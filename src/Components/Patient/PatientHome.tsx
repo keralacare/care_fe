@@ -342,39 +342,7 @@ export const PatientHome = (props: any) => {
             </Button>
           </Alert>
         )}
-        {/* {isPatientMandatoryDataFilled(patientData) &&
-          (patientData?.facility != patientData?.last_consultation?.facility ||
-            (patientData.is_active &&
-              patientData?.last_consultation?.discharge_date)) && (
-            <div className="relative my-2">
-              <div className="mx-auto max-w-screen-xl rounded-lg bg-red-200 p-3 shadow sm:px-6 lg:px-8">
-                <div className="text-center">
-                  <p className="font-bold text-red-800">
-                    <CareIcon icon="l-exclamation-triangle" className="mr-2" />
-                    <span className="inline">
-                      {t("consultation_missing_warning")}{" "}
-                      <strong>
-                        {patientData.facility_object?.name || "-"}{" "}
-                      </strong>
-                    </span>
-                  </p>
-                </div>
-              </div>
-              <div className="mt-4 flex items-center">
-                <Link
-                  href={`/facility/${patientData?.facility}/patient/${id}/consultation`}
-                  className={classNames(
-                    buttonStyles({}),
-                    "mb-2 w-full",
-                    !patientData.is_active &&
-                      "pointer-events-none cursor-not-allowed opacity-50",
-                  )}
-                >
-                  {t("create_consultation")}
-                </Link>
-              </div>
-            </div>
-          )} */}
+
         <div>
           <div>
             <div className="flex flex-row gap-x-4">
@@ -527,38 +495,6 @@ export const PatientHome = (props: any) => {
                       <div className="w-full">
                         <div className="flex justify-between">
                           <h1 className="text-xl">General Info</h1>
-                          {/* edit button */}
-                          {/* <div>
-                                <ButtonV2
-                                  className="w-full"
-                                  disabled={!patientData.is_active}
-                                  authorizeFor={NonReadOnlyUsers}
-                                  onClick={() => {
-                                    const showAllFacilityUsers = [
-                                      "DistrictAdmin",
-                                      "StateAdmin",
-                                    ];
-                                    if (
-                                      !showAllFacilityUsers.includes(
-                                        authUser.user_type,
-                                      ) &&
-                                      authUser.home_facility_object?.id !==
-                                        patientData.facility
-                                    ) {
-                                      Notification.Error({
-                                        msg: "Oops! Non-Home facility users don't have permission to perform this action.",
-                                      });
-                                    } else {
-                                      navigate(
-                                        `/facility/${patientData?.facility}/patient/${id}/update`,
-                                      );
-                                    }
-                                  }}
-                                >
-                                  <CareIcon icon="l-edit-alt" className="text-lg" />
-                                  Edit
-                                </ButtonV2>
-                              </div> */}
                         </div>
                         <div className="mb-8 mt-2 grid grid-cols-1 gap-x-4 gap-y-2 md:grid-cols-2 md:gap-y-8 lg:grid-cols-2">
                           <div className="sm:col-span-1">
