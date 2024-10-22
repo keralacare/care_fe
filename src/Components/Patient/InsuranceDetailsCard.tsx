@@ -17,7 +17,7 @@ export const InsuranceDetialsCard = (props: InsuranceDetails) => {
           Insurance Details
         </div>
         {data ? (
-          <div className="border-gray-150 grid grid-cols-1 gap-2 rounded-md border bg-white p-5 shadow sm:grid-cols-2 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-2 rounded-md border border-secondary-100 bg-white p-5 shadow sm:grid-cols-2 md:grid-cols-2">
             <div className=" ">
               <div className="text-sm font-semibold leading-5 text-zinc-400">
                 Member ID

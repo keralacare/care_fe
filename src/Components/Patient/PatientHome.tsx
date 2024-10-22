@@ -1,4 +1,4 @@
-import { Link, navigate } from "raviger";
+import { navigate } from "raviger";
 import { useEffect, useState } from "react";
 import * as Notification from "../../Utils/Notifications";
 
@@ -18,7 +18,7 @@ import {
   isAntenatal,
   isPostPartum,
 } from "../../Utils/utils";
-import ButtonV2, { buttonStyles } from "../Common/components/ButtonV2";
+import ButtonV2 from "../Common/components/ButtonV2";
 
 import CareIcon from "../../CAREUI/icons/CareIcon";
 import Chip from "../../CAREUI/display/Chip";
@@ -39,7 +39,6 @@ import routes from "../../Redux/api";
 import { InsuranceDetialsCard } from "./InsuranceDetailsCard";
 import request from "../../Utils/request/request";
 import PaginatedList from "../../CAREUI/misc/PaginatedList";
-import { isPatientMandatoryDataFilled } from "./Utils";
 import { useTranslation } from "react-i18next";
 import { Alert, AlertDescription, AlertTitle } from "@/Components/ui/alert";
 import { Button } from "@/Components/ui/button";
@@ -273,10 +272,10 @@ export const PatientHome = (props: any) => {
 
       <div>
         <div className="relative mt-2">
-          <div className="mx-auto max-w-screen-xl p-3 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-screen-xl py-3">
             <div className="md:flex">
               {patientData?.last_consultation?.assigned_to_object && (
-                <p className="mx-3 flex flex-1 justify-center gap-2 rounded-lg bg-green-200 p-3 text-center font-bold text-green-800 shadow">
+                <p className="flex flex-1 justify-center gap-2 rounded-lg bg-green-200 p-3 text-center font-bold text-green-800 shadow">
                   <span className="inline">
                     Assigned Doctor:
                     {formatName(
@@ -343,7 +342,7 @@ export const PatientHome = (props: any) => {
             </Button>
           </Alert>
         )}
-        {isPatientMandatoryDataFilled(patientData) &&
+        {/* {isPatientMandatoryDataFilled(patientData) &&
           (patientData?.facility != patientData?.last_consultation?.facility ||
             (patientData.is_active &&
               patientData?.last_consultation?.discharge_date)) && (
@@ -375,7 +374,7 @@ export const PatientHome = (props: any) => {
                 </Link>
               </div>
             </div>
-          )}
+          )} */}
         <div>
           <div>
             <div className="flex flex-row gap-x-4">
@@ -662,22 +661,22 @@ export const PatientHome = (props: any) => {
                               </div>
                             </div>
                           </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <hr className="mb-1 mr-5 h-1 w-5 border-0 bg-blue-500" />
+                      <div className="w-full">
+                        <div className="flex justify-between">
+                          <h1 className="text-xl">Covid Details</h1>
+                        </div>
 
-                          {patientData.date_of_return && (
-                            <div className="sm:col-span-1">
-                              <div className="text-sm font-semibold leading-5 text-zinc-400">
-                                Date of Return
-                              </div>
-                              <div className="mt-1 text-sm font-medium leading-5">
-                                {formatDateTime(patientData.date_of_return)}
-                              </div>
-                            </div>
-                          )}
+                        <div className="mb-8 mt-2 grid grid-cols-1 gap-x-4 gap-y-2 md:grid-cols-2 md:gap-y-8 lg:grid-cols-2">
                           {patientData.is_vaccinated &&
                             !!patientData.number_of_doses && (
                               <div className="sm:col-span-1">
                                 <div className="text-sm font-semibold leading-5 text-zinc-400">
-                                  Number of vaccine doses
+                                  Number of Covid vaccine doses
                                 </div>
                                 <div className="mt-1 text-sm font-medium leading-5">
                                   {patientData.number_of_doses}
@@ -719,6 +718,16 @@ export const PatientHome = (props: any) => {
                                 </div>
                               </div>
                             )}
+                          {patientData.date_of_return && (
+                            <div className="sm:col-span-1">
+                              <div className="text-sm font-semibold leading-5 text-zinc-400">
+                                Date of Return
+                              </div>
+                              <div className="mt-1 text-sm font-medium leading-5">
+                                {formatDateTime(patientData.date_of_return)}
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
