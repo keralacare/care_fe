@@ -438,7 +438,7 @@ export const PatientHome = (props: any) => {
               }`}
               onClick={() => setActiveTab("patient-profile")}
             >
-              Patient Profile
+              {t("patient_profile")}
             </button>
 
             <button
@@ -494,7 +494,7 @@ export const PatientHome = (props: any) => {
                       <hr className="mb-1 mr-5 h-1 w-5 border-0 bg-blue-500" />
                       <div className="w-full">
                         <div className="flex justify-between">
-                          <h1 className="text-xl">General Info</h1>
+                          <h1 className="text-xl">{t("general_info")}</h1>
                         </div>
                         <div className="mb-8 mt-2 grid grid-cols-1 gap-x-4 gap-y-2 md:grid-cols-2 md:gap-y-8 lg:grid-cols-2">
                           <div className="sm:col-span-1">
@@ -507,7 +507,7 @@ export const PatientHome = (props: any) => {
                           </div>
                           <div className="sm:col-span-1">
                             <div className="text-sm font-semibold leading-5 text-zinc-400">
-                              Phone
+                              {t("phone")}
                             </div>
                             <div className="mt-1 text-sm leading-5">
                               <div>
@@ -533,7 +533,7 @@ export const PatientHome = (props: any) => {
                           </div>
                           <div className="sm:col-span-1">
                             <div className="text-sm font-semibold leading-5 text-zinc-400">
-                              Date of Birth
+                              {t("date_of_birth")}
                             </div>
                             <div className="mt-1 text-sm font-medium leading-5">
                               {dayjs(patientData.date_of_birth).format(
@@ -544,7 +544,7 @@ export const PatientHome = (props: any) => {
                           </div>
                           <div className="sm:col-span-1">
                             <div className="text-sm font-semibold leading-5 text-zinc-400">
-                              Sex
+                              {t("sex")}
                             </div>
                             <div className="mt-1 text-sm font-medium leading-5">
                               {patientGender}
@@ -555,7 +555,7 @@ export const PatientHome = (props: any) => {
                               {/* Emergency Contact Section */}
                               <div className="flex-1">
                                 <div className="text-sm font-semibold leading-5 text-zinc-400">
-                                  Emergency Contact
+                                  {t("emergency_contact")}
                                 </div>
 
                                 <div className="mt-1 text-sm leading-5 text-secondary-900">
@@ -589,7 +589,7 @@ export const PatientHome = (props: any) => {
 
                               <div className="ml-0 mt-4 flex-1 sm:ml-4 sm:mt-0">
                                 <div className="text-sm font-semibold leading-5 text-zinc-400">
-                                  Emergency Contact Person Name
+                                  {t("emergency_contact_person_name")}
                                 </div>
                                 <div className="mt-1 text-sm font-medium leading-5">
                                   {patientData.name || "-"}
@@ -604,7 +604,7 @@ export const PatientHome = (props: any) => {
                       <hr className="mb-1 mr-5 h-1 w-5 border-0 bg-blue-500" />
                       <div className="w-full">
                         <div className="flex justify-between">
-                          <h1 className="text-xl">Covid Details</h1>
+                          <h1 className="text-xl">{t("covid_details")}</h1>
                         </div>
 
                         <div className="mb-8 mt-2 grid grid-cols-1 gap-x-4 gap-y-2 md:grid-cols-2 md:gap-y-8 lg:grid-cols-2">
@@ -612,7 +612,7 @@ export const PatientHome = (props: any) => {
                             !!patientData.number_of_doses && (
                               <div className="sm:col-span-1">
                                 <div className="text-sm font-semibold leading-5 text-zinc-400">
-                                  Number of Covid vaccine doses
+                                  {t("number_of_covid_vaccine_doses")}
                                 </div>
                                 <div className="mt-1 text-sm font-medium leading-5">
                                   {patientData.number_of_doses}
@@ -623,7 +623,7 @@ export const PatientHome = (props: any) => {
                             patientData.vaccine_name && (
                               <div className="sm:col-span-1">
                                 <div className="text-sm font-semibold leading-5 text-zinc-400">
-                                  Vaccine name
+                                  {t("vaccine_name")}
                                 </div>
                                 <div className="mt-1 text-sm font-medium leading-5">
                                   {patientData.vaccine_name}
@@ -634,7 +634,7 @@ export const PatientHome = (props: any) => {
                             patientData.last_vaccinated_date && (
                               <div className="sm:col-span-1">
                                 <div className="text-sm font-semibold leading-5 text-zinc-400">
-                                  Last Vaccinated on
+                                  {t("last_vaccinated_on")}
                                 </div>
                                 <div className="mt-1 text-sm font-medium leading-5">
                                   {formatDateTime(
@@ -647,7 +647,7 @@ export const PatientHome = (props: any) => {
                             !!patientData.countries_travelled.length && (
                               <div className="sm:col-span-1">
                                 <div className="text-sm font-semibold leading-5 text-zinc-400">
-                                  Countries travelled
+                                  {t("countries_travelled")}
                                 </div>
                                 <div className="mt-1 text-sm font-medium leading-5">
                                   {patientData.countries_travelled.join(", ")}
@@ -657,7 +657,7 @@ export const PatientHome = (props: any) => {
                           {patientData.date_of_return && (
                             <div className="sm:col-span-1">
                               <div className="text-sm font-semibold leading-5 text-zinc-400">
-                                Date of Return
+                                {t("date_of_return")}
                               </div>
                               <div className="mt-1 text-sm font-medium leading-5">
                                 {formatDateTime(patientData.date_of_return)}
@@ -671,7 +671,7 @@ export const PatientHome = (props: any) => {
                       <hr className="mb-1 mr-5 h-1 w-5 border-0 bg-blue-500" />
                       <div className="w-full">
                         <div className="flex justify-between">
-                          <h1 className="text-xl">Social Profile</h1>
+                          <h1 className="text-xl">{t("social_profile")}</h1>
                         </div>
                         {patientData.meta_info?.occupation ||
                         patientData.ration_card_category ||
@@ -730,7 +730,7 @@ export const PatientHome = (props: any) => {
                           </div>
                         ) : (
                           <div className="flex w-full items-center justify-center text-xl font-bold text-secondary-500">
-                            No Social Profile Details Available
+                            {t("no_social_profile_details_available")}
                           </div>
                         )}
                       </div>
@@ -741,12 +741,12 @@ export const PatientHome = (props: any) => {
                     <hr className="mb-1 mr-5 h-1 w-5 border-0 bg-blue-500" />
                     <div className="w-full">
                       <div className="flex justify-between">
-                        <h1 className="mr-4 w-full text-xl">Location</h1>
+                        <h1 className="mr-4 w-full text-xl">{t("location")}</h1>
                       </div>
                       <div className="mb-8 mt-2 grid grid-cols-1 gap-x-4 gap-y-2 md:grid-cols-2 md:gap-y-8 lg:grid-cols-2">
                         <div className="sm:col-span-1">
                           <div className="text-sm font-semibold leading-5 text-zinc-400">
-                            Current Address
+                            {t("current_address")}
                           </div>
                           <div className="mt-1 whitespace-normal break-words text-sm font-medium leading-5">
                             {patientData.address || "-"}
@@ -754,7 +754,7 @@ export const PatientHome = (props: any) => {
                         </div>
                         <div className="sm:col-span-1">
                           <div className="text-sm font-semibold leading-5 text-zinc-400">
-                            Permanent Address
+                            {t("permanent_address")}
                           </div>
                           <div className="mt-1 whitespace-normal break-words text-sm font-medium leading-5">
                             {patientData.permanent_address || "-"}
@@ -762,7 +762,7 @@ export const PatientHome = (props: any) => {
                         </div>
                         <div className="sm:col-span-1">
                           <div className="text-sm font-semibold leading-5 text-zinc-400">
-                            Nationality
+                            {t("nationality")}
                           </div>
                           <div className="mt-1 whitespace-normal break-words text-sm font-medium leading-5">
                             {patientData.nationality || "-"}
@@ -770,7 +770,7 @@ export const PatientHome = (props: any) => {
                         </div>
                         <div className="sm:col-span-1">
                           <div className="text-sm font-semibold leading-5 text-zinc-400">
-                            State
+                            {t("state")}
                           </div>
                           <div className="mt-1 whitespace-normal break-words text-sm font-medium leading-5">
                             {patientData?.state_object?.name} -{" "}
@@ -779,7 +779,7 @@ export const PatientHome = (props: any) => {
                         </div>
                         <div className="sm:col-span-1">
                           <div className="text-sm font-semibold leading-5 text-zinc-400">
-                            District
+                            {t("district")}
                           </div>
                           <div className="mt-1 whitespace-normal break-words text-sm font-medium leading-5">
                             {patientData.district_object?.name || "-"}
@@ -788,7 +788,7 @@ export const PatientHome = (props: any) => {
 
                         <div className="sm:col-span-1">
                           <div className="text-sm font-semibold leading-5 text-zinc-400">
-                            Local Body
+                            {t("local_body")}
                           </div>
                           <div className="mt-1 whitespace-normal break-words text-sm font-medium leading-5">
                             {patientData.local_body_object?.name || "-"}
@@ -797,7 +797,7 @@ export const PatientHome = (props: any) => {
 
                         <div className="sm:col-span-1">
                           <div className="text-sm font-semibold leading-5 text-zinc-400">
-                            Ward
+                            {t("ward")}
                           </div>
                           <div className="mt-1 whitespace-normal break-words text-sm font-medium leading-5">
                             {(patientData.ward_object &&
@@ -810,7 +810,7 @@ export const PatientHome = (props: any) => {
 
                         <div className="sm:col-span-1">
                           <div className="text-sm font-semibold leading-5 text-zinc-400">
-                            Village
+                            {t("village")}
                           </div>
                           <div className="mt-1 whitespace-normal break-words text-sm font-medium leading-5">
                             {patientData.village || "-"}
@@ -826,7 +826,7 @@ export const PatientHome = (props: any) => {
                       <div className="w-full">
                         <div className="flex justify-between">
                           <h1 className="mr-4 w-full border-b border-dashed pb-2 text-xl">
-                            Volunteer Contact
+                            {t("volunteer_contact")}
                           </h1>
                         </div>
                         <div className="mb-8 mt-2 grid grid-cols-1 gap-x-4 gap-y-2 md:grid-cols-2 md:gap-y-8 lg:grid-cols-2">
@@ -835,7 +835,7 @@ export const PatientHome = (props: any) => {
                               {/* Emergency Contact Section */}
                               <div className="flex-1">
                                 <div className="text-sm font-semibold leading-5 text-zinc-400">
-                                  Emergency Contact.(Volunteer)
+                                  {t("emergency_contact_volunteer")}
                                 </div>
                                 {patientData.assigned_to_object && (
                                   <div className="mt-1 text-sm leading-5 text-secondary-900">
@@ -870,7 +870,7 @@ export const PatientHome = (props: any) => {
 
                               <div className="ml-0 mt-4 flex-1 sm:ml-4 sm:mt-0">
                                 <div className="text-sm font-semibold leading-5 text-zinc-400">
-                                  Emergency Contact Person Name (Volunteer)
+                                  {t("emergency_contact_person_name_volunteer")}
                                 </div>
                                 {patientData.assigned_to_object && (
                                   <div className="mt-1 text-sm font-medium leading-5">
@@ -901,7 +901,7 @@ export const PatientHome = (props: any) => {
                     <hr className="mb-1 mr-5 h-1 w-5 border-0 bg-blue-500" />
                     <div className="h-full space-y-2">
                       <div className="mr-4 pb-2 text-xl font-bold text-secondary-900">
-                        Medical
+                        {t("medical")}
                       </div>
                       {!patientData.present_health &&
                         !patientData.allergies &&
@@ -913,14 +913,14 @@ export const PatientHome = (props: any) => {
                           (history) => history.disease !== "NO",
                         ) && (
                           <div className="flex w-full items-center justify-center text-xl font-bold text-secondary-500">
-                            No Medical History Available
+                            {t("no_medical_history_available")}
                           </div>
                         )}
                       <div className="mt-2 grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-2 md:gap-y-8">
                         {patientData.present_health && (
                           <div className="sm:col-span-1">
                             <div className="text-sm font-semibold leading-5 text-zinc-400">
-                              Present Health
+                              {t("present_health")}
                             </div>
                             <div
                               data-testid="patient-present-health"
@@ -933,7 +933,7 @@ export const PatientHome = (props: any) => {
                         {patientData.ongoing_medication && (
                           <div className="sm:col-span-1">
                             <div className="text-sm font-semibold leading-5 text-zinc-400">
-                              Ongoing Medications
+                              {t("ongoing_medications")}
                             </div>
                             <div
                               data-testid="patient-ongoing-medication"
@@ -946,7 +946,7 @@ export const PatientHome = (props: any) => {
                         {patientData.allergies && (
                           <div className="sm:col-span-1">
                             <div className="text-sm font-semibold leading-5 text-zinc-400">
-                              Allergies
+                              {t("allergies")}
                             </div>
                             <div
                               data-testid="patient-allergies"
@@ -960,7 +960,7 @@ export const PatientHome = (props: any) => {
                           patientData.is_antenatal && (
                             <div className="sm:col-span-1">
                               <div className="text-sm font-semibold leading-5 text-zinc-400">
-                                Is pregnant
+                                {t("is_pregnant")}
                               </div>
                               <div className="mt-1 whitespace-normal break-words text-sm font-medium leading-5">
                                 Yes
