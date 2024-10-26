@@ -39,12 +39,12 @@ import { InsuranceDetialsCard } from "./InsuranceDetailsCard";
 import request from "../../Utils/request/request";
 import PaginatedList from "../../CAREUI/misc/PaginatedList";
 import { useTranslation } from "react-i18next";
-import { Alert, AlertDescription, AlertTitle } from "@/Components/ui/alert";
-import { Button } from "@/Components/ui/button";
-import Loading from "@/Components/Common/Loading";
 import { Avatar } from "../Common/Avatar";
 import { SkillModel } from "../Users/models";
 import DropdownMenu, { DropdownItem } from "../Common/components/Menu";
+import Loading from "../Common/Loading";
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
+import { Button } from "@headlessui/react";
 
 export const parseOccupation = (occupation: string | undefined) => {
   return OCCUPATION_TYPES.find((i) => i.value === occupation)?.text;
