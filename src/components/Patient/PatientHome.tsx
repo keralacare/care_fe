@@ -44,7 +44,7 @@ import { SkillModel } from "../Users/models";
 import DropdownMenu, { DropdownItem } from "../Common/components/Menu";
 import Loading from "../Common/Loading";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
-import { Button } from "@headlessui/react";
+import { Button } from "@/components/ui/button";
 
 export const parseOccupation = (occupation: string | undefined) => {
   return OCCUPATION_TYPES.find((i) => i.value === occupation)?.text;
