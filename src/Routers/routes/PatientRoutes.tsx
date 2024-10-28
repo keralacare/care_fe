@@ -20,6 +20,9 @@ const PatientRoutes: AppRoutes = {
   "/facility/:facilityId/patient/:id": ({ facilityId, id }) => (
     <PatientHome facilityId={facilityId} id={id} />
   ),
+  "/facility/:facilityId/patient/:id/tab/:tab": ({ facilityId, id, tab }) => (
+    <PatientHome facilityId={facilityId} id={id} tab={tab} />
+  ),
   "/facility/:facilityId/patient/:id/insurance": ({ facilityId, id }) => (
     <InsuranceDetails facilityId={facilityId} id={id} />
   ),
