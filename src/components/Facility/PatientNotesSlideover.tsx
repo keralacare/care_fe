@@ -17,6 +17,11 @@ import DoctorNoteReplyPreviewCard from "./DoctorNoteReplyPreviewCard";
 import useNotificationSubscriptionState from "@/common/hooks/useNotificationSubscriptionState";
 import { Link } from "raviger";
 import { t } from "i18next";
+import CopilotChat, { copilotChatSend, listCopilotChats } from "@/CopilotChat";
+import { Assistant } from "openai/resources/beta/assistants";
+import { Thread } from "openai/resources/beta/threads/threads";
+import OpenAI from "openai";
+import { MessagesPage } from "openai/resources/beta/threads/messages";
 
 interface PatientNotesProps {
   patientId: string;
@@ -28,7 +33,7 @@ interface PatientNotesProps {
 export default function PatientNotesSlideover(props: PatientNotesProps) {
   const authUser = useAuthUser();
   const notificationSubscriptionState = useNotificationSubscriptionState();
-  const [thread, setThread] = useState(
+  const [thread, setThread] = useState<any>(
     authUser.user_type === "Nurse"
       ? PATIENT_NOTES_THREADS.Nurses
       : PATIENT_NOTES_THREADS.Doctors,
@@ -40,6 +45,66 @@ export default function PatientNotesSlideover(props: PatientNotesProps) {
   const [reply_to, setReplyTo] = useState<PaitentNotesReplyModel | undefined>(
     undefined,
   );
+
+  const [copilotAssistant, setCopilotAssistant] = useState<Assistant>();
+  const [copliotThread, setCopilotThread] = useState<Thread>();
+  const [copilotChatMessages, setCopilotChatMessages] =
+    useState<MessagesPage>();
+  const [copilotThinking, setCopilotThinking] = useState(false);
+
+  useEffect(() => {
+    const setupCopilot = async () => {
+      const patient = await request(routes.getPatient, {
+        pathParams: { id: patientId },
+      });
+      const openai = new OpenAI({
+        apiKey: import.meta.env.REACT_COPILOT_API_KEY,
+        dangerouslyAllowBrowser: true,
+      });
+      const localThreadId = localStorage.getItem(
+        "copilot-thread-id-" + patientId,
+      );
+      const localAssistantId = localStorage.getItem(
+        "copilot-assistant-id" + patientId,
+      );
+      if (localThreadId) {
+        setCopilotThread(await openai.beta.threads.retrieve(localThreadId));
+      } else {
+        const newThread = await openai.beta.threads.create();
+        setCopilotThread(newThread);
+        localStorage.setItem("copilot-thread-id-" + patientId, newThread.id);
+      }
+      if (localAssistantId) {
+        setCopilotAssistant(
+          await openai.beta.assistants.retrieve(localAssistantId),
+        );
+      } else {
+        const newAssistant = await openai.beta.assistants.create({
+          name: "Care Copilot",
+          instructions:
+            "Your name is Care Copilot. You are a copilot assistant for the HMIS software CARE. Your job is to summarize and advice on patient status and further steps to be taken. The patient that is being referred to has the following data : " +
+            JSON.stringify(patient.data),
+          tools: [],
+          model: "gpt-4o-mini",
+        });
+        setCopilotAssistant(newAssistant);
+        localStorage.setItem(
+          "copilot-assistant-id-" + patientId,
+          newAssistant.id,
+        );
+      }
+    };
+    setupCopilot();
+  }, []);
+
+  useEffect(() => {
+    if (copliotThread && copilotAssistant) refreshChats();
+  }, [copliotThread, copilotAssistant]);
+
+  const refreshChats = async () => {
+    if (copliotThread)
+      setCopilotChatMessages(await listCopilotChats(copliotThread));
+  };
 
   useEffect(() => {
     if (notificationSubscriptionState === "unsubscribed") {
@@ -71,6 +136,17 @@ export default function PatientNotesSlideover(props: PatientNotesProps) {
   );
 
   const onAddNote = async () => {
+    if (thread === 42) {
+      setCopilotThinking(true);
+      if (!copilotAssistant || !copliotThread) {
+        throw Error("Thread or Assistant not initialized");
+      }
+      await copilotChatSend(noteField, copilotAssistant, copliotThread);
+      await refreshChats();
+      setCopilotThinking(false);
+      setNoteField("");
+      return;
+    }
     if (!/\S+/.test(noteField)) {
       Notification.Error({
         msg: "Note Should Contain At Least 1 Character",
@@ -208,31 +284,52 @@ export default function PatientNotesSlideover(props: PatientNotesProps) {
             {notesActionIcons}
           </div>
           <div className="flex bg-primary-800 text-sm">
-            {keysOf(PATIENT_NOTES_THREADS).map((current) => (
+            {[...keysOf(PATIENT_NOTES_THREADS), "Copilot"].map((current) => (
               <button
                 id={`patient-note-tab-${current}`}
                 key={current}
                 className={classNames(
                   "flex flex-1 justify-center border-b-4 py-1",
-                  thread === PATIENT_NOTES_THREADS[current]
+                  thread ===
+                    (PATIENT_NOTES_THREADS[
+                      current as keyof typeof PATIENT_NOTES_THREADS
+                    ] || 42)
                     ? "border-primary-500 font-medium text-white"
                     : "border-primary-800 text-white/70",
                 )}
-                onClick={() => setThread(PATIENT_NOTES_THREADS[current])}
+                onClick={() =>
+                  setThread(
+                    PATIENT_NOTES_THREADS[
+                      current as keyof typeof PATIENT_NOTES_THREADS
+                    ] || 42,
+                  )
+                }
               >
                 {t(`patient_notes_thread__${current}`)}
               </button>
             ))}
           </div>
-          <PatientConsultationNotesList
-            state={state}
-            setState={setState}
-            reload={reload}
-            setReload={setReload}
-            disableEdit={!patientActive}
-            thread={thread}
-            setReplyTo={setReplyTo}
-          />
+          {thread === 42 ? (
+            <CopilotChat
+              consultationId={consultationId}
+              facilityId={facilityId}
+              patientId={patientId}
+              thread={copliotThread}
+              assistant={copilotAssistant}
+              chatMessages={copilotChatMessages}
+              thinking={copilotThinking}
+            />
+          ) : (
+            <PatientConsultationNotesList
+              state={state}
+              setState={setState}
+              reload={reload}
+              setReload={setReload}
+              disableEdit={!patientActive}
+              thread={thread}
+              setReplyTo={setReplyTo}
+            />
+          )}
           <DoctorNoteReplyPreviewCard
             parentNote={reply_to}
             cancelReply={() => setReplyTo(undefined)}
