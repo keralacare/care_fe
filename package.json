@@ -80,6 +80,7 @@
     "hi-profiles": "^1.1.0",
     "i18next": "^23.11.4",
     "i18next-browser-languagedetector": "^7.2.1",
+    "jotai": "^2.10.1",
     "lodash-es": "^4.17.21",
     "openai": "^4.68.4",
     "postcss-loader": "^7.3.3",

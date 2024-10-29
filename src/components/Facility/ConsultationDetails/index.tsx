@@ -41,6 +41,7 @@ import useQuery from "../../../Utils/request/useQuery";
 
 import Loading from "@/components/Common/Loading";
 import PageTitle from "@/components/Common/PageTitle";
+import CopilotPopup from "@/components/Copilot/CopilotPopup";
 
 export interface ConsultationTabProps {
   consultationId: string;
@@ -413,6 +414,7 @@ export const ConsultationDetails = (props: any) => {
           setShowPatientNotesPopup={setShowPatientNotesPopup}
         />
       )}
+      <CopilotPopup patientId={patientId} />
     </div>
   );
 };
