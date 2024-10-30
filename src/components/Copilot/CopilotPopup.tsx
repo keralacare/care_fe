@@ -307,19 +307,68 @@ export default function CopilotPopup(props: {
   );
 
   const startNewThread = async () => {
-    setCopilotStorage(
-      copilotStorage.map((s) =>
+    try {
+      // Reset all states
+      setCopilotThinking(false);
+      setChat("");
+      setCopilotChatMessages(undefined);
+
+      // Clear the thread from storage first
+      const updatedStorage = copilotStorage.map((s) =>
         s.patientId === patientId
           ? {
-              ...(currentCopilot as CopilotStorage),
+              ...s,
               threadId: undefined,
             }
           : s,
-      ),
-    );
-    await configureCopilot();
-    setCopilotChatMessages(undefined);
-    setChat("");
+      );
+      setCopilotStorage(updatedStorage);
+
+      // Create new thread
+      const newThread = await openai.beta.threads.create();
+      setCopilotThread(newThread);
+
+      // Update storage with new thread
+      setCopilotStorage(
+        updatedStorage.map((s) =>
+          s.patientId === patientId
+            ? {
+                ...s,
+                threadId: newThread.id,
+              }
+            : s,
+        ),
+      );
+
+      // Reset thinking states
+      setThinkingStates({
+        analyzing: {
+          stage: "analyzing",
+          message: "Analyzing your request...",
+          completed: false,
+        },
+        processing: {
+          stage: "processing",
+          message: "Processing context and history...",
+          completed: false,
+        },
+        generating: {
+          stage: "generating",
+          message: "Generating response...",
+          completed: false,
+        },
+      });
+
+      // Scroll chat to top
+      if (chatView.current) {
+        chatView.current.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      }
+    } catch (error) {
+      console.error("Error starting new thread:", error);
+    }
   };
 
   return (
@@ -343,7 +392,7 @@ export default function CopilotPopup(props: {
             </div>
             <button
               onClick={startNewThread}
-              className="rounded-lg p-1.5 text-secondary-500 transition-colors hover:bg-secondary-100 hover:text-primary-500"
+              className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-xs text-secondary-500 transition-colors hover:bg-secondary-100 hover:text-primary-500"
               aria-label="Start new chat"
               title="Start new chat"
             >
@@ -359,16 +408,26 @@ export default function CopilotPopup(props: {
                   clipRule="evenodd"
                 />
               </svg>
+              Start new chat
             </button>
           </div>
           <div
             ref={chatView}
-            className={`flex flex-1 flex-col gap-3 overflow-auto bg-secondary-100 p-3 ${copilotThinking ? "pb-[100px]" : "pb-[50px]"}`}
+            className={`flex flex-1 flex-col gap-3 overflow-auto bg-secondary-100 p-3 ${
+              copilotThinking ? "pb-[120px]" : "pb-[70px]"
+            }`}
             onClick={() => stopAllAudio()}
           >
             {!copilotThinking && orderedChats && !orderedChats.length && (
               <div className="flex h-full flex-col items-center justify-center gap-6 p-4 text-secondary-500">
-                <img src="/images/copilot.svg" className="w-24 grayscale" />
+                <div className="relative">
+                  <img
+                    src="/images/copilot.svg"
+                    className="mt-4 w-24 grayscale transition-all duration-700 hover:scale-110 hover:grayscale-0 group-hover:rotate-[360deg]"
+                    alt="Copilot"
+                  />
+                  <div className="absolute inset-0 animate-pulse rounded-full bg-secondary-100/50 blur-2xl"></div>
+                </div>
                 <div className="flex flex-col items-center gap-2">
                   <p className="font-medium">
                     Start chatting with CARE Copilot
@@ -439,17 +498,7 @@ export default function CopilotPopup(props: {
             {orderedChats?.map((message) => (
               <CopilotChatBlock message={message} key={message.id} />
             ))}
-            <div
-              className={`${copilotThinking ? "visible translate-y-0 opacity-100" : "invisible translate-y-10 opacity-0"} transition-all`}
-            >
-              <CopilotChatBlock
-                message={
-                  {
-                    role: "user",
-                    content: [{ text: { value: chat } }],
-                  } as any
-                }
-              />
+            {copilotThinking && (
               <div className="mt-4 rounded-lg bg-white p-4 shadow-sm">
                 <div className="flex flex-col gap-3">
                   {Object.values(thinkingStates).map((state) => (
@@ -482,6 +531,11 @@ export default function CopilotPopup(props: {
                   ))}
                 </div>
               </div>
+            )}
+          </div>
+          <div className="absolute bottom-[60px] left-0 right-0 flex justify-center">
+            <div className="rounded-full bg-secondary-100 px-3 py-1 text-xs text-secondary-500">
+              AI responses may not always be accurate
             </div>
           </div>
           <CopilotChatInput
@@ -495,11 +549,13 @@ export default function CopilotPopup(props: {
         <div className="flex items-center justify-end">
           <button
             onClick={() => setShowPopup(!showPopup)}
-            className="group relative flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-tr from-primary-500/90 to-blue-500/90 shadow-lg transition-all duration-300 before:absolute before:inset-0 before:-z-10 before:animate-pulse before:rounded-full before:bg-gradient-to-tr before:from-primary-400/20 before:to-blue-400/20 before:blur-xl hover:from-primary-500 hover:to-blue-500 hover:shadow-xl"
+            className="group relative flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-tr from-green-600/90 to-primary-600/90 shadow-lg transition-all duration-300 before:absolute before:inset-0 before:-z-10 before:animate-pulse before:rounded-full before:bg-gradient-to-tr before:from-green-500/20 before:to-primary-500/20 before:blur-xl hover:from-green-700 hover:to-primary-700 hover:shadow-xl"
           >
             <img
               src="/images/copilot.svg"
-              className="h-8 w-8 transition-all duration-300 group-hover:rotate-[360deg] group-hover:scale-110"
+              className={`h-8 w-8 transition-all duration-500 ${
+                showPopup ? "rotate-[360deg]" : "rotate-0"
+              } group-hover:scale-110`}
               alt="Copilot"
             />
           </button>
