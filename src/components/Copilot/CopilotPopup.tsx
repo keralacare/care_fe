@@ -10,6 +10,7 @@ import { Thread } from "openai/resources/beta/threads/threads";
 import CopilotChatInput from "./CopilotChatInput";
 import { CopilotChatBlock } from "./CopilotChatBlock";
 import { CopilotStorage } from "./types";
+import CareIcon from "@/CAREUI/icons/CareIcon";
 
 const openai = new OpenAI({
   apiKey: import.meta.env.REACT_COPILOT_API_KEY,
@@ -82,14 +83,27 @@ export default function CopilotPopup(props: { patientId: string }) {
     if (copilotThread && copilotAssistant) refreshChats();
   }, [copilotThread, copilotAssistant]);
 
-  const handleSendMessage = async () => {
+  const handleSendMessage = async (message: string) => {
     if (!copilotAssistant || !copilotThread) {
       throw Error("Thread or Assistant not initialized");
     }
+    stopAllAudio();
     setCopilotThinking(true);
+    if (chatView.current) {
+      const { scrollHeight, scrollTop, clientHeight } = chatView.current;
+      const wasAtBottom = scrollHeight - scrollTop - clientHeight < 10;
+      if (wasAtBottom) {
+        setTimeout(() => {
+          chatView.current?.scrollTo({
+            top: chatView.current.scrollHeight,
+            behavior: "smooth",
+          });
+        }, 100);
+      }
+    }
     await openai.beta.threads.messages.create(copilotThread.id, {
       role: "user",
-      content: chat,
+      content: message,
     });
 
     await openai.beta.threads.runs.createAndPoll(copilotThread.id, {
@@ -101,11 +115,61 @@ export default function CopilotPopup(props: { patientId: string }) {
     setCopilotThinking(false);
   };
 
+  const generateAudio = async (text: string) => {
+    const mp3 = await openai.audio.speech.create({
+      model: "tts-1-hd",
+      voice: "alloy",
+      input: text,
+    });
+    const arrayBuffer = await mp3.arrayBuffer();
+    const uint8Array = new Uint8Array(arrayBuffer);
+
+    return new Blob([uint8Array], { type: "audio/mp3" });
+  };
+
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const stopAllAudio = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+  };
+
+  const playAudio = (blob: Blob) => {
+    stopAllAudio();
+    const audio = new Audio(URL.createObjectURL(blob));
+    audioRef.current = audio;
+    audio.play();
+    audio.addEventListener("ended", () => {
+      audioRef.current = null;
+    });
+  };
+
   const refreshChats = async () => {
-    if (copilotThread)
-      setCopilotChatMessages(
-        await openai.beta.threads.messages.list(copilotThread.id),
-      );
+    if (!copilotThread) return;
+    const messages = await openai.beta.threads.messages.list(copilotThread.id);
+    if (messages.data.length > (copilotChatMessages?.data.length || 0)) {
+      const lastMessage = messages.data[0];
+      if (lastMessage.role === "assistant") {
+        const text = (lastMessage.content[0] as any).text.value;
+        const audio = await generateAudio(text);
+        playAudio(audio);
+      }
+    }
+    setCopilotChatMessages(messages);
+    if (chatView.current) {
+      const { scrollHeight, scrollTop, clientHeight } = chatView.current;
+      const wasAtBottom = scrollHeight - scrollTop - clientHeight < 10;
+      if (wasAtBottom) {
+        setTimeout(() => {
+          chatView.current?.scrollTo({
+            top: chatView.current.scrollHeight,
+            behavior: "smooth",
+          });
+        }, 100);
+      }
+    }
   };
 
   const orderedChats = copilotChatMessages?.data.sort(
@@ -124,10 +188,21 @@ export default function CopilotPopup(props: { patientId: string }) {
         >
           <div
             ref={chatView}
-            className="flex h-[500px] w-full flex-col gap-4 overflow-auto bg-secondary-100 p-4 pb-[50px]"
+            className={`flex h-[500px] w-full flex-col gap-4 overflow-auto bg-secondary-100 p-4 ${copilotThinking ? "pb-[100px]" : "pb-[50px]"}`}
+            onClick={() => stopAllAudio()}
           >
+            {!copilotThinking && orderedChats && !orderedChats.length && (
+              <div className="flex h-full items-center justify-center text-secondary-500">
+                <div className="text-center">
+                  <CareIcon icon="l-atom" className="text-8xl" />
+                  <br />
+                  <br />
+                  Start chatting with CARE Copilot
+                </div>
+              </div>
+            )}
             {orderedChats?.map((message) => (
-              <CopilotChatBlock message={message} />
+              <CopilotChatBlock message={message} key={message.id} />
             ))}
             <div
               className={`${copilotThinking ? "visible translate-y-0 opacity-100" : "invisible translate-y-10 opacity-0"} transition-all`}
@@ -177,8 +252,9 @@ export default function CopilotPopup(props: { patientId: string }) {
         <div className="flex items-center justify-end">
           <button
             onClick={() => setShowPopup(!showPopup)}
-            className="rounded-full bg-primary-500 p-4 font-black text-white"
+            className="flex items-center gap-2 rounded-full bg-gradient-to-tr from-primary-500 to-blue-500 px-4 py-3 font-black text-white"
           >
+            <CareIcon icon="l-atom" className="text-2xl" />
             Copilot Chat
           </button>
         </div>
