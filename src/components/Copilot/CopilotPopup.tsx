@@ -11,14 +11,18 @@ import CopilotChatInput from "./CopilotChatInput";
 import { CopilotChatBlock } from "./CopilotChatBlock";
 import { CopilotStorage } from "./types";
 import CareIcon from "@/CAREUI/icons/CareIcon";
+import { Run } from "openai/resources/beta/threads/runs/runs";
 
 const openai = new OpenAI({
   apiKey: import.meta.env.REACT_COPILOT_API_KEY,
   dangerouslyAllowBrowser: true,
 });
 
-export default function CopilotPopup(props: { patientId: string }) {
-  const { patientId } = props;
+export default function CopilotPopup(props: {
+  patientId: string;
+  consultationId: string;
+}) {
+  const { patientId, consultationId } = props;
 
   const [showPopup, setShowPopup] = useState(false);
   const [copilotStorage, setCopilotStorage] = useAtom(copilotAtom);
@@ -59,7 +63,16 @@ export default function CopilotPopup(props: { patientId: string }) {
         instructions:
           "Your name is Care Copilot. You are a copilot assistant for the HMIS software CARE. Your job is to summarize and advice on patient status and further steps to be taken. Make sure to not respond in key value pairs, and rather output a structured paragraph. The patient that is being referred to has the following data : " +
           JSON.stringify(patient.data),
-        tools: [],
+        tools: [
+          {
+            type: "function",
+            function: {
+              name: "generateCarePlan",
+              description:
+                "Returns the last 30 events for the patient to generate a CARE plan to target the future goals and plan for the patient",
+            },
+          },
+        ],
         model: "gpt-4o-mini",
       });
       setCopilotAssistant(newAssistant);
@@ -82,6 +95,49 @@ export default function CopilotPopup(props: { patientId: string }) {
   useEffect(() => {
     if (copilotThread && copilotAssistant) refreshChats();
   }, [copilotThread, copilotAssistant]);
+
+  const generateCarePlan = async () => {
+    const recentEvents = await request(routes.getEvents, {
+      pathParams: { consultationId },
+      query: { limit: 30 },
+    });
+
+    return JSON.stringify(recentEvents.data?.results);
+  };
+
+  const callFunction = async (run: Run) => {
+    if (
+      run.required_action &&
+      run.required_action.submit_tool_outputs &&
+      run.required_action.submit_tool_outputs.tool_calls &&
+      copilotThread
+    ) {
+      const toolOutputs = [];
+      for (const tool of run.required_action.submit_tool_outputs.tool_calls) {
+        let output;
+        if (tool.function.name === "generateCarePlan") {
+          output = await generateCarePlan();
+        }
+        toolOutputs.push({
+          tool_call_id: tool.id,
+          output,
+        });
+      }
+      if (toolOutputs.length > 0) {
+        const toolRun = await openai.beta.threads.runs.submitToolOutputsAndPoll(
+          copilotThread.id,
+          run.id,
+          { tool_outputs: toolOutputs },
+        );
+        if (run.status === "requires_action") {
+          await callFunction(toolRun);
+        }
+        console.log("Tool outputs submitted successfully.");
+      } else {
+        console.log("No tool outputs to submit.");
+      }
+    }
+  };
 
   const handleSendMessage = async (message: string) => {
     if (!copilotAssistant || !copilotThread) {
@@ -106,9 +162,13 @@ export default function CopilotPopup(props: { patientId: string }) {
       content: message,
     });
 
-    await openai.beta.threads.runs.createAndPoll(copilotThread.id, {
+    const run = await openai.beta.threads.runs.createAndPoll(copilotThread.id, {
       assistant_id: copilotAssistant.id,
     });
+
+    if (run.status === "requires_action") {
+      await callFunction(run);
+    }
 
     await refreshChats();
     setChat("");
@@ -205,13 +265,9 @@ export default function CopilotPopup(props: { patientId: string }) {
             onClick={() => stopAllAudio()}
           >
             {!copilotThinking && orderedChats && !orderedChats.length && (
-              <div className="flex h-full items-center justify-center text-secondary-500">
-                <div className="text-center">
-                  <CareIcon icon="l-atom" className="text-8xl" />
-                  <br />
-                  <br />
-                  Start chatting with CARE Copilot
-                </div>
+              <div className="flex h-full flex-col items-center justify-center gap-4 text-secondary-500">
+                <img src="/images/copilot.svg" className="w-32 grayscale" />
+                <p>Start chatting with CARE Copilot</p>
               </div>
             )}
             {orderedChats?.map((message) => (

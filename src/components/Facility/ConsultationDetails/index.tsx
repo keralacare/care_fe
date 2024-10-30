@@ -414,7 +414,7 @@ export const ConsultationDetails = (props: any) => {
           setShowPatientNotesPopup={setShowPatientNotesPopup}
         />
       )}
-      <CopilotPopup patientId={patientId} />
+      <CopilotPopup patientId={patientId} consultationId={consultationId} />
     </div>
   );
 };

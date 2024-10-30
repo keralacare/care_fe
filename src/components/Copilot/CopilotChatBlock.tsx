@@ -18,9 +18,7 @@ export function CopilotChatBlock(props: { message: Message }) {
         <Avatar
           name={isUser ? authUser.first_name : "👾"}
           imageUrl={
-            isUser
-              ? authUser.read_profile_picture_url
-              : "https://ayushma-staging.ohc.network/icon.png"
+            isUser ? authUser.read_profile_picture_url : "/images/copilot.svg"
           }
           className={`${isUser ? "rounded-full" : "rounded-none border-0"} h-8 shrink-0`}
         />
