@@ -26,9 +26,11 @@ export default function CopilotChatInput(props: {
 
   const handleStopRecording = async () => {
     stopRecording();
+    resetRecording();
   };
 
   useEffect(() => {
+    console.log("blob changed", blob);
     if (blob) {
       const main = async () => {
         const audioFile = new File([blob], "audio.mpeg", {

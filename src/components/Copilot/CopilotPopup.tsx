@@ -116,15 +116,38 @@ export default function CopilotPopup(props: { patientId: string }) {
   };
 
   const generateAudio = async (text: string) => {
-    const mp3 = await openai.audio.speech.create({
-      model: "tts-1-hd",
-      voice: "alloy",
-      input: text,
-    });
-    const arrayBuffer = await mp3.arrayBuffer();
-    const uint8Array = new Uint8Array(arrayBuffer);
+    const mediaSource = new MediaSource();
 
-    return new Blob([uint8Array], { type: "audio/mp3" });
+    const audio = new Audio();
+    audio.src = URL.createObjectURL(mediaSource);
+    audioRef.current = audio;
+    audio.play();
+
+    mediaSource.addEventListener("sourceopen", async () => {
+      const sourceBuffer = mediaSource.addSourceBuffer("audio/mpeg"); // Adjust MIME type if needed
+
+      const response = await openai.audio.speech.create({
+        model: "tts-1",
+        voice: "alloy",
+        input: text,
+      });
+      const reader = response.body?.getReader();
+      if (!reader) return;
+
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        sourceBuffer.appendBuffer(value);
+
+        await new Promise((resolve) => {
+          sourceBuffer.addEventListener("updateend", resolve, { once: true });
+        });
+      }
+
+      mediaSource.endOfStream();
+    });
   };
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -133,17 +156,8 @@ export default function CopilotPopup(props: { patientId: string }) {
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
-    }
-  };
-
-  const playAudio = (blob: Blob) => {
-    stopAllAudio();
-    const audio = new Audio(URL.createObjectURL(blob));
-    audioRef.current = audio;
-    audio.play();
-    audio.addEventListener("ended", () => {
       audioRef.current = null;
-    });
+    }
   };
 
   const refreshChats = async () => {
@@ -153,8 +167,7 @@ export default function CopilotPopup(props: { patientId: string }) {
       const lastMessage = messages.data[0];
       if (lastMessage.role === "assistant") {
         const text = (lastMessage.content[0] as any).text.value;
-        const audio = await generateAudio(text);
-        playAudio(audio);
+        generateAudio(text);
       }
     }
     setCopilotChatMessages(messages);
