@@ -306,6 +306,22 @@ export default function CopilotPopup(props: {
     (a, b) => a.created_at - b.created_at,
   );
 
+  const startNewThread = async () => {
+    setCopilotStorage(
+      copilotStorage.map((s) =>
+        s.patientId === patientId
+          ? {
+              ...(currentCopilot as CopilotStorage),
+              threadId: undefined,
+            }
+          : s,
+      ),
+    );
+    await configureCopilot();
+    setCopilotChatMessages(undefined);
+    setChat("");
+  };
+
   return (
     <>
       <div
@@ -314,17 +330,110 @@ export default function CopilotPopup(props: {
       />
       <div className="fixed bottom-6 right-6 z-30 flex flex-col gap-4">
         <div
-          className={`${showPopup ? "visible translate-y-0 opacity-100" : "hidden translate-y-10 opacity-0"} flex h-[500px] w-[400px] flex-col overflow-hidden rounded-xl border border-secondary-300 bg-white transition-all`}
+          className={`${showPopup ? "visible translate-y-0 opacity-100" : "hidden translate-y-10 opacity-0"} flex h-[600px] w-[450px] flex-col overflow-hidden rounded-xl border border-secondary-300 bg-white transition-all`}
         >
+          <div className="flex items-center justify-between border-b border-secondary-200 bg-white px-3 py-2">
+            <div className="flex items-center gap-2">
+              <img
+                src="/images/copilot.svg"
+                className="h-5 w-5"
+                alt="Copilot"
+              />
+              <h2 className="text-sm font-medium">Care Copilot</h2>
+            </div>
+            <button
+              onClick={startNewThread}
+              className="rounded-lg p-1.5 text-secondary-500 transition-colors hover:bg-secondary-100 hover:text-primary-500"
+              aria-label="Start new chat"
+              title="Start new chat"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="h-4 w-4"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M12 3.75a.75.75 0 01.75.75v6.75h6.75a.75.75 0 010 1.5h-6.75v6.75a.75.75 0 01-1.5 0v-6.75H4.5a.75.75 0 010-1.5h6.75V4.5a.75.75 0 01.75-.75z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </button>
+          </div>
           <div
             ref={chatView}
-            className={`flex h-[500px] w-full flex-col gap-4 overflow-auto bg-secondary-100 p-4 ${copilotThinking ? "pb-[100px]" : "pb-[50px]"}`}
+            className={`flex flex-1 flex-col gap-3 overflow-auto bg-secondary-100 p-3 ${copilotThinking ? "pb-[100px]" : "pb-[50px]"}`}
             onClick={() => stopAllAudio()}
           >
             {!copilotThinking && orderedChats && !orderedChats.length && (
-              <div className="flex h-full flex-col items-center justify-center gap-4 text-secondary-500">
-                <img src="/images/copilot.svg" className="w-32 grayscale" />
-                <p>Start chatting with CARE Copilot</p>
+              <div className="flex h-full flex-col items-center justify-center gap-6 p-4 text-secondary-500">
+                <img src="/images/copilot.svg" className="w-24 grayscale" />
+                <div className="flex flex-col items-center gap-2">
+                  <p className="font-medium">
+                    Start chatting with CARE Copilot
+                  </p>
+                  <p className="text-sm text-secondary-400">
+                    Click on a suggestion or type your own question
+                  </p>
+                </div>
+                <div className="flex w-full flex-col gap-2">
+                  <button
+                    onClick={() => {
+                      const message =
+                        "Can you summarize the current patient's status and medical history?";
+                      setChat(message);
+                      handleSendMessage(message);
+                    }}
+                    className="hover:bg-primary-50 w-full rounded-lg border border-secondary-200 bg-white p-3 text-left text-sm text-secondary-600 transition-all hover:border-primary-500 hover:text-primary-600"
+                  >
+                    📋 Summarize patient status and medical history
+                  </button>
+                  <button
+                    onClick={() => {
+                      const message =
+                        "Create a comprehensive care plan for this patient based on their current condition.";
+                      setChat(message);
+                      handleSendMessage(message);
+                    }}
+                    className="hover:bg-primary-50 w-full rounded-lg border border-secondary-200 bg-white p-3 text-left text-sm text-secondary-600 transition-all hover:border-primary-500 hover:text-primary-600"
+                  >
+                    🎯 Generate personalized care plan
+                  </button>
+                  <button
+                    onClick={() => {
+                      const message =
+                        "What are the potential differential diagnoses based on the patient's symptoms and history?";
+                      setChat(message);
+                      handleSendMessage(message);
+                    }}
+                    className="hover:bg-primary-50 w-full rounded-lg border border-secondary-200 bg-white p-3 text-left text-sm text-secondary-600 transition-all hover:border-primary-500 hover:text-primary-600"
+                  >
+                    🔍 Explore differential diagnoses
+                  </button>
+                  <button
+                    onClick={() => {
+                      const message =
+                        "What are the key risk factors and preventive measures to consider for this patient?";
+                      setChat(message);
+                      handleSendMessage(message);
+                    }}
+                    className="hover:bg-primary-50 w-full rounded-lg border border-secondary-200 bg-white p-3 text-left text-sm text-secondary-600 transition-all hover:border-primary-500 hover:text-primary-600"
+                  >
+                    ⚠️ Analyze risk factors and preventive measures
+                  </button>
+                  <button
+                    onClick={() => {
+                      const message =
+                        "Can you suggest relevant lab tests and investigations based on the patient's condition?";
+                      setChat(message);
+                      handleSendMessage(message);
+                    }}
+                    className="hover:bg-primary-50 w-full rounded-lg border border-secondary-200 bg-white p-3 text-left text-sm text-secondary-600 transition-all hover:border-primary-500 hover:text-primary-600"
+                  >
+                    🔬 Recommend relevant tests and investigations
+                  </button>
+                </div>
               </div>
             )}
             {orderedChats?.map((message) => (
@@ -380,19 +489,7 @@ export default function CopilotPopup(props: {
             chat={chat}
             setChat={setChat}
             thinking={copilotThinking}
-            startNewThread={() => {
-              setCopilotStorage(
-                copilotStorage.map((s) =>
-                  s.patientId === patientId
-                    ? {
-                        ...(currentCopilot as CopilotStorage),
-                        threadId: undefined,
-                      }
-                    : s,
-                ),
-              );
-              configureCopilot();
-            }}
+            startNewThread={startNewThread}
           />
         </div>
         <div className="flex items-center justify-end">
