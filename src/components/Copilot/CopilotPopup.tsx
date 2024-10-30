@@ -9,8 +9,9 @@ import { Assistant } from "openai/resources/beta/assistants";
 import { Thread } from "openai/resources/beta/threads/threads";
 import CopilotChatInput from "./CopilotChatInput";
 import { CopilotChatBlock } from "./CopilotChatBlock";
-import { CopilotStorage } from "./types";
+import { CopilotStorage, ThinkingState, ThinkingStates } from "./types";
 import { Run } from "openai/resources/beta/threads/runs/runs";
+import Spinner from "@/components/Common/Spinner";
 
 const openai = new OpenAI({
   apiKey: import.meta.env.REACT_COPILOT_API_KEY,
@@ -34,6 +35,24 @@ export default function CopilotPopup(props: {
   const chatView = useRef<HTMLDivElement>(null);
 
   const currentCopilot = copilotStorage.find((c) => c.patientId === patientId);
+
+  const [thinkingStates, setThinkingStates] = useState<ThinkingStates>({
+    analyzing: {
+      stage: "analyzing",
+      message: "Analyzing your request...",
+      completed: false,
+    },
+    processing: {
+      stage: "processing",
+      message: "Processing context and history...",
+      completed: false,
+    },
+    generating: {
+      stage: "generating",
+      message: "Generating response...",
+      completed: false,
+    },
+  });
 
   const configureCopilot = async () => {
     const openai = new OpenAI({
@@ -144,6 +163,39 @@ export default function CopilotPopup(props: {
     }
     stopAllAudio();
     setCopilotThinking(true);
+
+    setThinkingStates({
+      analyzing: {
+        stage: "analyzing",
+        message: "Analyzing your request...",
+        completed: false,
+      },
+      processing: {
+        stage: "processing",
+        message: "Processing context and history...",
+        completed: false,
+      },
+      generating: {
+        stage: "generating",
+        message: "Generating response...",
+        completed: false,
+      },
+    });
+
+    setTimeout(() => {
+      setThinkingStates((prev) => ({
+        ...prev,
+        analyzing: { ...prev.analyzing, completed: true },
+      }));
+    }, 1000);
+
+    setTimeout(() => {
+      setThinkingStates((prev) => ({
+        ...prev,
+        processing: { ...prev.processing, completed: true },
+      }));
+    }, 2000);
+
     if (chatView.current) {
       const { scrollHeight, scrollTop, clientHeight } = chatView.current;
       const wasAtBottom = scrollHeight - scrollTop - clientHeight < 10;
@@ -156,6 +208,7 @@ export default function CopilotPopup(props: {
         }, 100);
       }
     }
+
     await openai.beta.threads.messages.create(copilotThread.id, {
       role: "user",
       content: message,
@@ -168,6 +221,11 @@ export default function CopilotPopup(props: {
     if (run.status === "requires_action") {
       await callFunction(run);
     }
+
+    setThinkingStates((prev) => ({
+      ...prev,
+      generating: { ...prev.generating, completed: true },
+    }));
 
     await refreshChats();
     setChat("");
@@ -283,18 +341,38 @@ export default function CopilotPopup(props: {
                   } as any
                 }
               />
-            </div>
-            <div
-              className={`${copilotThinking ? "visible translate-y-0 opacity-100" : "invisible translate-y-10 opacity-0"} transition-all`}
-            >
-              <CopilotChatBlock
-                message={
-                  {
-                    role: "assistant",
-                    content: [{ text: { value: "Thinking..." } }],
-                  } as any
-                }
-              />
+              <div className="mt-4 rounded-lg bg-white p-4 shadow-sm">
+                <div className="flex flex-col gap-3">
+                  {Object.values(thinkingStates).map((state) => (
+                    <div key={state.stage} className="flex items-center gap-3">
+                      {state.completed ? (
+                        <div className="h-5 w-5 text-green-500">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        </div>
+                      ) : (
+                        <div className="h-5 w-5">
+                          <Spinner className="h-5 w-5" />
+                        </div>
+                      )}
+                      <span
+                        className={`text-sm ${state.completed ? "text-green-600" : "text-secondary-600"}`}
+                      >
+                        {state.message}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
           <CopilotChatInput
