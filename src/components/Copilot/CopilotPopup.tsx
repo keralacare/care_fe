@@ -227,7 +227,7 @@ export default function CopilotPopup(props: {
       const lastMessage = messages.data[0];
       if (lastMessage.role === "assistant") {
         const text = (lastMessage.content[0] as any).text.value;
-        generateAudio(text);
+        // generateAudio(text);
       }
     }
     setCopilotChatMessages(messages);
@@ -257,7 +257,7 @@ export default function CopilotPopup(props: {
       />
       <div className="fixed bottom-6 right-6 z-30 flex flex-col gap-4">
         <div
-          className={`${showPopup ? "visible translate-y-0 opacity-100" : "invisible translate-y-10 opacity-0"} flex h-[500px] w-[400px] flex-col overflow-hidden rounded-xl border border-secondary-300 bg-white transition-all`}
+          className={`${showPopup ? "visible translate-y-0 opacity-100" : "hidden translate-y-10 opacity-0"} flex h-[500px] w-[400px] flex-col overflow-hidden rounded-xl border border-secondary-300 bg-white transition-all`}
         >
           <div
             ref={chatView}
