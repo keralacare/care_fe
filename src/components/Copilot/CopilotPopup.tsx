@@ -10,7 +10,6 @@ import { Thread } from "openai/resources/beta/threads/threads";
 import CopilotChatInput from "./CopilotChatInput";
 import { CopilotChatBlock } from "./CopilotChatBlock";
 import { CopilotStorage } from "./types";
-import CareIcon from "@/CAREUI/icons/CareIcon";
 import { Run } from "openai/resources/beta/threads/runs/runs";
 
 const openai = new OpenAI({
@@ -224,11 +223,11 @@ export default function CopilotPopup(props: {
     if (!copilotThread) return;
     const messages = await openai.beta.threads.messages.list(copilotThread.id);
     if (messages.data.length > (copilotChatMessages?.data.length || 0)) {
-      const lastMessage = messages.data[0];
-      if (lastMessage.role === "assistant") {
-        const text = (lastMessage.content[0] as any).text.value;
-        // generateAudio(text);
-      }
+      // const lastMessage = messages.data[0];
+      // if (lastMessage.role === "assistant") {
+      // const text = (lastMessage.content[0] as any).text.value;
+      // generateAudio(text);
+      // }
     }
     setCopilotChatMessages(messages);
     if (chatView.current) {
@@ -321,10 +320,13 @@ export default function CopilotPopup(props: {
         <div className="flex items-center justify-end">
           <button
             onClick={() => setShowPopup(!showPopup)}
-            className="flex items-center gap-2 rounded-full bg-gradient-to-tr from-primary-500 to-blue-500 px-4 py-3 font-black text-white"
+            className="group relative flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-tr from-primary-500/90 to-blue-500/90 shadow-lg transition-all duration-300 before:absolute before:inset-0 before:-z-10 before:animate-pulse before:rounded-full before:bg-gradient-to-tr before:from-primary-400/20 before:to-blue-400/20 before:blur-xl hover:from-primary-500 hover:to-blue-500 hover:shadow-xl"
           >
-            <CareIcon icon="l-atom" className="text-2xl" />
-            Copilot Chat
+            <img
+              src="/images/copilot.svg"
+              className="h-8 w-8 transition-all duration-300 group-hover:rotate-[360deg] group-hover:scale-110"
+              alt="Copilot"
+            />
           </button>
         </div>
       </div>
