@@ -9,14 +9,38 @@ import { Assistant } from "openai/resources/beta/assistants";
 import { Thread } from "openai/resources/beta/threads/threads";
 import CopilotChatInput from "./CopilotChatInput";
 import { CopilotChatBlock } from "./CopilotChatBlock";
-import { CopilotStorage, ThinkingState, ThinkingStates } from "./types";
+import { ThinkingStates } from "./types";
 import { Run } from "openai/resources/beta/threads/runs/runs";
 import Spinner from "@/components/Common/Spinner";
+import { CopilotTempMessage } from "./CopilotTempMessage";
 
 const openai = new OpenAI({
   apiKey: import.meta.env.REACT_COPILOT_API_KEY,
   dangerouslyAllowBrowser: true,
 });
+
+const INITIAL_THINKING_STATES: ThinkingStates = {
+  processing: {
+    stage: "processing",
+    message: "Processing context and history...",
+    completed: false,
+  },
+  analyzing: {
+    stage: "analyzing",
+    message: "Analyzing your request...",
+    completed: false,
+  },
+  function_calling: {
+    stage: "function_calling",
+    message: "Calling required functions...",
+    completed: false,
+  },
+  generating: {
+    stage: "generating",
+    message: "Generating response...",
+    completed: false,
+  },
+};
 
 export default function CopilotPopup(props: {
   patientId: string;
@@ -36,23 +60,9 @@ export default function CopilotPopup(props: {
 
   const currentCopilot = copilotStorage.find((c) => c.patientId === patientId);
 
-  const [thinkingStates, setThinkingStates] = useState<ThinkingStates>({
-    analyzing: {
-      stage: "analyzing",
-      message: "Analyzing your request...",
-      completed: false,
-    },
-    processing: {
-      stage: "processing",
-      message: "Processing context and history...",
-      completed: false,
-    },
-    generating: {
-      stage: "generating",
-      message: "Generating response...",
-      completed: false,
-    },
-  });
+  const [thinkingStates, setThinkingStates] = useState<ThinkingStates>(
+    INITIAL_THINKING_STATES,
+  );
 
   const configureCopilot = async () => {
     const openai = new OpenAI({
@@ -124,12 +134,21 @@ export default function CopilotPopup(props: {
   };
 
   const callFunction = async (run: Run) => {
-    if (
-      run.required_action &&
-      run.required_action.submit_tool_outputs &&
-      run.required_action.submit_tool_outputs.tool_calls &&
-      copilotThread
-    ) {
+    if (run.required_action?.submit_tool_outputs?.tool_calls && copilotThread) {
+      const functionNames = run.required_action.submit_tool_outputs.tool_calls
+        .map((t) => t.function.name)
+        .join(", ");
+
+      setThinkingStates((prev) => ({
+        ...prev,
+        function_calling: {
+          ...prev.function_calling,
+          message: `Calling ${functionNames}...`,
+          functionName: functionNames,
+          completed: false,
+        },
+      }));
+
       const toolOutputs = [];
       for (const tool of run.required_action.submit_tool_outputs.tool_calls) {
         let output;
@@ -141,18 +160,25 @@ export default function CopilotPopup(props: {
           output,
         });
       }
+
       if (toolOutputs.length > 0) {
         const toolRun = await openai.beta.threads.runs.submitToolOutputsAndPoll(
           copilotThread.id,
           run.id,
           { tool_outputs: toolOutputs },
         );
+
+        setThinkingStates((prev) => ({
+          ...prev,
+          function_calling: {
+            ...prev.function_calling,
+            completed: true,
+          },
+        }));
+
         if (run.status === "requires_action") {
           await callFunction(toolRun);
         }
-        console.log("Tool outputs submitted successfully.");
-      } else {
-        console.log("No tool outputs to submit.");
       }
     }
   };
@@ -164,55 +190,19 @@ export default function CopilotPopup(props: {
     stopAllAudio();
     setCopilotThinking(true);
 
-    setThinkingStates({
-      analyzing: {
-        stage: "analyzing",
-        message: "Analyzing your request...",
-        completed: false,
-      },
-      processing: {
-        stage: "processing",
-        message: "Processing context and history...",
-        completed: false,
-      },
-      generating: {
-        stage: "generating",
-        message: "Generating response...",
-        completed: false,
-      },
-    });
-
-    setTimeout(() => {
-      setThinkingStates((prev) => ({
-        ...prev,
-        analyzing: { ...prev.analyzing, completed: true },
-      }));
-    }, 1000);
-
-    setTimeout(() => {
-      setThinkingStates((prev) => ({
-        ...prev,
-        processing: { ...prev.processing, completed: true },
-      }));
-    }, 2000);
-
-    if (chatView.current) {
-      const { scrollHeight, scrollTop, clientHeight } = chatView.current;
-      const wasAtBottom = scrollHeight - scrollTop - clientHeight < 10;
-      if (wasAtBottom) {
-        setTimeout(() => {
-          chatView.current?.scrollTo({
-            top: chatView.current.scrollHeight,
-            behavior: "smooth",
-          });
-        }, 100);
-      }
-    }
+    // Reset thinking states
+    setThinkingStates(INITIAL_THINKING_STATES);
 
     await openai.beta.threads.messages.create(copilotThread.id, {
       role: "user",
       content: message,
     });
+
+    // Show second stage complete
+    setThinkingStates((prev) => ({
+      ...prev,
+      processing: { ...prev.processing, completed: true },
+    }));
 
     const run = await openai.beta.threads.runs.createAndPoll(copilotThread.id, {
       assistant_id: copilotAssistant.id,
@@ -222,6 +212,7 @@ export default function CopilotPopup(props: {
       await callFunction(run);
     }
 
+    // Show final stage complete
     setThinkingStates((prev) => ({
       ...prev,
       generating: { ...prev.generating, completed: true },
@@ -230,41 +221,6 @@ export default function CopilotPopup(props: {
     await refreshChats();
     setChat("");
     setCopilotThinking(false);
-  };
-
-  const generateAudio = async (text: string) => {
-    const mediaSource = new MediaSource();
-
-    const audio = new Audio();
-    audio.src = URL.createObjectURL(mediaSource);
-    audioRef.current = audio;
-    audio.play();
-
-    mediaSource.addEventListener("sourceopen", async () => {
-      const sourceBuffer = mediaSource.addSourceBuffer("audio/mpeg"); // Adjust MIME type if needed
-
-      const response = await openai.audio.speech.create({
-        model: "tts-1",
-        voice: "alloy",
-        input: text,
-      });
-      const reader = response.body?.getReader();
-      if (!reader) return;
-
-      // eslint-disable-next-line no-constant-condition
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        sourceBuffer.appendBuffer(value);
-
-        await new Promise((resolve) => {
-          sourceBuffer.addEventListener("updateend", resolve, { once: true });
-        });
-      }
-
-      mediaSource.endOfStream();
-    });
   };
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -341,23 +297,7 @@ export default function CopilotPopup(props: {
       );
 
       // Reset thinking states
-      setThinkingStates({
-        analyzing: {
-          stage: "analyzing",
-          message: "Analyzing your request...",
-          completed: false,
-        },
-        processing: {
-          stage: "processing",
-          message: "Processing context and history...",
-          completed: false,
-        },
-        generating: {
-          stage: "generating",
-          message: "Generating response...",
-          completed: false,
-        },
-      });
+      setThinkingStates(INITIAL_THINKING_STATES);
 
       // Scroll chat to top
       if (chatView.current) {
@@ -499,35 +439,52 @@ export default function CopilotPopup(props: {
             {orderedChats?.map((message) => (
               <CopilotChatBlock message={message} key={message.id} />
             ))}
+            {copilotThinking && chat.trim() && (
+              <CopilotTempMessage message={chat} />
+            )}
             {copilotThinking && (
               <div className="mt-4 rounded-lg bg-white p-4 shadow-sm">
                 <div className="flex flex-col gap-3">
                   {Object.values(thinkingStates).map((state) => (
-                    <div key={state.stage} className="flex items-center gap-3">
-                      {state.completed ? (
-                        <div className="h-5 w-5 text-green-500">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            fill="currentColor"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                        </div>
-                      ) : (
-                        <div className="h-5 w-5">
-                          <Spinner className="h-5 w-5" />
-                        </div>
-                      )}
-                      <span
-                        className={`text-sm ${state.completed ? "text-green-600" : "text-secondary-600"}`}
-                      >
-                        {state.message}
-                      </span>
+                    <div key={state.stage} className="flex flex-col gap-2">
+                      <div className="flex items-center gap-3">
+                        {state.completed ? (
+                          <div className="h-5 w-5 text-green-500">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 24 24"
+                              fill="currentColor"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                          </div>
+                        ) : (
+                          <div className="h-5 w-5">
+                            <Spinner className="h-5 w-5" />
+                          </div>
+                        )}
+                        <span
+                          className={`text-sm ${
+                            state.completed
+                              ? "text-green-600"
+                              : "text-secondary-600"
+                          }`}
+                        >
+                          {state.message}
+                        </span>
+                      </div>
+                      {state.stage === "function_calling" &&
+                        state.functionName && (
+                          <div className="ml-8 flex items-center gap-2 text-xs text-secondary-500">
+                            <span>
+                              {state.completed ? "✓" : "•"} {state.functionName}
+                            </span>
+                          </div>
+                        )}
                     </div>
                   ))}
                 </div>
