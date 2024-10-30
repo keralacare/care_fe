@@ -379,7 +379,11 @@ export default function CopilotPopup(props: {
       />
       <div className="fixed bottom-6 right-6 z-30 flex flex-col gap-4">
         <div
-          className={`${showPopup ? "visible translate-y-0 opacity-100" : "hidden translate-y-10 opacity-0"} flex h-[600px] w-[450px] flex-col overflow-hidden rounded-xl border border-secondary-300 bg-white transition-all`}
+          className={`${
+            showPopup
+              ? "visible translate-y-0 opacity-100"
+              : "hidden translate-y-10 opacity-0"
+          } flex h-[700px] w-[450px] flex-col overflow-hidden rounded-xl border border-secondary-300 bg-white transition-all`}
         >
           <div className="flex items-center justify-between border-b border-secondary-200 bg-white px-3 py-2">
             <div className="flex items-center gap-2">
@@ -420,14 +424,11 @@ export default function CopilotPopup(props: {
           >
             {!copilotThinking && orderedChats && !orderedChats.length && (
               <div className="flex h-full flex-col items-center justify-center gap-6 p-4 text-secondary-500">
-                <div className="relative">
-                  <img
-                    src="/images/copilot.svg"
-                    className="mt-4 w-24 grayscale transition-all duration-700 hover:scale-110 hover:grayscale-0 group-hover:rotate-[360deg]"
-                    alt="Copilot"
-                  />
-                  <div className="absolute inset-0 animate-pulse rounded-full bg-secondary-100/50 blur-2xl"></div>
-                </div>
+                <img
+                  src="/images/copilot.svg"
+                  className="w-24 grayscale transition-all duration-300 hover:scale-105 hover:grayscale-0"
+                  alt="Copilot"
+                />
                 <div className="flex flex-col items-center gap-2">
                   <p className="font-medium">
                     Start chatting with CARE Copilot
@@ -549,13 +550,13 @@ export default function CopilotPopup(props: {
         <div className="flex items-center justify-end">
           <button
             onClick={() => setShowPopup(!showPopup)}
-            className="group relative flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-tr from-green-600/90 to-primary-600/90 shadow-lg transition-all duration-300 before:absolute before:inset-0 before:-z-10 before:animate-pulse before:rounded-full before:bg-gradient-to-tr before:from-green-500/20 before:to-primary-500/20 before:blur-xl hover:from-green-700 hover:to-primary-700 hover:shadow-xl"
+            className="group relative flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-tr from-green-600/90 to-primary-600/90 shadow-lg transition-all duration-300 hover:shadow-xl"
           >
             <img
               src="/images/copilot.svg"
               className={`h-8 w-8 transition-all duration-500 ${
                 showPopup ? "rotate-[360deg]" : "rotate-0"
-              } group-hover:scale-110`}
+              }`}
               alt="Copilot"
             />
           </button>
