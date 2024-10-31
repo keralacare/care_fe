@@ -114,31 +114,66 @@ export const ConsultationCarePlanTab = ({
     }));
   }, []);
 
+  const clearAllItems = useCallback(() => {
+    if (
+      window.confirm(
+        "Are you sure you want to delete all care plan items? This action cannot be undone.",
+      )
+    ) {
+      saveItems(patientId, []);
+      setEditedItems({});
+      setIsEditMode(false);
+    }
+  }, [patientId, saveItems]);
+
   return (
     <div className="p-4">
       <div className="mb-4">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-xl font-semibold">Care Plan</h2>
-          {!isEditMode && localItems.length > 0 && (
-            <button
-              onClick={startEditing}
-              className="flex items-center gap-2 rounded-lg bg-green-500 px-4 py-2 text-white hover:bg-green-600"
-            >
-              <svg
-                className="h-5 w-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+          {localItems.length > 0 && (
+            <div className="flex gap-2">
+              {!isEditMode && (
+                <button
+                  onClick={startEditing}
+                  className="flex items-center gap-2 rounded-lg bg-green-500 px-4 py-2 text-white hover:bg-green-600"
+                >
+                  <svg
+                    className="h-5 w-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                    />
+                  </svg>
+                  Edit All
+                </button>
+              )}
+              <button
+                onClick={clearAllItems}
+                className="flex items-center gap-2 rounded-lg border border-red-500 px-4 py-2 text-red-500 hover:bg-red-50"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                />
-              </svg>
-              Edit All
-            </button>
+                <svg
+                  className="h-5 w-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  />
+                </svg>
+                Clear All
+              </button>
+            </div>
           )}
         </div>
         <div className="flex gap-2">
@@ -176,21 +211,22 @@ export const ConsultationCarePlanTab = ({
                 key={item.id}
                 className="flex items-center justify-between rounded-lg hover:bg-gray-50"
               >
-                <div className="flex flex-1 items-center gap-3">
+                <div className="flex flex-1 items-start gap-3 py-2">
                   <input
                     type="checkbox"
                     checked={item.status === "completed"}
                     onChange={() => toggleStatus(item.id)}
-                    className="h-5 w-5 rounded border-gray-300 text-primary"
+                    className="mt-1 h-5 w-5 rounded border-gray-300 text-primary"
                     disabled={isEditMode}
                   />
                   {isEditMode ? (
-                    <input
-                      type="text"
+                    <textarea
                       value={editedItems[item.id] || ""}
                       onChange={(e) => handleItemEdit(item.id, e.target.value)}
                       className="flex-1 rounded border px-2 py-1"
+                      rows={2}
                       autoFocus={localItems[0].id === item.id}
+                      style={{ resize: "vertical", minHeight: "3rem" }}
                     />
                   ) : (
                     <span
@@ -204,15 +240,16 @@ export const ConsultationCarePlanTab = ({
                     </span>
                   )}
                 </div>
-                <div className="ml-2 flex items-center gap-4">
-                  <span className="text-sm text-gray-500">
-                    {new Date(item.createdAt).toLocaleDateString()}
-                  </span>
+                <div className="ml-2 flex items-start gap-4 py-2">
+                  {!isEditMode && (
+                    <span className="text-sm text-gray-500">
+                      {new Date(item.createdAt).toLocaleDateString()}
+                    </span>
+                  )}
                   <button
                     onClick={() => {
                       deleteItem(item.id);
                       if (isEditMode) {
-                        // Remove the item from editedItems when deleted
                         const newEditedItems = { ...editedItems };
                         delete newEditedItems[item.id];
                         setEditedItems(newEditedItems);

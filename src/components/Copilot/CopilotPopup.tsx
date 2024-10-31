@@ -117,7 +117,8 @@ export default function CopilotPopup(props: {
                 properties: {
                   suggestions: {
                     type: "string",
-                    description: "Line-separated list of care plan items",
+                    description:
+                      "List of care plan items in plain text, without any stying, numbering or bullet points",
                   },
                 },
                 required: ["suggestions"],
