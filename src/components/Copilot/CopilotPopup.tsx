@@ -129,7 +129,7 @@ export default function CopilotPopup(props: {
             function: {
               name: "generate_discharge_summary",
               description:
-                "Generates and saves a discharge summary for the patient",
+                "Generates and saves a discharge summary for the patient, let users know to visit the Discharge Summary section to view it",
               parameters: {
                 type: "object",
                 properties: {
