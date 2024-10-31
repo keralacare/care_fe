@@ -42,6 +42,7 @@ import useQuery from "../../../Utils/request/useQuery";
 import Loading from "@/components/Common/Loading";
 import PageTitle from "@/components/Common/PageTitle";
 import CopilotPopup from "@/components/Copilot/CopilotPopup";
+import { ConsultationCarePlanTab } from "./ConsultationCarePlanTab";
 
 export interface ConsultationTabProps {
   consultationId: string;
@@ -66,6 +67,7 @@ const TABS = {
   PRESSURE_SORE: ConsultationPressureSoreTab,
   DIALYSIS: ConsultationDialysisTab,
   ABDM: ABDMRecordsTab,
+  CARE_PLAN: ConsultationCarePlanTab,
 };
 
 export const ConsultationDetails = (props: any) => {

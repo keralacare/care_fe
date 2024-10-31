@@ -42,6 +42,34 @@ const INITIAL_THINKING_STATES: ThinkingStates = {
   },
 };
 
+const STORAGE_KEY_PREFIX = "care_plan_"; // Match the prefix used in CarePlan component
+
+const generateCarePlan = async (patientId: string, suggestions: string) => {
+  try {
+    // Parse the suggestions into an array of care plan items
+    const carePlanItems = suggestions
+      .split("\n")
+      .filter((item) => item.trim())
+      .map((item) => ({
+        id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+        description: item.trim(),
+        status: "pending",
+        createdAt: new Date().toISOString(),
+      }));
+
+    // Store in localStorage
+    localStorage.setItem(
+      `${STORAGE_KEY_PREFIX}${patientId}`,
+      JSON.stringify(carePlanItems),
+    );
+
+    return "Care plan has been generated and saved. You can view and manage it in the Care Plan tab.";
+  } catch (error) {
+    console.error("Error generating care plan:", error);
+    return "Failed to generate care plan. Please try again.";
+  }
+};
+
 export default function CopilotPopup(props: {
   patientId: string;
   consultationId: string;
@@ -88,16 +116,37 @@ export default function CopilotPopup(props: {
       });
       const newAssistant = await openai.beta.assistants.create({
         name: "Care Copilot",
-        instructions:
-          "Your name is Care Copilot. You are a copilot assistant for the HMIS software CARE. Your job is to summarize and advice on patient status and further steps to be taken. Make sure to not respond in key value pairs, and rather output a structured paragraph. The patient that is being referred to has the following data : " +
-          JSON.stringify(patient.data),
+        instructions: `Your name is Care Copilot. You are a copilot assistant for the HMIS software CARE. Your job is to summarize and advice on patient status and further steps to be taken. When generating care plans:
+        1. Analyze the patient's condition thoroughly
+        2. Create specific, actionable items
+        3. Include monitoring tasks, medications, and lifestyle recommendations
+        4. Each item should be on a new line
+        5. After generating a care plan, encourage users to visit the Care Plan tab to manage it
+        The patient that is being referred to has the following data: ${JSON.stringify(patient.data)}`,
         tools: [
           {
             type: "function",
             function: {
-              name: "generateCarePlan",
+              name: "get_event_history_of_the_patient",
+              description: "Returns the last 30 events for the patient",
+            },
+          },
+          {
+            type: "function",
+            function: {
+              name: "save_care_plan",
               description:
-                "Returns the last 30 events for the patient to generate a CARE plan to target the future goals and plan for the patient",
+                "Saves the care plan to the patient's record that is generated, recommend users to visit the [Care Plan tab](./care_plan) to manage it",
+              parameters: {
+                type: "object",
+                properties: {
+                  suggestions: {
+                    type: "string",
+                    description: "Line-separated list of care plan items",
+                  },
+                },
+                required: ["suggestions"],
+              },
             },
           },
         ],
@@ -124,7 +173,7 @@ export default function CopilotPopup(props: {
     if (copilotThread && copilotAssistant) refreshChats();
   }, [copilotThread, copilotAssistant]);
 
-  const generateCarePlan = async () => {
+  const getEventHistory = async () => {
     const recentEvents = await request(routes.getEvents, {
       pathParams: { consultationId },
       query: { limit: 30 },
@@ -151,13 +200,27 @@ export default function CopilotPopup(props: {
 
       const toolOutputs = [];
       for (const tool of run.required_action.submit_tool_outputs.tool_calls) {
-        let output;
-        if (tool.function.name === "generateCarePlan") {
-          output = await generateCarePlan();
+        let output = "No data available"; // Default output
+        try {
+          if (tool.function.name === "get_event_history_of_the_patient") {
+            const eventHistory = await getEventHistory();
+            output = eventHistory || "No event history available";
+          } else if (tool.function.name === "save_care_plan") {
+            const params = JSON.parse(tool.function.arguments);
+            const carePlanResult = await generateCarePlan(
+              patientId,
+              params.suggestions,
+            );
+            output = carePlanResult || "Care plan generated successfully";
+          }
+        } catch (error) {
+          console.error(`Error in function ${tool.function.name}:`, error);
+          output = `Error executing ${tool.function.name}: ${error instanceof Error ? error.message : "Unknown error"}`;
         }
+
         toolOutputs.push({
           tool_call_id: tool.id,
-          output,
+          output: output.toString(), // Ensure output is a string
         });
       }
 
@@ -176,7 +239,7 @@ export default function CopilotPopup(props: {
           },
         }));
 
-        if (run.status === "requires_action") {
+        if (toolRun.status === "requires_action") {
           await callFunction(toolRun);
         }
       }
