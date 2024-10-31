@@ -259,6 +259,16 @@ export default function CopilotPopup(props: {
       content: message,
     });
 
+    // Scroll after user message is added
+    setTimeout(() => {
+      if (chatView.current) {
+        chatView.current.scrollTo({
+          top: chatView.current.scrollHeight,
+          behavior: "smooth",
+        });
+      }
+    }, 100);
+
     // Show second stage complete
     setThinkingStates((prev) => ({
       ...prev,
@@ -282,6 +292,16 @@ export default function CopilotPopup(props: {
     await refreshChats();
     setChat("");
     setCopilotThinking(false);
+
+    // Final scroll after everything is complete
+    setTimeout(() => {
+      if (chatView.current) {
+        chatView.current.scrollTo({
+          top: chatView.current.scrollHeight,
+          behavior: "smooth",
+        });
+      }
+    }, 100);
   };
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -297,26 +317,17 @@ export default function CopilotPopup(props: {
   const refreshChats = async () => {
     if (!copilotThread) return;
     const messages = await openai.beta.threads.messages.list(copilotThread.id);
-    if (messages.data.length > (copilotChatMessages?.data.length || 0)) {
-      // const lastMessage = messages.data[0];
-      // if (lastMessage.role === "assistant") {
-      // const text = (lastMessage.content[0] as any).text.value;
-      // generateAudio(text);
-      // }
-    }
     setCopilotChatMessages(messages);
-    if (chatView.current) {
-      const { scrollHeight, scrollTop, clientHeight } = chatView.current;
-      const wasAtBottom = scrollHeight - scrollTop - clientHeight < 10;
-      if (wasAtBottom) {
-        setTimeout(() => {
-          chatView.current?.scrollTo({
-            top: chatView.current.scrollHeight,
-            behavior: "smooth",
-          });
-        }, 100);
+
+    // Ensure scroll happens after state update and DOM render
+    setTimeout(() => {
+      if (chatView.current) {
+        chatView.current.scrollTo({
+          top: chatView.current.scrollHeight,
+          behavior: "smooth",
+        });
       }
-    }
+    }, 100);
   };
 
   const orderedChats = copilotChatMessages?.data.sort(
