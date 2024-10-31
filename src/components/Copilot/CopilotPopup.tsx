@@ -1,5 +1,5 @@
 import { useAtom } from "jotai";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { copilotAtom } from "./Store";
 import request from "@/Utils/request/request";
 import OpenAI from "openai";
@@ -67,6 +67,7 @@ export default function CopilotPopup(props: {
 
   const {
     carePlan: { saveItems },
+    dischargeSummary: { saveSummary },
   } = useCopilot();
 
   const configureCopilot = async () => {
@@ -120,6 +121,25 @@ export default function CopilotPopup(props: {
                   },
                 },
                 required: ["suggestions"],
+              },
+            },
+          },
+          {
+            type: "function",
+            function: {
+              name: "generate_discharge_summary",
+              description:
+                "Generates and saves a discharge summary for the patient",
+              parameters: {
+                type: "object",
+                properties: {
+                  summary: {
+                    type: "string",
+                    description:
+                      "The complete discharge summary text in markdown format",
+                  },
+                },
+                required: ["summary"],
               },
             },
           },
@@ -177,6 +197,19 @@ export default function CopilotPopup(props: {
     }
   };
 
+  const handleDischargeSummary = useCallback(
+    (summary: string) => {
+      try {
+        saveSummary(patientId, summary);
+        return "Discharge summary generated and saved successfully";
+      } catch (error) {
+        console.error("Error saving discharge summary:", error);
+        return "Error saving discharge summary";
+      }
+    },
+    [patientId, saveSummary],
+  );
+
   const callFunction = async (run: Run) => {
     if (run.required_action?.submit_tool_outputs?.tool_calls && copilotThread) {
       const functionNames = run.required_action.submit_tool_outputs.tool_calls
@@ -207,6 +240,9 @@ export default function CopilotPopup(props: {
               params.suggestions,
             );
             output = carePlanResult || "Care plan generated successfully";
+          } else if (tool.function.name === "generate_discharge_summary") {
+            const params = JSON.parse(tool.function.arguments);
+            output = handleDischargeSummary(params.summary);
           }
         } catch (error) {
           console.error(`Error in function ${tool.function.name}:`, error);

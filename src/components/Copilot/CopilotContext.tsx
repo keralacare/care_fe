@@ -7,20 +7,34 @@ interface CarePlanItem {
   createdAt: string;
 }
 
+interface DischargeSummary {
+  id: string;
+  content: string;
+  createdAt: string;
+}
+
 interface CopilotContextType {
   carePlan: {
     items: CarePlanItem[];
     loadItems: (patientId: string) => void;
     saveItems: (patientId: string, items: CarePlanItem[]) => void;
   };
+  dischargeSummary: {
+    summary: DischargeSummary | null;
+    saveSummary: (patientId: string, content: string) => void;
+    loadSummary: (patientId: string) => void;
+  };
 }
 
 const CopilotContext = createContext<CopilotContextType | undefined>(undefined);
 
 const STORAGE_KEY_PREFIX = "care_plan_";
+const DISCHARGE_SUMMARY_PREFIX = "discharge_summary_";
 
 export function CopilotProvider({ children }: { children: React.ReactNode }) {
   const [carePlanItems, setCarePlanItems] = useState<CarePlanItem[]>([]);
+  const [dischargeSummary, setDischargeSummary] =
+    useState<DischargeSummary | null>(null);
 
   const loadCarePlanItems = useCallback((patientId: string) => {
     try {
@@ -71,11 +85,54 @@ export function CopilotProvider({ children }: { children: React.ReactNode }) {
     [],
   );
 
+  const saveDischargeSummary = useCallback(
+    (patientId: string, content: string) => {
+      try {
+        const summary: DischargeSummary = {
+          id: Date.now().toString(),
+          content,
+          createdAt: new Date().toISOString(),
+        };
+
+        localStorage.setItem(
+          `${DISCHARGE_SUMMARY_PREFIX}${patientId}`,
+          JSON.stringify(summary),
+        );
+
+        setDischargeSummary(summary);
+      } catch (error) {
+        console.error("Error saving discharge summary:", error);
+      }
+    },
+    [],
+  );
+
+  const loadDischargeSummary = useCallback((patientId: string) => {
+    try {
+      const stored = localStorage.getItem(
+        `${DISCHARGE_SUMMARY_PREFIX}${patientId}`,
+      );
+      if (stored) {
+        setDischargeSummary(JSON.parse(stored));
+      } else {
+        setDischargeSummary(null);
+      }
+    } catch (error) {
+      console.error("Error loading discharge summary:", error);
+      setDischargeSummary(null);
+    }
+  }, []);
+
   const value = {
     carePlan: {
       items: carePlanItems,
       loadItems: loadCarePlanItems,
       saveItems: saveCarePlanItems,
+    },
+    dischargeSummary: {
+      summary: dischargeSummary,
+      saveSummary: saveDischargeSummary,
+      loadSummary: loadDischargeSummary,
     },
   };
 

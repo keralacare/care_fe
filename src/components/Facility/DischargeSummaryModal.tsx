@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DialogModal from "@/components/Common/Dialog";
 import TextFormField from "../Form/FormFields/TextFormField";
 import { ConsultationModel } from "./models";
@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next";
 import CheckBoxFormField from "../Form/FormFields/CheckBoxFormField";
 import request from "../../Utils/request/request";
 import routes from "../../Redux/api";
+import { useCopilot } from "@/components/Copilot/CopilotContext";
 
 interface Props {
   show: boolean;
@@ -29,6 +30,15 @@ export default function DischargeSummaryModal(props: Props) {
   const [downloading, setDownloading] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [regenDischargeSummary, setRegenDischargeSummary] = useState(false);
+  const {
+    dischargeSummary: { summary, loadSummary },
+  } = useCopilot();
+
+  useEffect(() => {
+    if (props.consultation?.patient) {
+      loadSummary(props.consultation.patient);
+    }
+  }, [props.consultation?.patient]);
 
   const popup = (url: string) => {
     window.open(url, "_blank");
@@ -137,6 +147,26 @@ export default function DischargeSummaryModal(props: Props) {
     setEmailing(false);
   };
 
+  const renderSummaryContent = () => {
+    if (!summary) return null;
+
+    return (
+      <div className="mb-4 rounded-lg border border-secondary-200 bg-secondary-50 p-4">
+        <div className="mb-2 flex items-center justify-between">
+          <span className="text-sm font-medium text-secondary-700">
+            AI Generated Summary
+          </span>
+          <span className="text-xs text-secondary-500">
+            {new Date(summary.createdAt).toLocaleDateString()}
+          </span>
+        </div>
+        <p className="whitespace-pre-wrap text-sm text-secondary-600">
+          {summary.content}
+        </p>
+      </div>
+    );
+  };
+
   return (
     <DialogModal
       show={props.show}
@@ -145,6 +175,7 @@ export default function DischargeSummaryModal(props: Props) {
       className="md:max-w-2xl"
     >
       <div className="flex flex-col">
+        {renderSummaryContent()}
         <div className="mb-6 flex flex-col gap-1">
           <span className="text-sm text-secondary-800">
             {t("email_discharge_summary_description")}
