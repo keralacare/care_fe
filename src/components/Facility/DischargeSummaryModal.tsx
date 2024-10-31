@@ -15,6 +15,7 @@ import CheckBoxFormField from "../Form/FormFields/CheckBoxFormField";
 import request from "../../Utils/request/request";
 import routes from "../../Redux/api";
 import { useCopilot } from "@/components/Copilot/CopilotContext";
+import ReactMarkdown from "react-markdown";
 
 interface Props {
   show: boolean;
@@ -30,8 +31,10 @@ export default function DischargeSummaryModal(props: Props) {
   const [downloading, setDownloading] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [regenDischargeSummary, setRegenDischargeSummary] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editContent, setEditContent] = useState("");
   const {
-    dischargeSummary: { summary, loadSummary },
+    dischargeSummary: { summary, loadSummary, saveSummary },
   } = useCopilot();
 
   useEffect(() => {
@@ -147,6 +150,13 @@ export default function DischargeSummaryModal(props: Props) {
     setEmailing(false);
   };
 
+  const handleSaveEdit = () => {
+    if (props.consultation?.patient && editContent.trim()) {
+      saveSummary(props.consultation.patient, editContent);
+      setIsEditing(false);
+    }
+  };
+
   const renderSummaryContent = () => {
     if (!summary) return null;
 
@@ -156,13 +166,45 @@ export default function DischargeSummaryModal(props: Props) {
           <span className="text-sm font-medium text-secondary-700">
             AI Generated Summary
           </span>
-          <span className="text-xs text-secondary-500">
-            {new Date(summary.createdAt).toLocaleDateString()}
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-secondary-500">
+              {new Date(summary.createdAt).toLocaleDateString()}
+            </span>
+            {isEditing ? (
+              <button
+                onClick={handleSaveEdit}
+                className="rounded p-1 text-green-600 hover:bg-green-50"
+                title="Save changes"
+              >
+                <CareIcon icon="l-check" className="text-lg" />
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  setEditContent(summary.content);
+                  setIsEditing(true);
+                }}
+                className="rounded p-1 text-secondary-600 hover:bg-secondary-100"
+                title="Edit summary"
+              >
+                <CareIcon icon="l-edit" className="text-lg" />
+              </button>
+            )}
+          </div>
         </div>
-        <p className="whitespace-pre-wrap text-sm text-secondary-600">
-          {summary.content}
-        </p>
+        {isEditing ? (
+          <textarea
+            value={editContent}
+            onChange={(e) => setEditContent(e.target.value)}
+            className="w-full rounded-md border border-secondary-200 p-2 text-sm"
+            rows={10}
+            placeholder="Enter markdown content..."
+          />
+        ) : (
+          <div className="prose prose-sm max-w-none prose-headings:font-medium prose-headings:text-secondary-900 prose-p:text-secondary-600">
+            <ReactMarkdown>{summary.content}</ReactMarkdown>
+          </div>
+        )}
       </div>
     );
   };
