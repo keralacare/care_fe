@@ -93,12 +93,9 @@ export default function CopilotPopup(props: {
       });
       const newAssistant = await openai.beta.assistants.create({
         name: "Care Copilot",
-        instructions: `Your name is Care Copilot. You are a copilot assistant for the HMIS software CARE. Your job is to summarize and advice on patient status and further steps to be taken. When generating care plans:
-        1. Analyze the patient's condition thoroughly
-        2. Create specific, actionable items
-        3. Include monitoring tasks, medications, and lifestyle recommendations
-        4. Each item should be on a new line
-        5. After generating a care plan, encourage users to visit the Care Plan tab to manage it
+        instructions: `Your name is Care Copilot. You are a copilot assistant for the HMIS software CARE. Your job is to summarize and advice on patient status and further steps to be taken.
+        - Analyze the patient's condition thoroughly
+        - Create specific, actionable items
         The patient that is being referred to has the following data: ${JSON.stringify(patient.data)}`,
         tools: [
           {
@@ -113,7 +110,7 @@ export default function CopilotPopup(props: {
             function: {
               name: "save_care_plan",
               description:
-                "Saves the care plan to the patient's record that is generated, recommend users to visit the [Care Plan tab](./care_plan) to manage it",
+                "Saves the care plan to the patient's record, recommend users to visit the [Care Plan tab](./care_plan) to manage it",
               parameters: {
                 type: "object",
                 properties: {
