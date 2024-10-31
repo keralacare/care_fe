@@ -15,47 +15,44 @@ import Chip from "@/CAREUI/display/Chip";
 import ButtonV2 from "@/components/Common/components/ButtonV2";
 import { NonReadOnlyUsers } from "@/Utils/AuthorizeFor";
 import { navigate } from "raviger";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import routes from "@/Redux/api";
 import request from "@/Utils/request/request";
 import * as Notification from "../../../Utils/Notifications";
+import Loading from "@/components/Common/Loading";
+import useQuery from "@/Utils/request/useQuery";
+import { triggerGoal } from "@/Integrations/Plausible";
+import useAuthUser from "@/common/hooks/useAuthUser";
+import ConfirmDialog from "@/components/Common/ConfirmDialog";
+import UserAutocomplete from "@/components/Common/UserAutocompleteFormField";
 
-const DemographyTab = ({
-  id,
-  facilityId,
-  patientData: initialPatientData,
-  insuranceDetials,
-  authUser,
-}: {
-  id: string;
-  facilityId: string;
-  patientData: PatientModel;
-  insuranceDetials: any;
-  authUser: any;
-}) => {
+export const Demography = (props: any) => {
+  const { facilityId, id } = props;
+  const [patientData, setPatientData] = useState<PatientModel>({});
+  const authUser = useAuthUser();
   const { t } = useTranslation();
-  const patientGender = GENDER_TYPES.find(
-    (i) => i.id === patientData.gender,
-  )?.text;
-  const [_openAssignVolunteerDialog, setOpenAssignVolunteerDialog] =
+  const [assignedVolunteerObject, setAssignedVolunteerObject] =
+    useState<any>(null);
+  const [openAssignVolunteerDialog, setOpenAssignVolunteerDialog] =
     useState(false);
 
-  const [patientData, setPatientData] =
-    useState<PatientModel>(initialPatientData);
+  const initErr: any = {};
+  const errors = initErr;
 
-  const scrollToSection = (sectionId: string) => {
-    const section = document.getElementById(sectionId);
-    if (section) {
-      section.scrollIntoView({ behavior: "smooth" });
-    }
+  useEffect(() => {
+    setAssignedVolunteerObject(patientData.assigned_to_object);
+  }, [patientData.assigned_to_object]);
+
+  const handleVolunteerSelect = (volunteer: any) => {
+    setAssignedVolunteerObject(volunteer.value);
   };
 
-  const isPatientInactive = (patientData: PatientModel, facilityId: string) => {
-    return (
-      !patientData.is_active ||
-      !(patientData?.last_consultation?.facility === facilityId)
-    );
-  };
+  const { data: insuranceDetials } = useQuery(routes.hcx.policies.list, {
+    query: {
+      patient: id,
+      limit: 1,
+    },
+  });
 
   const handlePatientTransfer = async (value: boolean) => {
     const dummyPatientData = Object.assign({}, patientData);
@@ -82,10 +79,74 @@ const DemographyTab = ({
     });
   };
 
+  const { loading: isLoading, refetch } = useQuery(routes.getPatient, {
+    pathParams: {
+      id,
+    },
+    onResponse: ({ res, data }) => {
+      if (res?.ok && data) {
+        setPatientData(data);
+      }
+      triggerGoal("Patient Profile Viewed", {
+        facilityId: facilityId,
+        userId: authUser.id,
+      });
+    },
+  });
+
+  const handleAssignedVolunteer = async () => {
+    const { res, data } = await request(routes.patchPatient, {
+      pathParams: {
+        id: patientData.id as string,
+      },
+      body: {
+        assigned_to: assignedVolunteerObject
+          ? assignedVolunteerObject.id
+          : null,
+      },
+    });
+    if (res?.ok && data) {
+      setPatientData(data);
+      if (assignedVolunteerObject) {
+        Notification.Success({
+          msg: "Volunteer assigned successfully.",
+        });
+      } else {
+        Notification.Success({
+          msg: "Volunteer unassigned successfully.",
+        });
+      }
+      refetch();
+    }
+    setOpenAssignVolunteerDialog(false);
+    if (errors["assignedVolunteer"]) delete errors["assignedVolunteer"];
+  };
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  const patientGender = GENDER_TYPES.find(
+    (i) => i.id === patientData.gender,
+  )?.text;
+
+  const isPatientInactive = (patientData: PatientModel, facilityId: string) => {
+    return (
+      !patientData.is_active ||
+      !(patientData?.last_consultation?.facility === facilityId)
+    );
+  };
+
+  const scrollToSection = (sectionId: string) => {
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth" });
+    }
+  };
   return (
     <div>
       <section className="w-full lg:flex" data-testid="patient-dashboard">
-        <div className="mr-2 hidden font-medium text-secondary-800 lg:flex lg:flex-1 lg:flex-col">
+        <div className="mr-2 hidden font-medium text-secondary-800 lg:flex lg:flex-[2] lg:flex-col">
           <div
             className="mb-4 cursor-pointer rounded-lg p-3 transition-colors duration-300 hover:bg-gray-200 hover:text-green-800"
             onClick={() => scrollToSection("general-info")}
@@ -112,7 +173,7 @@ const DemographyTab = ({
           </div>
         </div>
 
-        <div className="lg:flex-[5]">
+        <div className="lg:flex-[7]">
           <div className="mb-2 flex flex-row justify-between">
             <div className="w-1/2">
               <div className="text-sm font-normal leading-5 text-secondary-700">
@@ -178,7 +239,7 @@ const DemographyTab = ({
                 <hr className="mb-1 mr-5 h-1 w-5 border-0 bg-blue-500" />
                 <div className="w-full">
                   <div className="flex justify-between">
-                    <h1 className="text-xl">{t("general_info")}</h1>
+                    <h1 className="text-xl">General Info</h1>
                   </div>
                   <div className="mb-8 mt-2 grid grid-cols-1 gap-x-4 gap-y-2 md:grid-cols-2 md:gap-y-8 lg:grid-cols-2">
                     <div className="sm:col-span-1">
@@ -449,13 +510,15 @@ const DemographyTab = ({
                                   href={`tel:${patientData.emergency_phone_number}`}
                                   className="text-sm font-medium text-black hover:text-secondary-500"
                                 >
-                                  {patientData.emergency_phone_number || "-"}
+                                  {patientData.assigned_to_object
+                                    ?.alt_phone_number || "-"}
                                 </a>
                               </div>
-                              {patientData.emergency_phone_number && (
+                              {patientData.assigned_to_object
+                                ?.alt_phone_number && (
                                 <div>
                                   <a
-                                    href={`https://wa.me/${patientData.emergency_phone_number?.replace(
+                                    href={`https://wa.me/${patientData.assigned_to_object?.alt_phone_number?.replace(
                                       /\D+/g,
                                       "",
                                     )}`}
@@ -480,7 +543,6 @@ const DemographyTab = ({
                             <div className="mt-1 text-sm font-medium leading-5">
                               {formatName(patientData.assigned_to_object) ||
                                 "-"}
-                              {/* {patientData.name || "-"} */}
                             </div>
                           )}
                         </div>
@@ -505,7 +567,7 @@ const DemographyTab = ({
             </div>
           </div>
         </div>
-        <div className="h-full lg:ml-9 lg:flex-[2]">
+        <div className="h-full lg:ml-9 lg:flex-[3]">
           <section className="mb-4 space-y-2 md:flex">
             <div className="w-full">
               <div className="mb-2 font-semibold text-secondary-900">
@@ -624,20 +686,6 @@ const DemographyTab = ({
                           className="text-xl"
                         />
                         View Patient Notes
-                      </span>
-                    </ButtonV2>
-                  </div>
-                  <div>
-                    <ButtonV2
-                      className="w-full bg-white font-semibold text-green-800 hover:bg-secondary-200"
-                      onClick={() => setOpenAssignVolunteerDialog(true)}
-                      disabled={false}
-                      size="large"
-                      authorizeFor={NonReadOnlyUsers}
-                    >
-                      <span className="flex w-full items-center justify-start gap-2">
-                        <CareIcon icon="l-users-alt" className="text-xl" />
-                        Assign to a volunteer
                       </span>
                     </ButtonV2>
                   </div>
@@ -787,8 +835,25 @@ const DemographyTab = ({
           </div>
         </div>
       </section>
+      <ConfirmDialog
+        className="w-full justify-between"
+        title={`Assign a volunteer to ${patientData.name}`}
+        show={openAssignVolunteerDialog}
+        onClose={() => setOpenAssignVolunteerDialog(false)}
+        description={
+          <div className="mt-6">
+            <UserAutocomplete
+              value={assignedVolunteerObject}
+              onChange={handleVolunteerSelect}
+              userType={"Volunteer"}
+              name={"assign_volunteer"}
+              error={errors.assignedVolunteer}
+            />
+          </div>
+        }
+        action="Assign"
+        onConfirm={handleAssignedVolunteer}
+      />
     </div>
   );
 };
-
-export default DemographyTab;

@@ -18,11 +18,33 @@ const PatientRoutes: AppRoutes = {
     <PatientRegister facilityId={facilityId} />
   ),
   "/facility/:facilityId/patient/:id": ({ facilityId, id }) => (
-    <PatientHome facilityId={facilityId} id={id} />
+    <PatientHome facilityId={facilityId} id={id} page="demography" />
   ),
-  "/facility/:facilityId/patient/:id/tab/:tab": ({ facilityId, id, tab }) => (
-    <PatientHome facilityId={facilityId} id={id} tab={tab} />
+  "/facility/:facilityId/patient/:id/demography": ({ facilityId, id }) => (
+    <PatientHome facilityId={facilityId} id={id} page="demography" />
   ),
+  "/facility/:facilityId/patient/:id/encounters": ({ facilityId, id }) => (
+    <PatientHome facilityId={facilityId} id={id} page="encounters" />
+  ),
+  "/facility/:facilityId/patient/:id/health_profile": ({ facilityId, id }) => (
+    <PatientHome facilityId={facilityId} id={id} page="health_profile" />
+  ),
+  "/facility/:facilityId/patient/:id/immunisation_records": ({
+    facilityId,
+    id,
+  }) => (
+    <PatientHome facilityId={facilityId} id={id} page="immunisation_records" />
+  ),
+  "/facility/:facilityId/patient/:id/shift_patient": ({ facilityId, id }) => (
+    <PatientHome facilityId={facilityId} id={id} page="shift_patient" />
+  ),
+  "/facility/:facilityId/patient/:id/request_sample_test": ({
+    facilityId,
+    id,
+  }) => (
+    <PatientHome facilityId={facilityId} id={id} page="request_sample_test" />
+  ),
+
   "/facility/:facilityId/patient/:id/insurance": ({ facilityId, id }) => (
     <InsuranceDetails facilityId={facilityId} id={id} />
   ),

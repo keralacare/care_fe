@@ -1,16 +1,38 @@
+import useAuthUser from "@/common/hooks/useAuthUser";
+import Loading from "@/components/Common/Loading";
+import { triggerGoal } from "@/Integrations/Plausible";
+import routes from "@/Redux/api";
+import useQuery from "@/Utils/request/useQuery";
 import { formatDateTime } from "@/Utils/utils";
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PatientModel } from "../models";
 
-interface ImmunisationRecordsTabProps {
-  patientData: PatientModel;
-}
+export const ImmunisationRecords = (props: any) => {
+  const { facilityId, id } = props;
+  const [patientData, setPatientData] = useState<PatientModel>({});
 
-const ImmunisationRecordsTab: React.FC<ImmunisationRecordsTabProps> = ({
-  patientData,
-}) => {
+  const authUser = useAuthUser();
   const { t } = useTranslation();
+
+  const { loading: isLoading } = useQuery(routes.getPatient, {
+    pathParams: {
+      id,
+    },
+    onResponse: ({ res, data }) => {
+      if (res?.ok && data) {
+        setPatientData(data);
+      }
+      triggerGoal("Patient Profile Viewed", {
+        facilityId: facilityId,
+        userId: authUser.id,
+      });
+    },
+  });
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <div className="my-2 w-full rounded-md bg-white p-5 shadow-md lg:w-1/2">
@@ -81,5 +103,3 @@ const ImmunisationRecordsTab: React.FC<ImmunisationRecordsTabProps> = ({
     </div>
   );
 };
-
-export default ImmunisationRecordsTab;

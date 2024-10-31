@@ -1,38 +1,39 @@
-import ConsultationHistoryTab from "./ConsultationHistoryTab";
-import HealthProfileSummaryTab from "./HealthProfileSummary";
-import ImmunisationRecordsTab from "./ImmunisationDetailsTab";
-import TestSampleHistoryTab from "./SampleTestTab";
-import ShiftingHistoryTab from "./ShiftingHistoryTab";
+import { Demography } from "./Demography";
+import EncounterHistory from "./EncounterHistory";
+import { HealthProfileSummary } from "./HealthProfileSummary";
+import { ImmunisationRecords } from "./ImmunisationRecords";
+import { SampleTestHistory } from "./SampleTestHistory";
+import ShiftingHistory from "./ShiftingHistory";
 
 export const patientTabs = [
-  //   {
-  //     label: "Demography",
-  //     route: "demography",
-  //     component: DemographyTab,
-  //   },
   {
-    label: "Consultation History",
-    route: "consultation-history",
-    component: ConsultationHistoryTab,
+    label: "Demography",
+    route: "demography",
+    component: Demography,
+  },
+  {
+    label: "Encounter History",
+    route: "encounters",
+    component: EncounterHistory,
   },
   {
     label: "Health Profile Summary",
-    route: "medical-history",
-    component: HealthProfileSummaryTab,
+    route: "health_profile",
+    component: HealthProfileSummary,
   },
   {
     label: "Immunisation Records",
-    route: "immunisation-records",
-    component: ImmunisationRecordsTab,
+    route: "immunisation_records",
+    component: ImmunisationRecords,
   },
   {
     label: "Shift Patient",
-    route: "shifting-history",
-    component: ShiftingHistoryTab,
+    route: "shift_patient",
+    component: ShiftingHistory,
   },
   {
     label: "Request Sample Test",
-    route: "test-sample-history",
-    component: TestSampleHistoryTab,
+    route: "request_sample_test",
+    component: SampleTestHistory,
   },
 ];

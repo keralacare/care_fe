@@ -7,23 +7,19 @@ import PaginatedList from "@/CAREUI/misc/PaginatedList";
 import routes from "@/Redux/api";
 import { triggerGoal } from "@/Integrations/Plausible";
 import useQuery from "@/Utils/request/useQuery";
+import Loading from "@/components/Common/Loading";
+import useAuthUser from "@/common/hooks/useAuthUser";
 
-interface ConsultationHistoryTabProps {
-  patientData: PatientModel;
-  id: string;
-  facilityId: string;
-  authUser: any;
-}
+const EncounterHistory = (props: any) => {
+  const { facilityId, id } = props;
+  const [patientData, setPatientData] = useState<PatientModel>({});
+  const authUser = useAuthUser();
+  const [_selectedStatus, _setSelectedStatus] = useState<{
+    status: number;
+    sample: any;
+  }>({ status: 0, sample: null });
 
-const ConsultationHistoryTab: React.FC<ConsultationHistoryTabProps> = ({
-  patientData: initialPatientData,
-  id,
-  facilityId,
-  authUser,
-}) => {
-  const [patientData, setPatientData] =
-    useState<PatientModel>(initialPatientData);
-  const { loading: _isLoading, refetch } = useQuery(routes.getPatient, {
+  const { loading: isLoading, refetch } = useQuery(routes.getPatient, {
     pathParams: {
       id,
     },
@@ -37,6 +33,11 @@ const ConsultationHistoryTab: React.FC<ConsultationHistoryTabProps> = ({
       });
     },
   });
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
   return (
     <div>
       <div>
@@ -83,4 +84,4 @@ const ConsultationHistoryTab: React.FC<ConsultationHistoryTabProps> = ({
   );
 };
 
-export default ConsultationHistoryTab;
+export default EncounterHistory;
