@@ -54,6 +54,7 @@ export interface ConsultationTabProps {
 
 const TABS = {
   UPDATES: ConsultationUpdatesTab,
+  CARE_PLAN: ConsultationCarePlanTab,
   FEED: ConsultationFeedTab,
   SUMMARY: ConsultationSummaryTab,
   MEDICINES: ConsultationMedicinesTab,
@@ -67,7 +68,6 @@ const TABS = {
   PRESSURE_SORE: ConsultationPressureSoreTab,
   DIALYSIS: ConsultationDialysisTab,
   ABDM: ABDMRecordsTab,
-  CARE_PLAN: ConsultationCarePlanTab,
 };
 
 export const ConsultationDetails = (props: any) => {

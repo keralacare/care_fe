@@ -13,6 +13,7 @@ import { ThinkingStates } from "./types";
 import { Run } from "openai/resources/beta/threads/runs/runs";
 import Spinner from "@/components/Common/Spinner";
 import { CopilotTempMessage } from "./CopilotTempMessage";
+import { useCopilot } from "./CopilotContext";
 
 const openai = new OpenAI({
   apiKey: import.meta.env.REACT_COPILOT_API_KEY,
@@ -42,34 +43,6 @@ const INITIAL_THINKING_STATES: ThinkingStates = {
   },
 };
 
-const STORAGE_KEY_PREFIX = "care_plan_"; // Match the prefix used in CarePlan component
-
-const generateCarePlan = async (patientId: string, suggestions: string) => {
-  try {
-    // Parse the suggestions into an array of care plan items
-    const carePlanItems = suggestions
-      .split("\n")
-      .filter((item) => item.trim())
-      .map((item) => ({
-        id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-        description: item.trim(),
-        status: "pending",
-        createdAt: new Date().toISOString(),
-      }));
-
-    // Store in localStorage
-    localStorage.setItem(
-      `${STORAGE_KEY_PREFIX}${patientId}`,
-      JSON.stringify(carePlanItems),
-    );
-
-    return "Care plan has been generated and saved. You can view and manage it in the Care Plan tab.";
-  } catch (error) {
-    console.error("Error generating care plan:", error);
-    return "Failed to generate care plan. Please try again.";
-  }
-};
-
 export default function CopilotPopup(props: {
   patientId: string;
   consultationId: string;
@@ -91,6 +64,10 @@ export default function CopilotPopup(props: {
   const [thinkingStates, setThinkingStates] = useState<ThinkingStates>(
     INITIAL_THINKING_STATES,
   );
+
+  const {
+    carePlan: { saveItems },
+  } = useCopilot();
 
   const configureCopilot = async () => {
     const openai = new OpenAI({
@@ -182,6 +159,27 @@ export default function CopilotPopup(props: {
     return JSON.stringify(recentEvents.data?.results);
   };
 
+  const generateCarePlan = async (patientId: string, suggestions: string) => {
+    try {
+      const carePlanItems = suggestions
+        .split("\n")
+        .filter((item) => item.trim())
+        .map((item) => ({
+          id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+          description: item.trim(),
+          status: "pending" as const,
+          createdAt: new Date().toISOString(),
+        }));
+
+      saveItems(patientId, carePlanItems);
+
+      return "Care plan has been generated and saved. You can view and manage it in the Care Plan tab.";
+    } catch (error) {
+      console.error("Error generating care plan:", error);
+      return "Failed to generate care plan. Please try again.";
+    }
+  };
+
   const callFunction = async (run: Run) => {
     if (run.required_action?.submit_tool_outputs?.tool_calls && copilotThread) {
       const functionNames = run.required_action.submit_tool_outputs.tool_calls
@@ -200,7 +198,7 @@ export default function CopilotPopup(props: {
 
       const toolOutputs = [];
       for (const tool of run.required_action.submit_tool_outputs.tool_calls) {
-        let output = "No data available"; // Default output
+        let output = "No data available";
         try {
           if (tool.function.name === "get_event_history_of_the_patient") {
             const eventHistory = await getEventHistory();
@@ -220,7 +218,7 @@ export default function CopilotPopup(props: {
 
         toolOutputs.push({
           tool_call_id: tool.id,
-          output: output.toString(), // Ensure output is a string
+          output: output.toString(),
         });
       }
 
