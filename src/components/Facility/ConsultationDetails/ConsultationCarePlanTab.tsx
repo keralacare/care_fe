@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { ConsultationTabProps } from ".";
+import { useCopilot } from "@/components/Copilot/CopilotContext";
 
 interface CarePlanItem {
   id: string;
@@ -8,33 +9,44 @@ interface CarePlanItem {
   createdAt: string;
 }
 
-const STORAGE_KEY_PREFIX = "care_plan_";
-
 export const ConsultationCarePlanTab = ({
   patientId,
 }: ConsultationTabProps) => {
-  const [carePlanItems, setCarePlanItems] = useState<CarePlanItem[]>([]);
+  const {
+    carePlan: { items: carePlanItems, loadItems, saveItems },
+  } = useCopilot();
   const [newItem, setNewItem] = useState("");
+  const [localItems, setLocalItems] = useState<CarePlanItem[]>(carePlanItems);
 
-  // Load care plan items from localStorage on component mount
+  // Sync local state with context items
   useEffect(() => {
-    const storedItems = localStorage.getItem(
-      `${STORAGE_KEY_PREFIX}${patientId}`,
-    );
-    if (storedItems) {
-      setCarePlanItems(JSON.parse(storedItems));
-    }
-  }, [patientId]);
+    setLocalItems(carePlanItems);
+  }, [carePlanItems]);
 
-  // Save to localStorage whenever items change
+  // Initial load from Copilot context
   useEffect(() => {
-    localStorage.setItem(
-      `${STORAGE_KEY_PREFIX}${patientId}`,
-      JSON.stringify(carePlanItems),
-    );
-  }, [carePlanItems, patientId]);
+    loadItems(patientId);
+  }, [patientId, loadItems]);
 
-  const addCarePlanItem = () => {
+  const toggleStatus = useCallback(
+    (id: string) => {
+      const updatedItems = localItems.map((item) =>
+        item.id === id
+          ? {
+              ...item,
+              status:
+                item.status === "pending"
+                  ? ("completed" as const)
+                  : ("pending" as const),
+            }
+          : item,
+      );
+      saveItems(patientId, updatedItems);
+    },
+    [localItems, patientId, saveItems],
+  );
+
+  const addCarePlanItem = useCallback(() => {
     if (!newItem.trim()) return;
 
     const item: CarePlanItem = {
@@ -44,26 +56,18 @@ export const ConsultationCarePlanTab = ({
       createdAt: new Date().toISOString(),
     };
 
-    setCarePlanItems((prevItems) => [...prevItems, item]);
+    const updatedItems = [...localItems, item];
+    saveItems(patientId, updatedItems);
     setNewItem("");
-  };
+  }, [newItem, localItems, patientId, saveItems]);
 
-  const toggleStatus = (id: string) => {
-    setCarePlanItems((items) =>
-      items.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              status: item.status === "pending" ? "completed" : "pending",
-            }
-          : item,
-      ),
-    );
-  };
-
-  const deleteItem = (id: string) => {
-    setCarePlanItems((items) => items.filter((item) => item.id !== id));
-  };
+  const deleteItem = useCallback(
+    (id: string) => {
+      const updatedItems = localItems.filter((item) => item.id !== id);
+      saveItems(patientId, updatedItems);
+    },
+    [localItems, patientId, saveItems],
+  );
 
   return (
     <div className="p-4">
@@ -92,13 +96,13 @@ export const ConsultationCarePlanTab = ({
       </div>
 
       <div className="space-y-3">
-        {carePlanItems.length === 0 ? (
+        {localItems.length === 0 ? (
           <div className="text-center text-gray-500">
             No care plan items yet. Add one above or ask Copilot to generate a
             care plan.
           </div>
         ) : (
-          carePlanItems.map((item) => (
+          localItems.map((item) => (
             <div
               key={item.id}
               className="flex items-center justify-between rounded-lg border p-3 hover:bg-gray-50"
