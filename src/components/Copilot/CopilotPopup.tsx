@@ -539,6 +539,17 @@ export default function CopilotPopup(props: {
                   >
                     🔬 Recommend relevant tests and investigations
                   </button>
+                  <button
+                    onClick={() => {
+                      const message =
+                        "Generate a comprehensive discharge summary for this patient based on their medical history, current condition, and treatment plan.";
+                      setChat(message);
+                      handleSendMessage(message);
+                    }}
+                    className="hover:bg-primary-50 w-full rounded-lg border border-secondary-200 bg-white p-3 text-left text-sm text-secondary-600 transition-all hover:border-primary-500 hover:text-primary-600"
+                  >
+                    📝 Generate discharge summary
+                  </button>
                 </div>
               </div>
             )}
