@@ -23,6 +23,7 @@ interface CopilotContextType {
     summary: DischargeSummary | null;
     saveSummary: (patientId: string, content: string) => void;
     loadSummary: (patientId: string) => void;
+    clearSummary: (patientId: string) => void;
   };
 }
 
@@ -123,6 +124,15 @@ export function CopilotProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  const clearDischargeSummary = useCallback((patientId: string) => {
+    try {
+      localStorage.removeItem(`${DISCHARGE_SUMMARY_PREFIX}${patientId}`);
+      setDischargeSummary(null);
+    } catch (error) {
+      console.error("Error clearing discharge summary:", error);
+    }
+  }, []);
+
   const value = {
     carePlan: {
       items: carePlanItems,
@@ -133,6 +143,7 @@ export function CopilotProvider({ children }: { children: React.ReactNode }) {
       summary: dischargeSummary,
       saveSummary: saveDischargeSummary,
       loadSummary: loadDischargeSummary,
+      clearSummary: clearDischargeSummary,
     },
   };
 

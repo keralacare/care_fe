@@ -433,6 +433,7 @@
   "configure": "Configure",
   "configure_facility": "Configure Facility",
   "confirm": "Confirm",
+  "confirm_clear_discharge_summary": "Are you sure you want to clear the discharge summary? This action cannot be undone.",
   "confirm_delete": "Confirm Delete",
   "confirm_discontinue": "Confirm Discontinue",
   "confirm_password": "Confirm Password",

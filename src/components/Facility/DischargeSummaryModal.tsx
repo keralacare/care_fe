@@ -34,7 +34,7 @@ export default function DischargeSummaryModal(props: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState("");
   const {
-    dischargeSummary: { summary, loadSummary, saveSummary },
+    dischargeSummary: { summary, loadSummary, saveSummary, clearSummary },
   } = useCopilot();
 
   useEffect(() => {
@@ -179,16 +179,29 @@ export default function DischargeSummaryModal(props: Props) {
                 <CareIcon icon="l-check" className="text-lg" />
               </button>
             ) : (
-              <button
-                onClick={() => {
-                  setEditContent(summary.content);
-                  setIsEditing(true);
-                }}
-                className="rounded p-1 text-secondary-600 hover:bg-secondary-100"
-                title="Edit summary"
-              >
-                <CareIcon icon="l-edit" className="text-lg" />
-              </button>
+              <>
+                <button
+                  onClick={() => {
+                    setEditContent(summary.content);
+                    setIsEditing(true);
+                  }}
+                  className="rounded p-1 text-secondary-600 hover:bg-secondary-100"
+                  title="Edit summary"
+                >
+                  <CareIcon icon="l-edit" className="text-lg" />
+                </button>
+                <button
+                  onClick={() => {
+                    if (window.confirm(t("confirm_clear_discharge_summary"))) {
+                      clearSummary(props.consultation.patient);
+                    }
+                  }}
+                  className="rounded p-1 text-red-600 hover:bg-red-50"
+                  title="Clear summary"
+                >
+                  <CareIcon icon="l-trash-alt" className="text-lg" />
+                </button>
+              </>
             )}
           </div>
         </div>
