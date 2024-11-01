@@ -5,6 +5,11 @@ import { ImmunisationRecords } from "./ImmunisationRecords";
 import { SampleTestHistory } from "./SampleTestHistory";
 import ShiftingHistory from "./ShiftingHistory";
 
+export interface PatientProps {
+  facilityId: string;
+  id: string;
+}
+
 export const patientTabs = [
   {
     label: "Demography",

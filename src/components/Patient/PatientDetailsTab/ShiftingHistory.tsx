@@ -15,8 +15,9 @@ import { useTranslation } from "react-i18next";
 import { NonReadOnlyUsers } from "@/Utils/AuthorizeFor";
 import { PatientModel } from "../models";
 import { triggerGoal } from "@/Integrations/Plausible";
+import { PatientProps } from ".";
 
-const ShiftingHistory = (props: any) => {
+const ShiftingHistory = (props: PatientProps) => {
   const { facilityId, id } = props;
   const [patientData, setPatientData] = useState<PatientModel>({});
   const [showShifts, setShowShifts] = useState(false);

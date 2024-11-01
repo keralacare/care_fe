@@ -13,8 +13,8 @@ import request from "../../Utils/request/request";
 import routes from "../../Redux/api";
 
 interface SampleDetailsProps {
-  facilityId: number;
-  patientId: number;
+  facilityId: string;
+  patientId: string;
   itemData: SampleTestModel;
   refetch: () => void;
   handleApproval: (status: number, sample: SampleTestModel) => void;

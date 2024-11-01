@@ -6,8 +6,9 @@ import Loading from "@/components/Common/Loading";
 import useQuery from "@/Utils/request/useQuery";
 import routes from "@/Redux/api";
 import { triggerGoal } from "@/Integrations/Plausible";
+import { PatientProps } from ".";
 
-export const HealthProfileSummary = (props: any) => {
+export const HealthProfileSummary = (props: PatientProps) => {
   const { facilityId, id } = props;
   const [patientData, setPatientData] = useState<PatientModel>({});
 

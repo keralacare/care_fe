@@ -7,8 +7,9 @@ import { formatDateTime } from "@/Utils/utils";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PatientModel } from "../models";
+import { PatientProps } from ".";
 
-export const ImmunisationRecords = (props: any) => {
+export const ImmunisationRecords = (props: PatientProps) => {
   const { facilityId, id } = props;
   const [patientData, setPatientData] = useState<PatientModel>({});
 

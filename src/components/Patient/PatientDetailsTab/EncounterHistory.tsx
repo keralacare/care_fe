@@ -9,8 +9,9 @@ import { triggerGoal } from "@/Integrations/Plausible";
 import useQuery from "@/Utils/request/useQuery";
 import Loading from "@/components/Common/Loading";
 import useAuthUser from "@/common/hooks/useAuthUser";
+import { PatientProps } from ".";
 
-const EncounterHistory = (props: any) => {
+const EncounterHistory = (props: PatientProps) => {
   const { facilityId, id } = props;
   const [patientData, setPatientData] = useState<PatientModel>({});
   const authUser = useAuthUser();

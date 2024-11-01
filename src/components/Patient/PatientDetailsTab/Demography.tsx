@@ -25,8 +25,9 @@ import { triggerGoal } from "@/Integrations/Plausible";
 import useAuthUser from "@/common/hooks/useAuthUser";
 import ConfirmDialog from "@/components/Common/ConfirmDialog";
 import UserAutocomplete from "@/components/Common/UserAutocompleteFormField";
+import { PatientProps } from ".";
 
-export const Demography = (props: any) => {
+export const Demography = (props: PatientProps) => {
   const { facilityId, id } = props;
   const [patientData, setPatientData] = useState<PatientModel>({});
   const authUser = useAuthUser();
