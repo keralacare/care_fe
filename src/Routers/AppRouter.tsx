@@ -116,7 +116,7 @@ export default function AppRouter() {
 
   return (
     <SidebarShrinkContext.Provider value={{ shrinked, setShrinked }}>
-      <div className="absolute inset-0 flex h-screen overflow-hidden bg-secondary-100 print:overflow-visible">
+      <div className="flex h-screen overflow-hidden bg-secondary-100 print:overflow-visible">
         <>
           <div className="block md:hidden">
             <MobileSidebar open={sidebarOpen} setOpen={setSidebarOpen} />{" "}
@@ -126,7 +126,7 @@ export default function AppRouter() {
           </div>
         </>
 
-        <div className="flex w-full flex-1 flex-col overflow-hidden print:overflow-visible">
+        <div className="relative flex w-full flex-1 flex-col overflow-hidden print:overflow-visible">
           <div className="relative z-10 flex h-16 shrink-0 bg-white shadow md:hidden">
             <button
               onClick={() => setSidebarOpen(true)}
@@ -161,7 +161,7 @@ export default function AppRouter() {
 
           <main
             id="pages"
-            className="flex-1 overflow-y-scroll bg-gray-100 pb-4 focus:outline-none md:py-0"
+            className="flex-1 overflow-y-scroll bg-gray-100 pb-4 focus:outline-none md:pt-0"
           >
             <div className="max-w-8xl mx-auto mt-4 min-h-[96vh] rounded-lg border bg-gray-50 p-3 shadow">
               {pages}

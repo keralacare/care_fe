@@ -514,16 +514,16 @@ export const PatientHome = (props: any) => {
           </div>
         </div>
 
-        <div className="my-2 mt-4 w-full border-b">
+        <div className="sticky top-0 my-2 mt-4 w-full border-b bg-gray-50">
           <div className="no-scrollbar flex flex-row overflow-x-auto">
             {patientTabs.map((tab) => (
               <Link
                 key={tab.route}
                 href={`/facility/${facilityId}/patient/${id}/${tab.route}`}
-                className={`px-4 py-2 ${
+                className={`px-4 py-2 font-medium ${
                   page === tab.route
-                    ? "border-b-2 border-green-600 font-semibold text-green-700"
-                    : "rounded-lg text-secondary-900 hover:bg-gray-100"
+                    ? "border-b-2 border-green-600 text-green-700"
+                    : "rounded-lg text-gray-600 hover:bg-gray-100"
                 }`}
               >
                 {tab.label}

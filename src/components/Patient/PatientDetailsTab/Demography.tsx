@@ -146,8 +146,11 @@ export const Demography = (props: PatientProps) => {
   };
   return (
     <div>
-      <section className="w-full lg:flex" data-testid="patient-dashboard">
-        <div className="mr-2 hidden font-medium text-secondary-800 lg:flex lg:flex-[2] lg:flex-col">
+      <section
+        className="mt-8 w-full items-start lg:flex"
+        data-testid="patient-dashboard"
+      >
+        <div className="sticky top-20 mr-2 hidden font-medium text-secondary-800 lg:flex lg:flex-[2] lg:flex-col">
           <div
             className="mb-4 cursor-pointer rounded-lg p-3 transition-colors duration-300 hover:bg-gray-200 hover:text-green-800"
             onClick={() => scrollToSection("general-info")}
@@ -568,7 +571,7 @@ export const Demography = (props: PatientProps) => {
             </div>
           </div>
         </div>
-        <div className="h-full lg:ml-9 lg:flex-[3]">
+        <div className="sticky top-20 h-full lg:ml-9 lg:flex-[3]">
           <section className="mb-4 space-y-2 md:flex">
             <div className="w-full">
               <div className="mb-2 font-semibold text-secondary-900">
