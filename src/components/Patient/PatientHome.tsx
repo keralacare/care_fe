@@ -520,10 +520,10 @@ export const PatientHome = (props: any) => {
               <Link
                 key={tab.route}
                 href={`/facility/${facilityId}/patient/${id}/${tab.route}`}
-                className={`px-4 py-2 font-medium ${
+                className={`px-4 py-2 text-sm font-medium ${
                   page === tab.route
-                    ? "border-b-2 border-green-600 text-green-700"
-                    : "rounded-lg text-gray-600 hover:bg-gray-100"
+                    ? "border-b-2 border-green-800 text-green-800"
+                    : "rounded-t-lg text-gray-600 hover:bg-gray-100"
                 }`}
               >
                 {tab.label}

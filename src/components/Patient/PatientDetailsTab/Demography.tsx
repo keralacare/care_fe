@@ -174,10 +174,10 @@ export const Demography = (props: PatientProps) => {
   return (
     <div>
       <section
-        className="mt-8 w-full items-start lg:flex"
+        className="mt-8 w-full items-start gap-6 lg:flex 2xl:gap-8"
         data-testid="patient-dashboard"
       >
-        <div className="sticky top-20 mr-2 hidden font-medium text-secondary-800 lg:flex lg:flex-[2] lg:flex-col">
+        <div className="sticky top-20 hidden text-sm font-medium text-gray-600 lg:flex lg:basis-1/6 lg:flex-col">
           <div
             className={`mb-3 cursor-pointer rounded-lg p-3 transition-colors duration-300 ${
               activeSection === "general-info"
@@ -220,7 +220,7 @@ export const Demography = (props: PatientProps) => {
           </div>
         </div>
 
-        <div className="lg:flex-[7]">
+        <div className="lg:basis-4/6">
           <div className="mb-2 flex flex-row justify-between">
             <div className="w-1/2">
               <div className="text-sm font-normal leading-5 text-secondary-700">
@@ -280,7 +280,7 @@ export const Demography = (props: PatientProps) => {
           <div className="flex h-full flex-col">
             <div
               id="general-info"
-              className="group my-2 rounded-md bg-white pb-2 pl-5 pt-5 shadow-md"
+              className="group my-2 rounded-md bg-white pb-2 pl-5 pt-5 shadow"
             >
               <div>
                 <hr className="mb-1 mr-5 h-1 w-5 border-0 bg-blue-500" />
@@ -490,7 +490,7 @@ export const Demography = (props: PatientProps) => {
 
             <div
               id="social-profile"
-              className="group my-2 rounded-md bg-white p-5 shadow-md"
+              className="group my-2 rounded-md bg-white p-5 shadow"
             >
               <hr className="mb-1 mr-5 h-1 w-5 border-0 bg-blue-500" />
               <div className="w-full">
@@ -585,7 +585,7 @@ export const Demography = (props: PatientProps) => {
             {patientData.assigned_to_object && (
               <div
                 id="volunteer-contact"
-                className="my-2 rounded-md bg-white pb-2 pl-5 pt-5 shadow-md"
+                className="my-2 rounded-md bg-white pb-2 pl-5 pt-5 shadow"
               >
                 <hr className="mb-1 mr-5 h-1 w-5 border-0 bg-blue-500" />
                 <div className="w-full">
@@ -653,7 +653,7 @@ export const Demography = (props: PatientProps) => {
             )}
             <div
               id="insurance-details"
-              className="my-2 rounded-md bg-white pb-5 pl-5 pt-2 shadow-md"
+              className="my-2 rounded-md bg-white pb-5 pl-5 pt-2 shadow"
             >
               <hr className="my-2 mr-5 h-1 w-5 border-0 bg-blue-500" />
               <InsuranceDetialsCard
@@ -686,7 +686,7 @@ export const Demography = (props: PatientProps) => {
             </div>
           </div>
         </div>
-        <div className="sticky top-20 h-full lg:ml-9 lg:flex-[3]">
+        <div className="sticky top-20 h-full lg:basis-1/6">
           <section className="mb-4 space-y-2 md:flex">
             <div className="w-full">
               <div className="mb-2 font-semibold text-secondary-900">

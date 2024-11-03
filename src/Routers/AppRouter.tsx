@@ -161,9 +161,9 @@ export default function AppRouter() {
 
           <main
             id="pages"
-            className="flex-1 overflow-y-scroll bg-gray-100 pb-4 focus:outline-none md:pt-0"
+            className="flex-1 overflow-y-scroll bg-gray-100 py-4 focus:outline-none"
           >
-            <div className="max-w-8xl mx-auto mt-4 min-h-[96vh] rounded-lg border bg-gray-50 p-3 shadow">
+            <div className="max-w-8xl mx-auto min-h-full rounded-lg border bg-gray-50 p-3 shadow">
               {pages}
             </div>
           </main>
