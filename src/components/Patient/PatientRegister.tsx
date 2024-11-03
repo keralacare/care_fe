@@ -33,7 +33,7 @@ import {
   scrollTo,
 } from "../../Utils/utils";
 import { statusType, useAbortableEffect } from "@/common/utils";
-import { useCallback, useReducer, useRef, useState } from "react";
+import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 
 import { AbhaNumberModel } from "../ABDM/types/abha";
 import AccordionV2 from "@/components/Common/components/AccordionV2";
@@ -223,6 +223,25 @@ export const PatientRegister = (props: PatientRegisterProps) => {
 
   const headerText = !id ? "Add Details of Patient" : "Update Patient Details";
   const buttonText = !id ? "Add Patient" : "Save Details";
+
+  useEffect(() => {
+    const getQueryParams = () => {
+      const params = new URLSearchParams(window.location.search);
+      return {
+        section: params.get("section"),
+      };
+    };
+
+    const { section } = getQueryParams();
+    if (section) {
+      setTimeout(() => {
+        const element = document.getElementById(section);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 1000);
+    }
+  }, []);
 
   const fetchDistricts = useCallback(async (id: number) => {
     if (id > 0) {
@@ -1113,7 +1132,7 @@ export const PatientRegister = (props: PatientRegisterProps) => {
                   )}
                 </div>
               )}
-              <div className="mb-8 overflow-visible">
+              <div id="general-info" className="mb-8 overflow-visible">
                 <h1 className="mb-4 text-left text-xl font-bold text-purple-500">
                   Personal Details
                 </h1>
@@ -1572,7 +1591,7 @@ export const PatientRegister = (props: PatientRegisterProps) => {
                 </div>
               </div>
               {field("nationality").value === "India" && (
-                <div className="mb-8 rounded border p-4">
+                <div id="social-profile" className="mb-8 rounded border p-4">
                   <AccordionV2
                     className="mt-2 shadow-none md:mt-0 lg:mt-0"
                     expandIcon={
@@ -1650,7 +1669,7 @@ export const PatientRegister = (props: PatientRegisterProps) => {
                   </AccordionV2>
                 </div>
               )}
-              <div className="mb-8 rounded border p-4">
+              <div id="covid-details" className="mb-8 rounded border p-4">
                 <AccordionV2
                   className="mt-2 shadow-none md:mt-0 lg:mt-0"
                   expandIcon={
@@ -1771,7 +1790,10 @@ export const PatientRegister = (props: PatientRegisterProps) => {
                   </div>
                 </AccordionV2>
               </div>
-              <div className="mb-8 overflow-visible rounded border p-4">
+              <div
+                id="medical-history"
+                className="mb-8 overflow-visible rounded border p-4"
+              >
                 <h1 className="mb-4 text-left text-xl font-bold text-purple-500">
                   Medical History
                 </h1>
@@ -1831,7 +1853,10 @@ export const PatientRegister = (props: PatientRegisterProps) => {
                   </div>
                 </div>
               </div>
-              <div className="flex w-full flex-col gap-4 rounded border bg-white p-4">
+              <div
+                id="insurance-details"
+                className="flex w-full flex-col gap-4 rounded border bg-white p-4"
+              >
                 <div className="flex w-full flex-col items-center justify-between gap-4 sm:flex-row">
                   <h1 className="text-left text-xl font-bold text-purple-500">
                     Insurance Details

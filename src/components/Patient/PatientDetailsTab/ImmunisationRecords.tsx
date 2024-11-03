@@ -8,6 +8,9 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PatientModel } from "../models";
 import { PatientProps } from ".";
+import CareIcon from "@/CAREUI/icons/CareIcon";
+import { navigate } from "raviger";
+import * as Notification from "../../../Utils/Notifications";
 
 export const ImmunisationRecords = (props: PatientProps) => {
   const { facilityId, id } = props;
@@ -35,12 +38,38 @@ export const ImmunisationRecords = (props: PatientProps) => {
     return <Loading />;
   }
 
+  const handleEditClick = (sectionId: any) => {
+    navigate(
+      `/facility/${facilityId}/patient/${id}/update?section=${sectionId}`,
+    );
+  };
+
   return (
-    <div className="my-2 w-full rounded-md bg-white p-5 shadow-md lg:w-1/2">
+    <div className="group my-2 w-full rounded-md bg-white p-5 shadow-md lg:w-1/2">
       <hr className="mb-1 mr-5 h-1 w-5 border-0 bg-blue-500" />
       <div>
-        <div className="flex justify-between">
+        <div className="flex flex-row gap-x-4">
           <h1 className="text-xl">{t("covid_details")}</h1>
+          <button
+            className="hidden rounded border border-secondary-400 bg-white px-1 py-1 text-sm font-semibold text-green-800 hover:bg-secondary-200 group-hover:flex"
+            disabled={!patientData.is_active}
+            onClick={() => {
+              const showAllFacilityUsers = ["DistrictAdmin", "StateAdmin"];
+              if (
+                !showAllFacilityUsers.includes(authUser.user_type) &&
+                authUser.home_facility_object?.id !== patientData.facility
+              ) {
+                Notification.Error({
+                  msg: "Oops! Non-Home facility users don't have permission to perform this action.",
+                });
+              } else {
+                handleEditClick("covid-details");
+              }
+            }}
+          >
+            <CareIcon icon="l-edit-alt" className="text-md mr-1 mt-1" />
+            Edit
+          </button>
         </div>
 
         <div className="mb-8 mt-2 grid grid-cols-1 gap-x-4 gap-y-2 md:grid-cols-2 md:gap-y-8 lg:grid-cols-2">
