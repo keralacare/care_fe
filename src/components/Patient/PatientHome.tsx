@@ -514,7 +514,7 @@ export const PatientHome = (props: any) => {
           </div>
         </div>
 
-        <div className="sticky top-0 my-2 mt-4 w-full border-b bg-gray-50">
+        <div className="sticky top-0 w-full border-b bg-gray-50">
           <div className="no-scrollbar flex flex-row overflow-x-auto">
             {patientTabs.map((tab) => (
               <Link

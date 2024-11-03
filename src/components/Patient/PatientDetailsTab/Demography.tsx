@@ -288,7 +288,7 @@ export const Demography = (props: PatientProps) => {
                   <div className="flex flex-row gap-x-4">
                     <h1 className="text-xl">General Info</h1>
                     <button
-                      className="hidden rounded border border-secondary-400 bg-white px-2 py-1 text-sm font-semibold text-green-800 hover:bg-secondary-200 group-hover:flex"
+                      className="flex rounded border border-secondary-400 bg-white px-2 py-1 text-sm font-semibold text-green-800 hover:bg-secondary-200"
                       disabled={!patientData.is_active}
                       onClick={() => {
                         const showAllFacilityUsers = [
@@ -497,7 +497,7 @@ export const Demography = (props: PatientProps) => {
                 <div className="flex flex-row gap-x-4">
                   <h1 className="text-xl">{t("social_profile")}</h1>
                   <button
-                    className="hidden rounded border border-secondary-400 bg-white px-2 py-1 text-sm font-semibold text-green-800 hover:bg-secondary-200 group-hover:flex"
+                    className="flex rounded border border-secondary-400 bg-white px-2 py-1 text-sm font-semibold text-green-800 hover:bg-secondary-200"
                     disabled={!patientData.is_active}
                     onClick={() => {
                       const showAllFacilityUsers = [

@@ -126,7 +126,7 @@ export default function AppRouter() {
           </div>
         </>
 
-        <div className="relative flex w-full flex-1 flex-col overflow-hidden print:overflow-visible">
+        <div className="relative flex w-full flex-1 flex-col overflow-hidden bg-gray-100 print:overflow-visible">
           <div className="relative z-10 flex h-16 shrink-0 bg-white shadow md:hidden">
             <button
               onClick={() => setSidebarOpen(true)}
@@ -161,9 +161,9 @@ export default function AppRouter() {
 
           <main
             id="pages"
-            className="flex-1 overflow-y-scroll bg-gray-100 py-4 focus:outline-none"
+            className="flex-1 overflow-y-auto bg-gray-100 pb-2 pr-2 focus:outline-none"
           >
-            <div className="max-w-8xl mx-auto min-h-full rounded-lg border bg-gray-50 p-3 shadow">
+            <div className="max-w-8xl mx-auto mt-2 min-h-[calc(100vh-1rem)] rounded-lg border bg-gray-50 p-3 shadow">
               {pages}
             </div>
           </main>
