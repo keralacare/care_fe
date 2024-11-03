@@ -36,12 +36,33 @@ export const Demography = (props: PatientProps) => {
     useState<any>(null);
   const [openAssignVolunteerDialog, setOpenAssignVolunteerDialog] =
     useState(false);
+  const [activeSection, setActiveSection] = useState<string | null>(null);
 
   const initErr: any = {};
   const errors = initErr;
 
   useEffect(() => {
     setAssignedVolunteerObject(patientData.assigned_to_object);
+
+    const sections = document.querySelectorAll("div[id]");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      {
+        threshold: 0.6,
+      },
+    );
+
+    sections.forEach((section) => observer.observe(section));
+
+    return () => {
+      sections.forEach((section) => observer.unobserve(section));
+    };
   }, [patientData.assigned_to_object]);
 
   const handleVolunteerSelect = (volunteer: any) => {
@@ -152,25 +173,41 @@ export const Demography = (props: PatientProps) => {
       >
         <div className="sticky top-20 mr-2 hidden font-medium text-secondary-800 lg:flex lg:flex-[2] lg:flex-col">
           <div
-            className="mb-4 cursor-pointer rounded-lg p-3 transition-colors duration-300 hover:bg-gray-200 hover:text-green-800"
+            className={`mb-3 cursor-pointer rounded-lg p-3 transition-colors duration-300 ${
+              activeSection === "general-info"
+                ? "bg-white text-green-800"
+                : "hover:bg-white hover:text-green-800"
+            }`}
             onClick={() => scrollToSection("general-info")}
           >
             General Info
           </div>
           <div
-            className="mb-4 cursor-pointer rounded-lg p-3 transition-colors duration-300 hover:bg-gray-200 hover:text-green-800"
+            className={`mb-3 cursor-pointer rounded-lg p-3 transition-colors duration-300 ${
+              activeSection === "social-profile"
+                ? "bg-white text-green-800"
+                : "hover:bg-white hover:text-green-800"
+            }`}
             onClick={() => scrollToSection("social-profile")}
           >
             Social Profile
           </div>
           <div
-            className="mb-4 cursor-pointer rounded-lg p-3 transition-colors duration-300 hover:bg-gray-200 hover:text-green-800"
+            className={`mb-3 cursor-pointer rounded-lg p-3 transition-colors duration-300 ${
+              activeSection === "volunteer-contact"
+                ? "bg-white text-green-800"
+                : "hover:bg-white hover:text-green-800"
+            }`}
             onClick={() => scrollToSection("volunteer-contact")}
           >
             Volunteer Contact
           </div>
           <div
-            className="mb-4 cursor-pointer rounded-lg p-3 transition-colors duration-300 hover:bg-gray-200 hover:text-green-800"
+            className={`mb-3 cursor-pointer rounded-lg p-3 transition-colors duration-300 ${
+              activeSection === "insurance-details"
+                ? "bg-white text-green-800"
+                : "hover:bg-white hover:text-green-800"
+            }`}
             onClick={() => scrollToSection("insurance-details")}
           >
             Insurance Details
