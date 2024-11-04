@@ -174,7 +174,7 @@ export const Demography = (props: PatientProps) => {
   return (
     <div>
       <section
-        className="mt-8 w-full items-start gap-6 lg:flex 2xl:gap-8"
+        className="mt-8 w-full items-start gap-6 px-3 md:px-0 lg:flex 2xl:gap-8"
         data-testid="patient-dashboard"
       >
         <div className="sticky top-20 hidden text-sm font-medium text-gray-600 lg:flex lg:basis-1/6 lg:flex-col">
@@ -228,7 +228,7 @@ export const Demography = (props: PatientProps) => {
               </div>
               <div className="mt-1 text-xl font-semibold leading-5 text-secondary-900">
                 <Chip
-                  size="large"
+                  size="medium"
                   variant="custom"
                   className={
                     patientData.is_active
@@ -265,22 +265,26 @@ export const Demography = (props: PatientProps) => {
               </ButtonV2>
             </div>
           </div>
-          <div className="my-2 rounded-md border border-blue-400 bg-blue-50 p-5">
+          <div className="mt-4 rounded-md border border-blue-400 bg-blue-50 p-5">
             <div className="grid grid-cols-1 gap-x-4 gap-y-2 md:grid-cols-2 md:gap-y-8 lg:grid-cols-2">
               <div className="sm:col-span-1">
-                <div>ABHA Number:</div>
-                <div>-</div>
+                <p className="text-normal text-sm text-gray-600 sm:col-span-1">
+                  ABHA Number:
+                </p>
+                <p className="text-sm font-semibold text-gray-900">-</p>
               </div>
               <div className="sm:col-span-1">
-                <div>ABHA Address:</div>
-                <div>-</div>
+                <p className="text-normal text-sm text-gray-600 sm:col-span-1">
+                  ABHA Address:
+                </p>
+                <p className="text-sm font-semibold text-gray-900">-</p>
               </div>
             </div>
           </div>
-          <div className="flex h-full flex-col">
+          <div className="flex h-full flex-col gap-y-4">
             <div
               id="general-info"
-              className="group my-2 rounded-md bg-white pb-2 pl-5 pt-5 shadow"
+              className="group mt-4 rounded-md bg-white pb-2 pl-5 pt-5 shadow"
             >
               <div>
                 <hr className="mb-1 mr-5 h-1 w-5 border-0 bg-blue-500" />
@@ -317,15 +321,15 @@ export const Demography = (props: PatientProps) => {
                   </div>
                   <div className="mb-8 mt-2 grid grid-cols-1 gap-x-4 gap-y-2 md:grid-cols-2 md:gap-y-8 lg:grid-cols-2">
                     <div className="sm:col-span-1">
-                      <div className="text-sm font-semibold leading-5 text-zinc-400">
+                      <div className="text-sm font-normal leading-5 text-gray-600">
                         Full Name
                       </div>
-                      <div className="mt-1 text-sm font-medium leading-5">
+                      <div className="mt-1 text-sm font-semibold leading-5 text-gray-900">
                         {patientData.name}
                       </div>
                     </div>
                     <div className="sm:col-span-1">
-                      <div className="text-sm font-semibold leading-5 text-zinc-400">
+                      <div className="text-sm font-normal leading-5 text-gray-600">
                         {t("phone_number")}
                       </div>
                       <div className="mt-1 text-sm leading-5">
@@ -350,19 +354,19 @@ export const Demography = (props: PatientProps) => {
                       </div>
                     </div>
                     <div className="sm:col-span-1">
-                      <div className="text-sm font-semibold leading-5 text-zinc-400">
+                      <div className="text-sm font-normal leading-5 text-gray-600">
                         {t("date_of_birth")}
                       </div>
-                      <div className="mt-1 text-sm font-medium leading-5">
+                      <div className="mt-1 text-sm font-semibold leading-5 text-gray-900">
                         {dayjs(patientData.date_of_birth).format("DD MMM YYYY")}{" "}
                         ({formatPatientAge(patientData, true)})
                       </div>
                     </div>
                     <div className="sm:col-span-1">
-                      <div className="text-sm font-semibold leading-5 text-zinc-400">
+                      <div className="text-sm font-normal leading-5 text-gray-600">
                         {t("sex")}
                       </div>
-                      <div className="mt-1 text-sm font-medium leading-5">
+                      <div className="mt-1 text-sm font-semibold leading-5 text-gray-900">
                         {patientGender}
                       </div>
                     </div>
@@ -370,7 +374,7 @@ export const Demography = (props: PatientProps) => {
                       <div className="mr-6 flex flex-col items-start justify-between rounded-md border border-orange-300 bg-orange-50 p-4 sm:flex-row">
                         {/* Emergency Contact Section */}
                         <div className="flex-1">
-                          <div className="text-sm font-semibold leading-5 text-zinc-400">
+                          <div className="text-sm font-normal leading-5 text-gray-600">
                             {t("emergency_contact")}
                           </div>
 
@@ -403,70 +407,70 @@ export const Demography = (props: PatientProps) => {
                         </div>
 
                         <div className="ml-0 mt-4 flex-1 sm:ml-4 sm:mt-0">
-                          <div className="text-sm font-semibold leading-5 text-zinc-400">
+                          <div className="text-sm font-normal leading-5 text-gray-600">
                             {t("emergency_contact_person_name")}
                           </div>
-                          <div className="mt-1 text-sm font-medium leading-5">
+                          <div className="mt-1 text-sm font-semibold leading-5 text-gray-900">
                             {patientData.name || "-"}
                           </div>
                         </div>
                       </div>
                     </div>
                     <div className="sm:col-span-1">
-                      <div className="text-sm font-semibold leading-5 text-zinc-400">
+                      <div className="text-sm font-normal leading-5 text-gray-600">
                         {t("current_address")}
                       </div>
-                      <div className="mt-1 whitespace-normal break-words text-sm font-medium leading-5">
+                      <div className="mt-1 whitespace-normal break-words text-sm font-semibold leading-5 text-gray-900">
                         {patientData.address || "-"}
                       </div>
                     </div>
                     <div className="sm:col-span-1">
-                      <div className="text-sm font-semibold leading-5 text-zinc-400">
+                      <div className="text-sm font-normal leading-5 text-gray-600">
                         {t("permanent_address")}
                       </div>
-                      <div className="mt-1 whitespace-normal break-words text-sm font-medium leading-5">
+                      <div className="mt-1 whitespace-normal break-words text-sm font-semibold leading-5 text-gray-900">
                         {patientData.permanent_address || "-"}
                       </div>
                     </div>
                     <div className="sm:col-span-1">
-                      <div className="text-sm font-semibold leading-5 text-zinc-400">
+                      <div className="text-sm font-normal leading-5 text-gray-600">
                         {t("nationality")}
                       </div>
-                      <div className="mt-1 whitespace-normal break-words text-sm font-medium leading-5">
+                      <div className="mt-1 whitespace-normal break-words text-sm font-semibold leading-5 text-gray-900">
                         {patientData.nationality || "-"}
                       </div>
                     </div>
                     <div className="sm:col-span-1">
-                      <div className="text-sm font-semibold leading-5 text-zinc-400">
+                      <div className="text-sm font-normal leading-5 text-gray-600">
                         {t("state")}
                       </div>
-                      <div className="mt-1 whitespace-normal break-words text-sm font-medium leading-5">
+                      <div className="mt-1 whitespace-normal break-words text-sm font-semibold leading-5 text-gray-900">
                         {patientData?.state_object?.name}
                       </div>
                     </div>
                     <div className="sm:col-span-1">
-                      <div className="text-sm font-semibold leading-5 text-zinc-400">
+                      <div className="text-sm font-normal leading-5 text-gray-600">
                         {t("district")}
                       </div>
-                      <div className="mt-1 whitespace-normal break-words text-sm font-medium leading-5">
+                      <div className="mt-1 whitespace-normal break-words text-sm font-semibold leading-5 text-gray-900">
                         {patientData.district_object?.name || "-"}
                       </div>
                     </div>
 
                     <div className="sm:col-span-1">
-                      <div className="text-sm font-semibold leading-5 text-zinc-400">
+                      <div className="text-sm font-normal leading-5 text-gray-600">
                         {t("local_body")}
                       </div>
-                      <div className="mt-1 whitespace-normal break-words text-sm font-medium leading-5">
+                      <div className="mt-1 whitespace-normal break-words text-sm font-semibold leading-5 text-gray-900">
                         {patientData.local_body_object?.name || "-"}
                       </div>
                     </div>
 
                     <div className="sm:col-span-1">
-                      <div className="text-sm font-semibold leading-5 text-zinc-400">
+                      <div className="text-sm font-normal leading-5 text-gray-600">
                         {t("ward")}
                       </div>
-                      <div className="mt-1 whitespace-normal break-words text-sm font-medium leading-5">
+                      <div className="mt-1 whitespace-normal break-words text-sm font-semibold leading-5 text-gray-900">
                         {(patientData.ward_object &&
                           patientData.ward_object.number +
                             ", " +
@@ -476,10 +480,10 @@ export const Demography = (props: PatientProps) => {
                     </div>
 
                     <div className="sm:col-span-1">
-                      <div className="text-sm font-semibold leading-5 text-zinc-400">
+                      <div className="text-sm font-normal leading-5 text-gray-600">
                         {t("village")}
                       </div>
-                      <div className="mt-1 whitespace-normal break-words text-sm font-medium leading-5">
+                      <div className="mt-1 whitespace-normal break-words text-sm font-semibold leading-5 text-gray-900">
                         {patientData.village || "-"}
                       </div>
                     </div>
@@ -490,7 +494,7 @@ export const Demography = (props: PatientProps) => {
 
             <div
               id="social-profile"
-              className="group my-2 rounded-md bg-white p-5 shadow"
+              className="group rounded-md bg-white p-5 shadow"
             >
               <hr className="mb-1 mr-5 h-1 w-5 border-0 bg-blue-500" />
               <div className="w-full">
@@ -529,20 +533,20 @@ export const Demography = (props: PatientProps) => {
                   <div className="mb-8 mt-2 grid grid-cols-1 gap-x-4 gap-y-2 md:grid-cols-2 md:gap-y-8 lg:grid-cols-2">
                     {patientData.meta_info?.occupation && (
                       <div className="sm:col-span-1">
-                        <div className="text-sm font-semibold leading-5 text-zinc-400">
+                        <div className="text-sm font-normal leading-5 text-gray-600">
                           {t("occupation")}
                         </div>
-                        <div className="mt-1 text-sm font-medium leading-5">
+                        <div className="mt-1 text-sm font-semibold leading-5 text-gray-900">
                           {parseOccupation(patientData.meta_info.occupation)}
                         </div>
                       </div>
                     )}
                     {patientData.ration_card_category && (
                       <div className="sm:col-span-1">
-                        <div className="text-sm font-semibold leading-5 text-zinc-400">
+                        <div className="text-sm font-normal leading-5 text-gray-600">
                           {t("ration_card_category")}
                         </div>
-                        <div className="mt-1 text-sm font-medium leading-5">
+                        <div className="mt-1 text-sm font-semibold leading-5 text-gray-900">
                           {t(
                             `ration_card__${patientData.ration_card_category}`,
                           )}
@@ -551,10 +555,10 @@ export const Demography = (props: PatientProps) => {
                     )}
                     {patientData.meta_info?.socioeconomic_status && (
                       <div className="sm:col-span-1">
-                        <div className="text-sm font-semibold leading-5 text-zinc-400">
+                        <div className="text-sm font-normal leading-5 text-gray-600">
                           {t("socioeconomic_status")}
                         </div>
-                        <div className="mt-1 text-sm font-medium leading-5">
+                        <div className="mt-1 text-sm font-semibold leading-5 text-gray-900">
                           {t(
                             `SOCIOECONOMIC_STATUS__${patientData.meta_info.socioeconomic_status}`,
                           )}
@@ -563,10 +567,10 @@ export const Demography = (props: PatientProps) => {
                     )}
                     {patientData.meta_info?.domestic_healthcare_support && (
                       <div className="sm:col-span-1">
-                        <div className="text-sm font-semibold leading-5 text-zinc-400">
+                        <div className="text-sm font-normal leading-5 text-gray-600">
                           {t("domestic_healthcare_support")}
                         </div>
-                        <div className="mt-1 text-sm font-medium leading-5">
+                        <div className="mt-1 text-sm font-semibold leading-5 text-gray-900">
                           {t(
                             `DOMESTIC_HEALTHCARE_SUPPORT__${patientData.meta_info.domestic_healthcare_support}`,
                           )}
@@ -585,7 +589,7 @@ export const Demography = (props: PatientProps) => {
             {patientData.assigned_to_object && (
               <div
                 id="volunteer-contact"
-                className="my-2 rounded-md bg-white pb-2 pl-5 pt-5 shadow"
+                className="rounded-md bg-white pb-2 pl-5 pt-5 shadow"
               >
                 <hr className="mb-1 mr-5 h-1 w-5 border-0 bg-blue-500" />
                 <div className="w-full">
@@ -599,7 +603,7 @@ export const Demography = (props: PatientProps) => {
                       <div className="mr-6 flex flex-col items-start justify-between rounded-md border border-orange-300 bg-orange-50 p-4 sm:flex-row">
                         {/* Emergency Contact Section */}
                         <div className="flex-1">
-                          <div className="text-sm font-semibold leading-5 text-zinc-400">
+                          <div className="text-sm font-normal leading-5 text-gray-600">
                             {t("emergency_contact_volunteer")}
                           </div>
                           {patientData.assigned_to_object && (
@@ -635,11 +639,11 @@ export const Demography = (props: PatientProps) => {
                         </div>
 
                         <div className="ml-0 mt-4 flex-1 sm:ml-4 sm:mt-0">
-                          <div className="text-sm font-semibold leading-5 text-zinc-400">
+                          <div className="text-sm font-normal leading-5 text-gray-600">
                             {t("emergency_contact_person_name_volunteer")}
                           </div>
                           {patientData.assigned_to_object && (
-                            <div className="mt-1 text-sm font-medium leading-5">
+                            <div className="mt-1 text-sm font-semibold leading-5 text-gray-900">
                               {formatName(patientData.assigned_to_object) ||
                                 "-"}
                             </div>
@@ -653,7 +657,7 @@ export const Demography = (props: PatientProps) => {
             )}
             <div
               id="insurance-details"
-              className="my-2 rounded-md bg-white pb-5 pl-5 pt-2 shadow"
+              className="rounded-md bg-white pb-5 pl-5 pt-2 shadow"
             >
               <hr className="my-2 mr-5 h-1 w-5 border-0 bg-blue-500" />
               <InsuranceDetialsCard
@@ -686,13 +690,13 @@ export const Demography = (props: PatientProps) => {
             </div>
           </div>
         </div>
-        <div className="sticky top-20 h-full lg:basis-1/6">
+        <div className="sticky top-20 mt-8 h-full lg:basis-1/6">
           <section className="mb-4 space-y-2 md:flex">
             <div className="w-full">
-              <div className="mb-2 font-semibold text-secondary-900">
+              <div className="font-semibold text-secondary-900">
                 Quick Links
               </div>
-              <div className="h-full space-y-2">
+              <div className="mt-2 h-full space-y-2">
                 <div className="space-y-3 border-b border-dashed text-left text-lg font-semibold text-secondary-900">
                   <div>
                     {patientData?.is_active &&
@@ -700,7 +704,7 @@ export const Demography = (props: PatientProps) => {
                         patientData?.last_consultation?.discharge_date) && (
                         <div>
                           <ButtonV2
-                            className="w-full border border-secondary-400 bg-white font-semibold text-green-800 hover:bg-secondary-200"
+                            className="w-full bg-white font-semibold text-green-800 hover:bg-secondary-200"
                             size="large"
                             onClick={() =>
                               navigate(
@@ -842,10 +846,10 @@ export const Demography = (props: PatientProps) => {
               <div className="rounded-sm px-2">
                 <div className="my-1 flex justify-between">
                   <div>
-                    <div className="text-sm font-normal leading-5 text-secondary-500">
+                    <div className="text-xs font-normal leading-5 text-gray-600">
                       Last Discharged Reason
                     </div>
-                    <div className="mt-1 text-xl font-semibold leading-5 text-secondary-900">
+                    <div className="text-sm font-semibold text-gray-900">
                       {patientData.is_active ? (
                         "-"
                       ) : !patientData.last_consultation
@@ -873,14 +877,14 @@ export const Demography = (props: PatientProps) => {
               </div>
               <div className="my-1 rounded-sm p-2">
                 <div>
-                  <div className="text-sm font-normal leading-5 text-secondary-500">
+                  <div className="text-xs font-normal text-gray-600">
                     Last Updated by{" "}
-                    <span className="font-semibold text-secondary-800">
+                    <span className="font-semibold text-gray-900">
                       {patientData.last_edited?.first_name}{" "}
                       {patientData.last_edited?.last_name}
                     </span>
                   </div>
-                  <div className="mt-1 whitespace-normal text-sm font-semibold leading-5 text-secondary-900">
+                  <div className="whitespace-normal text-sm font-semibold text-gray-900">
                     <div className="tooltip">
                       <span className={`tooltip-text tooltip`}>
                         {patientData.modified_date
@@ -893,15 +897,15 @@ export const Demography = (props: PatientProps) => {
                     </div>
                   </div>
                 </div>
-                <div className="my-2 pr-2">
-                  <div className="text-sm font-normal leading-5 text-secondary-500">
+                <div className="mt-4">
+                  <div className="text-xs font-normal leading-5 text-gray-600">
                     Patient profile created by{" "}
-                    <span className="font-semibold text-secondary-800">
+                    <span className="font-semibold text-gray-900">
                       {patientData.created_by?.first_name}{" "}
                       {patientData.created_by?.last_name}
                     </span>
                   </div>
-                  <div className="mt-1 whitespace-normal text-sm font-semibold leading-5 text-secondary-900">
+                  <div className="whitespace-normal text-sm font-semibold text-gray-900">
                     <div className="tooltip">
                       <span className={`tooltip-text tooltip`}>
                         {patientData.created_date

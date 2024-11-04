@@ -79,7 +79,7 @@ const ShiftingHistory = (props: PatientProps) => {
   }
 
   return (
-    <section className="mt-7 h-full space-y-2">
+    <section className="mt-4 h-full space-y-2 px-4 md:px-0">
       <div className="flex justify-between">
         <div className="text-2xl font-semibold text-secondary-900">
           Shifting

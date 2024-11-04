@@ -65,83 +65,85 @@ export const HealthProfileSummary = (props: PatientProps) => {
   }
 
   return (
-    <div className="group my-2 w-full rounded-md bg-white pb-5 pl-5 pt-5 shadow-md lg:w-1/2">
-      <hr className="mb-1 mr-5 h-1 w-5 border-0 bg-blue-500" />
-      <div className="h-full space-y-2">
-        <div className="flex flex-row">
-          <div className="mr-4 text-xl font-bold text-secondary-900">
-            {t("medical")}
-          </div>
-          <button
-            className="hidden rounded border border-secondary-400 bg-white px-1 py-1 text-sm font-semibold text-green-800 hover:bg-secondary-200 group-hover:flex"
-            disabled={!patientData.is_active}
-            onClick={() => {
-              const showAllFacilityUsers = ["DistrictAdmin", "StateAdmin"];
-              if (
-                !showAllFacilityUsers.includes(authUser.user_type) &&
-                authUser.home_facility_object?.id !== patientData.facility
-              ) {
-                Notification.Error({
-                  msg: "Oops! Non-Home facility users don't have permission to perform this action.",
-                });
-              } else {
-                handleEditClick("medical-history");
-              }
-            }}
-          >
-            <CareIcon icon="l-edit-alt" className="text-md mr-1 mt-1" />
-            Edit
-          </button>
-        </div>
-
-        <div className="mt-2 grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-2 md:gap-y-8">
-          <div className="sm:col-span-1">
-            <div className="text-sm font-semibold leading-5 text-zinc-400">
-              {t("present_health")}
+    <div className="mt-4 px-4 md:px-0">
+      <div className="group my-2 w-full rounded bg-white p-4 shadow lg:w-1/2">
+        <hr className="mb-1 mr-5 h-1 w-5 border-0 bg-blue-500" />
+        <div className="h-full space-y-2">
+          <div className="flex flex-row">
+            <div className="mr-4 text-xl font-bold text-secondary-900">
+              {t("medical")}
             </div>
-            <div
-              data-testid="patient-present-health"
-              className="mt-1 overflow-x-scroll whitespace-normal break-words text-sm font-medium leading-5"
+            <button
+              className="flexrounded flex border border-secondary-400 bg-white px-1 py-1 text-sm font-semibold text-green-800 hover:bg-secondary-200"
+              disabled={!patientData.is_active}
+              onClick={() => {
+                const showAllFacilityUsers = ["DistrictAdmin", "StateAdmin"];
+                if (
+                  !showAllFacilityUsers.includes(authUser.user_type) &&
+                  authUser.home_facility_object?.id !== patientData.facility
+                ) {
+                  Notification.Error({
+                    msg: "Oops! Non-Home facility users don't have permission to perform this action.",
+                  });
+                } else {
+                  handleEditClick("medical-history");
+                }
+              }}
             >
-              {patientData.present_health || "-"}
-            </div>
+              <CareIcon icon="l-edit-alt" className="text-md mr-1 mt-1" />
+              Edit
+            </button>
           </div>
 
-          <div className="sm:col-span-1">
-            <div className="text-sm font-semibold leading-5 text-zinc-400">
-              {t("ongoing_medications")}
-            </div>
-            <div
-              data-testid="patient-ongoing-medication"
-              className="mt-1 overflow-x-scroll whitespace-normal break-words text-sm font-medium leading-5"
-            >
-              {patientData.ongoing_medication || "-"}
-            </div>
-          </div>
-
-          <div className="sm:col-span-1">
-            <div className="text-sm font-semibold leading-5 text-zinc-400">
-              {t("allergies")}
-            </div>
-            <div
-              data-testid="patient-allergies"
-              className="mt-1 overflow-x-scroll whitespace-normal break-words text-sm font-medium leading-5"
-            >
-              {patientData.allergies || "-"}
-            </div>
-          </div>
-
-          {patientData.gender === 2 && patientData.is_antenatal && (
+          <div className="mt-2 grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-2 md:gap-y-8">
             <div className="sm:col-span-1">
               <div className="text-sm font-semibold leading-5 text-zinc-400">
-                {t("is_pregnant")}
+                {t("present_health")}
               </div>
-              <div className="mt-1 whitespace-normal break-words text-sm font-medium leading-5">
-                Yes
+              <div
+                data-testid="patient-present-health"
+                className="mt-1 overflow-x-scroll whitespace-normal break-words text-sm font-medium leading-5"
+              >
+                {patientData.present_health || "-"}
               </div>
             </div>
-          )}
-          {patientMedHis}
+
+            <div className="sm:col-span-1">
+              <div className="text-sm font-semibold leading-5 text-zinc-400">
+                {t("ongoing_medications")}
+              </div>
+              <div
+                data-testid="patient-ongoing-medication"
+                className="mt-1 overflow-x-scroll whitespace-normal break-words text-sm font-medium leading-5"
+              >
+                {patientData.ongoing_medication || "-"}
+              </div>
+            </div>
+
+            <div className="sm:col-span-1">
+              <div className="text-sm font-semibold leading-5 text-zinc-400">
+                {t("allergies")}
+              </div>
+              <div
+                data-testid="patient-allergies"
+                className="mt-1 overflow-x-scroll whitespace-normal break-words text-sm font-medium leading-5"
+              >
+                {patientData.allergies || "-"}
+              </div>
+            </div>
+
+            {patientData.gender === 2 && patientData.is_antenatal && (
+              <div className="sm:col-span-1">
+                <div className="text-sm font-semibold leading-5 text-zinc-400">
+                  {t("is_pregnant")}
+                </div>
+                <div className="mt-1 whitespace-normal break-words text-sm font-medium leading-5">
+                  Yes
+                </div>
+              </div>
+            )}
+            {patientMedHis}
+          </div>
         </div>
       </div>
     </div>

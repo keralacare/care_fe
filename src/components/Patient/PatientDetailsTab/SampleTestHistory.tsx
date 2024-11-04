@@ -57,7 +57,7 @@ export const SampleTestHistory = (props: PatientProps) => {
   };
 
   return (
-    <div>
+    <div className="mt-4 px-3 md:px-0">
       <div>
         <div className="flex justify-between">
           <h2 className="my-4 ml-0 text-2xl font-semibold leading-tight">
