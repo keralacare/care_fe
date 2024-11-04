@@ -59,7 +59,7 @@ import Spinner from "@/components/Common/Spinner";
 import TextAreaFormField from "../Form/FormFields/TextAreaFormField";
 import TextFormField from "../Form/FormFields/TextFormField";
 import TransferPatientDialog from "../Facility/TransferPatientDialog";
-import _ from "lodash";
+import { startCase, toLower } from "lodash-es";
 import countryList from "@/common/static/countries.json";
 import { debounce } from "lodash-es";
 import request from "../../Utils/request/request";
@@ -635,7 +635,7 @@ export const PatientRegister = (props: PatientRegisterProps) => {
             ? formData.last_vaccinated_date
             : null
           : null,
-      name: _.startCase(_.toLower(formData.name)),
+      name: startCase(toLower(formData.name)),
       pincode: formData.pincode ? formData.pincode : undefined,
       gender: Number(formData.gender),
       nationality: formData.nationality,
@@ -1219,7 +1219,6 @@ export const PatientRegister = (props: PatientRegisterProps) => {
                               {...field("date_of_birth")}
                               errorClassName="hidden"
                               required
-                              position="LEFT"
                               disableFuture
                             />
                           </div>
@@ -1330,7 +1329,6 @@ export const PatientRegister = (props: PatientRegisterProps) => {
                           containerClassName="w-full"
                           {...field("last_menstruation_start_date")}
                           label="Last Menstruation Start Date"
-                          position="LEFT"
                           disableFuture
                           required
                         />
@@ -1355,7 +1353,6 @@ export const PatientRegister = (props: PatientRegisterProps) => {
                       containerClassName="w-full"
                       {...field("date_of_delivery")}
                       label="Date of Delivery"
-                      position="LEFT"
                       disableFuture
                       required
                     />
@@ -1727,7 +1724,6 @@ export const PatientRegister = (props: PatientRegisterProps) => {
                                 {...field("last_vaccinated_date")}
                                 label="Last Date of Vaccination"
                                 disableFuture={true}
-                                position="LEFT"
                               />
                             </div>
                           </div>
@@ -1759,7 +1755,6 @@ export const PatientRegister = (props: PatientRegisterProps) => {
                               {...field("date_declared_positive")}
                               label="Date Patient is Declared Positive for COVID"
                               disableFuture
-                              position="LEFT"
                             />
                           </div>
                         </CollapseV2>
@@ -1770,7 +1765,6 @@ export const PatientRegister = (props: PatientRegisterProps) => {
                           id="date_of_test"
                           label="Date of Sample given for COVID Test"
                           disableFuture
-                          position="LEFT"
                         />
                       </div>
                     </div>
