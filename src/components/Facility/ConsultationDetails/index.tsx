@@ -204,7 +204,7 @@ export const ConsultationDetails = (props: any) => {
   return (
     <div>
       <div>
-        <nav className="relative flex flex-wrap items-start justify-between">
+        <nav className="relative flex flex-wrap items-start justify-between px-3 pt-3 md:px-6 md:pt-6">
           <PageTitle
             title="Patient Dashboard"
             className="sm:m-0 sm:p-0"
@@ -278,7 +278,7 @@ export const ConsultationDetails = (props: any) => {
             </a>
           </div>
         </nav>
-        <div className="mt-2 flex w-full flex-col md:flex-row">
+        <div className="mt-2 flex w-full flex-col px-3 md:flex-row md:px-6">
           <div className="size-full rounded-lg border bg-white text-black shadow">
             <PatientInfoCard
               patient={patientData}
@@ -352,19 +352,21 @@ export const ConsultationDetails = (props: any) => {
           </div>
         </div>
         {!!consultationData.diagnoses?.length && (
-          <div className="col-span-1 mt-2 overflow-hidden rounded-lg bg-white shadow">
-            <div className="px-4 py-2">
-              <DiagnosesListAccordion
-                diagnoses={consultationData.diagnoses ?? []}
-              />
+          <div className="px-3 md:px-6">
+            <div className="col-span-1 mt-2 overflow-hidden rounded-lg bg-white shadow">
+              <div className="px-4 py-2">
+                <DiagnosesListAccordion
+                  diagnoses={consultationData.diagnoses ?? []}
+                />
+              </div>
             </div>
           </div>
         )}
         <div className="mt-4 w-full border-b-2 border-secondary-200">
           <div className="overflow-x-auto sm:flex sm:items-baseline">
-            <div className="mt-4 sm:mt-0">
+            <div className="mt-4 px-0 md:px-6">
               <nav
-                className="flex space-x-6 overflow-x-auto pb-2 pl-2"
+                className="flex space-x-6 overflow-x-auto pb-2"
                 id="consultation_tab_nav"
               >
                 {keysOf(TABS).map((p) => {
@@ -396,7 +398,9 @@ export const ConsultationDetails = (props: any) => {
             </div>
           </div>
         </div>
-        <SelectedTab {...consultationTabProps} />
+        <div className="px-3 md:px-6">
+          <SelectedTab {...consultationTabProps} />
+        </div>
       </div>
 
       <DoctorVideoSlideover
