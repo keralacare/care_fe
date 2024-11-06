@@ -17,17 +17,17 @@ export const patientTabs = [
     component: Demography,
   },
   {
-    label: "Encounter History",
+    label: "Encounters",
     route: "encounters",
     component: EncounterHistory,
   },
   {
-    label: "Health Profile Summary",
+    label: "Health Profile",
     route: "health_profile",
     component: HealthProfileSummary,
   },
   {
-    label: "Immunisation Records",
+    label: "Immunisation",
     route: "immunisation_records",
     component: ImmunisationRecords,
   },
@@ -37,7 +37,7 @@ export const patientTabs = [
     component: ShiftingHistory,
   },
   {
-    label: "Request Sample Test",
+    label: "Request Test",
     route: "request_sample_test",
     component: SampleTestHistory,
   },
