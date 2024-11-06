@@ -525,7 +525,7 @@ export const PatientHome = (props: any) => {
           </div>
         </div>
 
-        <div className="sticky top-0 z-50 mt-4 w-full overflow-x-auto border-b bg-gray-50">
+        <div className="sticky top-0 z-10 mt-4 w-full overflow-x-auto border-b bg-gray-50">
           <div className="flex flex-row">
             {patientTabs.map((tab) => (
               <Link
