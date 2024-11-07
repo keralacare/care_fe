@@ -44,6 +44,9 @@ const PatientRoutes: AppRoutes = {
   }) => (
     <PatientHome facilityId={facilityId} id={id} page="request_sample_test" />
   ),
+  "/facility/:facilityId/patient/:id/patient_notes": ({ facilityId, id }) => (
+    <PatientHome facilityId={facilityId} id={id} page="patient_notes" />
+  ),
 
   "/facility/:facilityId/patient/:id/insurance": ({ facilityId, id }) => (
     <InsuranceDetails facilityId={facilityId} id={id} />

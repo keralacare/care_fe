@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-
 import dayjs from "dayjs";
 import CareIcon from "@/CAREUI/icons/CareIcon";
 import ButtonV2 from "@/components/Common/components/ButtonV2";
@@ -8,18 +7,15 @@ import ConfirmDialog from "@/components/Common/ConfirmDialog";
 import routes from "@/Redux/api";
 import useQuery from "@/Utils/request/useQuery";
 import useAuthUser from "@/common/hooks/useAuthUser";
-import Loading from "@/components/Common/Loading";
 import { navigate } from "raviger";
 import request from "@/Utils/request/request";
 import { useTranslation } from "react-i18next";
 import { NonReadOnlyUsers } from "@/Utils/AuthorizeFor";
 import { PatientModel } from "../models";
-import { triggerGoal } from "@/Integrations/Plausible";
 import { PatientProps } from ".";
 
 const ShiftingHistory = (props: PatientProps) => {
-  const { facilityId, id } = props;
-  const [patientData, setPatientData] = useState<PatientModel>({});
+  const { patientData, facilityId, id } = props;
   const [showShifts, setShowShifts] = useState(false);
   const [isShiftClicked, setIsShiftClicked] = useState(false);
   const authUser = useAuthUser();
@@ -42,21 +38,6 @@ const ShiftingHistory = (props: PatientProps) => {
     );
   };
 
-  const { loading: isLoading } = useQuery(routes.getPatient, {
-    pathParams: {
-      id,
-    },
-    onResponse: ({ res, data }) => {
-      if (res?.ok && data) {
-        setPatientData(data);
-      }
-      triggerGoal("Patient Profile Viewed", {
-        facilityId: facilityId,
-        userId: authUser.id,
-      });
-    },
-  });
-
   const { loading: isShiftDataLoading, data: activeShiftingData } = useQuery(
     routes.listShiftRequests,
     {
@@ -73,10 +54,6 @@ const ShiftingHistory = (props: PatientProps) => {
       !(patientData?.last_consultation?.facility === facilityId)
     );
   };
-
-  if (isLoading) {
-    return <Loading />;
-  }
 
   return (
     <section className="mt-4 h-full space-y-2 px-4 md:px-0">

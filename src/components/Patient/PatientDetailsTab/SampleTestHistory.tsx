@@ -8,41 +8,15 @@ import PaginatedList from "@/CAREUI/misc/PaginatedList";
 import CircularProgress from "@/components/Common/components/CircularProgress";
 import { SampleTestCard } from "../SampleTestCard";
 import routes from "@/Redux/api";
-import Loading from "@/components/Common/Loading";
-import useQuery from "@/Utils/request/useQuery";
-import { triggerGoal } from "@/Integrations/Plausible";
-import useAuthUser from "@/common/hooks/useAuthUser";
 import { PatientProps } from ".";
 
 export const SampleTestHistory = (props: PatientProps) => {
-  const { facilityId, id } = props;
-  const [patientData, setPatientData] = useState<PatientModel>({});
-  const authUser = useAuthUser();
-
+  const { patientData, facilityId, id } = props;
   const [_selectedStatus, setSelectedStatus] = useState<{
     status: number;
     sample: any;
   }>({ status: 0, sample: null });
   const [_showAlertMessage, setShowAlertMessage] = useState(false);
-
-  const { loading: isLoading } = useQuery(routes.getPatient, {
-    pathParams: {
-      id,
-    },
-    onResponse: ({ res, data }) => {
-      if (res?.ok && data) {
-        setPatientData(data);
-      }
-      triggerGoal("Patient Profile Viewed", {
-        facilityId: facilityId,
-        userId: authUser.id,
-      });
-    },
-  });
-
-  if (isLoading) {
-    return <Loading />;
-  }
 
   const isPatientInactive = (patientData: PatientModel, facilityId: string) => {
     return (

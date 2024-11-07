@@ -423,23 +423,6 @@ export const PatientHome = (props: any) => {
                               </DropdownItem>
                             )}
 
-                          <DropdownItem
-                            id="view-patient-notes"
-                            onClick={() =>
-                              navigate(
-                                `/facility/${patientData?.facility}/patient/${id}/notes`,
-                              )
-                            }
-                            icon={
-                              <CareIcon
-                                icon="l-clipboard-notes"
-                                className="text-lg"
-                              />
-                            }
-                          >
-                            View Patient Notes
-                          </DropdownItem>
-
                           {NonReadOnlyUsers && (
                             <DropdownItem
                               id="assign-volunteer"
@@ -546,7 +529,12 @@ export const PatientHome = (props: any) => {
         {patientTabs.map(
           (tab) =>
             page === tab.route && (
-              <tab.component key={tab.route} facilityId={facilityId} id={id} />
+              <tab.component
+                key={tab.route}
+                patientData={patientData}
+                facilityId={facilityId}
+                id={id}
+              />
             ),
         )}
       </div>

@@ -1,42 +1,16 @@
 import useAuthUser from "@/common/hooks/useAuthUser";
-import Loading from "@/components/Common/Loading";
-import { triggerGoal } from "@/Integrations/Plausible";
-import routes from "@/Redux/api";
-import useQuery from "@/Utils/request/useQuery";
 import { formatDateTime } from "@/Utils/utils";
-import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { PatientModel } from "../models";
 import { PatientProps } from ".";
 import CareIcon from "@/CAREUI/icons/CareIcon";
 import { navigate } from "raviger";
 import * as Notification from "../../../Utils/Notifications";
 
 export const ImmunisationRecords = (props: PatientProps) => {
-  const { facilityId, id } = props;
-  const [patientData, setPatientData] = useState<PatientModel>({});
+  const { patientData, facilityId, id } = props;
 
   const authUser = useAuthUser();
   const { t } = useTranslation();
-
-  const { loading: isLoading } = useQuery(routes.getPatient, {
-    pathParams: {
-      id,
-    },
-    onResponse: ({ res, data }) => {
-      if (res?.ok && data) {
-        setPatientData(data);
-      }
-      triggerGoal("Patient Profile Viewed", {
-        facilityId: facilityId,
-        userId: authUser.id,
-      });
-    },
-  });
-
-  if (isLoading) {
-    return <Loading />;
-  }
 
   const handleEditClick = (sectionId: any) => {
     navigate(

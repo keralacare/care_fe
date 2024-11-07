@@ -19,27 +19,20 @@ import { useEffect, useState } from "react";
 import routes from "@/Redux/api";
 import request from "@/Utils/request/request";
 import * as Notification from "../../../Utils/Notifications";
-import Loading from "@/components/Common/Loading";
 import useQuery from "@/Utils/request/useQuery";
-import { triggerGoal } from "@/Integrations/Plausible";
 import useAuthUser from "@/common/hooks/useAuthUser";
-import ConfirmDialog from "@/components/Common/ConfirmDialog";
-import UserAutocomplete from "@/components/Common/UserAutocompleteFormField";
 import { PatientProps } from ".";
 
 export const Demography = (props: PatientProps) => {
-  const { facilityId, id } = props;
-  const [patientData, setPatientData] = useState<PatientModel>({});
+  const { patientData: initialPatientData, facilityId, id } = props;
+  const [patientData, setPatientData] =
+    useState<PatientModel>(initialPatientData);
   const authUser = useAuthUser();
   const { t } = useTranslation();
-  const [assignedVolunteerObject, setAssignedVolunteerObject] =
+  const [_assignedVolunteerObject, setAssignedVolunteerObject] =
     useState<any>(null);
-  const [openAssignVolunteerDialog, setOpenAssignVolunteerDialog] =
-    useState(false);
-  const [activeSection, setActiveSection] = useState<string | null>(null);
 
-  const initErr: any = {};
-  const errors = initErr;
+  const [activeSection, setActiveSection] = useState<string | null>(null);
 
   useEffect(() => {
     setAssignedVolunteerObject(patientData.assigned_to_object);
@@ -64,10 +57,6 @@ export const Demography = (props: PatientProps) => {
       sections.forEach((section) => observer.unobserve(section));
     };
   }, [patientData.assigned_to_object]);
-
-  const handleVolunteerSelect = (volunteer: any) => {
-    setAssignedVolunteerObject(volunteer.value);
-  };
 
   const { data: insuranceDetials } = useQuery(routes.hcx.policies.list, {
     query: {
@@ -100,53 +89,6 @@ export const Demography = (props: PatientProps) => {
       },
     });
   };
-
-  const { loading: isLoading, refetch } = useQuery(routes.getPatient, {
-    pathParams: {
-      id,
-    },
-    onResponse: ({ res, data }) => {
-      if (res?.ok && data) {
-        setPatientData(data);
-      }
-      triggerGoal("Patient Profile Viewed", {
-        facilityId: facilityId,
-        userId: authUser.id,
-      });
-    },
-  });
-
-  const handleAssignedVolunteer = async () => {
-    const { res, data } = await request(routes.patchPatient, {
-      pathParams: {
-        id: patientData.id as string,
-      },
-      body: {
-        assigned_to: assignedVolunteerObject
-          ? assignedVolunteerObject.id
-          : null,
-      },
-    });
-    if (res?.ok && data) {
-      setPatientData(data);
-      if (assignedVolunteerObject) {
-        Notification.Success({
-          msg: "Volunteer assigned successfully.",
-        });
-      } else {
-        Notification.Success({
-          msg: "Volunteer unassigned successfully.",
-        });
-      }
-      refetch();
-    }
-    setOpenAssignVolunteerDialog(false);
-    if (errors["assignedVolunteer"]) delete errors["assignedVolunteer"];
-  };
-
-  if (isLoading) {
-    return <Loading />;
-  }
 
   const patientGender = GENDER_TYPES.find(
     (i) => i.id === patientData.gender,
@@ -693,9 +635,7 @@ export const Demography = (props: PatientProps) => {
         <div className="sticky top-20 mt-8 h-full lg:basis-1/6">
           <section className="mb-4 space-y-2 md:flex">
             <div className="w-full">
-              <div className="font-semibold text-secondary-900">
-                Quick Links
-              </div>
+              <div className="font-semibold text-secondary-900">Actions</div>
               <div className="mt-2 h-full space-y-2">
                 <div className="space-y-3 border-b border-dashed text-left text-lg font-semibold text-secondary-900">
                   <div>
@@ -757,61 +697,44 @@ export const Demography = (props: PatientProps) => {
                       </span>
                     </ButtonV2>
                   </div>
-                  <div>
-                    <ButtonV2
-                      className="w-full bg-white font-semibold text-green-800 hover:bg-secondary-200"
-                      disabled={isPatientInactive(patientData, facilityId)}
-                      size="large"
-                      onClick={() =>
-                        navigate(
-                          `/facility/${facilityId}/patient/${id}/shift/new`,
-                        )
-                      }
-                      authorizeFor={NonReadOnlyUsers}
-                    >
-                      <span className="flex w-full items-center justify-start gap-2">
-                        <CareIcon icon="l-ambulance" className="text-xl" />
-                        Shift Patient
-                      </span>
-                    </ButtonV2>
-                  </div>
-                  <div>
-                    <ButtonV2
-                      className="w-full bg-white font-semibold text-green-800 hover:bg-secondary-200"
-                      disabled={isPatientInactive(patientData, facilityId)}
-                      size="large"
-                      onClick={() =>
-                        navigate(
-                          `/facility/${patientData?.facility}/patient/${id}/sample-test`,
-                        )
-                      }
-                      authorizeFor={NonReadOnlyUsers}
-                    >
-                      <span className="flex w-full items-center justify-start gap-2">
-                        <CareIcon icon="l-medkit" className="text-xl" />
-                        Request Sample Test
-                      </span>
-                    </ButtonV2>
-                  </div>
-                  <div>
-                    <ButtonV2
-                      className="w-full bg-white font-semibold text-green-800 hover:bg-secondary-200"
-                      size="large"
-                      onClick={() =>
-                        navigate(
-                          `/facility/${patientData?.facility}/patient/${id}/notes`,
-                        )
-                      }
-                    >
-                      <span className="flex w-full items-center justify-start gap-2">
-                        <CareIcon
-                          icon="l-clipboard-notes"
-                          className="text-xl"
-                        />
-                        View Patient Notes
-                      </span>
-                    </ButtonV2>
-                  </div>
+                  {!isPatientInactive(patientData, facilityId) && (
+                    <div>
+                      <ButtonV2
+                        className="w-full bg-white font-semibold text-green-800 hover:bg-secondary-200"
+                        size="large"
+                        onClick={() =>
+                          navigate(
+                            `/facility/${facilityId}/patient/${id}/shift/new`,
+                          )
+                        }
+                        authorizeFor={NonReadOnlyUsers}
+                      >
+                        <span className="flex w-full items-center justify-start gap-2">
+                          <CareIcon icon="l-ambulance" className="text-xl" />
+                          Shift Patient
+                        </span>
+                      </ButtonV2>
+                    </div>
+                  )}
+                  {!isPatientInactive(patientData, facilityId) && (
+                    <div>
+                      <ButtonV2
+                        className="w-full bg-white font-semibold text-green-800 hover:bg-secondary-200"
+                        size="large"
+                        onClick={() =>
+                          navigate(
+                            `/facility/${patientData?.facility}/patient/${id}/sample-test`,
+                          )
+                        }
+                        authorizeFor={NonReadOnlyUsers}
+                      >
+                        <span className="flex w-full items-center justify-start gap-2">
+                          <CareIcon icon="l-medkit" className="text-xl" />
+                          Request Sample Test
+                        </span>
+                      </ButtonV2>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -958,25 +881,6 @@ export const Demography = (props: PatientProps) => {
           </div>
         </div>
       </section>
-      <ConfirmDialog
-        className="w-full justify-between"
-        title={`Assign a volunteer to ${patientData.name}`}
-        show={openAssignVolunteerDialog}
-        onClose={() => setOpenAssignVolunteerDialog(false)}
-        description={
-          <div className="mt-6">
-            <UserAutocomplete
-              value={assignedVolunteerObject}
-              onChange={handleVolunteerSelect}
-              userType={"Volunteer"}
-              name={"assign_volunteer"}
-              error={errors.assignedVolunteer}
-            />
-          </div>
-        }
-        action="Assign"
-        onConfirm={handleAssignedVolunteer}
-      />
     </div>
   );
 };

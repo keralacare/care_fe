@@ -1,7 +1,7 @@
 import CircularProgress from "@/components/Common/components/CircularProgress";
 import { ConsultationCard } from "@/components/Facility/ConsultationCard";
 import { ConsultationModel } from "@/components/Facility/models";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { PatientModel } from "../models";
 import PaginatedList from "@/CAREUI/misc/PaginatedList";
 import routes from "@/Redux/api";
@@ -12,13 +12,14 @@ import useAuthUser from "@/common/hooks/useAuthUser";
 import { PatientProps } from ".";
 
 const EncounterHistory = (props: PatientProps) => {
-  const { facilityId, id } = props;
-  const [patientData, setPatientData] = useState<PatientModel>({});
+  const { patientData: initialPatientData, facilityId, id } = props;
+  const [patientData, setPatientData] =
+    useState<PatientModel>(initialPatientData);
   const authUser = useAuthUser();
-  const [_selectedStatus, _setSelectedStatus] = useState<{
-    status: number;
-    sample: any;
-  }>({ status: 0, sample: null });
+
+  useEffect(() => {
+    setPatientData(initialPatientData);
+  }, [initialPatientData]);
 
   const { loading: isLoading, refetch } = useQuery(routes.getPatient, {
     pathParams: {
