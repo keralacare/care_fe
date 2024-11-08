@@ -398,7 +398,7 @@ export const ConsultationDetails = (props: any) => {
             </div>
           </div>
         </div>
-        <div className="px-3 md:px-6">
+        <div className="px-3 pb-3 md:px-6 md:pb-6">
           <SelectedTab {...consultationTabProps} />
         </div>
       </div>

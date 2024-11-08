@@ -266,50 +266,24 @@ export const PatientHome = (props: any) => {
             <div>
               <div className="flex flex-col justify-between gap-4 gap-y-2 md:flex-row">
                 <div className="flex flex-col gap-4 md:flex-row">
-                  <div className="flex flex-row gap-x-2">
+                  <div className="flex flex-row gap-x-4">
                     <div className="h-10 w-10 flex-shrink-0 md:h-14 md:w-14">
                       <Avatar
-                        className="size-10 font-bold text-secondary-800 md:size-auto"
+                        className="size-10 font-semibold text-secondary-800 md:size-auto"
                         name={patientData.name || "Unknown"}
                         colors={["#86efac", "#14532d"]}
                       />
                     </div>
                     <div>
-                      <h1 className="text-2xl font-bold capitalize">
+                      <h1 className="text-xl font-semibold capitalize text-gray-950">
                         {patientData.name}
                       </h1>
-                      <h3 className="text-sm font-medium text-gray-500">
+                      <h3 className="text-sm font-medium text-gray-600">
                         {formatPatientAge(patientData, true)},{"  "}
                         {patientGender},{"  "} {patientData.blood_group || "-"}
                       </h3>
                     </div>
                   </div>
-
-                  <div>
-                    <h1 className="text-sm text-secondary-700">Facility</h1>
-                    <h3 className="text-sm font-semibold text-secondary-900">
-                      {patientData.facility_object?.name || "-"}
-                    </h3>
-                  </div>
-
-                  {patientData?.last_consultation
-                    ?.treating_physician_object && (
-                    <div>
-                      <h1 className="text-sm text-secondary-700">
-                        Treating Doctor:
-                      </h1>
-                      <h1 className="text-sm font-semibold text-secondary-900">
-                        {formatName(
-                          patientData.last_consultation
-                            .treating_physician_object,
-                        )}
-                      </h1>
-                      <h1 className="text-sm font-normal">
-                        {!!skillsQuery.data?.results?.length &&
-                          formatSkills(skillsQuery.data?.results)}
-                      </h1>
-                    </div>
-                  )}
                 </div>
                 <div className="h-full space-y-2">
                   <div className="space-y-3 border-b border-dashed text-left text-lg font-semibold text-secondary-900">
@@ -447,10 +421,11 @@ export const PatientHome = (props: any) => {
               </div>
 
               <div>
-                <div className="ml-auto mt-7 flex flex-wrap gap-3">
+                <div className="ml-auto mt-4 flex flex-wrap gap-3">
                   {patientData.is_vaccinated && (
                     <Chip
                       variant="custom"
+                      size="small"
                       className="bg-blue-100 text-blue-800"
                       startIcon="l-syringe"
                       text="Vaccinated"
@@ -459,11 +434,16 @@ export const PatientHome = (props: any) => {
                   {patientData.allow_transfer ? (
                     <Chip
                       variant="warning"
+                      size="small"
                       startIcon="l-unlock"
                       text="Transfer Allowed"
                     />
                   ) : (
-                    <Chip startIcon="l-lock" text="Transfer Blocked" />
+                    <Chip
+                      startIcon="l-lock"
+                      size="small"
+                      text="Transfer Blocked"
+                    />
                   )}
 
                   {patientData.gender === 2 && (
@@ -474,6 +454,7 @@ export const PatientHome = (props: any) => {
                         ) && (
                           <Chip
                             variant="custom"
+                            size="small"
                             className="border-pink-300 bg-pink-100 text-pink-600"
                             startIcon="l-baby-carriage"
                             text="Antenatal"
@@ -482,6 +463,7 @@ export const PatientHome = (props: any) => {
                       {isPostPartum(patientData.date_of_delivery) && (
                         <Chip
                           variant="custom"
+                          size="small"
                           className="border-pink-300 bg-pink-100 text-pink-600"
                           startIcon="l-baby-carriage"
                           text="Post-partum"
@@ -492,6 +474,7 @@ export const PatientHome = (props: any) => {
                   {patientData.last_consultation?.is_telemedicine && (
                     <Chip
                       variant="alert"
+                      size="small"
                       startIcon="l-phone"
                       text="Telemedicine"
                     />
@@ -499,10 +482,42 @@ export const PatientHome = (props: any) => {
                   {patientData.allergies && (
                     <Chip
                       variant="danger"
+                      size="small"
                       text={`Allergies ${patientData.allergies.length}`}
                     />
                   )}
                 </div>
+              </div>
+
+              <div className="mt-4 flex gap-4">
+                <div>
+                  <p className="text-xs font-normal leading-tight text-gray-600">
+                    Facility:
+                  </p>
+                  <p className="mt-1 flex text-sm font-semibold leading-tight text-gray-900">
+                    {patientData.facility_object?.name || "-"}
+                  </p>
+                </div>
+
+                {patientData?.last_consultation?.treating_physician_object && (
+                  <div>
+                    <h4 className="text-xs font-normal leading-tight text-gray-600">
+                      Treating Doctor:
+                    </h4>
+                    <div className="mt-1 flex space-x-2">
+                      <p className="flex text-sm font-semibold leading-tight text-gray-900">
+                        {formatName(
+                          patientData.last_consultation
+                            .treating_physician_object,
+                        )}
+                      </p>
+                      <p className="flex items-end text-xs font-normal leading-tight">
+                        {!!skillsQuery.data?.results?.length &&
+                          formatSkills(skillsQuery.data?.results)}
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
