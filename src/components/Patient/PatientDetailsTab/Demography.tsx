@@ -1,15 +1,9 @@
 import CareIcon from "@/CAREUI/icons/CareIcon";
-import { DISCHARGE_REASONS, GENDER_TYPES } from "@/common/constants";
-import {
-  formatDateTime,
-  formatName,
-  formatPatientAge,
-  relativeDate,
-} from "@/Utils/utils";
+import { GENDER_TYPES } from "@/common/constants";
+import { formatName, formatPatientAge } from "@/Utils/utils";
 import dayjs from "dayjs";
 import { useTranslation } from "react-i18next";
 import { InsuranceDetialsCard } from "../InsuranceDetailsCard";
-import { PatientModel } from "../models";
 import { parseOccupation } from "../PatientHome";
 import Chip from "@/CAREUI/display/Chip";
 import ButtonV2 from "@/components/Common/components/ButtonV2";
@@ -17,16 +11,13 @@ import { NonReadOnlyUsers } from "@/Utils/AuthorizeFor";
 import { navigate } from "raviger";
 import { useEffect, useState } from "react";
 import routes from "@/Redux/api";
-import request from "@/Utils/request/request";
 import * as Notification from "../../../Utils/Notifications";
 import useQuery from "@/Utils/request/useQuery";
 import useAuthUser from "@/common/hooks/useAuthUser";
 import { PatientProps } from ".";
 
 export const Demography = (props: PatientProps) => {
-  const { patientData: initialPatientData, facilityId, id } = props;
-  const [patientData, setPatientData] =
-    useState<PatientModel>(initialPatientData);
+  const { patientData, facilityId, id } = props;
   const authUser = useAuthUser();
   const { t } = useTranslation();
   const [_assignedVolunteerObject, setAssignedVolunteerObject] =
@@ -65,41 +56,9 @@ export const Demography = (props: PatientProps) => {
     },
   });
 
-  const handlePatientTransfer = async (value: boolean) => {
-    const dummyPatientData = Object.assign({}, patientData);
-    dummyPatientData["allow_transfer"] = value;
-
-    await request(routes.patchPatient, {
-      pathParams: {
-        id: patientData.id as string,
-      },
-
-      body: { allow_transfer: value },
-
-      onResponse: ({ res }) => {
-        if ((res || {}).status === 200) {
-          const dummyPatientData = Object.assign({}, patientData);
-          dummyPatientData["allow_transfer"] = value;
-          setPatientData(dummyPatientData);
-
-          Notification.Success({
-            msg: "Transfer status updated.",
-          });
-        }
-      },
-    });
-  };
-
   const patientGender = GENDER_TYPES.find(
     (i) => i.id === patientData.gender,
   )?.text;
-
-  const isPatientInactive = (patientData: PatientModel, facilityId: string) => {
-    return (
-      !patientData.is_active ||
-      !(patientData?.last_consultation?.facility === facilityId)
-    );
-  };
 
   const scrollToSection = (sectionId: string) => {
     const section = document.getElementById(sectionId);
@@ -119,7 +78,7 @@ export const Demography = (props: PatientProps) => {
         className="mt-8 w-full items-start gap-6 px-3 md:px-0 lg:flex 2xl:gap-8"
         data-testid="patient-dashboard"
       >
-        <div className="sticky top-20 hidden text-sm font-medium text-gray-600 lg:flex lg:basis-1/6 lg:flex-col">
+        <div className="sticky top-20 hidden text-sm font-medium text-gray-600 lg:flex lg:basis-1/5 lg:flex-col">
           <div
             className={`mb-3 cursor-pointer rounded-lg p-3 transition-colors duration-300 ${
               activeSection === "general-info"
@@ -162,7 +121,7 @@ export const Demography = (props: PatientProps) => {
           </div>
         </div>
 
-        <div className="lg:basis-4/6">
+        <div className="lg:basis-4/5">
           <div className="mb-2 flex flex-row justify-between">
             <div className="w-1/2">
               <div className="text-sm font-normal leading-5 text-secondary-700">
@@ -629,254 +588,6 @@ export const Demography = (props: PatientProps) => {
                 <CareIcon icon="l-plus" className="text-md mr-1 mt-1" />
                 Add Insurance Details
               </button>
-            </div>
-          </div>
-        </div>
-        <div className="sticky top-20 mt-8 h-full lg:basis-1/6">
-          <section className="mb-4 space-y-2 md:flex">
-            <div className="w-full">
-              <div className="font-semibold text-secondary-900">Actions</div>
-              <div className="mt-2 h-full space-y-2">
-                <div className="space-y-3 border-b border-dashed text-left text-lg font-semibold text-secondary-900">
-                  <div>
-                    {patientData?.is_active &&
-                      (!patientData?.last_consultation ||
-                        patientData?.last_consultation?.discharge_date) && (
-                        <div>
-                          <ButtonV2
-                            className="w-full bg-white font-semibold text-green-800 hover:bg-secondary-200"
-                            size="large"
-                            onClick={() =>
-                              navigate(
-                                `/facility/${patientData?.facility}/patient/${id}/consultation`,
-                              )
-                            }
-                          >
-                            <span className="flex w-full items-center justify-start gap-2">
-                              <CareIcon
-                                icon="l-chat-bubble-user"
-                                className="text-xl"
-                              />
-                              Add Consultation
-                            </span>
-                          </ButtonV2>
-                        </div>
-                      )}
-                  </div>
-                  <div>
-                    <ButtonV2
-                      className="w-full bg-white font-semibold text-green-800 hover:bg-secondary-200"
-                      size="large"
-                      onClick={() =>
-                        navigate(`/patient/${id}/investigation_reports`)
-                      }
-                    >
-                      <span className="flex w-full items-center justify-start gap-2">
-                        <CareIcon
-                          icon="l-file-search-alt"
-                          className="text-xl"
-                        />
-                        Investigations Summary
-                      </span>
-                    </ButtonV2>
-                  </div>
-                  <div>
-                    <ButtonV2
-                      className="w-full bg-white font-semibold text-green-800 hover:bg-secondary-200"
-                      id="upload-patient-files"
-                      size="large"
-                      onClick={() =>
-                        navigate(
-                          `/facility/${patientData?.facility}/patient/${id}/files`,
-                        )
-                      }
-                    >
-                      <span className="flex w-full items-center justify-start gap-2">
-                        <CareIcon icon="l-file-upload" className="text-xl" />
-                        View/Upload Patient Files
-                      </span>
-                    </ButtonV2>
-                  </div>
-                  {!isPatientInactive(patientData, facilityId) && (
-                    <div>
-                      <ButtonV2
-                        className="w-full bg-white font-semibold text-green-800 hover:bg-secondary-200"
-                        size="large"
-                        onClick={() =>
-                          navigate(
-                            `/facility/${facilityId}/patient/${id}/shift/new`,
-                          )
-                        }
-                        authorizeFor={NonReadOnlyUsers}
-                      >
-                        <span className="flex w-full items-center justify-start gap-2">
-                          <CareIcon icon="l-ambulance" className="text-xl" />
-                          Shift Patient
-                        </span>
-                      </ButtonV2>
-                    </div>
-                  )}
-                  {!isPatientInactive(patientData, facilityId) && (
-                    <div>
-                      <ButtonV2
-                        className="w-full bg-white font-semibold text-green-800 hover:bg-secondary-200"
-                        size="large"
-                        onClick={() =>
-                          navigate(
-                            `/facility/${patientData?.facility}/patient/${id}/sample-test`,
-                          )
-                        }
-                        authorizeFor={NonReadOnlyUsers}
-                      >
-                        <span className="flex w-full items-center justify-start gap-2">
-                          <CareIcon icon="l-medkit" className="text-xl" />
-                          Request Sample Test
-                        </span>
-                      </ButtonV2>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </section>
-          <hr />
-          <div
-            id="actions"
-            className="my-2 flex h-full flex-col justify-between space-y-2"
-          >
-            <div>
-              {patientData.review_time &&
-                !patientData.last_consultation?.discharge_date &&
-                Number(patientData.last_consultation?.review_interval) > 0 && (
-                  <div
-                    className={
-                      "my-2 inline-flex w-full items-center justify-center rounded-md border p-3 text-xs font-semibold leading-4 shadow-sm lg:mt-0" +
-                      (dayjs().isBefore(patientData.review_time)
-                        ? " bg-secondary-100"
-                        : " bg-red-600/5 p-1 text-sm font-normal text-red-600")
-                    }
-                  >
-                    <CareIcon icon="l-clock" className="text-md mr-2" />
-                    <p className="p-1">
-                      {(dayjs().isBefore(patientData.review_time)
-                        ? "Review before: "
-                        : "Review Missed: ") +
-                        formatDateTime(patientData.review_time)}
-                    </p>
-                  </div>
-                )}
-
-              <div className="rounded-sm px-2">
-                <div className="my-1 flex justify-between">
-                  <div>
-                    <div className="text-xs font-normal leading-5 text-gray-600">
-                      Last Discharged Reason
-                    </div>
-                    <div className="text-sm font-semibold text-gray-900">
-                      {patientData.is_active ? (
-                        "-"
-                      ) : !patientData.last_consultation
-                          ?.new_discharge_reason ? (
-                        <span className="text-secondary-800">
-                          {patientData?.last_consultation?.suggestion === "OP"
-                            ? "OP file closed"
-                            : "UNKNOWN"}
-                        </span>
-                      ) : patientData.last_consultation
-                          ?.new_discharge_reason ===
-                        DISCHARGE_REASONS.find((i) => i.text == "Expired")
-                          ?.id ? (
-                        <span className="text-red-600">EXPIRED</span>
-                      ) : (
-                        DISCHARGE_REASONS.find(
-                          (reason) =>
-                            reason.id ===
-                            patientData.last_consultation?.new_discharge_reason,
-                        )?.text
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="my-1 rounded-sm p-2">
-                <div>
-                  <div className="text-xs font-normal text-gray-600">
-                    Last Updated by{" "}
-                    <span className="font-semibold text-gray-900">
-                      {patientData.last_edited?.first_name}{" "}
-                      {patientData.last_edited?.last_name}
-                    </span>
-                  </div>
-                  <div className="whitespace-normal text-sm font-semibold text-gray-900">
-                    <div className="tooltip">
-                      <span className={`tooltip-text tooltip`}>
-                        {patientData.modified_date
-                          ? formatDateTime(patientData.modified_date)
-                          : "--:--"}
-                      </span>
-                      {patientData.modified_date
-                        ? relativeDate(patientData.modified_date)
-                        : "--:--"}
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-4">
-                  <div className="text-xs font-normal leading-5 text-gray-600">
-                    Patient profile created by{" "}
-                    <span className="font-semibold text-gray-900">
-                      {patientData.created_by?.first_name}{" "}
-                      {patientData.created_by?.last_name}
-                    </span>
-                  </div>
-                  <div className="whitespace-normal text-sm font-semibold text-gray-900">
-                    <div className="tooltip">
-                      <span className={`tooltip-text tooltip`}>
-                        {patientData.created_date
-                          ? formatDateTime(patientData.created_date)
-                          : "--:--"}
-                      </span>
-                      {patientData.modified_date
-                        ? relativeDate(patientData.created_date)
-                        : "--:--"}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="py-2">
-              {patientData.last_consultation?.new_discharge_reason ===
-                DISCHARGE_REASONS.find((i) => i.text == "Expired")?.id && (
-                <div>
-                  <ButtonV2
-                    id="death-report"
-                    className="my-2 w-full"
-                    name="death_report"
-                    onClick={() => navigate(`/death_report/${id}`)}
-                  >
-                    <CareIcon icon="l-file-download" className="text-lg" />
-                    Death Report
-                  </ButtonV2>
-                </div>
-              )}
-
-              <div>
-                <ButtonV2
-                  id="patient-allow-transfer"
-                  className="my-2 w-full"
-                  disabled={
-                    !patientData.last_consultation?.id || !patientData.is_active
-                  }
-                  onClick={() =>
-                    handlePatientTransfer(!patientData.allow_transfer)
-                  }
-                  authorizeFor={NonReadOnlyUsers}
-                >
-                  <CareIcon icon="l-lock" className="text-lg" />
-                  {patientData.allow_transfer
-                    ? "Disable Transfer"
-                    : "Allow Transfer"}
-                </ButtonV2>
-              </div>
             </div>
           </div>
         </div>

@@ -2,17 +2,20 @@ import { Link, navigate } from "raviger";
 import { useEffect, useState } from "react";
 import * as Notification from "../../Utils/Notifications";
 import {
+  DISCHARGE_REASONS,
   GENDER_TYPES,
   OCCUPATION_TYPES,
   SAMPLE_TEST_STATUS,
 } from "@/common/constants";
 import { PatientModel } from "./models";
 import {
+  formatDateTime,
   formatName,
   formatPatientAge,
   humanizeStrings,
   isAntenatal,
   isPostPartum,
+  relativeDate,
 } from "../../Utils/utils";
 
 import CareIcon from "../../CAREUI/icons/CareIcon";
@@ -29,11 +32,18 @@ import request from "../../Utils/request/request";
 import { useTranslation } from "react-i18next";
 import { Avatar } from "../Common/Avatar";
 import { SkillModel } from "../Users/models";
-import DropdownMenu, { DropdownItem } from "../Common/components/Menu";
 import Loading from "../Common/Loading";
-import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
-import { Button } from "@/components/ui/button";
 import { patientTabs } from "./PatientDetailsTab";
+import ButtonV2 from "../Common/components/ButtonV2";
+import dayjs from "@/Utils/dayjs";
+import { Demography } from "./PatientDetailsTab/Demography";
+import EncounterHistory from "./PatientDetailsTab/EncounterHistory";
+import { HealthProfileSummary } from "./PatientDetailsTab/HealthProfileSummary";
+import { ImmunisationRecords } from "./PatientDetailsTab/ImmunisationRecords";
+import PatientNotes from "./PatientDetailsTab/Notes";
+import { SampleTestHistory } from "./PatientDetailsTab/SampleTestHistory";
+import ShiftingHistory from "./PatientDetailsTab/ShiftingHistory";
+import { isPatientMandatoryDataFilled } from "./Utils";
 
 export const parseOccupation = (occupation: string | undefined) => {
   return OCCUPATION_TYPES.find((i) => i.value === occupation)?.text;
@@ -160,12 +170,110 @@ export const PatientHome = (props: any) => {
     (i) => i.id === patientData.gender,
   )?.text;
 
-  const isPatientInactive = (patientData: PatientModel, facilityId: string) => {
-    return (
-      !patientData.is_active ||
-      !(patientData?.last_consultation?.facility === facilityId)
-    );
+  const handlePatientTransfer = async (value: boolean) => {
+    const dummyPatientData = Object.assign({}, patientData);
+    dummyPatientData["allow_transfer"] = value;
+
+    await request(routes.patchPatient, {
+      pathParams: {
+        id: patientData.id as string,
+      },
+
+      body: { allow_transfer: value },
+
+      onResponse: ({ res }) => {
+        if ((res || {}).status === 200) {
+          const dummyPatientData = Object.assign({}, patientData);
+          dummyPatientData["allow_transfer"] = value;
+          setPatientData(dummyPatientData);
+
+          Notification.Success({
+            msg: "Transfer status updated.",
+          });
+        }
+      },
+    });
   };
+
+  let content;
+
+  switch (page) {
+    case "demography":
+      content = (
+        <Demography
+          key="demography"
+          patientData={patientData}
+          facilityId={facilityId}
+          id={id}
+        />
+      );
+      break;
+    case "encounters":
+      content = (
+        <EncounterHistory
+          key="encounters"
+          patientData={patientData}
+          facilityId={facilityId}
+          id={id}
+        />
+      );
+      break;
+    case "health_profile":
+      content = (
+        <HealthProfileSummary
+          key="health_profile"
+          patientData={patientData}
+          facilityId={facilityId}
+          id={id}
+        />
+      );
+      break;
+    case "immunisation_records":
+      content = (
+        <ImmunisationRecords
+          key="immunisation_records"
+          patientData={patientData}
+          facilityId={facilityId}
+          id={id}
+        />
+      );
+      break;
+    case "shift_patient":
+      content = (
+        <ShiftingHistory
+          key="shift_patient"
+          patientData={patientData}
+          facilityId={facilityId}
+          id={id}
+        />
+      );
+      break;
+    case "request_sample_test":
+      content = (
+        <SampleTestHistory
+          key="request_sample_test"
+          patientData={patientData}
+          facilityId={facilityId}
+          id={id}
+        />
+      );
+      break;
+    case "patient_notes":
+      content = (
+        <PatientNotes key="patient_notes" facilityId={facilityId} id={id} />
+      );
+      break;
+    default:
+      content = (
+        <Demography
+          key="demography"
+          patientData={patientData}
+          facilityId={facilityId}
+          id={id}
+        />
+      );
+      break;
+  }
 
   return (
     <Page
@@ -221,45 +329,6 @@ export const PatientHome = (props: any) => {
             </div>
           </div>
         </div>
-        {(patientData?.facility != patientData?.last_consultation?.facility ||
-          (patientData.is_active &&
-            patientData?.last_consultation?.discharge_date)) && (
-          <div className="px-3 md:px-0">
-            <Alert
-              variant="destructive"
-              className="mb-4 flex flex-col justify-between gap-2 md:flex-row"
-            >
-              <div className="flex gap-2">
-                <CareIcon
-                  icon="l-exclamation-triangle"
-                  className="mr-2 hidden h-10 animate-pulse md:block"
-                />
-                <div>
-                  <AlertTitle className="flex items-center">
-                    {t("consultation_not_filed")}
-                  </AlertTitle>
-                  <AlertDescription>
-                    <span className="text-gray-700">
-                      {t("consultation_not_filed_description")}
-                    </span>
-                  </AlertDescription>
-                </div>
-              </div>
-              <Button
-                variant="outline_primary"
-                disabled={!patientData.is_active}
-                onClick={() =>
-                  navigate(
-                    `/facility/${patientData?.facility}/patient/${id}/consultation`,
-                  )
-                }
-              >
-                <CareIcon icon="l-plus" className="mr-2" />
-                <span>{t("create_consultation")}</span>
-              </Button>
-            </Alert>
-          </div>
-        )}
 
         <div className="px-3 md:px-0">
           <div className="rounded-md bg-white p-3 shadow-sm">
@@ -287,141 +356,56 @@ export const PatientHome = (props: any) => {
                 </div>
                 <div className="h-full space-y-2">
                   <div className="space-y-3 border-b border-dashed text-left text-lg font-semibold text-secondary-900">
-                    <DropdownMenu
-                      id="patient-actions-dropdown"
-                      title="Patient Actions"
-                      icon={<CareIcon icon="l-user-md" className="text-lg" />}
-                    >
+                    <div>
                       {patientData?.is_active &&
                         (!patientData?.last_consultation ||
                           patientData?.last_consultation?.discharge_date) && (
-                          <DropdownItem
-                            id="add-consultation"
-                            onClick={() =>
-                              navigate(
-                                `/facility/${patientData?.facility}/patient/${id}/consultation`,
-                              )
-                            }
-                            icon={
-                              <CareIcon
-                                icon="l-chat-bubble-user"
-                                className="text-lg"
-                              />
-                            }
-                          >
-                            Add Consultation
-                          </DropdownItem>
-                        )}
-
-                      {patientData?.facility && (
-                        <>
-                          <DropdownItem
-                            id="investigations-summary"
-                            onClick={() =>
-                              navigate(`/patient/${id}/investigation_reports`)
-                            }
-                            icon={
-                              <CareIcon
-                                icon="l-file-search-alt"
-                                className="text-lg"
-                              />
-                            }
-                          >
-                            Investigations Summary
-                          </DropdownItem>
-
-                          <DropdownItem
-                            id="upload-patient-files"
-                            onClick={() =>
-                              navigate(
-                                `/facility/${patientData?.facility}/patient/${id}/files`,
-                              )
-                            }
-                            icon={
-                              <CareIcon
-                                icon="l-file-upload"
-                                className="text-lg"
-                              />
-                            }
-                          >
-                            View/Upload Patient Files
-                          </DropdownItem>
-
-                          {NonReadOnlyUsers &&
-                            !isPatientInactive(patientData, facilityId) && (
-                              <DropdownItem
-                                id="shift-patient"
-                                onClick={() =>
-                                  navigate(
-                                    `/facility/${facilityId}/patient/${id}/shift/new`,
-                                  )
-                                }
-                                disabled={isPatientInactive(
-                                  patientData,
-                                  facilityId,
-                                )}
-                                authorizeFor={NonReadOnlyUsers}
-                                icon={
-                                  <CareIcon
-                                    icon="l-ambulance"
-                                    className="text-lg"
-                                  />
-                                }
-                              >
-                                Shift Patient
-                              </DropdownItem>
-                            )}
-
-                          {NonReadOnlyUsers &&
-                            !isPatientInactive(patientData, facilityId) && (
-                              <DropdownItem
-                                id="request-sample-test"
-                                onClick={() =>
-                                  navigate(
-                                    `/facility/${patientData?.facility}/patient/${id}/sample-test`,
-                                  )
-                                }
-                                disabled={isPatientInactive(
-                                  patientData,
-                                  facilityId,
-                                )}
-                                authorizeFor={NonReadOnlyUsers}
-                                icon={
-                                  <CareIcon
-                                    icon="l-medkit"
-                                    className="text-lg"
-                                  />
-                                }
-                              >
-                                Request Sample Test
-                              </DropdownItem>
-                            )}
-
-                          {NonReadOnlyUsers && (
-                            <DropdownItem
-                              id="assign-volunteer"
-                              onClick={() => setOpenAssignVolunteerDialog(true)}
-                              disabled={false}
-                              authorizeFor={NonReadOnlyUsers}
-                              icon={
-                                <CareIcon
-                                  icon="l-users-alt"
-                                  className="text-lg"
-                                />
+                          <div>
+                            <ButtonV2
+                              className="w-full"
+                              size="default"
+                              onClick={() =>
+                                navigate(
+                                  `/facility/${patientData?.facility}/patient/${id}/consultation`,
+                                )
                               }
                             >
-                              Assign to a Volunteer
-                            </DropdownItem>
-                          )}
-                        </>
-                      )}
-                    </DropdownMenu>
+                              <span className="flex w-full items-center justify-start gap-2">
+                                <CareIcon
+                                  icon="l-chat-bubble-user"
+                                  className="text-xl"
+                                />
+                                Add Consultation
+                              </span>
+                            </ButtonV2>
+                          </div>
+                        )}
+                    </div>
                   </div>
                 </div>
               </div>
 
               <div>
                 <div className="ml-auto mt-4 flex flex-wrap gap-3">
+                  {isPatientMandatoryDataFilled(patientData) &&
+                    (!patientData.last_consultation ||
+                      patientData.last_consultation?.facility !==
+                        patientData.facility ||
+                      (patientData.last_consultation?.discharge_date &&
+                        patientData.is_active)) && (
+                      <span className="relative inline-flex">
+                        <Chip
+                          size="small"
+                          variant="danger"
+                          startIcon="l-notes"
+                          text="No Consultation Filed"
+                        />
+                        <span className="absolute -right-1 -top-1 flex h-3 w-3 items-center justify-center">
+                          <span className="center absolute inline-flex h-4 w-4 animate-ping rounded-full bg-red-400"></span>
+                          <span className="relative inline-flex h-3 w-3 rounded-full bg-red-600"></span>
+                        </span>
+                      </span>
+                    )}
                   {patientData.is_vaccinated && (
                     <Chip
                       variant="custom"
@@ -541,17 +525,218 @@ export const PatientHome = (props: any) => {
           </div>
         </div>
 
-        {patientTabs.map(
-          (tab) =>
-            page === tab.route && (
-              <tab.component
-                key={tab.route}
-                patientData={patientData}
-                facilityId={facilityId}
-                id={id}
-              />
-            ),
-        )}
+        <div className="h-full lg:flex">
+          <div className="h-full lg:mr-7 lg:basis-5/6">{content}</div>
+          <div className="sticky top-20 mt-8 h-full lg:basis-1/6">
+            <section className="mb-4 space-y-2 md:flex">
+              <div className="mx-3 w-full lg:mx-0">
+                <div className="font-semibold text-secondary-900">Actions</div>
+                <div className="mt-2 h-full space-y-2">
+                  <div className="space-y-3 border-b border-dashed text-left text-lg font-semibold text-secondary-900">
+                    <div>
+                      <ButtonV2
+                        className="w-full bg-white font-semibold text-green-800 hover:bg-secondary-200"
+                        size="large"
+                        onClick={() =>
+                          navigate(`/patient/${id}/investigation_reports`)
+                        }
+                      >
+                        <span className="flex w-full items-center justify-start gap-2">
+                          <CareIcon
+                            icon="l-file-search-alt"
+                            className="text-xl"
+                          />
+                          Investigations Summary
+                        </span>
+                      </ButtonV2>
+                    </div>
+                    <div>
+                      <ButtonV2
+                        className="w-full bg-white font-semibold text-green-800 hover:bg-secondary-200"
+                        id="upload-patient-files"
+                        size="large"
+                        onClick={() =>
+                          navigate(
+                            `/facility/${patientData?.facility}/patient/${id}/files`,
+                          )
+                        }
+                      >
+                        <span className="flex w-full items-center justify-start gap-2">
+                          <CareIcon icon="l-file-upload" className="text-xl" />
+                          View/Upload Patient Files
+                        </span>
+                      </ButtonV2>
+                    </div>
+
+                    {NonReadOnlyUsers && (
+                      <div>
+                        <ButtonV2
+                          id="assign-volunteer"
+                          onClick={() => setOpenAssignVolunteerDialog(true)}
+                          disabled={false}
+                          authorizeFor={NonReadOnlyUsers}
+                          className="w-full bg-white font-semibold text-green-800 hover:bg-secondary-200"
+                          size="large"
+                        >
+                          <span className="flex w-full items-center justify-start gap-2">
+                            <CareIcon icon="l-users-alt" className="text-lg" />{" "}
+                            Assign to a Volunteer
+                          </span>
+                        </ButtonV2>
+                      </div>
+                    )}
+
+                    <div>
+                      <ButtonV2
+                        id="patient-allow-transfer"
+                        className="flex w-full flex-row bg-white font-semibold text-green-800 hover:bg-secondary-200"
+                        size="large"
+                        disabled={
+                          !patientData.last_consultation?.id ||
+                          !patientData.is_active
+                        }
+                        onClick={() =>
+                          handlePatientTransfer(!patientData.allow_transfer)
+                        }
+                        authorizeFor={NonReadOnlyUsers}
+                      >
+                        <span className="flex w-full items-center justify-start gap-2">
+                          <CareIcon icon="l-lock" className="text-lg" />
+                          {patientData.allow_transfer
+                            ? "Disable Transfer"
+                            : "Allow Transfer"}
+                        </span>
+                      </ButtonV2>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <hr />
+            <div
+              id="actions"
+              className="my-2 flex h-full flex-col justify-between space-y-2"
+            >
+              <div>
+                {patientData.review_time &&
+                  !patientData.last_consultation?.discharge_date &&
+                  Number(patientData.last_consultation?.review_interval) >
+                    0 && (
+                    <div
+                      className={
+                        "my-2 inline-flex w-full items-center justify-center rounded-md border p-3 text-xs font-semibold leading-4 shadow-sm lg:mt-0" +
+                        (dayjs().isBefore(patientData.review_time)
+                          ? " bg-secondary-100"
+                          : " bg-red-600/5 p-1 text-sm font-normal text-red-600")
+                      }
+                    >
+                      <CareIcon icon="l-clock" className="text-md mr-2" />
+                      <p className="p-1">
+                        {(dayjs().isBefore(patientData.review_time)
+                          ? "Review before: "
+                          : "Review Missed: ") +
+                          formatDateTime(patientData.review_time)}
+                      </p>
+                    </div>
+                  )}
+
+                <div className="rounded-sm px-2">
+                  <div className="my-1 flex justify-between">
+                    <div>
+                      <div className="text-xs font-normal leading-5 text-gray-600">
+                        Last Discharged Reason
+                      </div>
+                      <div className="text-sm font-semibold text-gray-900">
+                        {patientData.is_active ? (
+                          "-"
+                        ) : !patientData.last_consultation
+                            ?.new_discharge_reason ? (
+                          <span className="text-secondary-800">
+                            {patientData?.last_consultation?.suggestion === "OP"
+                              ? "OP file closed"
+                              : "UNKNOWN"}
+                          </span>
+                        ) : patientData.last_consultation
+                            ?.new_discharge_reason ===
+                          DISCHARGE_REASONS.find((i) => i.text == "Expired")
+                            ?.id ? (
+                          <span className="text-red-600">EXPIRED</span>
+                        ) : (
+                          DISCHARGE_REASONS.find(
+                            (reason) =>
+                              reason.id ===
+                              patientData.last_consultation
+                                ?.new_discharge_reason,
+                          )?.text
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="my-1 rounded-sm p-2">
+                  <div>
+                    <div className="text-xs font-normal text-gray-600">
+                      Last Updated by{" "}
+                      <span className="font-semibold text-gray-900">
+                        {patientData.last_edited?.first_name}{" "}
+                        {patientData.last_edited?.last_name}
+                      </span>
+                    </div>
+                    <div className="whitespace-normal text-sm font-semibold text-gray-900">
+                      <div className="tooltip">
+                        <span className={`tooltip-text tooltip`}>
+                          {patientData.modified_date
+                            ? formatDateTime(patientData.modified_date)
+                            : "--:--"}
+                        </span>
+                        {patientData.modified_date
+                          ? relativeDate(patientData.modified_date)
+                          : "--:--"}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-4">
+                    <div className="text-xs font-normal leading-5 text-gray-600">
+                      Patient profile created by{" "}
+                      <span className="font-semibold text-gray-900">
+                        {patientData.created_by?.first_name}{" "}
+                        {patientData.created_by?.last_name}
+                      </span>
+                    </div>
+                    <div className="whitespace-normal text-sm font-semibold text-gray-900">
+                      <div className="tooltip">
+                        <span className={`tooltip-text tooltip`}>
+                          {patientData.created_date
+                            ? formatDateTime(patientData.created_date)
+                            : "--:--"}
+                        </span>
+                        {patientData.modified_date
+                          ? relativeDate(patientData.created_date)
+                          : "--:--"}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="py-2">
+                {patientData.last_consultation?.new_discharge_reason ===
+                  DISCHARGE_REASONS.find((i) => i.text == "Expired")?.id && (
+                  <div>
+                    <ButtonV2
+                      id="death-report"
+                      className="my-2 w-full"
+                      name="death_report"
+                      onClick={() => navigate(`/death_report/${id}`)}
+                    >
+                      <CareIcon icon="l-file-download" className="text-lg" />
+                      Death Report
+                    </ButtonV2>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <ConfirmDialog

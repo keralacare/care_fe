@@ -63,9 +63,9 @@ const ShiftingHistory = (props: PatientProps) => {
         </div>
         <div>
           <ButtonV2
-            className="w-full bg-green-600 font-semibold text-white hover:bg-green-500"
+            className="w-full bg-green-600 px-4 py-3 font-semibold text-white hover:bg-green-500"
             disabled={isPatientInactive(patientData, facilityId)}
-            size="large"
+            size="default"
             onClick={() =>
               navigate(`/facility/${facilityId}/patient/${id}/shift/new`)
             }

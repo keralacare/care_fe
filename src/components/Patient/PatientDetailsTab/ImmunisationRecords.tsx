@@ -20,7 +20,7 @@ export const ImmunisationRecords = (props: PatientProps) => {
 
   return (
     <div className="mt-4 px-4 md:px-0">
-      <div className="w-full rounded-md bg-white p-4 shadow-md lg:w-1/2">
+      <div className="w-full rounded-md bg-white p-4 shadow-md lg:w-2/3">
         <hr className="mb-1 mr-5 h-1 w-5 border-0 bg-blue-500" />
         <div>
           <div className="flex flex-row gap-x-4">

@@ -38,9 +38,9 @@ export const SampleTestHistory = (props: PatientProps) => {
             Sample Test History
           </h2>
           <ButtonV2
-            className="bg-green-600 font-semibold text-white hover:bg-green-500"
+            className="bg-green-600 px-4 py-3 font-semibold text-white hover:bg-green-500"
             disabled={isPatientInactive(patientData, facilityId)}
-            size="large"
+            size="default"
             onClick={() =>
               navigate(
                 `/facility/${patientData?.facility}/patient/${id}/sample-test`,

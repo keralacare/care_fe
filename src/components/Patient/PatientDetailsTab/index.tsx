@@ -3,9 +3,18 @@ import { Demography } from "./Demography";
 import EncounterHistory from "./EncounterHistory";
 import { HealthProfileSummary } from "./HealthProfileSummary";
 import { ImmunisationRecords } from "./ImmunisationRecords";
-import Notes from "./Notes";
+import PatientNotes from "./Notes";
 import { SampleTestHistory } from "./SampleTestHistory";
 import ShiftingHistory from "./ShiftingHistory";
+
+export type TabRoute =
+  | "demography"
+  | "encounters"
+  | "health_profile"
+  | "immunisation_records"
+  | "shift_patient"
+  | "request_sample_test"
+  | "patient_notes";
 
 export interface PatientProps {
   facilityId: string;
@@ -47,6 +56,6 @@ export const patientTabs = [
   {
     label: "Notes",
     route: "patient_notes",
-    component: Notes,
+    component: PatientNotes,
   },
 ];
