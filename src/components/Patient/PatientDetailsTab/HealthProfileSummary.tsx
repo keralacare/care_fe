@@ -11,13 +11,14 @@ export const HealthProfileSummary = (props: PatientProps) => {
   const authUser = useAuthUser();
   const { t } = useTranslation();
 
-  const handleEditClick = (sectionId: any) => {
+  const handleEditClick = (sectionId: string) => {
     navigate(
       `/facility/${facilityId}/patient/${id}/update?section=${sectionId}`,
     );
   };
 
-  let patientMedHis: any[] = [];
+  let patientMedHis: JSX.Element[] = [];
+
   if (
     patientData &&
     patientData.medical_history &&

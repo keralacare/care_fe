@@ -12,7 +12,7 @@ export const ImmunisationRecords = (props: PatientProps) => {
   const authUser = useAuthUser();
   const { t } = useTranslation();
 
-  const handleEditClick = (sectionId: any) => {
+  const handleEditClick = (sectionId: string) => {
     navigate(
       `/facility/${facilityId}/patient/${id}/update?section=${sectionId}`,
     );

@@ -19,8 +19,8 @@ import * as Notification from "../../../Utils/Notifications";
 import routes from "@/Redux/api";
 
 interface PatientNotesProps {
-  id: any;
-  facilityId: any;
+  id: string;
+  facilityId: string;
 }
 
 const PatientNotes = (props: PatientNotesProps) => {

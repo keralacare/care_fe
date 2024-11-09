@@ -13,6 +13,7 @@ import { useTranslation } from "react-i18next";
 import { NonReadOnlyUsers } from "@/Utils/AuthorizeFor";
 import { PatientModel } from "../models";
 import { PatientProps } from ".";
+import { ShiftingModel } from "@/components/Facility/models";
 
 const ShiftingHistory = (props: PatientProps) => {
   const { patientData, facilityId, id } = props;
@@ -21,12 +22,14 @@ const ShiftingHistory = (props: PatientProps) => {
   const authUser = useAuthUser();
   const { t } = useTranslation();
 
-  const [modalFor, setModalFor] = useState({
+  const [modalFor, setModalFor] = useState<{
+    externalId: string | undefined;
+    loading: boolean;
+  }>({
     externalId: undefined,
     loading: false,
   });
-
-  const handleTransferComplete = async (shift: any) => {
+  const handleTransferComplete = async (shift: ShiftingModel) => {
     setModalFor({ ...modalFor, loading: true });
     await request(routes.completeTransfer, {
       pathParams: {
@@ -63,7 +66,7 @@ const ShiftingHistory = (props: PatientProps) => {
         </div>
         <div>
           <ButtonV2
-            className="w-full bg-green-600 px-4 py-3 font-semibold text-white hover:bg-green-500"
+            className="w-full bg-green-600 px-3 py-2 font-semibold text-white hover:bg-green-500"
             disabled={isPatientInactive(patientData, facilityId)}
             size="default"
             onClick={() =>
@@ -102,7 +105,7 @@ const ShiftingHistory = (props: PatientProps) => {
         }
       >
         {activeShiftingData?.count ? (
-          activeShiftingData.results.map((shift: any) => (
+          activeShiftingData.results.map((shift: ShiftingModel) => (
             <div key={`shift_${shift.id}`} className="mx-2">
               <div className="h-full overflow-hidden rounded-lg bg-white shadow">
                 <div className="flex h-full flex-col justify-between p-4">
@@ -224,14 +227,13 @@ const ShiftingHistory = (props: PatientProps) => {
                               shift.assigned_facility
                           )
                         }
-                        onClick={() => setModalFor(shift.external_id)}
                       >
                         {t("transfer_to_receiving_facility")}
                       </ButtonV2>
                       <ConfirmDialog
                         title="Confirm Transfer Complete"
                         description="Are you sure you want to mark this transfer as complete? The Origin facility will no longer have access to this patient"
-                        show={modalFor === shift.external_id}
+                        show={modalFor.externalId === shift.external_id}
                         action="Confirm"
                         onClose={() =>
                           setModalFor({

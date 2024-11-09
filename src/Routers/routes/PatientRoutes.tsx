@@ -10,7 +10,7 @@ import { AppRoutes } from "../AppRouter";
 
 const PatientRoutes: AppRoutes = {
   "/patients": () => <PatientManager />,
-  "/patient/:id": ({ id }) => <PatientHome id={id} />,
+  "/patient/:id": ({ id }) => <PatientHome id={id} page="demography" />,
   "/patient/:id/investigation_reports": ({ id }) => (
     <InvestigationReports id={id} />
   ),

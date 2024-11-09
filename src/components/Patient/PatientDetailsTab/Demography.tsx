@@ -15,13 +15,14 @@ import * as Notification from "../../../Utils/Notifications";
 import useQuery from "@/Utils/request/useQuery";
 import useAuthUser from "@/common/hooks/useAuthUser";
 import { PatientProps } from ".";
+import { AssignedToObjectModel } from "../models";
 
 export const Demography = (props: PatientProps) => {
   const { patientData, facilityId, id } = props;
   const authUser = useAuthUser();
   const { t } = useTranslation();
   const [_assignedVolunteerObject, setAssignedVolunteerObject] =
-    useState<any>(null);
+    useState<AssignedToObjectModel>();
 
   const [activeSection, setActiveSection] = useState<string | null>(null);
 
@@ -67,7 +68,7 @@ export const Demography = (props: PatientProps) => {
     }
   };
 
-  const handleEditClick = (sectionId: any) => {
+  const handleEditClick = (sectionId: string) => {
     navigate(
       `/facility/${facilityId}/patient/${id}/update?section=${sectionId}`,
     );

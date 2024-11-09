@@ -52,6 +52,7 @@ export const parseOccupation = (occupation: string | undefined) => {
 export const PatientHome = (props: any) => {
   const { facilityId, id, page } = props;
   const [patientData, setPatientData] = useState<PatientModel>({});
+  console.log(patientData);
   const [assignedVolunteerObject, setAssignedVolunteerObject] =
     useState<any>(null);
 
@@ -293,43 +294,7 @@ export const PatientHome = (props: any) => {
         onClose={() => setShowAlertMessage(false)}
       />
 
-      <div>
-        <div className="relative mt-2 px-3 md:px-0">
-          <div className="mx-auto w-full py-3">
-            <div className="flex flex-col gap-x-2 space-y-2 md:flex-row md:space-x-4 md:space-y-0">
-              {patientData?.last_consultation?.assigned_to_object && (
-                <p className="flex flex-1 justify-center gap-2 rounded-lg bg-green-200 p-3 text-center font-bold text-green-800 shadow">
-                  <span className="inline">
-                    Assigned Doctor:
-                    {formatName(
-                      patientData.last_consultation.assigned_to_object,
-                    )}
-                  </span>
-                  {patientData?.last_consultation?.assigned_to_object
-                    .alt_phone_number && (
-                    <a
-                      href={`https://wa.me/${patientData?.last_consultation?.assigned_to_object.alt_phone_number?.replace(/\D+/g, "")}`}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      <CareIcon icon="l-whatsapp" /> Video Call
-                    </a>
-                  )}
-                </p>
-              )}
-
-              {patientData.assigned_to_object && (
-                <p className="flex flex-1 justify-center gap-2 rounded-lg bg-green-200 p-3 text-center font-bold text-green-800 shadow">
-                  <span className="inline">
-                    Assigned Volunteer:
-                    {formatName(patientData.assigned_to_object)}
-                  </span>
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
-
+      <div className="mt-3">
         <div className="px-3 md:px-0">
           <div className="rounded-md bg-white p-3 shadow-sm">
             <div>
@@ -500,6 +465,42 @@ export const PatientHome = (props: any) => {
                           formatSkills(skillsQuery.data?.results)}
                       </p>
                     </div>
+                  </div>
+                )}
+                {patientData?.last_consultation?.assigned_to_object && (
+                  <div>
+                    <p className="text-xs font-normal leading-tight text-gray-600">
+                      Assigned Doctor:
+                    </p>
+                    <div className="mt-1 flex space-x-2 text-sm font-semibold leading-tight text-gray-900">
+                      <p>
+                        {formatName(
+                          patientData.last_consultation.assigned_to_object,
+                        )}
+                      </p>
+                      {patientData?.last_consultation?.assigned_to_object
+                        .alt_phone_number && (
+                        <a
+                          href={`https://wa.me/${patientData.last_consultation.assigned_to_object.alt_phone_number.replace(/\D+/g, "")}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="flex items-center space-x-1 text-xs text-green-500"
+                        >
+                          <CareIcon icon="l-whatsapp" /> <span>Video Call</span>
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {patientData.assigned_to_object && (
+                  <div>
+                    <p className="text-xs font-normal leading-tight text-gray-600">
+                      Assigned Volunteer:
+                    </p>
+                    <p className="mt-1 text-sm font-semibold leading-tight text-gray-900">
+                      {formatName(patientData.assigned_to_object)}
+                    </p>
                   </div>
                 )}
               </div>

@@ -12,10 +12,11 @@ import { PatientProps } from ".";
 
 export const SampleTestHistory = (props: PatientProps) => {
   const { patientData, facilityId, id } = props;
-  const [_selectedStatus, setSelectedStatus] = useState<{
+  const [selectedStatus, setSelectedStatus] = useState<{
     status: number;
-    sample: any;
+    sample: SampleTestModel | null;
   }>({ status: 0, sample: null });
+  console.log("selectedStatus", selectedStatus);
   const [_showAlertMessage, setShowAlertMessage] = useState(false);
 
   const isPatientInactive = (patientData: PatientModel, facilityId: string) => {
@@ -25,7 +26,7 @@ export const SampleTestHistory = (props: PatientProps) => {
     );
   };
 
-  const confirmApproval = (status: number, sample: any) => {
+  const confirmApproval = (status: number, sample: SampleTestModel) => {
     setSelectedStatus({ status, sample });
     setShowAlertMessage(true);
   };
@@ -38,7 +39,7 @@ export const SampleTestHistory = (props: PatientProps) => {
             Sample Test History
           </h2>
           <ButtonV2
-            className="bg-green-600 px-4 py-3 font-semibold text-white hover:bg-green-500"
+            className="bg-green-600 px-3 py-2 font-semibold text-white hover:bg-green-500"
             disabled={isPatientInactive(patientData, facilityId)}
             size="default"
             onClick={() =>
