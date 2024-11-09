@@ -239,7 +239,7 @@ export const PatientRegister = (props: PatientRegisterProps) => {
         if (element) {
           element.scrollIntoView({ behavior: "smooth" });
         }
-      }, 1000);
+      }, 2000);
     }
   }, []);
 

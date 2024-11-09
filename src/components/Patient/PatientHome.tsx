@@ -52,7 +52,6 @@ export const parseOccupation = (occupation: string | undefined) => {
 export const PatientHome = (props: any) => {
   const { facilityId, id, page } = props;
   const [patientData, setPatientData] = useState<PatientModel>({});
-  console.log(patientData);
   const [assignedVolunteerObject, setAssignedVolunteerObject] =
     useState<any>(null);
 
@@ -131,11 +130,16 @@ export const PatientHome = (props: any) => {
   const formatSkills = (arr: SkillModel[]) => {
     const skills = arr.map((skill) => skill.skill_object.name);
 
+    if (skills.length === 0) {
+      return "";
+    }
+
     if (skills.length <= 3) {
       return humanizeStrings(skills);
     }
 
-    return `${skills[0]}, ${skills[1]} and ${skills.length - 2} other skills...`;
+    const [first, second, ...rest] = skills;
+    return `${first}, ${second} and ${rest.length} other skills...`;
   };
 
   const handleApproval = async () => {
@@ -172,22 +176,17 @@ export const PatientHome = (props: any) => {
   )?.text;
 
   const handlePatientTransfer = async (value: boolean) => {
-    const dummyPatientData = Object.assign({}, patientData);
-    dummyPatientData["allow_transfer"] = value;
-
     await request(routes.patchPatient, {
       pathParams: {
         id: patientData.id as string,
       },
-
       body: { allow_transfer: value },
-
       onResponse: ({ res }) => {
-        if ((res || {}).status === 200) {
-          const dummyPatientData = Object.assign({}, patientData);
-          dummyPatientData["allow_transfer"] = value;
-          setPatientData(dummyPatientData);
-
+        if (res?.status === 200) {
+          setPatientData((prev) => ({
+            ...prev,
+            allow_transfer: value,
+          }));
           Notification.Success({
             msg: "Transfer status updated.",
           });

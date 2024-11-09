@@ -4,6 +4,8 @@ import { PatientProps } from ".";
 import CareIcon from "@/CAREUI/icons/CareIcon";
 import { navigate } from "raviger";
 import * as Notification from "../../../Utils/Notifications";
+import { PatientModel } from "../models";
+import { UserModel } from "@/components/Users/models";
 
 export const HealthProfileSummary = (props: PatientProps) => {
   const { patientData, facilityId, id } = props;
@@ -19,11 +21,7 @@ export const HealthProfileSummary = (props: PatientProps) => {
 
   let patientMedHis: JSX.Element[] = [];
 
-  if (
-    patientData &&
-    patientData.medical_history &&
-    patientData.medical_history.length
-  ) {
+  if (patientData?.medical_history?.length) {
     const medHis = patientData.medical_history;
     patientMedHis = medHis
       .filter((item) => item.disease !== "NO")
@@ -39,6 +37,16 @@ export const HealthProfileSummary = (props: PatientProps) => {
       ));
   }
 
+  const ADMIN_USER_TYPES = ["DistrictAdmin", "StateAdmin"] as const;
+
+  const canEditPatient = (authUser: UserModel, patientData: PatientModel) => {
+    return (
+      ADMIN_USER_TYPES.includes(
+        authUser.user_type as (typeof ADMIN_USER_TYPES)[number],
+      ) || authUser.home_facility_object?.id === patientData.facility
+    );
+  };
+
   return (
     <div className="mt-4 px-4 md:px-0">
       <div className="group my-2 w-full rounded bg-white p-4 shadow lg:w-2/3">
@@ -51,12 +59,9 @@ export const HealthProfileSummary = (props: PatientProps) => {
             <button
               className="flexrounded flex border border-secondary-400 bg-white px-1 py-1 text-sm font-semibold text-green-800 hover:bg-secondary-200"
               disabled={!patientData.is_active}
+              aria-label="Edit medical history"
               onClick={() => {
-                const showAllFacilityUsers = ["DistrictAdmin", "StateAdmin"];
-                if (
-                  !showAllFacilityUsers.includes(authUser.user_type) &&
-                  authUser.home_facility_object?.id !== patientData.facility
-                ) {
+                if (!canEditPatient(authUser, patientData)) {
                   Notification.Error({
                     msg: "Oops! Non-Home facility users don't have permission to perform this action.",
                   });

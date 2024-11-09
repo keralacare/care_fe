@@ -29,6 +29,7 @@ export const Demography = (props: PatientProps) => {
   useEffect(() => {
     setAssignedVolunteerObject(patientData.assigned_to_object);
 
+    const observedSections: Element[] = [];
     const sections = document.querySelectorAll("div[id]");
     const observer = new IntersectionObserver(
       (entries) => {
@@ -43,10 +44,13 @@ export const Demography = (props: PatientProps) => {
       },
     );
 
-    sections.forEach((section) => observer.observe(section));
+    sections.forEach((section) => {
+      observer.observe(section);
+      observedSections.push(section);
+    });
 
     return () => {
-      sections.forEach((section) => observer.unobserve(section));
+      observedSections.forEach((section) => observer.unobserve(section));
     };
   }, [patientData.assigned_to_object]);
 
@@ -72,6 +76,20 @@ export const Demography = (props: PatientProps) => {
     navigate(
       `/facility/${facilityId}/patient/${id}/update?section=${sectionId}`,
     );
+  };
+
+  const hasEditPermission = () => {
+    const showAllFacilityUsers = ["DistrictAdmin", "StateAdmin"];
+    if (
+      !showAllFacilityUsers.includes(authUser.user_type) &&
+      authUser.home_facility_object?.id !== patientData.facility
+    ) {
+      Notification.Error({
+        msg: "Oops! Non-Home facility users don't have permission to perform this action.",
+      });
+      return false;
+    }
+    return true;
   };
   return (
     <div>
@@ -147,11 +165,7 @@ export const Demography = (props: PatientProps) => {
                 disabled={!patientData.is_active}
                 authorizeFor={NonReadOnlyUsers}
                 onClick={() => {
-                  const showAllFacilityUsers = ["DistrictAdmin", "StateAdmin"];
-                  if (
-                    !showAllFacilityUsers.includes(authUser.user_type) &&
-                    authUser.home_facility_object?.id !== patientData.facility
-                  ) {
+                  if (!hasEditPermission()) {
                     Notification.Error({
                       msg: "Oops! Non-Home facility users don't have permission to perform this action.",
                     });
@@ -197,15 +211,7 @@ export const Demography = (props: PatientProps) => {
                       className="flex rounded border border-secondary-400 bg-white px-2 py-1 text-sm font-semibold text-green-800 hover:bg-secondary-200"
                       disabled={!patientData.is_active}
                       onClick={() => {
-                        const showAllFacilityUsers = [
-                          "DistrictAdmin",
-                          "StateAdmin",
-                        ];
-                        if (
-                          !showAllFacilityUsers.includes(authUser.user_type) &&
-                          authUser.home_facility_object?.id !==
-                            patientData.facility
-                        ) {
+                        if (!hasEditPermission()) {
                           Notification.Error({
                             msg: "Oops! Non-Home facility users don't have permission to perform this action.",
                           });
@@ -406,15 +412,7 @@ export const Demography = (props: PatientProps) => {
                     className="flex rounded border border-secondary-400 bg-white px-2 py-1 text-sm font-semibold text-green-800 hover:bg-secondary-200"
                     disabled={!patientData.is_active}
                     onClick={() => {
-                      const showAllFacilityUsers = [
-                        "DistrictAdmin",
-                        "StateAdmin",
-                      ];
-                      if (
-                        !showAllFacilityUsers.includes(authUser.user_type) &&
-                        authUser.home_facility_object?.id !==
-                          patientData.facility
-                      ) {
+                      if (!hasEditPermission()) {
                         Notification.Error({
                           msg: "Oops! Non-Home facility users don't have permission to perform this action.",
                         });
@@ -512,7 +510,7 @@ export const Demography = (props: PatientProps) => {
                             <div className="mt-1 text-sm leading-5 text-secondary-900">
                               <div>
                                 <a
-                                  href={`tel:${patientData.emergency_phone_number}`}
+                                  href={`tel:${patientData.assigned_to_object?.alt_phone_number}`}
                                   className="text-sm font-medium text-black hover:text-secondary-500"
                                 >
                                   {patientData.assigned_to_object
@@ -573,11 +571,7 @@ export const Demography = (props: PatientProps) => {
                 className="mt-3 rounded border border-green-800 bg-white px-3 py-2 text-sm font-semibold text-green-800 hover:bg-secondary-200"
                 disabled={!patientData.is_active}
                 onClick={() => {
-                  const showAllFacilityUsers = ["DistrictAdmin", "StateAdmin"];
-                  if (
-                    !showAllFacilityUsers.includes(authUser.user_type) &&
-                    authUser.home_facility_object?.id !== patientData.facility
-                  ) {
+                  if (!hasEditPermission()) {
                     Notification.Error({
                       msg: "Oops! Non-Home facility users don't have permission to perform this action.",
                     });

@@ -5,6 +5,8 @@ import { PatientProps } from ".";
 import CareIcon from "@/CAREUI/icons/CareIcon";
 import { navigate } from "raviger";
 import * as Notification from "../../../Utils/Notifications";
+import { PatientModel } from "../models";
+import { UserModel } from "@/components/Users/models";
 
 export const ImmunisationRecords = (props: PatientProps) => {
   const { patientData, facilityId, id } = props;
@@ -15,6 +17,16 @@ export const ImmunisationRecords = (props: PatientProps) => {
   const handleEditClick = (sectionId: string) => {
     navigate(
       `/facility/${facilityId}/patient/${id}/update?section=${sectionId}`,
+    );
+  };
+
+  const ADMIN_USER_TYPES = ["DistrictAdmin", "StateAdmin"] as const;
+
+  const canEditPatient = (authUser: UserModel, patientData: PatientModel) => {
+    return (
+      ADMIN_USER_TYPES.includes(
+        authUser.user_type as (typeof ADMIN_USER_TYPES)[number],
+      ) || authUser.home_facility_object?.id === patientData.facility
     );
   };
 
@@ -29,11 +41,7 @@ export const ImmunisationRecords = (props: PatientProps) => {
               className="hidden rounded border border-secondary-400 bg-white px-1 py-1 text-sm font-semibold text-green-800 hover:bg-secondary-200 group-hover:flex"
               disabled={!patientData.is_active}
               onClick={() => {
-                const showAllFacilityUsers = ["DistrictAdmin", "StateAdmin"];
-                if (
-                  !showAllFacilityUsers.includes(authUser.user_type) &&
-                  authUser.home_facility_object?.id !== patientData.facility
-                ) {
+                if (!canEditPatient(authUser, patientData)) {
                   Notification.Error({
                     msg: "Oops! Non-Home facility users don't have permission to perform this action.",
                   });

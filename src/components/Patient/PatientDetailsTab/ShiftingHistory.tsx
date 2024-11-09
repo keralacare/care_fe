@@ -141,7 +141,7 @@ const ShiftingHistory = (props: PatientProps) => {
                             className="mr-2 text-lg"
                           />
                           <dd className="text-sm font-bold leading-5 text-secondary-900">
-                            {(shift.origin_facility_object || {})?.name}
+                            {shift.origin_facility_object?.name}
                           </dd>
                         </dt>
                       </div>
@@ -155,10 +155,7 @@ const ShiftingHistory = (props: PatientProps) => {
                             className="mr-2 text-lg"
                           />
                           <dd className="text-sm font-bold leading-5 text-secondary-900">
-                            {
-                              (shift.shifting_approving_facility_object || {})
-                                ?.name
-                            }
+                            {shift.shifting_approving_facility_object?.name}
                           </dd>
                         </dt>
                       </div>
@@ -172,7 +169,7 @@ const ShiftingHistory = (props: PatientProps) => {
                             className="mr-2 text-lg"
                           />
                           <dd className="text-sm font-bold leading-5 text-secondary-900">
-                            {(shift.assigned_facility_object || {})?.name ||
+                            {shift.assigned_facility_object?.name ??
                               "Yet to be decided"}
                           </dd>
                         </dt>

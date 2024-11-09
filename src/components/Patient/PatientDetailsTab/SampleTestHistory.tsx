@@ -12,17 +12,19 @@ import { PatientProps } from ".";
 
 export const SampleTestHistory = (props: PatientProps) => {
   const { patientData, facilityId, id } = props;
-  const [selectedStatus, setSelectedStatus] = useState<{
+  const [_selectedStatus, setSelectedStatus] = useState<{
     status: number;
     sample: SampleTestModel | null;
   }>({ status: 0, sample: null });
-  console.log("selectedStatus", selectedStatus);
   const [_showAlertMessage, setShowAlertMessage] = useState(false);
 
   const isPatientInactive = (patientData: PatientModel, facilityId: string) => {
     return (
       !patientData.is_active ||
-      !(patientData?.last_consultation?.facility === facilityId)
+      !(
+        patientData?.last_consultation &&
+        patientData.last_consultation.facility === facilityId
+      )
     );
   };
 

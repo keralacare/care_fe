@@ -55,31 +55,43 @@ const PatientNotes = (props: PatientNotesProps) => {
       return;
     }
 
-    const { res } = await request(routes.addPatientNote, {
-      pathParams: { patientId: patientId },
-      body: {
-        note: noteField,
-        thread,
-        reply_to: reply_to?.id,
-      },
-    });
-    if (res?.status === 201) {
-      Notification.Success({ msg: "Note added successfully" });
-      setNoteField("");
-      setReload(!reload);
-      setState({ ...state, cPage: 1 });
-      setReplyTo(undefined);
+    try {
+      const { res } = await request(routes.addPatientNote, {
+        pathParams: { patientId: patientId },
+        body: {
+          note: noteField,
+          thread,
+          reply_to: reply_to?.id,
+        },
+      });
+      if (res?.status === 201) {
+        setNoteField("");
+        setReload(!reload);
+        setState({ ...state, cPage: 1 });
+        setReplyTo(undefined);
+        Notification.Success({ msg: "Note added successfully" });
+      }
+    } catch (error) {
+      Notification.Error({
+        msg: "Failed to add note. Please try again.",
+      });
     }
   };
 
   useEffect(() => {
     async function fetchPatientName() {
       if (patientId) {
-        const { data } = await request(routes.getPatient, {
-          pathParams: { id: patientId },
-        });
-        if (data) {
-          setPatientActive(data.is_active ?? true);
+        try {
+          const { data } = await request(routes.getPatient, {
+            pathParams: { id: patientId },
+          });
+          if (data) {
+            setPatientActive(data.is_active ?? true);
+          }
+        } catch (error) {
+          Notification.Error({
+            msg: "Failed to fetch patient status",
+          });
         }
       }
     }
