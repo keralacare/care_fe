@@ -1,13 +1,29 @@
 import { Link, navigate } from "raviger";
 import { useEffect, useState } from "react";
-import * as Notification from "../../Utils/Notifications";
+import { useTranslation } from "react-i18next";
+
+import ConfirmDialog from "@/components/Common/ConfirmDialog";
+import UserAutocomplete from "@/components/Common/UserAutocompleteFormField";
+
+import useAuthUser from "@/hooks/useAuthUser";
+
 import {
   DISCHARGE_REASONS,
   GENDER_TYPES,
   OCCUPATION_TYPES,
   SAMPLE_TEST_STATUS,
 } from "@/common/constants";
-import { PatientModel } from "./models";
+
+import dayjs from "@/Utils/dayjs";
+import routes from "@/Utils/request/api";
+
+import Chip from "../../CAREUI/display/Chip";
+import CareIcon from "../../CAREUI/icons/CareIcon";
+import { triggerGoal } from "../../Integrations/Plausible";
+import { NonReadOnlyUsers } from "../../Utils/AuthorizeFor";
+import * as Notification from "../../Utils/Notifications";
+import request from "../../Utils/request/request";
+import useQuery from "../../Utils/request/useQuery";
 import {
   formatDateTime,
   formatName,
@@ -17,25 +33,12 @@ import {
   isPostPartum,
   relativeDate,
 } from "../../Utils/utils";
-
-import CareIcon from "../../CAREUI/icons/CareIcon";
-import Chip from "../../CAREUI/display/Chip";
-import ConfirmDialog from "@/components/Common/ConfirmDialog";
-import { NonReadOnlyUsers } from "../../Utils/AuthorizeFor";
-import Page from "@/components/Common/components/Page";
-import UserAutocomplete from "@/components/Common/UserAutocompleteFormField";
-import { triggerGoal } from "../../Integrations/Plausible";
-import useAuthUser from "@/common/hooks/useAuthUser";
-import useQuery from "../../Utils/request/useQuery";
-import routes from "../../Redux/api";
-import request from "../../Utils/request/request";
-import { useTranslation } from "react-i18next";
 import { Avatar } from "../Common/Avatar";
-import { SkillModel } from "../Users/models";
+import ButtonV2 from "../Common/ButtonV2";
 import Loading from "../Common/Loading";
+import Page from "../Common/Page";
+import { SkillModel } from "../Users/models";
 import { patientTabs } from "./PatientDetailsTab";
-import ButtonV2 from "../Common/components/ButtonV2";
-import dayjs from "@/Utils/dayjs";
 import { Demography } from "./PatientDetailsTab/Demography";
 import EncounterHistory from "./PatientDetailsTab/EncounterHistory";
 import { HealthProfileSummary } from "./PatientDetailsTab/HealthProfileSummary";
@@ -44,6 +47,7 @@ import PatientNotes from "./PatientDetailsTab/Notes";
 import { SampleTestHistory } from "./PatientDetailsTab/SampleTestHistory";
 import ShiftingHistory from "./PatientDetailsTab/ShiftingHistory";
 import { isPatientMandatoryDataFilled } from "./Utils";
+import { PatientModel } from "./models";
 
 export const parseOccupation = (occupation: string | undefined) => {
   return OCCUPATION_TYPES.find((i) => i.value === occupation)?.text;
@@ -62,7 +66,6 @@ export const PatientHome = (props: any) => {
     sample: any;
   }>({ status: 0, sample: null });
   const [showAlertMessage, setShowAlertMessage] = useState(false);
-
   const [openAssignVolunteerDialog, setOpenAssignVolunteerDialog] =
     useState(false);
 
@@ -601,7 +604,12 @@ export const PatientHome = (props: any) => {
                         authorizeFor={NonReadOnlyUsers}
                       >
                         <span className="flex w-full items-center justify-start gap-2">
-                          <CareIcon icon="l-lock" className="text-lg" />
+                          <CareIcon
+                            icon={
+                              patientData.allow_transfer ? "l-lock" : "l-unlock"
+                            }
+                            className="text-lg"
+                          />
                           {patientData.allow_transfer
                             ? "Disable Transfer"
                             : "Allow Transfer"}

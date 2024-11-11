@@ -1,20 +1,26 @@
-import CareIcon from "@/CAREUI/icons/CareIcon";
-import { GENDER_TYPES } from "@/common/constants";
-import { formatName, formatPatientAge } from "@/Utils/utils";
 import dayjs from "dayjs";
-import { useTranslation } from "react-i18next";
-import { InsuranceDetialsCard } from "../InsuranceDetailsCard";
-import { parseOccupation } from "../PatientHome";
-import Chip from "@/CAREUI/display/Chip";
-import ButtonV2 from "@/components/Common/components/ButtonV2";
-import { NonReadOnlyUsers } from "@/Utils/AuthorizeFor";
 import { navigate } from "raviger";
 import { useEffect, useState } from "react";
-import routes from "@/Redux/api";
-import * as Notification from "../../../Utils/Notifications";
+import { useTranslation } from "react-i18next";
+
+import Chip from "@/CAREUI/display/Chip";
+import CareIcon from "@/CAREUI/icons/CareIcon";
+
+import ButtonV2 from "@/components/Common/ButtonV2";
+
+import useAuthUser from "@/hooks/useAuthUser";
+
+import { GENDER_TYPES } from "@/common/constants";
+
+import { NonReadOnlyUsers } from "@/Utils/AuthorizeFor";
+import routes from "@/Utils/request/api";
 import useQuery from "@/Utils/request/useQuery";
-import useAuthUser from "@/common/hooks/useAuthUser";
+import { formatName, formatPatientAge } from "@/Utils/utils";
+
 import { PatientProps } from ".";
+import * as Notification from "../../../Utils/Notifications";
+import { InsuranceDetialsCard } from "../InsuranceDetailsCard";
+import { parseOccupation } from "../PatientHome";
 import { AssignedToObjectModel } from "../models";
 
 export const Demography = (props: PatientProps) => {

@@ -1,14 +1,18 @@
-import React, { useState } from "react";
-import { PatientModel, SampleTestModel } from "../models";
 import { navigate } from "raviger";
-import ButtonV2 from "@/components/Common/components/ButtonV2";
-import { NonReadOnlyUsers } from "@/Utils/AuthorizeFor";
+import React, { useState } from "react";
+
 import CareIcon from "@/CAREUI/icons/CareIcon";
 import PaginatedList from "@/CAREUI/misc/PaginatedList";
-import CircularProgress from "@/components/Common/components/CircularProgress";
-import { SampleTestCard } from "../SampleTestCard";
-import routes from "@/Redux/api";
+
+import ButtonV2 from "@/components/Common/ButtonV2";
+import CircularProgress from "@/components/Common/CircularProgress";
+
+import { NonReadOnlyUsers } from "@/Utils/AuthorizeFor";
+import routes from "@/Utils/request/api";
+
 import { PatientProps } from ".";
+import { SampleTestCard } from "../SampleTestCard";
+import { PatientModel, SampleTestModel } from "../models";
 
 export const SampleTestHistory = (props: PatientProps) => {
   const { patientData, facilityId, id } = props;

@@ -1,22 +1,28 @@
-import { useState, useEffect } from "react";
-import ButtonV2 from "@/components/Common/components/ButtonV2";
-import { useMessageListener } from "@/common/hooks/useMessageListener";
-import { PATIENT_NOTES_THREADS } from "@/common/constants";
-import useAuthUser from "@/common/hooks/useAuthUser";
 import { t } from "i18next";
+import { useEffect, useState } from "react";
+
 import CareIcon from "@/CAREUI/icons/CareIcon";
+
+import ButtonV2 from "@/components/Common/ButtonV2";
 import DoctorNoteReplyPreviewCard from "@/components/Facility/DoctorNoteReplyPreviewCard";
-import {
-  PatientNotesModel,
-  PatientNoteStateType,
-} from "@/components/Facility/models";
 import PatientNotesList from "@/components/Facility/PatientNotesList";
+import {
+  PatientNoteStateType,
+  PatientNotesModel,
+} from "@/components/Facility/models";
 import AutoExpandingTextInputFormField from "@/components/Form/FormFields/AutoExpandingTextInputFormField";
+
+import useAuthUser from "@/hooks/useAuthUser";
+import { useMessageListener } from "@/hooks/useMessageListener";
+
+import { PATIENT_NOTES_THREADS } from "@/common/constants";
+
 import { NonReadOnlyUsers } from "@/Utils/AuthorizeFor";
+import routes from "@/Utils/request/api";
 import request from "@/Utils/request/request";
-import { keysOf, classNames } from "@/Utils/utils";
+import { classNames, keysOf } from "@/Utils/utils";
+
 import * as Notification from "../../../Utils/Notifications";
-import routes from "@/Redux/api";
 
 interface PatientNotesProps {
   id: string;

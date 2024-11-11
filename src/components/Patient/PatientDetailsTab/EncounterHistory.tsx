@@ -1,15 +1,20 @@
-import CircularProgress from "@/components/Common/components/CircularProgress";
+import React, { useEffect, useState } from "react";
+
+import PaginatedList from "@/CAREUI/misc/PaginatedList";
+
+import CircularProgress from "@/components/Common/CircularProgress";
+import Loading from "@/components/Common/Loading";
 import { ConsultationCard } from "@/components/Facility/ConsultationCard";
 import { ConsultationModel } from "@/components/Facility/models";
-import React, { useEffect, useState } from "react";
-import { PatientModel } from "../models";
-import PaginatedList from "@/CAREUI/misc/PaginatedList";
-import routes from "@/Redux/api";
+
+import useAuthUser from "@/hooks/useAuthUser";
+
 import { triggerGoal } from "@/Integrations/Plausible";
+import routes from "@/Utils/request/api";
 import useQuery from "@/Utils/request/useQuery";
-import Loading from "@/components/Common/Loading";
-import useAuthUser from "@/common/hooks/useAuthUser";
+
 import { PatientProps } from ".";
+import { PatientModel } from "../models";
 
 const EncounterHistory = (props: PatientProps) => {
   const { patientData: initialPatientData, facilityId, id } = props;

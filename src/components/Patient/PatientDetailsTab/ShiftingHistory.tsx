@@ -1,19 +1,24 @@
-import React, { useState } from "react";
 import dayjs from "dayjs";
-import CareIcon from "@/CAREUI/icons/CareIcon";
-import ButtonV2 from "@/components/Common/components/ButtonV2";
-import { formatDateTime } from "@/Utils/utils";
-import ConfirmDialog from "@/components/Common/ConfirmDialog";
-import routes from "@/Redux/api";
-import useQuery from "@/Utils/request/useQuery";
-import useAuthUser from "@/common/hooks/useAuthUser";
 import { navigate } from "raviger";
-import request from "@/Utils/request/request";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { NonReadOnlyUsers } from "@/Utils/AuthorizeFor";
-import { PatientModel } from "../models";
-import { PatientProps } from ".";
+
+import CareIcon from "@/CAREUI/icons/CareIcon";
+
+import ButtonV2 from "@/components/Common/ButtonV2";
+import ConfirmDialog from "@/components/Common/ConfirmDialog";
 import { ShiftingModel } from "@/components/Facility/models";
+
+import useAuthUser from "@/hooks/useAuthUser";
+
+import { NonReadOnlyUsers } from "@/Utils/AuthorizeFor";
+import routes from "@/Utils/request/api";
+import request from "@/Utils/request/request";
+import useQuery from "@/Utils/request/useQuery";
+import { formatDateTime } from "@/Utils/utils";
+
+import { PatientProps } from ".";
+import { PatientModel } from "../models";
 
 const ShiftingHistory = (props: PatientProps) => {
   const { patientData, facilityId, id } = props;
@@ -22,19 +27,11 @@ const ShiftingHistory = (props: PatientProps) => {
   const authUser = useAuthUser();
   const { t } = useTranslation();
 
-  const [modalFor, setModalFor] = useState<{
-    externalId: string | undefined;
-    loading: boolean;
-  }>({
-    externalId: undefined,
-    loading: false,
-  });
+  const [modalFor, setModalFor] = useState<ShiftingModel>();
   const handleTransferComplete = async (shift: ShiftingModel) => {
-    setModalFor({ ...modalFor, loading: true });
+    if (!shift) return;
     await request(routes.completeTransfer, {
-      pathParams: {
-        id: modalFor.externalId ?? "",
-      },
+      pathParams: { externalId: shift.external_id },
     });
     navigate(
       `/facility/${shift.assigned_facility}/patient/${shift.patient}/consultation`,
@@ -230,14 +227,9 @@ const ShiftingHistory = (props: PatientProps) => {
                       <ConfirmDialog
                         title="Confirm Transfer Complete"
                         description="Are you sure you want to mark this transfer as complete? The Origin facility will no longer have access to this patient"
-                        show={modalFor.externalId === shift.external_id}
+                        show={!!modalFor}
                         action="Confirm"
-                        onClose={() =>
-                          setModalFor({
-                            externalId: undefined,
-                            loading: false,
-                          })
-                        }
+                        onClose={() => setModalFor(undefined)}
                         onConfirm={() => handleTransferComplete(shift)}
                       />
                     </div>
