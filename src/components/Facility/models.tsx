@@ -1,4 +1,22 @@
-import { AssetData, AssetLocationType } from "../Assets/AssetTypes";
+import { AssetData, AssetLocationType } from "@/components/Assets/AssetTypes";
+import { RouteToFacility } from "@/components/Common/RouteToFacilitySelect";
+import { InvestigationType } from "@/components/Common/prescription-builder/InvestigationBuilder";
+import { ProcedureType } from "@/components/Common/prescription-builder/ProcedureBuilder";
+import {
+  ConsultationDiagnosis,
+  CreateDiagnosis,
+} from "@/components/Diagnosis/types";
+import {
+  AssignedToObjectModel,
+  BloodPressure,
+  DailyRoundsModel,
+  FacilityNameModel,
+  FileUploadModel,
+  PatientModel,
+} from "@/components/Patient/models";
+import { EncounterSymptom } from "@/components/Symptoms/types";
+import { UserBareMinimum } from "@/components/Users/models";
+
 import {
   CONSENT_PATIENT_CODE_STATUS_CHOICES,
   CONSENT_TYPE_CHOICES,
@@ -8,22 +26,8 @@ import {
   SHIFTING_CHOICES_PEACETIME,
   UserRole,
 } from "@/common/constants";
-import { FeatureFlag } from "../../Utils/featureFlags";
-import { ConsultationDiagnosis, CreateDiagnosis } from "../Diagnosis/types";
-import {
-  AssignedToObjectModel,
-  BloodPressure,
-  DailyRoundsModel,
-  FacilityNameModel,
-  FileUploadModel,
-  PatientModel,
-} from "../Patient/models";
-import { EncounterSymptom } from "../Symptoms/types";
-import { UserBareMinimum } from "../Users/models";
-import { InvestigationType } from "@/components/Common/prescription-builder/InvestigationBuilder";
-import { ProcedureType } from "@/components/Common/prescription-builder/ProcedureBuilder";
-import { RouteToFacility } from "@/components/Common/RouteToFacilitySelect";
-import { PerformedByModel } from "../HCX/misc";
+
+import { FeatureFlag } from "@/Utils/featureFlags";
 
 export interface LocalBodyModel {
   id: number;
@@ -713,8 +717,8 @@ export interface ShiftingModel {
   ambulance_number: string;
   comments: string;
   created_date: string;
-  created_by_object: PerformedByModel;
-  last_edited_by_object: PerformedByModel;
+  created_by_object: UserBareMinimum;
+  last_edited_by_object: UserBareMinimum;
   is_assigned_to_user: boolean;
   created_by: number;
   last_edited_by: number;
@@ -746,15 +750,15 @@ export interface ResourceModel {
   status: string;
   sub_category: string;
   title: string;
-  assigned_to_object: PerformedByModel | null;
-  created_by_object: PerformedByModel | null;
+  assigned_to_object: UserBareMinimum | null;
+  created_by_object: UserBareMinimum | null;
   created_date: string;
-  last_edited_by_object: PerformedByModel;
+  last_edited_by_object: UserBareMinimum;
 }
 
 export interface CommentModel {
   id: string;
-  created_by_object: PerformedByModel;
+  created_by_object: UserBareMinimum;
   created_date: string;
   modified_date: string;
   comment: string;
