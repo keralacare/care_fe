@@ -212,7 +212,7 @@ export const ConsultationDetails = (props: any) => {
         <div>
           <nav className="relative flex flex-wrap items-start justify-between">
             <PageTitle
-              title="Patient Dashboard"
+              title={t("patient_dashboard")}
               className="sm:m-0 sm:p-0"
               crumbsReplacements={{
                 [facilityId]: { name: patientData?.facility_object?.name },
@@ -287,7 +287,7 @@ export const ConsultationDetails = (props: any) => {
             </div>
           </nav>
           <div className="mt-2 flex w-full flex-col md:flex-row">
-            <div className="size-full rounded-lg border bg-white text-black shadow">
+            <div className="size-full text-black">
               <PatientInfoCard
                 patient={patientData}
                 consultation={consultationData}

@@ -176,7 +176,7 @@ export default function PatientInfoCard(props: PatientInfoCardProps) {
 
       <section className="flex flex-col lg:flex-row">
         <div
-          className="flex w-full flex-col bg-white px-4 pt-2 lg:flex-row"
+          className="flex w-full flex-col px-4 pt-2 lg:flex-row"
           id="patient-infobadges"
         >
           {/* Can support for patient picture in the future */}
@@ -281,7 +281,7 @@ export default function PatientInfoCard(props: PatientInfoCardProps) {
             </div>
             <div className="flex flex-col flex-wrap items-center justify-center lg:items-start lg:justify-normal">
               <div
-                className="mb-2 hidden flex-row text-xl font-semibold capitalize lg:flex"
+                className="mb-2 hidden flex-row text-2xl font-bold capitalize lg:flex"
                 id="patient-name-consultation"
               >
                 {patient.name}

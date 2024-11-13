@@ -200,7 +200,7 @@ export const DailyRounds = (props: any) => {
       });
       if (data) {
         setPatientName(data.name!);
-        setFacilityName(data.facility_object!.name);
+        setFacilityName(data.facility_object?.name || "");
         setConsultationSuggestion(data.last_consultation?.suggestion);
         setDiagnoses(
           data.last_consultation?.diagnoses?.sort(

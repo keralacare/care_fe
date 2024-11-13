@@ -1,5 +1,6 @@
 import {
   ConsultationModel,
+  FacilityModel,
   PatientCategory,
 } from "@/components/Facility/models";
 import { UserBareMinimum } from "@/components/Users/models";
@@ -74,11 +75,7 @@ export interface PatientModel {
   emergency_phone_number?: string;
   allergies?: string;
   medical_history?: Array<{ disease: string | number; details: string }>;
-  facility_object?: {
-    id: number;
-    name: string;
-    facility_type?: { id: number; name: string };
-  };
+  facility_object?: FacilityModel;
   contact_with_carrier?: boolean;
   medical_history_details?: string;
   is_active?: boolean;
