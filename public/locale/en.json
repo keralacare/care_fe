@@ -651,7 +651,7 @@
   "events": "Events",
   "expand_sidebar": "Expand Sidebar",
   "expected_burn_rate": "Expected Burn Rate",
-  "expired_on": "Expired On",
+  "expired_on": "Expired On {{death_date}}",
   "expires_on": "Expires On",
   "facilities": "Facilities",
   "facility": "Facility",
@@ -1316,5 +1316,15 @@
   "yet_to_be_decided": "Yet to be decided",
   "you_need_at_least_a_location_to_create_an_assest": "You need at least a location to create an assest.",
   "zoom_in": "Zoom In",
-  "zoom_out": "Zoom Out"
+  "zoom_out": "Zoom Out",
+  "review_missed": "Review Missed",
+  "review_before": "Review Before",
+  "consent__missing": "Consent Records Missing",
+  "domiciliary_care": "Domiciliary Care",
+  "discharged_from_care": "Discharged from CARE",
+  "discharged_on": "Discharged on {{discharge_date}}",
+  "commenced_on": "Commenced On {{date}}",
+  "admitted on": "Admitted on {{date}}",
+  "icu_admission_on": "ICU Admission on {{date}}",
+  "admitted_on": "Admitted on {{date}}"
 }

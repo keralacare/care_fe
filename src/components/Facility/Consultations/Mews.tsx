@@ -70,7 +70,7 @@ const getBorderColor = (score: number) => {
 
 export const Mews = ({ dailyRound }: { dailyRound: DailyRoundsModel }) => {
   const mewsCard = (isMissing: boolean, data: string[] | number) => {
-    if (isMissing) {
+    if (!isMissing) {
       return (
         <>
           <div className="tooltip flex flex-col items-center">

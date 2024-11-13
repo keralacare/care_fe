@@ -60,7 +60,7 @@ const Avatar: React.FC<AvatarProps> = ({
   return (
     <div
       className={cn(
-        `flex aspect-square w-full items-center justify-center overflow-hidden border border-black/10`,
+        `flex aspect-square w-full items-center justify-center overflow-hidden border ${imageUrl ? "border-transparent" : "border-black/10"}`,
         className,
       )}
       style={{
