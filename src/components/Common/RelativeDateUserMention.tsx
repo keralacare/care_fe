@@ -1,8 +1,8 @@
-import CareIcon from "@/CAREUI/icons/CareIcon";
-
 import { UserBareMinimum } from "@/components/Users/models";
 
 import { formatDateTime, formatName, relativeDate } from "@/Utils/utils";
+
+import { Avatar } from "./Avatar";
 
 function RelativeDateUserMention(props: {
   actionDate?: string;
@@ -35,9 +35,10 @@ function RelativeDateUserMention(props: {
               <p className="flex justify-center">{props.user.user_type}</p>
             </div>
           </span>
-          <CareIcon
-            icon="l-user-circle"
-            className="ml-1 text-xl font-semibold text-green-700 hover:text-green-600"
+          <Avatar
+            name={formatName(props.user)}
+            imageUrl={props.user.read_profile_picture_url}
+            className=" ml-1 w-4 rounded-full"
           />
         </div>
       )}

@@ -2,10 +2,14 @@ import { Link, navigate } from "raviger";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import Card from "@/CAREUI/display/Card";
+import Chip from "@/CAREUI/display/Chip";
+
+import ButtonV2 from "@/components/Common/ButtonV2";
 import Loading from "@/components/Common/Loading";
-import PageTitle from "@/components/Common/PageTitle";
+import Page from "@/components/Common/Page";
 import RelativeDateUserMention from "@/components/Common/RelativeDateUserMention";
-import DiagnosesListAccordion from "@/components/Diagnosis/DiagnosesListAccordion";
+import DiagnosesGrid from "@/components/Diagnosis/DiagnosesGrid";
 import Error404 from "@/components/ErrorPages/404";
 import { ConsultationABGTab } from "@/components/Facility/ConsultationDetails/ConsultationABGTab";
 import { ConsultationDialysisTab } from "@/components/Facility/ConsultationDetails/ConsultationDialysisTab";
@@ -25,6 +29,7 @@ import PatientNotesSlideover from "@/components/Facility/PatientNotesSlideover";
 import { ConsultationModel } from "@/components/Facility/models";
 import PatientInfoCard from "@/components/Patient/PatientInfoCard";
 import { PatientModel } from "@/components/Patient/models";
+import UserBlock from "@/components/Users/UserBlock";
 
 import useAuthUser from "@/hooks/useAuthUser";
 import { useCareAppConsultationTabs } from "@/hooks/useCareApps";
@@ -198,6 +203,10 @@ export const ConsultationDetails = (props: any) => {
         : "text-secondary-700 hover:text-secondary-700"
     }`;
 
+  const principalDiagnosis = consultationData.diagnoses?.find(
+    (diagnosis) => diagnosis.is_principal,
+  );
+
   return (
     <ConsultationProvider
       initialContext={{
@@ -205,200 +214,221 @@ export const ConsultationDetails = (props: any) => {
         patient: patientData,
       }}
     >
-      <div>
-        <div>
-          <nav className="relative flex flex-wrap items-start justify-between">
-            <PageTitle
-              title={t("patient_dashboard")}
-              className="sm:m-0 sm:p-0"
-              crumbsReplacements={{
-                [facilityId]: { name: patientData?.facility_object?.name },
-                [patientId]: { name: patientData?.name },
-                [consultationId]: {
-                  name:
-                    consultationData.suggestion === "A"
-                      ? `Admitted on ${formatDateTime(
-                          consultationData.encounter_date!,
-                        )}`
-                      : consultationData.suggestion_text,
-                },
-              }}
-              breadcrumbs={true}
-              backUrl="/patients"
-            />
-            <div
-              className="flex w-full flex-col min-[1150px]:w-min min-[1150px]:flex-row min-[1150px]:items-center"
-              id="consultationpage-header"
+      <Page
+        title={t("patient_dashboard")}
+        className="sm:m-0 sm:p-0"
+        crumbsReplacements={{
+          [facilityId]: { name: patientData?.facility_object?.name },
+          [patientId]: { name: patientData?.name },
+          [consultationId]: {
+            name:
+              consultationData.suggestion === "A"
+                ? `Admitted on ${formatDateTime(
+                    consultationData.encounter_date!,
+                  )}`
+                : consultationData.suggestion_text,
+          },
+        }}
+        breadcrumbs={true}
+        backUrl="/patients"
+        options={
+          <div
+            className="flex md:grid md:grid-cols-2 gap-1 lg:flex w-full flex-col md:flex-row items-center md:max-w-[300px] lg:max-w-[550px]"
+            id="consultationpage-header"
+          >
+            {!consultationData.discharge_date && (
+              <>
+                <ButtonV2
+                  id="doctor-connect-button"
+                  onClick={() => {
+                    triggerGoal("Doctor Connect Clicked", {
+                      consultationId,
+                      facilityId: patientData.facility,
+                      userId: authUser.id,
+                      page: "ConsultationDetails",
+                    });
+                    setShowDoctors(true);
+                  }}
+                  className="w-full hover:text-white"
+                >
+                  {t("doctor_connect")}
+                </ButtonV2>
+                {patientData.last_consultation?.id &&
+                  isCameraAttached &&
+                  CameraFeedPermittedUserTypes.includes(authUser.user_type) && (
+                    <Link
+                      href={`/facility/${patientData.facility}/patient/${patientData.id}/consultation/${patientData.last_consultation?.id}/feed`}
+                      className="btn btn-primary w-full hover:text-white"
+                    >
+                      {t("camera_feed")}
+                    </Link>
+                  )}
+              </>
+            )}
+            <Link
+              href={`/facility/${patientData.facility}/patient/${patientData.id}`}
+              className="btn btn-primary w-full hover:text-white"
+              id="patient-details"
             >
-              {!consultationData.discharge_date && (
-                <>
-                  <button
-                    id="doctor-connect-button"
-                    onClick={() => {
-                      triggerGoal("Doctor Connect Clicked", {
-                        consultationId,
-                        facilityId: patientData.facility,
-                        userId: authUser.id,
-                        page: "ConsultationDetails",
-                      });
-                      setShowDoctors(true);
-                    }}
-                    className="btn btn-primary m-1 w-full hover:text-white"
-                  >
-                    Doctor Connect
-                  </button>
-                  {patientData.last_consultation?.id &&
-                    isCameraAttached &&
-                    CameraFeedPermittedUserTypes.includes(
-                      authUser.user_type,
-                    ) && (
-                      <Link
-                        href={`/facility/${patientData.facility}/patient/${patientData.id}/consultation/${patientData.last_consultation?.id}/feed`}
-                        className="btn btn-primary m-1 w-full hover:text-white"
-                      >
-                        Camera Feed
-                      </Link>
-                    )}
-                </>
-              )}
-              <Link
-                href={`/facility/${patientData.facility}/patient/${patientData.id}`}
-                className="btn btn-primary m-1 w-full hover:text-white"
-                id="patient-details"
-              >
-                Patient Details
-              </Link>
-              <a
-                id="patient_discussion_notes"
-                onClick={() =>
-                  showPatientNotesPopup
-                    ? navigate(
-                        `/facility/${facilityId}/patient/${patientId}/consultation/${consultationId}/notes`,
-                      )
-                    : setShowPatientNotesPopup(true)
-                }
-                className="btn btn-primary m-1 w-full hover:text-white"
-              >
-                Discussion Notes
-              </a>
-            </div>
-          </nav>
-          <div className="mt-2 flex w-full flex-col md:flex-row">
-            <div className="size-full text-black">
-              <PatientInfoCard
-                patient={patientData}
-                consultation={consultationData}
-                fetchPatientData={() => {
-                  consultationQuery.refetch();
-                  patientDataQuery.refetch();
-                }}
-                consultationId={consultationId}
-                activeShiftingData={activeShiftingData}
-              />
+              {t("patient_details")}
+            </Link>
+            <ButtonV2
+              id="patient_discussion_notes"
+              onClick={() =>
+                showPatientNotesPopup
+                  ? navigate(
+                      `/facility/${facilityId}/patient/${patientId}/consultation/${consultationId}/notes`,
+                    )
+                  : setShowPatientNotesPopup(true)
+              }
+              className="w-full hover:text-white"
+            >
+              {t("discussion_notes")}
+            </ButtonV2>
+          </div>
+        }
+      >
+        <div className="mt-8 flex w-full flex-col md:flex-row ">
+          <div className="size-full text-black">
+            <PatientInfoCard
+              patient={patientData}
+              consultation={consultationData}
+              fetchPatientData={() => {
+                consultationQuery.refetch();
+                patientDataQuery.refetch();
+              }}
+              consultationId={consultationId}
+              activeShiftingData={activeShiftingData}
+            />
 
-              <div className="flex flex-col justify-between px-4 md:flex-row">
-                {consultationData.admitted_to && (
-                  <div className="mt-2 rounded-lg border bg-secondary-100 p-2 md:mt-0">
-                    <div className="border-b-2 py-1">
-                      Patient
-                      {consultationData.discharge_date
-                        ? " Discharged from"
-                        : " Admitted to"}
-                      <span className="badge badge-pill badge-warning ml-2 font-bold">
-                        {consultationData.admitted_to}
-                      </span>
-                    </div>
-                    {(consultationData.discharge_date ??
-                      consultationData.encounter_date) && (
-                      <div className="text-3xl font-bold">
-                        {relativeTime(
-                          consultationData.discharge_date
-                            ? consultationData.discharge_date
-                            : consultationData.encounter_date,
-                        )}
-                      </div>
-                    )}
-                    <div className="-mt-2 text-xs">
-                      {consultationData.encounter_date &&
-                        formatDateTime(consultationData.encounter_date)}
-                      {consultationData.discharge_date &&
-                        ` - ${formatDateTime(consultationData.discharge_date)}`}
-                    </div>
+            <div className="flex flex-col justify-between px-4 md:flex-row">
+              {consultationData.admitted_to && (
+                <div className="mt-2 rounded-lg border bg-secondary-100 p-2 md:mt-0">
+                  <div className="border-b-2 py-1">
+                    Patient
+                    {consultationData.discharge_date
+                      ? " Discharged from"
+                      : " Admitted to"}
+                    <span className="badge badge-pill badge-warning ml-2 font-bold">
+                      {consultationData.admitted_to}
+                    </span>
                   </div>
-                )}
-              </div>
-              <div className="flex flex-col justify-between gap-2 px-4 py-1 md:flex-row">
-                <div className="font-base flex flex-col text-xs leading-relaxed text-secondary-700">
-                  <div className="flex">
-                    <span className="text-secondary-900">Created: </span>&nbsp;
-                    <RelativeDateUserMention
-                      actionDate={consultationData.created_date}
-                      user={consultationData.created_by}
-                      tooltipPosition="right"
-                      withoutSuffix={true}
-                    />
+                  {(consultationData.discharge_date ??
+                    consultationData.encounter_date) && (
+                    <div className="text-3xl font-bold">
+                      {relativeTime(
+                        consultationData.discharge_date
+                          ? consultationData.discharge_date
+                          : consultationData.encounter_date,
+                      )}
+                    </div>
+                  )}
+                  <div className="-mt-2 text-xs">
+                    {consultationData.encounter_date &&
+                      formatDateTime(consultationData.encounter_date)}
+                    {consultationData.discharge_date &&
+                      ` - ${formatDateTime(consultationData.discharge_date)}`}
                   </div>
                 </div>
-                <div className="font-base flex flex-col text-xs leading-relaxed text-secondary-700 md:text-right">
-                  <div className="flex">
-                    <span className="text-secondary-900">Last Modified: </span>
-                    &nbsp;
-                    <RelativeDateUserMention
-                      actionDate={consultationData.modified_date}
-                      user={consultationData.last_edited_by}
-                      tooltipPosition="left"
-                      withoutSuffix={true}
-                    />
-                  </div>
-                </div>
-              </div>
+              )}
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col-reverse lg:flex-row-reverse flex-wrap gap-2 mt-4 relative">
+          <div className="text-[10px] text-gray-500 mt-1 md:absolute md:right-0 md:-top-6 flex flex-col md:flex-row items-center gap-1 md:gap-3">
+            <div className="flex items-center gap-1">
+              <i className="text-gray-400">{t("created")}</i>
+              <RelativeDateUserMention
+                actionDate={consultationData?.created_date}
+                user={consultationData?.created_by}
+                tooltipPosition="left"
+                withoutSuffix={true}
+              />
+            </div>
+            <div className="flex items-center gap-1">
+              <i className="text-gray-400">{t("last_modified")}</i>
+              <RelativeDateUserMention
+                actionDate={consultationData?.modified_date}
+                user={consultationData?.last_edited_by}
+                tooltipPosition="left"
+                withoutSuffix={true}
+              />
             </div>
           </div>
           {!!consultationData.diagnoses?.length && (
-            <div className="col-span-1 mt-2 overflow-hidden rounded-lg bg-white shadow">
-              <div className="px-4 py-2">
-                <DiagnosesListAccordion
-                  diagnoses={consultationData.diagnoses ?? []}
-                />
-              </div>
+            <div className="flex-1 ">
+              <DiagnosesGrid diagnoses={consultationData.diagnoses ?? []} />
             </div>
           )}
-          <div className="mt-4 w-full border-b-2 border-secondary-200">
-            <div className="overflow-x-auto sm:flex sm:items-baseline">
-              <div className="mt-4 sm:mt-0">
-                <nav
-                  className="flex space-x-6 overflow-x-auto pb-2 pl-2"
-                  id="consultation_tab_nav"
-                >
-                  {keysOf(tabs).map((p) => {
-                    if (p === "FEED") {
-                      if (
-                        isCameraAttached === false || // No camera attached
-                        consultationData?.discharge_date || // Discharged
-                        !consultationData?.current_bed?.bed_object?.id || // Not admitted to bed
-                        !CameraFeedPermittedUserTypes.includes(
-                          authUser.user_type,
-                        )
-                      )
-                        return null; // Hide feed tab
-                    }
+          <div className="min-w-[300px] flex flex-col gap-2 lg:max-w-[400px]">
+            {principalDiagnosis && (
+              <Card
+                data-test-id="principal-diagnosis"
+                className="bg-primary-100/50 border border-primary-200"
+                title={t("principal_diagnosis")}
+                tight
+                titleRight={
+                  <Chip
+                    size="small"
+                    className="capitalize"
+                    variant="secondary"
+                    text={principalDiagnosis.verification_status}
+                  />
+                }
+              >
+                <div className="font-bold text-lg">
+                  {principalDiagnosis.diagnosis_object?.label ?? "-"}{" "}
+                </div>
+              </Card>
+            )}
+            {(consultationData.treating_physician_object ||
+              consultationData.deprecated_verified_by) && (
+              <Card title={t("treating_doctor")} tight titleVariant="small">
+                {consultationData.treating_physician_object ? (
+                  <UserBlock
+                    user={consultationData.treating_physician_object}
+                  />
+                ) : (
+                  consultationData.deprecated_verified_by
+                )}
+              </Card>
+            )}
+          </div>
+        </div>
 
-                    return (
-                      <Link
-                        key={p}
-                        className={tabButtonClasses(tab === p)}
-                        href={`/facility/${facilityId}/patient/${patientId}/consultation/${consultationId}/${p.toLocaleLowerCase()}`}
-                      >
-                        {t(`CONSULTATION_TAB__${p}`)}
-                      </Link>
-                    );
-                  })}
-                </nav>
-              </div>
+        <div className="mt-4 w-full border-b-2 border-secondary-200">
+          <div className="overflow-x-auto sm:flex sm:items-baseline">
+            <div className="mt-4 sm:mt-0">
+              <nav
+                className="flex space-x-6 overflow-x-auto pb-2"
+                id="consultation_tab_nav"
+              >
+                {keysOf(tabs).map((p) => {
+                  if (p === "FEED") {
+                    if (
+                      isCameraAttached === false || // No camera attached
+                      consultationData?.discharge_date || // Discharged
+                      !consultationData?.current_bed?.bed_object?.id || // Not admitted to bed
+                      !CameraFeedPermittedUserTypes.includes(authUser.user_type)
+                    )
+                      return null; // Hide feed tab
+                  }
+
+                  return (
+                    <Link
+                      key={p}
+                      className={tabButtonClasses(tab === p)}
+                      href={`/facility/${facilityId}/patient/${patientId}/consultation/${consultationId}/${p.toLocaleLowerCase()}`}
+                    >
+                      {t(`CONSULTATION_TAB__${p}`)}
+                    </Link>
+                  );
+                })}
+              </nav>
             </div>
           </div>
-          <SelectedTab {...consultationTabProps} />
         </div>
+        <SelectedTab {...consultationTabProps} />
 
         <DoctorVideoSlideover
           facilityId={facilityId}
@@ -414,7 +444,7 @@ export const ConsultationDetails = (props: any) => {
             setShowPatientNotesPopup={setShowPatientNotesPopup}
           />
         )}
-      </div>
+      </Page>
     </ConsultationProvider>
   );
 };

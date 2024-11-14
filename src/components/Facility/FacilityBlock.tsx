@@ -29,7 +29,7 @@ export default function FacilityBlock(props: {
 
   return (
     <Element
-      className={`flex items-center ${mini ? "gap-2" : "gap-4"} text-left text-inherit`}
+      className={`flex items-center ${mini ? "gap-2" : "gap-3"} text-left text-inherit`}
     >
       <div className="flex aspect-square shrink-0 items-center justify-center overflow-hidden">
         <Avatar

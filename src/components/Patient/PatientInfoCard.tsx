@@ -3,7 +3,7 @@ import { Link, navigate } from "raviger";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import Chip from "@/CAREUI/display/Chip";
+import Chip, { ChipProps } from "@/CAREUI/display/Chip";
 import CareIcon from "@/CAREUI/icons/CareIcon";
 import { AuthorizedForConsultationRelatedActions } from "@/CAREUI/misc/AuthorizedChild";
 
@@ -19,7 +19,6 @@ import {
   PatientCategory,
 } from "@/components/Facility/models";
 import { PatientModel } from "@/components/Patient/models";
-import { SkillModel } from "@/components/Users/models";
 
 import useAuthUser from "@/hooks/useAuthUser";
 
@@ -37,27 +36,9 @@ import * as Notification from "@/Utils/Notifications";
 import dayjs from "@/Utils/dayjs";
 import routes from "@/Utils/request/api";
 import request from "@/Utils/request/request";
-import useQuery from "@/Utils/request/useQuery";
-import {
-  classNames,
-  formatDate,
-  formatDateTime,
-  formatName,
-  formatPatientAge,
-  humanizeStrings,
-} from "@/Utils/utils";
+import { classNames, formatDateTime, formatPatientAge } from "@/Utils/utils";
 
 import FacilityBlock from "../Facility/FacilityBlock";
-
-const formatSkills = (arr: SkillModel[]) => {
-  const skills = arr.map((skill) => skill.skill_object.name);
-
-  if (skills.length <= 3) {
-    return humanizeStrings(skills);
-  }
-
-  return `${skills[0]}, ${skills[1]} and ${skills.length - 2} other skills...`;
-};
 
 export interface PatientInfoCardProps {
   patient: PatientModel;
@@ -104,12 +85,12 @@ export default function PatientInfoCard(props: PatientInfoCardProps) {
 
     if (res?.status !== 200 || !data) {
       Notification.Error({
-        msg: "Failed to update Medico Legal Case",
+        msg: t("failed_to_update_medicolegal"),
       });
       setMedicoLegalCase(!value);
     } else {
       Notification.Success({
-        msg: "Medico Legal Case updated successfully",
+        msg: t("updated_medicolegal"),
       });
     }
   };
@@ -126,12 +107,112 @@ export default function PatientInfoCard(props: PatientInfoCardProps) {
 
     return false;
   };
-  const skillsQuery = useQuery(routes.userListSkill, {
-    pathParams: {
-      username: consultation?.treating_physician_object?.username ?? "",
+
+  const chips: (Omit<ChipProps, "size"> & { show: boolean })[] = [
+    {
+      variant: "primary",
+      text: `${consultation?.suggestion === "A" ? "IP" : "OP"}: ${
+        consultation?.patient_no
+      }`,
+      show: !!consultation?.patient_no,
     },
-    prefetch: !!consultation?.treating_physician_object?.username,
-  });
+    {
+      variant: "alert",
+      text:
+        TELEMEDICINE_ACTIONS.find((i) => i.id === patient.action)?.desc || "",
+      show: !!patient.action && patient.action != 10,
+    },
+    {
+      text: `${t("blood_group")}: ${patient.blood_group}`,
+      variant: "secondary",
+      show: !!patient.blood_group,
+    },
+    {
+      text: t("medico_legal"),
+      show: medicoLegalCase,
+      variant: "danger",
+    },
+    {
+      text: `${
+        dayjs().isBefore(patient.review_time)
+          ? t("review_before")
+          : t("review_missed")
+      }: ${formatDateTime(patient.review_time)}`,
+      variant: dayjs().isBefore(patient.review_time) ? "secondary" : "priority",
+      startIcon: "l-clock",
+      show:
+        !!patient.review_time &&
+        !consultation?.discharge_date &&
+        Number(consultation?.review_interval) > 0,
+    },
+    {
+      text: t("consent__missing"),
+      variant: "priority",
+      show: !consultation?.has_consents?.length,
+    },
+    {
+      text: t("domiciliary_care"),
+      show: consultation?.suggestion === "DC",
+      variant: "secondary",
+    },
+    {
+      text: t("discharged_from_care"),
+      show: !!consultation?.discharge_date,
+      variant: "danger",
+    },
+    ...[
+      [
+        "Respiratory Support",
+        RESPIRATORY_SUPPORT.find(
+          (resp) =>
+            resp.value === consultation?.last_daily_round?.ventilator_interface,
+        )?.id ?? "UNKNOWN",
+        consultation?.last_daily_round?.ventilator_interface,
+      ],
+    ].map((stat) => ({
+      variant: "danger" as ChipProps["variant"],
+      text: `${stat[0]} : ${stat[1]}`,
+      show: !!stat[2] && stat[1] !== "NONE",
+    })),
+    {
+      variant: "alert",
+      text: `${
+        CONSULTATION_SUGGESTION.find(
+          (suggestion) => suggestion.id === consultation?.suggestion,
+        )?.text
+      } on ${formatDateTime(consultation?.encounter_date)}, ${
+        consultation?.new_discharge_reason === 3
+          ? `${t("expired_on", { death_date: consultation?.death_datetime })}`
+          : `${t("discharged_on", { discharge_date: formatDateTime(consultation?.discharge_date) })}
+                            `
+      }`,
+      show: !!consultation?.discharge_date,
+    },
+    {
+      variant: "secondary",
+      text: `
+        ${
+          consultation?.encounter_date &&
+          t(consultation.suggestion === "DC" ? "commenced_on" : "admitted_on", {
+            date: formatDateTime(consultation?.encounter_date),
+          })
+        }
+        ${
+          consultation?.icu_admission_date
+            ? `, ${t("icu_admission_on", {
+                date: formatDateTime(consultation?.icu_admission_date),
+              })}`
+            : ""
+        }
+      `,
+      show: !consultation?.discharge_date,
+    },
+  ];
+
+  const noUpdateFiled =
+    consultation?.facility === patient.facility &&
+    !(consultation?.discharge_date ?? !patient.is_active) &&
+    dayjs(consultation?.modified_date).isBefore(dayjs().subtract(1, "day"));
 
   return (
     <>
@@ -179,7 +260,7 @@ export default function PatientInfoCard(props: PatientInfoCardProps) {
 
       <section className="flex flex-col lg:flex-row">
         <div
-          className="flex w-full flex-col px-4 pt-2 lg:flex-row"
+          className="flex w-full flex-col lg:flex-row"
           id="patient-infobadges"
         >
           {/* Can support for patient picture in the future */}
@@ -263,16 +344,9 @@ export default function PatientInfoCard(props: PatientInfoCardProps) {
             </div>
           </div>
           <div className="flex w-full flex-col items-center gap-4 lg:items-start lg:gap-0 lg:pl-4">
-            <div className="flex flex-col items-center gap-2 sm:flex-row">
-              {medicoLegalCase && (
-                <span className="flex pl-2 capitalize">
-                  <span className="badge badge-pill badge-danger">MLC</span>
-                </span>
-              )}
-            </div>
             <div className="flex flex-col flex-wrap items-center justify-center lg:items-start lg:justify-normal">
               {patient.facility_object && (
-                <div className="mb-1">
+                <div>
                   <FacilityBlock mini facility={patient.facility_object} />
                 </div>
               )}
@@ -290,245 +364,55 @@ export default function PatientInfoCard(props: PatientInfoCardProps) {
                   className="flex w-full flex-wrap items-center justify-center gap-2 text-sm text-secondary-900 sm:flex-row sm:text-sm md:pr-10 lg:justify-normal"
                   id="patient-consultationbadges"
                 >
-                  {consultation?.patient_no && (
-                    <Chip
-                      size="small"
-                      text={`${consultation?.suggestion === "A" ? "IP" : "OP"}: ${
-                        consultation?.patient_no
-                      }`}
-                    />
-                  )}
-                  {patient.action && patient.action != 10 && (
-                    <Chip
-                      size="small"
-                      variant="alert"
-                      text={
-                        TELEMEDICINE_ACTIONS.find(
-                          (i) => i.id === patient.action,
-                        )?.desc || ""
-                      }
-                    />
-                  )}
-                  <div>
-                    {patient.blood_group && (
-                      <Chip
-                        size="small"
-                        variant="secondary"
-                        text={`${t("blood_group")}: ${patient.blood_group}`}
-                      />
-                    )}
-                  </div>
-                  {patient.review_time &&
-                    !consultation?.discharge_date &&
-                    Number(consultation?.review_interval) > 0 && (
-                      <Chip
-                        size="small"
-                        variant={
-                          dayjs().isBefore(patient.review_time)
-                            ? "secondary"
-                            : "priority"
-                        }
-                        text={`${
-                          dayjs().isBefore(patient.review_time)
-                            ? t("review_before")
-                            : t("review_missed")
-                        }: 
-                          ${formatDateTime(patient.review_time)}`}
-                        startIcon="l-clock"
-                      />
-                    )}
-                  {!!consultation?.has_consents?.length || (
-                    <Chip
-                      size="small"
-                      variant="priority"
-                      text={t("consent__missing")}
-                    />
-                  )}
-                  {consultation?.suggestion === "DC" && (
-                    <Chip
-                      size="small"
-                      variant="secondary"
-                      text={t("domiciliary_care")}
-                      startIcon="l-estate"
-                    />
-                  )}
-                  {!!consultation?.discharge_date && (
-                    <Chip
-                      size="small"
-                      variant="danger"
-                      text={t("discharged_from_care")}
-                    />
-                  )}
-                  {[
-                    [
-                      "Respiratory Support",
-                      RESPIRATORY_SUPPORT.find(
-                        (resp) =>
-                          resp.value ===
-                          consultation?.last_daily_round?.ventilator_interface,
-                      )?.id ?? "UNKNOWN",
-                      consultation?.last_daily_round?.ventilator_interface,
-                    ],
-                  ].map((stat, i) => {
-                    return (
-                      !!stat[2] &&
-                      stat[1] !== "NONE" && (
-                        <Chip
-                          key={"patient_stat_" + i}
-                          size="small"
-                          variant="danger"
-                          text={`${stat[0]} : ${stat[1]}`}
-                        />
-                      )
-                    );
-                  })}
-                  {consultation?.discharge_date ? (
-                    <Chip
-                      size="small"
-                      variant="alert"
-                      text={`${
-                        CONSULTATION_SUGGESTION.find(
-                          (suggestion) =>
-                            suggestion.id === consultation?.suggestion,
-                        )?.text
-                      } on ${formatDateTime(consultation.encounter_date)}, ${
-                        consultation?.new_discharge_reason === 3
-                          ? `${t("expired_on", { death_date: consultation?.death_datetime })}`
-                          : `${t("discharged_on", { discharge_date: formatDateTime(consultation?.discharge_date) })}
-                            `
-                      }`}
-                    />
-                  ) : (
-                    <Chip
-                      size="small"
-                      variant="secondary"
-                      text={`
-                      ${
-                        consultation?.encounter_date &&
-                        t(
-                          consultation.suggestion === "DC"
-                            ? "commenced_on"
-                            : "admitted_on",
-                          {
-                            date: formatDateTime(consultation?.encounter_date),
-                          },
-                        )
-                      }
-                        ${
-                          consultation?.icu_admission_date
-                            ? `, ${t("icu_admission_on", {
-                                date: formatDateTime(
-                                  consultation?.icu_admission_date,
-                                ),
-                              })}`
-                            : ""
-                        }
-                      `}
-                    />
-                  )}
+                  {chips
+                    .filter((c) => c.show)
+                    .map((chip, i) => (
+                      <Chip key={i} size="small" {...chip} />
+                    ))}
                 </div>
-              </div>
-            </div>
-            <div className="flex flex-wrap items-center justify-center lg:items-start lg:justify-normal">
-              <div className="flex w-full flex-col">
-                {consultation?.diagnoses?.length
-                  ? (() => {
-                      const principal_diagnosis = consultation.diagnoses.find(
-                        (diagnosis) => diagnosis.is_principal,
-                      );
-                      return principal_diagnosis ? (
-                        <div
-                          className="mt-1 flex flex-col sm:flex-row"
-                          id="principal-diagnosis"
-                        >
-                          <div className="mr-1 text-sm font-semibold">
-                            Principal Diagnosis:
-                          </div>
-                          <div className="flex gap-2 text-sm">
-                            {principal_diagnosis.diagnosis_object?.label ?? "-"}{" "}
-                            <span className="flex items-center rounded border border-primary-500 pl-1 pr-2 text-xs font-medium text-primary-500">
-                              <CareIcon icon="l-check" className="text-base" />
-                              <p className="capitalize">
-                                {principal_diagnosis.verification_status}
-                              </p>
-                            </span>
-                          </div>
-                        </div>
-                      ) : null;
-                    })()
-                  : null}
-                {(consultation?.treating_physician_object ||
-                  consultation?.deprecated_verified_by) && (
-                  <span className="space-x-1 text-sm" id="treating-physician">
-                    <span className="font-semibold leading-relaxed">
-                      {t("treating_doctor")}:{" "}
-                    </span>
-                    {consultation?.treating_physician_object
-                      ? formatName(consultation.treating_physician_object)
-                      : consultation?.deprecated_verified_by}
-                    <br className="md:hidden" />
-                    <span className="tooltip text-xs text-secondary-800">
-                      {!!skillsQuery.data?.results?.length &&
-                        formatSkills(skillsQuery.data?.results)}
-                      {(skillsQuery.data?.results?.length || 0) > 3 && (
-                        <ul className="tooltip-text tooltip-bottom flex flex-col text-xs font-medium">
-                          {skillsQuery.data?.results.map((skill) => (
-                            <li>{skill.skill_object.name}</li>
-                          ))}
-                        </ul>
-                      )}
-                    </span>
-                  </span>
-                )}
               </div>
             </div>
           </div>
         </div>
         <div
-          className="flex flex-col items-center justify-end gap-4 px-4 py-1 2xl:flex-row"
+          className="flex flex-col lg:flex-row items-center justify-end gap-4 2xl:flex-row"
           id="consultation-buttons"
         >
-          {consultation?.suggestion === "A" && (
-            <div className="flex flex-col items-center">
-              <div className="flex w-full justify-center px-4 lg:flex-row">
-                <div
-                  className={
-                    "flex h-7 w-7 items-center justify-center rounded-full border-2"
-                  }
-                >
-                  <span className="text-sm font-semibold">
-                    {dayjs(consultation.discharge_date || undefined).diff(
-                      consultation.encounter_date,
-                      "day",
-                    ) + 1}
-                  </span>
+          <div className="flex flex-row lg:flex-col gap-4 mt-2 lg:mt-0 lg:w-14 justify-center">
+            {consultation?.suggestion === "A" && (
+              <div className="flex flex-col items-center gap-1">
+                <div className="h-7 aspect-square flex items-center justify-center text-sm font-semibold border-2 rounded-full">
+                  {dayjs(consultation.discharge_date || undefined).diff(
+                    consultation.encounter_date,
+                    "day",
+                  ) + 1}
                 </div>
+                <span className="text-xs font-medium text-secondary-700">
+                  {t("ip_day_no")}
+                </span>
               </div>
-              <span className="mt-1 text-xs font-medium text-secondary-700">
-                IP Day No
-              </span>
-            </div>
-          )}
-          {consultation?.last_daily_round && (
-            <div className="flex w-full justify-center px-4 lg:flex-row">
-              <Mews dailyRound={consultation?.last_daily_round} />
-            </div>
-          )}
+            )}
+            {consultation?.last_daily_round && (
+              <div className="flex justify-center lg:flex-row">
+                <Mews dailyRound={consultation?.last_daily_round} />
+              </div>
+            )}
+          </div>
           {!!consultation?.discharge_date && (
             <div className="flex min-w-max flex-col items-center justify-center">
               <div className="text-sm font-normal leading-5 text-secondary-500">
-                Discharge Reason
+                {t("discharge_reason")}
               </div>
               <div className="mt-[6px] text-xl font-semibold leading-5 text-secondary-900">
                 {!consultation?.new_discharge_reason ? (
                   <span className="text-secondary-800">
                     {consultation.suggestion === "OP"
-                      ? "OP file closed"
-                      : "UNKNOWN"}
+                      ? t("op_file_closed")
+                      : t("unknown")}
                   </span>
                 ) : consultation?.new_discharge_reason ===
                   DISCHARGE_REASONS.find((i) => i.text == "Expired")?.id ? (
-                  <span className="text-red-600">EXPIRED</span>
+                  <span className="text-red-600">{t("expired")}</span>
                 ) : (
                   DISCHARGE_REASONS.find(
                     (reason) =>
@@ -538,25 +422,17 @@ export default function PatientInfoCard(props: PatientInfoCardProps) {
               </div>
             </div>
           )}
-          <div className="flex w-full flex-col gap-3 lg:w-auto 2xl:flex-row">
+          <div className="flex w-full flex-col lg:w-auto">
             <AuthorizedForConsultationRelatedActions>
               {patient.is_active &&
                 consultation?.id &&
                 !consultation?.discharge_date && (
                   <div
-                    className="h-10 min-h-[40px] w-full min-w-[170px] lg:w-auto"
+                    className="h-12 min-h-[40px] w-full min-w-[170px] lg:w-auto"
                     id="log-update"
                   >
                     <ButtonV2
-                      variant={
-                        !(consultation?.facility !== patient.facility) &&
-                        !(consultation?.discharge_date ?? !patient.is_active) &&
-                        dayjs(consultation?.modified_date).isBefore(
-                          dayjs().subtract(1, "day"),
-                        )
-                          ? "danger"
-                          : "primary"
-                      }
+                      variant={noUpdateFiled ? "danger" : "primary"}
                       href={
                         consultation?.admitted && !consultation?.current_bed
                           ? undefined
@@ -568,36 +444,30 @@ export default function PatientInfoCard(props: PatientInfoCardProps) {
                           !consultation?.current_bed
                         ) {
                           Notification.Error({
-                            msg: "Please assign a bed to the patient",
+                            msg: t("please_assign_bed"),
                           });
                           setOpen(true);
                         }
                       }}
-                      className="w-full"
+                      className="w-full justify-left"
                     >
-                      <span className="flex w-full items-center justify-center gap-2">
-                        <CareIcon icon="l-plus" className="text-xl" />
-                        <p className="font-semibold">
-                          {authUser.user_type === "Doctor"
-                            ? "File Note"
-                            : "Log Update"}
-                        </p>
+                      <CareIcon icon="l-plus" className="text-xl" />
+                      <span className="font-semibold">
+                        {authUser.user_type === "Doctor"
+                          ? t("file_note")
+                          : t("log_update")}
                       </span>
                     </ButtonV2>
-                    {!(consultation?.facility !== patient.facility) &&
-                      !(consultation?.discharge_date ?? !patient.is_active) &&
-                      dayjs(consultation?.modified_date).isBefore(
-                        dayjs().subtract(1, "day"),
-                      ) && (
-                        <>
-                          <p className="mt-0.5 text-xs text-red-500">
-                            <div className="text-center">
-                              <CareIcon icon="l-exclamation-triangle" /> No
-                              update filed in the last 24 hours
-                            </div>
-                          </p>
-                        </>
-                      )}
+                    {noUpdateFiled && (
+                      <>
+                        <p className="mt-0.5 text-xs text-red-500">
+                          <div className="text-center">
+                            <CareIcon icon="l-exclamation-triangle" />{" "}
+                            {t("no_update_filed")}
+                          </div>
+                        </p>
+                      </>
+                    )}
                   </div>
                 )}
             </AuthorizedForConsultationRelatedActions>

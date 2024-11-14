@@ -4,7 +4,7 @@ import { ButtonVariant } from "@/components/Common/ButtonV2";
 
 import { classNames } from "@/Utils/utils";
 
-interface Props {
+export interface ChipProps {
   size?: "small" | "medium" | "large";
   hideBorder?: boolean;
   variant?: ButtonVariant | "custom" | "priority";
@@ -21,7 +21,7 @@ export default function Chip({
   hideBorder = false,
   variant = "primary",
   ...props
-}: Props) {
+}: ChipProps) {
   return (
     <span
       id={props?.id}
