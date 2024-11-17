@@ -244,7 +244,7 @@ export default function useFileManager(
             </div>
             <div className="text-sm">
               <h1 className="text-xl text-black">Archive File</h1>
-              <span className="text-sm text-secondary-600">
+              <span className="text-sm text-gray-600">
                 This action is irreversible. Once a file is archived it cannot
                 be unarchived.
               </span>
@@ -298,7 +298,7 @@ export default function useFileManager(
         className="md:w-[700px]"
         onClose={() => setArchiveDialogueOpen(null)}
       >
-        <div className="mb-8 text-xs text-secondary-700">
+        <div className="mb-8 text-xs text-gray-700">
           <CareIcon icon="l-archive" className="mr-2" />
           This file has been archived and cannot be unarchived.
         </div>
@@ -336,14 +336,14 @@ export default function useFileManager(
             },
           ].map((item, index) => (
             <div key={index} className="flex gap-2">
-              <div className="flex aspect-square h-10 items-center justify-center rounded-full bg-primary-100">
+              <div className="flex aspect-square h-10 items-center justify-center rounded-full bg-accent-100">
                 <CareIcon
                   icon={item.icon as any}
-                  className="text-lg text-primary-500"
+                  className="text-lg text-accent-500"
                 />
               </div>
               <div>
-                <div className="text-xs uppercase text-secondary-700">
+                <div className="text-xs uppercase text-gray-700">
                   {item.label}
                 </div>
                 <div
@@ -364,11 +364,8 @@ export default function useFileManager(
         show={editDialogueOpen !== null}
         title={
           <div className="flex flex-row">
-            <div className="rounded-full bg-primary-100 px-5 py-4">
-              <CareIcon
-                icon="l-edit-alt"
-                className="text-lg text-primary-500"
-              />
+            <div className="rounded-full bg-accent-100 px-5 py-4">
+              <CareIcon icon="l-edit-alt" className="text-lg text-accent-500" />
             </div>
             <div className="m-4">
               <h1 className="text-xl text-black">Rename File</h1>

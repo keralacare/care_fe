@@ -166,7 +166,7 @@ export const validateRule = (
           isInitialState
             ? "text-black"
             : condition
-              ? "text-primary-500"
+              ? "text-accent-500"
               : "text-red-500",
         )}
       >
@@ -638,7 +638,7 @@ export const UserAdd = (props: UserProps) => {
       options={
         <Link
           href="https://school.ohc.network/targets/12953"
-          className="inline-block rounded border border-secondary-600 bg-secondary-50 px-4 py-2 text-secondary-600 transition hover:bg-secondary-100"
+          className="inline-block rounded border border-gray-600 bg-gray-50 px-4 py-2 text-gray-600 transition hover:bg-gray-100"
           target="_blank"
         >
           <CareIcon icon="l-question-circle" className="text-lg" /> &nbsp;Need
@@ -756,7 +756,7 @@ export const UserAdd = (props: UserProps) => {
                 }}
               />
               {usernameInputInFocus && (
-                <div className="text-small pl-2 text-secondary-500">
+                <div className="text-small pl-2 text-gray-500">
                   <div>
                     {usernameExists !== userExistsEnums.idle && (
                       <>
@@ -786,7 +786,7 @@ export const UserAdd = (props: UserProps) => {
                                   icon="l-check-circle"
                                   className="text-xl text-green-500"
                                 />{" "}
-                                <span className="text-primary-500">
+                                <span className="text-accent-500">
                                   Username is available
                                 </span>
                               </div>
@@ -849,7 +849,7 @@ export const UserAdd = (props: UserProps) => {
                 onBlur={() => setPasswordInputInFocus(false)}
               />
               {passwordInputInFocus && (
-                <div className="text-small pl-2 text-secondary-500">
+                <div className="text-small pl-2 text-gray-500">
                   {validateRule(
                     state.form.password?.length >= 8,
                     "Password should be atleast 8 characters long",

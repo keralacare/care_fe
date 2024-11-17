@@ -148,8 +148,8 @@ const RoutineSection = ({ consultationId }: ConsultationTabProps) => {
 
   if (Object.keys(results).length === 0) {
     return (
-      <div className="mt-1 w-full rounded-lg border bg-white p-4 shadow">
-        <div className="flex items-center justify-center text-2xl font-bold text-secondary-500">
+      <div className="mt-1 w-full rounded-lg border bg-primary p-4 shadow">
+        <div className="flex items-center justify-center text-2xl font-bold text-gray-500">
           {t("no_data_found")}
         </div>
       </div>
@@ -159,14 +159,14 @@ const RoutineSection = ({ consultationId }: ConsultationTabProps) => {
   return (
     <div className="pb-8 pt-4">
       <div className="m-2 w-full overflow-hidden overflow-x-auto rounded-lg border border-black shadow md:w-fit">
-        <table className="border-collapse overflow-hidden rounded-lg border bg-secondary-100">
-          <thead className="bg-white shadow">
+        <table className="border-collapse overflow-hidden rounded-lg border bg-gray-100">
+          <thead className="bg-primary shadow">
             <tr>
               <th className="w-48 border-b-2 border-r-2 border-black" />
               {Object.keys(results).map((date) => (
                 <th
                   key={date}
-                  className="border border-b-2 border-secondary-500 border-b-black p-1 text-sm font-semibold"
+                  className="border border-b-2 border-gray-500 border-b-black p-1 text-sm font-semibold"
                 >
                   <p>{formatDate(date)}</p>
                   <p>{formatTime(date)}</p>
@@ -174,17 +174,17 @@ const RoutineSection = ({ consultationId }: ConsultationTabProps) => {
               ))}
             </tr>
           </thead>
-          <tbody className="bg-secondary-200">
+          <tbody className="bg-gray-200">
             {ROUTINE_ROWS.map((row) => (
               <tr
                 key={row.field ?? row.title}
                 className={classNames(
-                  row.title && "border-t-2 border-t-secondary-600",
+                  row.title && "border-t-2 border-t-gray-600",
                 )}
               >
                 <td
                   className={classNames(
-                    "border border-r-2 border-secondary-500 border-r-black bg-white p-2",
+                    "border border-r-2 border-gray-500 border-r-black bg-primary p-2",
                     row.subField ? "pl-4 font-medium" : "font-bold",
                   )}
                 >
@@ -195,7 +195,7 @@ const RoutineSection = ({ consultationId }: ConsultationTabProps) => {
                     <td
                       key={`${row.field}-${idx}`}
                       className={classNames(
-                        "border border-secondary-500 bg-secondary-100 p-2 text-center font-medium",
+                        "border border-gray-500 bg-gray-100 p-2 text-center font-medium",
                       )}
                     >
                       {(() => {

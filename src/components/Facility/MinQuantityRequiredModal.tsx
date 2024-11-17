@@ -105,7 +105,7 @@ export const MinQuantityRequiredModal = (props: any) => {
           <div role="status">
             <svg
               aria-hidden="true"
-              className="mr-2 h-8 w-8 animate-spin fill-primary text-secondary-200 dark:text-secondary-600"
+              className="mr-2 h-8 w-8 animate-spin fill-primary text-gray-200 dark:text-gray-600"
               viewBox="0 0 100 101"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -126,7 +126,7 @@ export const MinQuantityRequiredModal = (props: any) => {
         <div>
           {" "}
           <div className="mb-4">
-            <p className="mt-1 text-sm text-secondary-500">
+            <p className="mt-1 text-sm text-gray-500">
               Set the minimum quantity for{" "}
               <strong>{minimumQuantityItemData?.item_object.name}</strong> in{" "}
               <strong> {facilityObject?.name}</strong>
@@ -145,7 +145,7 @@ export const MinQuantityRequiredModal = (props: any) => {
           </div>
           <div className="flex justify-end">
             <ButtonV2
-              variant="primary"
+              variant="accent"
               onClick={handleSubmit}
               className="mr-2"
               id="save-update-minimumquanitity"

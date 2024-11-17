@@ -21,7 +21,7 @@ const DoctorNote = (props: DoctorNoteProps) => {
 
   return (
     <div
-      className="m-2 flex h-[390px] grow flex-col-reverse overflow-auto bg-white"
+      className="m-2 flex h-[390px] grow flex-col-reverse overflow-auto bg-primary"
       id="patient-notes-list"
     >
       {state.notes.length ? (
@@ -53,7 +53,7 @@ const DoctorNote = (props: DoctorNoteProps) => {
           ))}
         </InfiniteScroll>
       ) : (
-        <div className="mt-2 flex h-full items-center justify-center text-2xl font-bold text-secondary-500">
+        <div className="mt-2 flex h-full items-center justify-center text-2xl font-bold text-gray-500">
           No Notes Found
         </div>
       )}

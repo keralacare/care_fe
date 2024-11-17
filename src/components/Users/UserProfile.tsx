@@ -567,7 +567,7 @@ export default function UserProfile() {
       />
       <div className="lg:grid lg:grid-cols-3 lg:gap-6">
         <div className="lg:col-span-1">
-          <p className="my-1 text-sm leading-5 text-secondary-600">
+          <p className="my-1 text-sm leading-5 text-gray-600">
             {t("local_body")}, {t("district")}, {t("state")}{" "}
             {t("are_non_editable_fields")}.
           </p>
@@ -604,7 +604,7 @@ export default function UserProfile() {
         </div>
         <div className="mt-5 lg:col-span-2 lg:mt-0">
           {!showEdit && !isLoading && (
-            <div className="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:rounded-lg sm:px-6">
+            <div className="overflow-hidden rounded-lg bg-primary px-4 py-5 shadow sm:rounded-lg sm:px-6">
               <dl className="col-gap-4 row-gap-8 grid grid-cols-1 sm:grid-cols-2">
                 <div
                   className="my-2 sm:col-span-1"
@@ -613,7 +613,7 @@ export default function UserProfile() {
                   <dt className="text-sm font-medium leading-5 text-black">
                     {t("username")}
                   </dt>
-                  <dd className="mt-1 text-sm leading-5 text-secondary-900">
+                  <dd className="mt-1 text-sm leading-5 text-gray-900">
                     {userData?.username || "-"}
                   </dd>
                 </div>
@@ -624,7 +624,7 @@ export default function UserProfile() {
                   <dt className="text-sm font-medium leading-5 text-black">
                     {t("phone_number")}
                   </dt>
-                  <dd className="mt-1 text-sm leading-5 text-secondary-900">
+                  <dd className="mt-1 text-sm leading-5 text-gray-900">
                     {userData?.phone_number || "-"}
                   </dd>
                 </div>
@@ -636,7 +636,7 @@ export default function UserProfile() {
                   <dt className="text-sm font-medium leading-5 text-black">
                     {t("whatsapp_number")}
                   </dt>
-                  <dd className="mt-1 text-sm leading-5 text-secondary-900">
+                  <dd className="mt-1 text-sm leading-5 text-gray-900">
                     {userData?.alt_phone_number || "-"}
                   </dd>
                 </div>
@@ -647,7 +647,7 @@ export default function UserProfile() {
                   <dt className="text-sm font-medium leading-5 text-black">
                     {t("email")}
                   </dt>
-                  <dd className="mt-1 text-sm leading-5 text-secondary-900">
+                  <dd className="mt-1 text-sm leading-5 text-gray-900">
                     {userData?.email || "-"}
                   </dd>
                 </div>
@@ -658,7 +658,7 @@ export default function UserProfile() {
                   <dt className="text-sm font-medium leading-5 text-black">
                     {t("first_name")}
                   </dt>
-                  <dd className="mt-1 text-sm leading-5 text-secondary-900">
+                  <dd className="mt-1 text-sm leading-5 text-gray-900">
                     {userData?.first_name || "-"}
                   </dd>
                 </div>
@@ -669,7 +669,7 @@ export default function UserProfile() {
                   <dt className="text-sm font-medium leading-5 text-black">
                     {t("last_name")}
                   </dt>
-                  <dd className="mt-1 text-sm leading-5 text-secondary-900">
+                  <dd className="mt-1 text-sm leading-5 text-gray-900">
                     {userData?.last_name || "-"}
                   </dd>
                 </div>
@@ -680,7 +680,7 @@ export default function UserProfile() {
                   <dt className="text-sm font-medium leading-5 text-black">
                     {t("date_of_birth")}
                   </dt>
-                  <dd className="mt-1 text-sm leading-5 text-secondary-900">
+                  <dd className="mt-1 text-sm leading-5 text-gray-900">
                     {userData?.date_of_birth
                       ? formatDate(userData?.date_of_birth)
                       : "-"}
@@ -690,7 +690,7 @@ export default function UserProfile() {
                   <dt className="text-sm font-medium leading-5 text-black">
                     {t("access_level")}
                   </dt>
-                  <dd className="badge badge-pill mt-1 bg-primary-500 text-sm text-white">
+                  <dd className="badge badge-pill mt-1 bg-accent-500 text-sm text-white">
                     <CareIcon icon="l-user-check" className="mr-2 text-lg" />
                     {userData?.user_type || "-"}
                   </dd>
@@ -699,7 +699,7 @@ export default function UserProfile() {
                   <dt className="text-sm font-medium leading-5 text-black">
                     {t("gender")}
                   </dt>
-                  <dd className="mt-1 text-sm leading-5 text-secondary-900">
+                  <dd className="mt-1 text-sm leading-5 text-gray-900">
                     {userData?.gender || "-"}
                   </dd>
                 </div>
@@ -707,7 +707,7 @@ export default function UserProfile() {
                   <dt className="text-sm font-medium leading-5 text-black">
                     {t("local_body")}
                   </dt>
-                  <dd className="mt-1 text-sm leading-5 text-secondary-900">
+                  <dd className="mt-1 text-sm leading-5 text-gray-900">
                     {userData?.local_body_object?.name || "-"}
                   </dd>
                 </div>
@@ -715,7 +715,7 @@ export default function UserProfile() {
                   <dt className="text-sm font-medium leading-5 text-black">
                     {t("district")}
                   </dt>
-                  <dd className="mt-1 text-sm leading-5 text-secondary-900">
+                  <dd className="mt-1 text-sm leading-5 text-gray-900">
                     {userData?.district_object?.name || "-"}
                   </dd>
                 </div>
@@ -723,7 +723,7 @@ export default function UserProfile() {
                   <dt className="text-sm font-medium leading-5 text-black">
                     {t("state")}
                   </dt>
-                  <dd className="mt-1 text-sm leading-5 text-secondary-900">
+                  <dd className="mt-1 text-sm leading-5 text-gray-900">
                     {userData?.state_object?.name || "-"}
                   </dd>
                 </div>
@@ -731,7 +731,7 @@ export default function UserProfile() {
                   <dt className="text-sm font-medium leading-5 text-black">
                     {t("skills")}
                   </dt>
-                  <dd className="mt-1 text-sm leading-5 text-secondary-900">
+                  <dd className="mt-1 text-sm leading-5 text-gray-900">
                     <div
                       className="flex flex-wrap gap-2"
                       id="already-linked-skills"
@@ -739,7 +739,7 @@ export default function UserProfile() {
                       {skillsView?.results?.length
                         ? skillsView.results?.map((skill: SkillModel) => {
                             return (
-                              <span className="flex items-center gap-2 rounded-full border-secondary-300 bg-secondary-200 px-3 text-xs text-secondary-700">
+                              <span className="flex items-center gap-2 rounded-full border-gray-300 bg-gray-200 px-3 text-xs text-gray-700">
                                 <p className="py-1.5">
                                   {skill.skill_object.name}
                                 </p>
@@ -757,7 +757,7 @@ export default function UserProfile() {
                   <dt className="text-sm font-medium leading-5 text-black">
                     {t("average_weekly_working_hours")}
                   </dt>
-                  <dd className="mt-1 text-sm leading-5 text-secondary-900">
+                  <dd className="mt-1 text-sm leading-5 text-gray-900">
                     {userData?.weekly_working_hours ?? "-"}
                   </dd>
                 </div>
@@ -768,7 +768,7 @@ export default function UserProfile() {
                   <dt className="text-sm font-medium leading-5 text-black">
                     {t("video_conference_link")}
                   </dt>
-                  <dd className="mt-1 break-words text-sm leading-5 text-secondary-900">
+                  <dd className="mt-1 break-words text-sm leading-5 text-gray-900">
                     {userData?.video_connect_link ? (
                       <a
                         className="text-blue-500"
@@ -790,7 +790,7 @@ export default function UserProfile() {
             <div className="space-y-4">
               <form action="#" method="POST">
                 <div className="shadow sm:rounded-md">
-                  <div className="bg-white px-4 pt-5">
+                  <div className="bg-primary px-4 pt-5">
                     <div className="grid grid-cols-6 gap-4">
                       <TextFormField
                         {...fieldProps("firstName")}
@@ -893,7 +893,7 @@ export default function UserProfile() {
                       />
                     </div>
                   </div>
-                  <div className="bg-secondary-50 px-4 py-3 text-right sm:px-6">
+                  <div className="bg-gray-50 px-4 py-3 text-right sm:px-6">
                     <Submit
                       onClick={handleSubmit}
                       label={t("update")}
@@ -904,7 +904,7 @@ export default function UserProfile() {
               </form>
               <form action="#" method="POST">
                 <div className="overflow-hidden shadow sm:rounded-md">
-                  <div className="bg-white px-4 pt-5">
+                  <div className="bg-primary px-4 pt-5">
                     <div className="grid grid-cols-6 gap-4">
                       <TextFormField
                         name="old_password"
@@ -936,7 +936,7 @@ export default function UserProfile() {
                           }}
                           required
                         />
-                        <div className="text-small mb-2 hidden pl-2 text-secondary-500 peer-focus-within:block">
+                        <div className="text-small mb-2 hidden pl-2 text-gray-500 peer-focus-within:block">
                           {validatePassword(changePasswordForm.new_password_1)}
                         </div>
                       </div>
@@ -955,7 +955,7 @@ export default function UserProfile() {
                           }}
                         />
                         {changePasswordForm.new_password_2.length > 0 && (
-                          <div className="text-small mb-2 hidden pl-2 text-secondary-500 peer-focus-within:block">
+                          <div className="text-small mb-2 hidden pl-2 text-gray-500 peer-focus-within:block">
                             {validateRule(
                               changePasswordForm.new_password_1 ===
                                 changePasswordForm.new_password_2,
@@ -967,7 +967,7 @@ export default function UserProfile() {
                       </div>
                     </div>
                   </div>
-                  <div className="bg-secondary-50 px-4 py-3 text-right sm:px-6">
+                  <div className="bg-gray-50 px-4 py-3 text-right sm:px-6">
                     <Submit
                       onClick={changePassword}
                       label={t("change_password")}
@@ -983,25 +983,25 @@ export default function UserProfile() {
       <div className="mb-8 mt-6 md:grid md:grid-cols-3 md:gap-6">
         <div className="md:col-span-1">
           <div className="px-4 sm:px-0">
-            <h3 className="text-lg font-medium leading-6 text-secondary-900">
+            <h3 className="text-lg font-medium leading-6 text-gray-900">
               {t("language_selection")}
             </h3>
-            <p className="mt-1 text-sm leading-5 text-secondary-600">
+            <p className="mt-1 text-sm leading-5 text-gray-600">
               {t("set_your_local_language")}
             </p>
           </div>
         </div>
         <div className="mt-5 md:col-span-2 md:mt-0">
-          <LanguageSelector className="w-full bg-white" />
+          <LanguageSelector className="w-full bg-primary" />
         </div>
       </div>
       <div className="mb-8 mt-6 md:grid md:grid-cols-3 md:gap-6">
         <div className="md:col-span-1">
           <div className="px-4 sm:px-0">
-            <h3 className="text-lg font-medium leading-6 text-secondary-900">
+            <h3 className="text-lg font-medium leading-6 text-gray-900">
               {t("software_update")}
             </h3>
-            <p className="mt-1 text-sm leading-5 text-secondary-600">
+            <p className="mt-1 text-sm leading-5 text-gray-600">
               {t("check_for_available_update")}
             </p>
           </div>

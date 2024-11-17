@@ -25,9 +25,9 @@ export const LinearProgressWithLabel = (props: { value: number }) => {
   return (
     <div className="flex align-middle">
       <div className="my-auto mr-2 w-full">
-        <div className="mr-2 h-1.5 w-full rounded-full bg-primary-200">
+        <div className="mr-2 h-1.5 w-full rounded-full bg-accent-200">
           <div
-            className="h-1.5 rounded-full bg-primary-500"
+            className="h-1.5 rounded-full bg-accent-500"
             style={{ width: `${props.value}%` }}
           />
         </div>
@@ -257,8 +257,8 @@ export const FileUpload = (props: FileUploadProps) => {
               <>
                 <h4 className="mb-6 text-2xl">{UPLOAD_HEADING[type]}</h4>
                 {fileUpload.files[0] ? (
-                  <div className="mb-8 rounded-lg border border-secondary-300 bg-white p-4">
-                    <div className="mb-4 flex items-center justify-between gap-2 rounded-md bg-secondary-300 px-4 py-2">
+                  <div className="mb-8 rounded-lg border border-gray-300 bg-primary p-4">
+                    <div className="mb-4 flex items-center justify-between gap-2 rounded-md bg-gray-300 px-4 py-2">
                       <span>
                         <CareIcon icon="l-paperclip" className="mr-2" />
                         {fileUpload.files[0].name}
@@ -314,7 +314,7 @@ export const FileUpload = (props: FileUploadProps) => {
                       .map((button, i) => (
                         <label
                           key={i}
-                          className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-primary-500/20 bg-primary-500/10 p-3 text-primary-700 transition-all hover:bg-primary-500/20 md:p-6"
+                          className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-accent-500/20 bg-accent-500/10 p-3 text-accent-700 transition-all hover:bg-accent-500/20 md:p-6"
                           onClick={button.onClick}
                           id={button.id}
                         >
@@ -364,7 +364,7 @@ export const FileUpload = (props: FileUploadProps) => {
         ))}
         {!(fileQuery?.data?.results || []).length && (
           <div className="mt-4">
-            <div className="text-md flex items-center justify-center font-semibold capitalize text-secondary-500">
+            <div className="text-md flex items-center justify-center font-semibold capitalize text-gray-500">
               {t("no_files_found", { type: tab.toLowerCase() })}
             </div>
           </div>

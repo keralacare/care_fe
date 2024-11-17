@@ -22,7 +22,7 @@ const NeurologicalMonitoring = ({ log, onChange }: LogUpdateSectionProps) => {
   const { t } = useTranslation();
   return (
     <div className="flex flex-col gap-2">
-      <div className="mt-4 rounded-lg bg-secondary-100 p-4">
+      <div className="mt-4 rounded-lg bg-gray-100 p-4">
         <CheckBoxFormField
           name="in_prone_position"
           label="The patient is in prone position"
@@ -143,8 +143,8 @@ const NeurologicalMonitoring = ({ log, onChange }: LogUpdateSectionProps) => {
         />
       </div>
       <div className="text-end">
-        <span className="text-xs text-secondary-700">Total&nbsp;</span>
-        <span className="text-5xl font-bold text-primary-400">
+        <span className="text-xs text-gray-700">Total&nbsp;</span>
+        <span className="text-5xl font-bold text-accent-400">
           {(log.glasgow_eye_open || 0) +
             (log.glasgow_verbal_response || 0) +
             (log.glasgow_motor_response || 0)}

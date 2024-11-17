@@ -47,7 +47,7 @@ export default function DailyRoundsFilter(props: Props) {
     <Popover className="relative mt-3">
       <PopoverButton>
         <ButtonV2
-          variant={isFilterApplied ? "primary" : "secondary"}
+          variant={isFilterApplied ? "accent" : "secondary"}
           className="border p-3"
         >
           <CareIcon icon="l-filter" />
@@ -62,15 +62,15 @@ export default function DailyRoundsFilter(props: Props) {
         leaveTo="opacity-0 translate-y-1"
       >
         <PopoverPanel className="absolute right-0 z-30 mt-1 w-80 px-4 sm:px-0 md:w-96 lg:max-w-3xl">
-          <div className="rounded-lg shadow-lg ring-1 ring-secondary-400">
-            <div className="rounded-t-lg bg-secondary-100 px-6 py-4">
+          <div className="rounded-lg shadow-lg ring-1 ring-gray-400">
+            <div className="rounded-t-lg bg-gray-100 px-6 py-4">
               <div className="flow-root rounded-md">
-                <span className="block text-sm text-secondary-800">
+                <span className="block text-sm text-gray-800">
                   {t("filter_by")}
                 </span>
               </div>
             </div>
-            <div className="relative flex flex-col gap-4 rounded-b-lg bg-white p-6">
+            <div className="relative flex flex-col gap-4 rounded-b-lg bg-primary p-6">
               <SelectFormField
                 {...field("rounds_type")}
                 label={t("LOG_UPDATE_FIELD_LABEL__rounds_type")}
@@ -131,7 +131,7 @@ export default function DailyRoundsFilter(props: Props) {
               </PopoverButton>
               <PopoverButton>
                 <ButtonV2
-                  variant="primary"
+                  variant="accent"
                   onClick={() => props.onApply(filter)}
                   border
                   className="w-full"

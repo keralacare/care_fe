@@ -35,8 +35,8 @@ export default function DailyRoundsList({ consultation, query }: Props) {
         <>
           <div className="mt-4 flex max-h-screen min-h-full w-full flex-col gap-4">
             <div className="flex flex-col gap-4 overflow-y-auto overflow-x-hidden px-3">
-              <PaginatedList.WhenEmpty className="flex w-full justify-center border-b border-secondary-200 bg-white p-5 text-center text-2xl font-bold text-secondary-500">
-                <span className="flex justify-center rounded-lg bg-white p-3 text-secondary-700">
+              <PaginatedList.WhenEmpty className="flex w-full justify-center border-b border-gray-200 bg-primary p-5 text-center text-2xl font-bold text-gray-500">
+                <span className="flex justify-center rounded-lg bg-primary p-3 text-gray-700">
                   {t("no_consultation_updates")}
                 </span>
               </PaginatedList.WhenEmpty>
@@ -44,7 +44,7 @@ export default function DailyRoundsList({ consultation, query }: Props) {
                 <LoadingLogUpdateCard />
               </PaginatedList.WhenLoading>
               <Timeline name="log update">
-                <PaginatedList.Items<DailyRoundsModel> className="flex grow flex-col gap-3 rounded-lg bg-white p-2 shadow">
+                <PaginatedList.Items<DailyRoundsModel> className="flex grow flex-col gap-3 rounded-lg bg-primary p-2 shadow">
                   {(item, items) => {
                     if (item.rounds_type === "AUTOMATED") {
                       return (

@@ -35,8 +35,8 @@ export default function ViewInvestigationSuggestions(props: {
   return (
     <div className="mt-5" id="investigation-suggestions">
       <h3>{t("investigations_suggested")}</h3>
-      <table className="mt-3 hidden w-full rounded-xl bg-white shadow md:table">
-        <thead className="bg-secondary-200 text-left">
+      <table className="mt-3 hidden w-full rounded-xl bg-primary shadow md:table">
+        <thead className="bg-gray-200 text-left">
           <tr>
             <th className="p-4">{t("investigations")}</th>
             <th className="p-4">{t("to_be_conducted")}</th>
@@ -49,7 +49,7 @@ export default function ViewInvestigationSuggestions(props: {
             investigations.investigation.map((investigation, index) => {
               let nextFurthestInvestigation: any = undefined;
               return (
-                <tr key={index} className="border-b border-b-secondary-200">
+                <tr key={index} className="border-b border-b-gray-200">
                   <td className="p-4">
                     <ul className="ml-4 list-decimal">
                       {investigation.type?.map((type, index) => {
@@ -202,7 +202,7 @@ export default function ViewInvestigationSuggestions(props: {
             let nextFurthestInvestigation: any = undefined;
 
             return (
-              <div key={index} className="rounded-xl bg-white p-4 shadow">
+              <div key={index} className="rounded-xl bg-primary p-4 shadow">
                 <b>Investigations :</b>
                 <ul className="ml-4 list-decimal">
                   {investigation.type?.map((type, index) => {
@@ -310,7 +310,7 @@ export default function ViewInvestigationSuggestions(props: {
             );
           })
         ) : (
-          <div className="rounded-xl bg-white shadow">
+          <div className="rounded-xl bg-primary shadow">
             {t("no_investigation_suggestions")}
           </div>
         )}

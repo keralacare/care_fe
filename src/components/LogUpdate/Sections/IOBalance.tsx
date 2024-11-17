@@ -70,9 +70,7 @@ const IOBalance = ({ log, onChange }: LogUpdateSectionProps) => {
                 <div key={j} className="flex items-end gap-4">
                   <div className="flex-1">
                     {j == 0 && (
-                      <div className="mb-2 text-sm text-secondary-800">
-                        Type
-                      </div>
+                      <div className="mb-2 text-sm text-gray-800">Type</div>
                     )}
                     <SelectFormField
                       name="name"
@@ -114,7 +112,7 @@ const IOBalance = ({ log, onChange }: LogUpdateSectionProps) => {
                     }
                     label={
                       j == 0 && (
-                        <div className="text-sm text-secondary-800">
+                        <div className="text-sm text-gray-800">
                           Quantity (ml)
                         </div>
                       )
@@ -137,7 +135,7 @@ const IOBalance = ({ log, onChange }: LogUpdateSectionProps) => {
               ))}
               <ButtonV2
                 variant="secondary"
-                className="bg-secondary-200"
+                className="bg-gray-200"
                 onClick={() =>
                   onChange({
                     [field.key]: [
@@ -153,14 +151,14 @@ const IOBalance = ({ log, onChange }: LogUpdateSectionProps) => {
               </ButtonV2>
             </div>
           ))}
-          <div className="flex items-center justify-between border-b-2 border-b-secondary-400 pb-2">
+          <div className="flex items-center justify-between border-b-2 border-b-gray-400 pb-2">
             <h4>Total</h4>
             <div>
               {fields
                 .flatMap((f) => (log[f.key] || []).map((f) => f.quantity))
                 .join("+")}
               =
-              <span className="text-3xl font-black text-primary-500">
+              <span className="text-3xl font-black text-accent-500">
                 {fields
                   .flatMap((f) => (log[f.key] || []).map((f) => f.quantity))
                   .reduce((a, b) => a + b, 0)}{" "}
@@ -179,7 +177,7 @@ const IOBalance = ({ log, onChange }: LogUpdateSectionProps) => {
               .reduce((a, b) => a + b, 0),
           ).join("-")}
           =
-          <span className="text-3xl font-black text-primary-500">
+          <span className="text-3xl font-black text-accent-500">
             {IOBalanceSections.map((s) =>
               s.fields
                 .flatMap((f) => (log[f.key] || []).map((f) => f.quantity))

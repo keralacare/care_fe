@@ -23,6 +23,7 @@ import NotificationItem from "@/components/Notifications/NotificationsList";
 import useActiveLink from "@/hooks/useActiveLink";
 import { useCareAppNavItems } from "@/hooks/useCareApps";
 
+import { THEMES, useTheme } from "@/Utils/themes";
 import { classNames } from "@/Utils/utils";
 
 export const SIDEBAR_SHRINK_PREFERENCE_KEY = "sidebarShrinkPreference";
@@ -115,9 +116,11 @@ const StatelessSidebar = ({
     setOverflowVisisble(value);
   };
 
+  const [theme, setTheme] = useTheme();
+
   return (
     <nav
-      className={`group flex h-dvh flex-1 flex-col bg-gray-100 py-3 md:py-5 ${
+      className={`group flex h-dvh flex-1 flex-col py-3 md:py-5 ${
         shrinked ? "w-14" : "w-60"
       } transition-all duration-300 ease-in-out ${
         isOverflowVisible && shrinked
@@ -144,7 +147,13 @@ const StatelessSidebar = ({
         >
           <img
             className="h-8 w-auto self-start transition md:h-10"
-            src={shrinked ? LOGO_COLLAPSE : careConfig.mainLogo?.light}
+            src={
+              shrinked
+                ? LOGO_COLLAPSE
+                : theme?.type === "light"
+                  ? careConfig.mainLogo?.light
+                  : careConfig.mainLogo?.dark
+            }
           />
         </Link>
         {setShrinked && !shrinked && (
@@ -161,7 +170,7 @@ const StatelessSidebar = ({
           <div
             ref={indicatorRef}
             className={classNames(
-              "absolute right-2 z-10 block h-6 w-1 rounded-l bg-primary-500 transition-all",
+              "absolute right-2 z-10 block h-6 w-1 rounded-l bg-accent-500 transition-all",
               activeLink ? "opacity-100" : "opacity-0",
             )}
           />
@@ -195,7 +204,21 @@ const StatelessSidebar = ({
           )}
         </div>
         <div className="hidden md:block md:flex-1" />
-
+        <button
+          onClick={() => setTheme(THEMES[0])}
+          className="text-primaryFont"
+        >
+          Light
+        </button>
+        <button
+          className="text-primaryFont"
+          onClick={() => setTheme(THEMES[1])}
+        >
+          Dark
+        </button>
+        <button className="text-primaryFont" onClick={() => setTheme(null)}>
+          System
+        </button>
         <SidebarUserCard shrinked={shrinked} />
       </div>
     </nav>
@@ -247,7 +270,7 @@ const ToggleShrink = ({ shrinked, toggle }: ToggleShrinkProps) => {
       <Tooltip>
         <TooltipTrigger asChild>
           <button
-            className={`flex h-6 w-6 cursor-pointer items-center justify-center rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 ${shrinked ? "bg-gray-200" : "bg-gray-100"} text-gray-600 hover:bg-primary-200 hover:text-primary-800 ${
+            className={`flex h-6 w-6 cursor-pointer items-center justify-center rounded focus:outline-none focus:ring-2 text-primaryFontLight focus:ring-indigo-500 hover:bg-secondaryActive ${
               shrinked ? "mx-auto" : "mr-4"
             } transition-all ease-in-out`}
             onClick={toggle}

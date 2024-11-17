@@ -79,10 +79,10 @@ export default function CameraCaptureDialog(props: CameraCaptureDialogProps) {
       show={show}
       title={
         <div className="flex flex-row">
-          <div className="rounded-full bg-primary-100 px-5 py-4">
+          <div className="rounded-full bg-accent-100 px-5 py-4">
             <CareIcon
               icon="l-camera-change"
-              className="text-lg text-primary-500"
+              className="text-lg text-accent-500"
             />
           </div>
           <div className="m-4">

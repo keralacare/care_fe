@@ -49,9 +49,7 @@ export default function BloodPressureFormField(props: Props) {
           labelClassName="hidden"
           errorClassName="hidden"
         />
-        <span className="px-2 pt-2 text-2xl font-medium text-secondary-400">
-          /
-        </span>
+        <span className="px-2 pt-2 text-2xl font-medium text-gray-400">/</span>
         <TextFormField
           className="w-full"
           type="number"

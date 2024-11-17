@@ -83,7 +83,7 @@ const PatientNotesList = (props: PatientNotesProps) => {
 
   if (isLoading) {
     return (
-      <div className="flex h-full w-full items-center justify-center bg-white">
+      <div className="flex h-full w-full items-center justify-center bg-primary">
         <CircularProgress />
       </div>
     );

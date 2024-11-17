@@ -89,17 +89,17 @@ export default function CriticalCareEditor(props: Props) {
             }}
           />
         ) : (
-          <ul className="space-y-4 bg-white">
+          <ul className="space-y-4 bg-primary">
             <li>
               <ButtonV2
                 ghost
-                className="w-full bg-primary-100/50 py-3"
+                className="w-full bg-accent-100/50 py-3"
                 border
                 href={`${consultationDashboardUrl}/daily-rounds/${props.id}/update`}
               >
                 <CareIcon
                   icon="l-info-circle"
-                  className="mr-2 text-2xl text-primary-500"
+                  className="mr-2 text-2xl text-accent-500"
                 />
                 <span className="mr-auto text-lg font-semibold">
                   Basic Editor
@@ -115,10 +115,10 @@ export default function CriticalCareEditor(props: Props) {
                 <li key={key}>
                   <ButtonV2
                     ghost
-                    variant={isCompleted ? "primary" : "secondary"}
+                    variant={isCompleted ? "accent" : "secondary"}
                     className={classNames(
                       "w-full py-3",
-                      isCompleted && "bg-primary-100/50",
+                      isCompleted && "bg-accent-100/50",
                     )}
                     border
                     onClick={() => setCurrent(key as SectionKey)}
@@ -128,9 +128,7 @@ export default function CriticalCareEditor(props: Props) {
                         icon={section.meta.icon}
                         className={classNames(
                           "mr-2 text-2xl",
-                          isCompleted
-                            ? "text-primary-500"
-                            : "text-secondary-500",
+                          isCompleted ? "text-accent-500" : "text-gray-500",
                         )}
                       />
                     )}
@@ -141,7 +139,7 @@ export default function CriticalCareEditor(props: Props) {
                       icon="l-check-circle"
                       className={classNames(
                         "text-2xl",
-                        !isCompleted && "text-secondary-500",
+                        !isCompleted && "text-gray-500",
                       )}
                     />
                   </ButtonV2>

@@ -35,7 +35,7 @@ export default function CameraPresetSelect(props: Props) {
             return (
               <ButtonV2
                 key={option.id}
-                variant={selected ? "primary" : "secondary"}
+                variant={selected ? "accent" : "secondary"}
                 className="min-w-16 max-w-40 text-ellipsis text-sm"
                 onClick={() => props.onChange?.(option)}
                 border
@@ -45,7 +45,7 @@ export default function CameraPresetSelect(props: Props) {
                 {selected && (
                   <CareIcon
                     icon="l-check"
-                    className="rounded-full bg-primary-500 text-base text-white"
+                    className="rounded-full bg-accent-500 text-base text-white"
                   />
                 )}
               </ButtonV2>
@@ -84,10 +84,10 @@ export const CameraPresetDropdown = (
       <div className="relative flex-1">
         <ListboxButton
           className={classNames(
-            "button-size-small button-shape-square relative inline-flex h-min min-w-32 cursor-pointer items-center gap-2 whitespace-pre pr-12 text-left text-sm font-medium shadow outline-offset-1 transition-all duration-200 ease-in-out enabled:hover:shadow-md disabled:cursor-not-allowed disabled:bg-secondary-200 disabled:text-secondary-500 md:min-w-40",
+            "button-size-small button-shape-square relative inline-flex h-min min-w-32 cursor-pointer items-center gap-2 whitespace-pre pr-12 text-left text-sm font-medium shadow outline-offset-1 transition-all duration-200 ease-in-out enabled:hover:shadow-md disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-500 md:min-w-40",
             selected
-              ? "button-primary-default button-primary-border"
-              : "button-secondary-default button-secondary-border",
+              ? "button-accent-default button-accent-border"
+              : "button-gray-default button-gray-border",
           )}
         >
           <span className="block truncate">
@@ -100,7 +100,7 @@ export const CameraPresetDropdown = (
           {selected && (
             <CareIcon
               icon="l-check"
-              className="absolute inset-y-0 right-7 mt-1.5 rounded-full bg-primary-500 text-base text-white"
+              className="absolute inset-y-0 right-7 mt-1.5 rounded-full bg-accent-500 text-base text-white"
             />
           )}
           <span className="pointer-events-none absolute inset-y-0 right-0 mr-1 mt-1 flex items-center">
@@ -110,7 +110,7 @@ export const CameraPresetDropdown = (
         <ListboxOptions
           modal={false}
           as="ul"
-          className="absolute z-20 max-h-48 w-full overflow-auto rounded-b-lg bg-white py-1 text-base shadow-lg ring-1 ring-secondary-500 focus:outline-none md:max-h-60"
+          className="absolute z-20 max-h-48 w-full overflow-auto rounded-b-lg bg-primary py-1 text-base shadow-lg ring-1 ring-gray-500 focus:outline-none md:max-h-60"
         >
           {props.options.map((obj) => (
             <ListboxOption

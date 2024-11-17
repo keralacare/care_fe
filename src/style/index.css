@@ -39,7 +39,7 @@ html {
 body {
     font-family: "Figtree", sans-serif;
     color: #453c52;
-    @apply font-sans text-secondary-900 w-full h-full antialiased;
+    @apply font-sans text-gray-900 w-full h-full antialiased;
 }
 
 h1,
@@ -102,7 +102,7 @@ a:hover {
     @apply text-blue-600;
 }
 
-.bg-primary {
+.bg-primary-gradient {
     background-image: linear-gradient( 135deg, rgba(56, 161, 105, 1) 0%, rgba(47, 133, 90, 1) 100%);
 }
 
@@ -125,51 +125,51 @@ button:focus {
 /* Button Styles */
 
 .btn-default {
-    @apply border text-secondary-800;
+    @apply border text-gray-800;
 }
 
 .btn-default:hover {
-    @apply bg-secondary-100 text-secondary-600;
+    @apply bg-gray-100 text-gray-600;
 }
 
 .btn-default:focus {
-    @apply bg-secondary-400 text-secondary-700;
+    @apply bg-gray-400 text-gray-700;
 }
 
 .btn-subtle {
-    @apply bg-secondary-200 text-secondary-800;
+    @apply bg-gray-200 text-gray-800;
 }
 
 .btn-subtle:hover {
-    @apply bg-secondary-300 text-secondary-900;
+    @apply bg-gray-300 text-gray-900;
 }
 
 .btn-subtle:focus {
-    @apply bg-secondary-400 text-secondary-900;
+    @apply bg-gray-400 text-gray-900;
 }
 
-.btn-primary-ghost {
-    @apply bg-white text-primary-500 border border-primary-500;
+.btn-accent-ghost {
+    @apply bg-primary text-accent-500 border border-accent-500;
 }
 
-.btn-primary-ghost:hover {
-    @apply bg-primary-100 text-primary-600 border-primary-400;
+.btn-accent-ghost:hover {
+    @apply bg-accent-100 text-accent-600 border-accent-400;
 }
 
-.btn-primary-ghost:focus {
-    @apply bg-primary-800 text-white border-primary-400;
+.btn-accent-ghost:focus {
+    @apply bg-accent-800 text-white border-accent-400;
 }
 
 .btn-primary {
-    @apply bg-primary-500 text-white;
+    @apply bg-accent-500 text-white;
 }
 
 .btn-primary:hover {
-    @apply bg-primary-600;
+    @apply bg-accent-600;
 }
 
 .btn-primary:focus {
-    @apply bg-primary-800;
+    @apply bg-accent-800;
     background-image: none;
 }
 
@@ -205,16 +205,16 @@ button:focus {
 
 
 .primary-button {
-    @apply focus:outline-none text-white bg-primary-500 hover:bg-primary-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-6 py-2.5 mr-2 mb-2 transition-all ease-in-out duration-200 !important;
+    @apply focus:outline-none text-white bg-accent-500 hover:bg-accent-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-6 py-2.5 mr-2 mb-2 transition-all ease-in-out duration-200 !important;
 }
 
 .secondary-button {
-    @apply text-secondary-900 bg-white border border-secondary-300 focus:outline-none hover:bg-secondary-100 focus:ring-4 focus:ring-secondary-200 font-medium rounded-lg text-sm px-6 py-2.5 mr-2 mb-2 transition-all ease-in-out duration-200 !important;
+    @apply text-gray-900 bg-primary border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-6 py-2.5 mr-2 mb-2 transition-all ease-in-out duration-200 !important;
 }
 
 button:disabled,
 .disabled {
-    @apply cursor-not-allowed bg-secondary-300 text-secondary-500 shadow-none border-transparent;
+    @apply cursor-not-allowed bg-gray-300 text-gray-500 shadow-none border-transparent;
     background-image: none;
 }
 
@@ -222,7 +222,7 @@ button:disabled:hover,
 .disabled:hover,
 button:disabled:focus,
 .disabled:focus {
-    @apply bg-secondary-300 text-secondary-500 border-transparent shadow-none;
+    @apply bg-gray-300 text-gray-500 border-transparent shadow-none;
     background-image: none;
 }
 
@@ -266,7 +266,7 @@ button:disabled:focus,
 }
 
 .radio-label span:first-child {
-    @apply relative rounded-full align-middle border border-secondary-500 bg-white mr-3;
+    @apply relative rounded-full align-middle border border-gray-500 bg-primary mr-3;
     width: 1.125rem;
     height: 1.125rem;
     transform: scale(1);
@@ -288,16 +288,16 @@ button:disabled:focus,
 
 .radio-label span:first-child:before {
     content: "";
-    @apply bg-primary-500 w-full h-full block opacity-100 rounded-full;
+    @apply bg-accent-500 w-full h-full block opacity-100 rounded-full;
     transform: scale(0);
 }
 
 .radio-label:hover span:first-child {
-    @apply bg-primary-100 border-primary-500;
+    @apply bg-accent-100 border-accent-500;
 }
 
 .radio-input:checked+.radio-label span:first-child {
-    @apply bg-primary-500 border-primary-500;
+    @apply bg-accent-500 border-accent-500;
     animation: wave 0.4s ease;
 }
 
@@ -320,7 +320,7 @@ button:disabled:focus,
 }
 
 .checkbox__label span:first-child {
-    @apply relative rounded align-middle border border-secondary-500 bg-white w-4 h-4 mr-3;
+    @apply relative rounded align-middle border border-gray-500 bg-primary w-4 h-4 mr-3;
     transform: scale(1);
     transition: all 0.2s ease;
 }
@@ -343,16 +343,16 @@ button:disabled:focus,
 
 .checkbox__label span:first-child:before {
     content: "";
-    @apply bg-primary-500 w-full h-full block opacity-100 rounded-full;
+    @apply bg-accent-500 w-full h-full block opacity-100 rounded-full;
     transform: scale(0);
 }
 
 .checkbox__label:hover span:first-child {
-    @apply bg-primary-100 border-primary-500;
+    @apply bg-accent-100 border-accent-500;
 }
 
 .checkbox__input:checked+.checkbox__label span:first-child {
-    @apply bg-primary-500 border-primary-500;
+    @apply bg-accent-500 border-accent-500;
     animation: wave 0.4s ease;
 }
 
@@ -373,25 +373,25 @@ button:disabled:focus,
 }
 
 label {
-    @apply block text-secondary-700 text-sm font-medium;
+    @apply block text-gray-700 text-sm font-medium;
 }
 
 input {
-    @apply border-secondary-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 transition-colors duration-300 !important;
+    @apply border-gray-300 rounded-md shadow-sm focus:ring-accent-500 focus:border-accent-500 transition-colors duration-300 !important;
 }
 
 input:disabled,
 .disabled {
-    @apply cursor-not-allowed bg-secondary-200 border-secondary-400 text-secondary-700;
+    @apply cursor-not-allowed bg-gray-200 border-gray-400 text-gray-700;
 }
 
 textarea {
-    @apply border-secondary-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 transition-colors duration-300;
+    @apply border-gray-300 rounded-md shadow-sm focus:ring-accent-500 focus:border-accent-500 transition-colors duration-300;
 }
 
 button:disabled,
 .disabled {
-    @apply cursor-not-allowed bg-secondary-300 text-secondary-500 shadow-none border-transparent;
+    @apply cursor-not-allowed bg-gray-300 text-gray-500 shadow-none border-transparent;
     background-image: none;
 }
 
@@ -399,17 +399,17 @@ button:disabled,
 /* Styling skeleton loading */
 
 .skeleton-placeholder__line-sm {
-    @apply rounded-full bg-secondary-100;
+    @apply rounded-full bg-gray-100;
     height: 0.625rem;
 }
 
 .skeleton-placeholder__line-md {
-    @apply rounded-full bg-secondary-100;
+    @apply rounded-full bg-gray-100;
     height: 1rem;
 }
 
 .skeleton-placeholder__image {
-    @apply mt-5 h-48 rounded-lg bg-secondary-100;
+    @apply mt-5 h-48 rounded-lg bg-gray-100;
 }
 
 .skeleton-animate {
@@ -663,7 +663,7 @@ button:disabled,
 }
 
 [type="checkbox"] {
-    @apply text-primary-500 focus:ring-1 focus:ring-primary-500 focus:outline-none;
+    @apply text-accent-500 focus:ring-1 focus:ring-accent-500 focus:outline-none;
 }
 
 

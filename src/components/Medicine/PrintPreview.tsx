@@ -58,7 +58,7 @@ export default function PrescriptionsPrintPreview() {
           alt="care logo"
         />
       </div>
-      <div className="mb-6 grid grid-cols-8 gap-y-1.5 border-2 border-secondary-400 p-2">
+      <div className="mb-6 grid grid-cols-8 gap-y-1.5 border-2 border-gray-400 p-2">
         <PatientDetail name="Patient" className="col-span-5">
           {patient && (
             <>
@@ -97,17 +97,17 @@ export default function PrescriptionsPrintPreview() {
       <PrescriptionsTable items={prnPrescriptions} prn />
 
       <div className="pt-12">
-        <p className="font-medium text-secondary-800">
+        <p className="font-medium text-gray-800">
           Sign of the Consulting Doctor
         </p>
         <PatientDetail name="Name of the Consulting Doctor">
           {encounter?.treating_physician_object &&
             formatName(encounter?.treating_physician_object)}
         </PatientDetail>
-        <p className="pt-6 text-center text-xs font-medium text-secondary-700">
+        <p className="pt-6 text-center text-xs font-medium text-gray-700">
           Generated on: {formatDateTime(new Date())}
         </p>
-        <p className="pt-1 text-center text-xs font-medium text-secondary-700">
+        <p className="pt-1 text-center text-xs font-medium text-gray-700">
           This is a computer generated prescription. It shall be issued to the
           patient only after the concerned doctor has verified the content and
           authorized the same by affixing signature.
@@ -133,11 +133,11 @@ const PatientDetail = ({
         className,
       )}
     >
-      <div className="font-medium text-secondary-800">{name}: </div>
+      <div className="font-medium text-gray-800">{name}: </div>
       {children != null ? (
         <span className="pl-2 font-bold">{children}</span>
       ) : (
-        <div className="h-5 w-48 animate-pulse bg-secondary-200" />
+        <div className="h-5 w-48 animate-pulse bg-gray-200" />
       )}
     </div>
   );
@@ -151,9 +151,7 @@ const PrescriptionsTable = ({
   prn?: boolean;
 }) => {
   if (!items) {
-    return (
-      <div className="h-96 w-full animate-pulse rounded-lg bg-secondary-200" />
-    );
+    return <div className="h-96 w-full animate-pulse rounded-lg bg-gray-200" />;
   }
 
   if (!items.length) {
@@ -161,11 +159,11 @@ const PrescriptionsTable = ({
   }
 
   return (
-    <table className="mb-8 mt-4 w-full border-collapse border-2 border-secondary-400">
+    <table className="mb-8 mt-4 w-full border-collapse border-2 border-gray-400">
       <caption className="mb-2 caption-top text-lg font-bold">
         {prn && "PRN"} Prescriptions
       </caption>
-      <thead className="border-b-2 border-secondary-400 bg-secondary-50">
+      <thead className="border-b-2 border-gray-400 bg-gray-50">
         <tr>
           <th className="max-w-52 p-1">Medicine</th>
           <th className="p-1">Dosage</th>
@@ -173,7 +171,7 @@ const PrescriptionsTable = ({
           <th className="max-w-32 p-1">Notes / Instructions</th>
         </tr>
       </thead>
-      <tbody className="border-b-2 border-secondary-400">
+      <tbody className="border-b-2 border-gray-400">
         {items.map((item) => (
           <PrescriptionEntry key={item.id} obj={item} />
         ))}
@@ -187,7 +185,7 @@ const PrescriptionEntry = ({ obj }: { obj: Prescription }) => {
   const medicine = obj.medicine_object;
 
   return (
-    <tr className="border-y border-y-secondary-400 text-center text-xs transition-all duration-200 ease-in-out even:bg-secondary-100">
+    <tr className="border-y border-y-gray-400 text-center text-xs transition-all duration-200 ease-in-out even:bg-gray-100">
       <td className="max-w-52 px-2 py-2 text-start text-sm">
         <p>
           <strong className="uppercase">
@@ -195,16 +193,16 @@ const PrescriptionEntry = ({ obj }: { obj: Prescription }) => {
           </strong>{" "}
         </p>
         {medicine?.type === "brand" && (
-          <span className="text-xs text-secondary-600">
+          <span className="text-xs text-gray-600">
             <p>
               Generic:{" "}
-              <span className="capitalize text-secondary-800">
+              <span className="capitalize text-gray-800">
                 {medicine.generic ?? "--"}
               </span>
             </p>
             <p>
               Brand:{" "}
-              <span className="capitalize text-secondary-800">
+              <span className="capitalize text-gray-800">
                 {medicine.company ?? "--"}
               </span>
             </p>
@@ -236,7 +234,7 @@ const PrescriptionEntry = ({ obj }: { obj: Prescription }) => {
       <td className="max-w-32 whitespace-break-spaces px-2 py-1">
         {obj.route && (
           <p>
-            <span className="text-secondary-700">Route: </span>
+            <span className="text-gray-700">Route: </span>
             <span className="font-medium">
               {t(`PRESCRIPTION_ROUTE_${obj.route}`)}
             </span>
@@ -244,7 +242,7 @@ const PrescriptionEntry = ({ obj }: { obj: Prescription }) => {
         )}
         {obj.frequency && (
           <p>
-            <span className="text-secondary-700">Freq: </span>
+            <span className="text-gray-700">Freq: </span>
             <span className="font-medium">
               {t(`PRESCRIPTION_FREQUENCY_${obj.frequency}`)}
             </span>
@@ -252,13 +250,13 @@ const PrescriptionEntry = ({ obj }: { obj: Prescription }) => {
         )}
         {obj.days && (
           <p>
-            <span className="text-secondary-700">Days: </span>
+            <span className="text-gray-700">Days: </span>
             <span className="font-medium">{obj.days} day(s)</span>
           </p>
         )}
         {obj.indicator && (
           <p>
-            <span className="text-secondary-700">Indicator: </span>
+            <span className="text-gray-700">Indicator: </span>
             <span className="font-medium">{obj.indicator}</span>
           </p>
         )}
@@ -267,7 +265,7 @@ const PrescriptionEntry = ({ obj }: { obj: Prescription }) => {
         {obj.notes}
         {obj.instruction_on_titration && (
           <p className="pt-1">
-            <span className="text-secondary-700">Titration instructions:</span>{" "}
+            <span className="text-gray-700">Titration instructions:</span>{" "}
             {obj.instruction_on_titration}
           </p>
         )}

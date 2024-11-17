@@ -21,13 +21,13 @@ export default function HumanBodyChart({
     <div className="relative flex flex-col items-start gap-2 lg:flex-row">
       {[HumanBodyPaths.anterior, HumanBodyPaths.posterior].map((paths, i) => (
         <div
-          className="flex flex-1 flex-col gap-4 rounded-xl border-2 border-secondary-300 p-2"
+          className="flex flex-1 flex-col gap-4 rounded-xl border-2 border-gray-300 p-2"
           key={i}
         >
           <h2 className="text-center text-xl font-bold">
             {i === 0 ? "Front" : "Back"}
           </h2>
-          <div className="flex flex-wrap justify-center gap-2 border-b-2 border-secondary-200 py-4">
+          <div className="flex flex-wrap justify-center gap-2 border-b-2 border-gray-200 py-4">
             {paths.map((path, j) => (
               <button
                 key={j}

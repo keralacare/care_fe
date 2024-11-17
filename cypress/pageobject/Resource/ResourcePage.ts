@@ -20,7 +20,7 @@ class ResourcePage {
 
   verifyCompletedResources() {
     cy.wait("@resource").its("response.statusCode").should("eq", 200);
-    cy.contains("button", "Active").should("have.class", "text-primary-500");
+    cy.contains("button", "Active").should("have.class", "text-accent-500");
     cy.contains("button", "Completed").should("have.class", "text-white");
   }
 
@@ -31,7 +31,7 @@ class ResourcePage {
   verifyActiveResources() {
     cy.wait("@resource").its("response.statusCode").should("eq", 200);
     cy.contains("button", "Active").should("have.class", "text-white");
-    cy.contains("button", "Completed").should("have.class", "text-primary-500");
+    cy.contains("button", "Completed").should("have.class", "text-accent-500");
   }
 
   clickListViewButton() {

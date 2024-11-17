@@ -77,9 +77,7 @@ const Vitals = ({ log, onChange }: LogUpdateSectionProps) => {
       <hr />
       <div>
         <h2 className="text-lg">{t("pain")}</h2>
-        <span className="text-secondary-800">
-          {t("pain_chart_description")}
-        </span>
+        <span className="text-gray-800">{t("pain_chart_description")}</span>
       </div>
       <PainChart
         pain={log.pain_scale_enhanced ?? []}

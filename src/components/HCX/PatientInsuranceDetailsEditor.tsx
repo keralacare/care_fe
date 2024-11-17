@@ -72,7 +72,7 @@ export default function PatientInsuranceDetailsEditor({
   };
 
   return (
-    <div className="flex w-full flex-col gap-6 rounded bg-white p-4">
+    <div className="flex w-full flex-col gap-6 rounded bg-primary p-4">
       <InsuranceDetailsBuilder
         name="insurance_details"
         value={insuranceDetails}

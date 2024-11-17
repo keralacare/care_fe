@@ -145,7 +145,7 @@ export default function PatientNotesSlideover(props: PatientNotesProps) {
     <div className="flex gap-1">
       {show && (
         <Link
-          className="tooltip flex h-8 w-8 cursor-pointer items-center justify-center rounded bg-primary-800 text-secondary-100 text-opacity-70 hover:bg-primary-700 hover:text-opacity-100"
+          className="tooltip flex h-8 w-8 cursor-pointer items-center justify-center rounded bg-accent-800 text-gray-100 text-opacity-70 hover:bg-accent-700 hover:text-opacity-100"
           href={`/facility/${facilityId}/patient/${patientId}/consultation/${consultationId}/notes`}
         >
           <CareIcon
@@ -160,7 +160,7 @@ export default function PatientNotesSlideover(props: PatientNotesProps) {
       <div
         id="expand_doctor_notes"
         className={classNames(
-          "tooltip flex h-8 w-8 cursor-pointer items-center justify-center rounded bg-primary-800 text-secondary-100 text-opacity-70 hover:bg-primary-700 hover:text-opacity-100",
+          "tooltip flex h-8 w-8 cursor-pointer items-center justify-center rounded bg-accent-800 text-gray-100 text-opacity-70 hover:bg-accent-700 hover:text-opacity-100",
         )}
         onClick={() => setShow(!show)}
       >
@@ -178,7 +178,7 @@ export default function PatientNotesSlideover(props: PatientNotesProps) {
         </span>
       </div>
       <div
-        className="tooltip flex h-8 w-8 cursor-pointer items-center justify-center rounded bg-primary-800 text-secondary-100 text-opacity-70 hover:bg-primary-700 hover:text-opacity-100"
+        className="tooltip flex h-8 w-8 cursor-pointer items-center justify-center rounded bg-accent-800 text-gray-100 text-opacity-70 hover:bg-accent-700 hover:text-opacity-100"
         onClick={() => setShowPatientNotesPopup(false)}
       >
         <CareIcon
@@ -212,19 +212,19 @@ export default function PatientNotesSlideover(props: PatientNotesProps) {
     >
       {!show ? (
         <div
-          className="flex w-full cursor-pointer items-center justify-around rounded-t-md bg-primary-800 p-2 text-white"
+          className="flex w-full cursor-pointer items-center justify-around rounded-t-md bg-accent-800 p-2 text-white"
           onClick={() => setShow(!show)}
         >
           <span className="font-semibold">Discussion Notes</span>
           {notesActionIcons}
         </div>
       ) : (
-        <div className="flex h-screen w-full -translate-y-0 flex-col text-clip border-2 border-b-0 border-primary-800 bg-white pb-3 transition-all sm:h-[500px] sm:rounded-t-md">
-          <div className="flex w-full items-center justify-between bg-primary-800 p-2 px-4 text-white">
+        <div className="flex h-screen w-full -translate-y-0 flex-col text-clip border-2 border-b-0 border-accent-800 bg-primary pb-3 transition-all sm:h-[500px] sm:rounded-t-md">
+          <div className="flex w-full items-center justify-between bg-accent-800 p-2 px-4 text-white">
             <span className="font-semibold">Discussion Notes</span>
             {notesActionIcons}
           </div>
-          <div className="flex bg-primary-800 text-sm">
+          <div className="flex bg-accent-800 text-sm">
             {keysOf(PATIENT_NOTES_THREADS).map((current) => (
               <button
                 id={`patient-note-tab-${current}`}
@@ -232,8 +232,8 @@ export default function PatientNotesSlideover(props: PatientNotesProps) {
                 className={classNames(
                   "flex flex-1 justify-center border-b-4 py-1",
                   thread === PATIENT_NOTES_THREADS[current]
-                    ? "border-primary-500 font-medium text-white"
-                    : "border-primary-800 text-white/70",
+                    ? "border-accent-500 font-medium text-white"
+                    : "border-accent-800 text-white/70",
                 )}
                 onClick={() => setThread(PATIENT_NOTES_THREADS[current])}
               >

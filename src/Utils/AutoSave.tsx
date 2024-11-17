@@ -187,7 +187,7 @@ export const RestoreDraftButton = () => {
     >
       <CareIcon icon="l-pen" />
       <span>Restore draft</span>
-      <span className="text-sm text-secondary-500">
+      <span className="text-sm text-gray-500">
         (
         {relativeTime(
           draftStarted

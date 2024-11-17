@@ -114,7 +114,7 @@ export default function ConfigureCamera(props: Props) {
 
   if (!["DistrictAdmin", "StateAdmin"].includes(authUser.user_type)) {
     return (
-      <div className="w-full overflow-hidden rounded-lg bg-white shadow">
+      <div className="w-full overflow-hidden rounded-lg bg-primary shadow">
         <CameraFeed
           asset={props.asset}
           key={key}
@@ -129,7 +129,7 @@ export default function ConfigureCamera(props: Props) {
     <div className="flex w-full flex-col gap-4 py-4">
       <div className="flex w-full flex-col gap-4 md:flex-row-reverse md:items-start">
         <form
-          className="rounded-lg bg-white p-4 shadow md:w-full"
+          className="rounded-lg bg-primary p-4 shadow md:w-full"
           onSubmit={async (e) => {
             e.preventDefault();
             const { res } = await request(routes.partialUpdateAsset, {
@@ -245,7 +245,7 @@ export default function ConfigureCamera(props: Props) {
           </div>
         </form>
 
-        <div className="w-full overflow-hidden rounded-lg bg-white shadow-lg">
+        <div className="w-full overflow-hidden rounded-lg bg-primary shadow-lg">
           <CameraFeed
             asset={props.asset}
             key={`${key}-${props.asset.modified_date}`}
@@ -277,7 +277,7 @@ export default function ConfigureCamera(props: Props) {
                 disabled={!onvifPresets?.length}
               >
                 <div className="relative flex-1">
-                  <ListboxButton className="button-size-small button-shape-square button-secondary-default button-secondary-border relative inline-flex h-min min-w-32 cursor-pointer items-center gap-2 whitespace-pre pr-12 text-left text-sm font-medium outline-offset-1 transition-all duration-200 ease-in-out enabled:hover:shadow-md disabled:cursor-not-allowed disabled:bg-secondary-200 disabled:text-secondary-500 md:min-w-40">
+                  <ListboxButton className="button-size-small button-shape-square button-gray-default button-gray-border relative inline-flex h-min min-w-32 cursor-pointer items-center gap-2 whitespace-pre pr-12 text-left text-sm font-medium outline-offset-1 transition-all duration-200 ease-in-out enabled:hover:shadow-md disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-500 md:min-w-40">
                     <span className="block truncate">
                       {!onvifPresets?.length
                         ? t("no_presets")
@@ -294,7 +294,7 @@ export default function ConfigureCamera(props: Props) {
                   <ListboxOptions
                     modal={false}
                     as="ul"
-                    className="absolute z-20 max-h-48 w-full overflow-auto rounded-b-lg bg-white py-1 text-base shadow-lg ring-1 ring-secondary-500 focus:outline-none md:max-h-60"
+                    className="absolute z-20 max-h-48 w-full overflow-auto rounded-b-lg bg-primary py-1 text-base shadow-lg ring-1 ring-gray-500 focus:outline-none md:max-h-60"
                   >
                     {onvifPresets?.map((obj) => (
                       <ListboxOption
@@ -320,8 +320,8 @@ export default function ConfigureCamera(props: Props) {
       </div>
 
       {!linkedAssetBeds?.length && !unlinkedBeds?.length ? (
-        <div className="flex w-full items-center justify-center rounded-lg border-4 border-dashed border-secondary-500/50 py-24">
-          <span className="text-center text-lg font-semibold text-secondary-500">
+        <div className="flex w-full items-center justify-center rounded-lg border-4 border-dashed border-gray-500/50 py-24">
+          <span className="text-center text-lg font-semibold text-gray-500">
             <p>{t("location_beds_empty")}</p>
             <p>{t("add_beds_to_configure_presets")}</p>
           </span>
@@ -329,16 +329,16 @@ export default function ConfigureCamera(props: Props) {
       ) : (
         <div>
           <h4 className="p-2">{t("manage_bed_presets")}</h4>
-          <div className="rounded-lg bg-secondary-100 pt-2 shadow">
-            <nav className="flex overflow-x-auto bg-white">
+          <div className="rounded-lg bg-gray-100 pt-2 shadow">
+            <nav className="flex overflow-x-auto bg-primary">
               {linkedAssetBeds?.map((obj) => (
                 <span
                   key={obj.id}
                   className={classNames(
-                    "cursor-pointer whitespace-nowrap border-b-2 bg-secondary-100 px-4 capitalize transition-all duration-200 ease-in-out",
+                    "cursor-pointer whitespace-nowrap border-b-2 bg-gray-100 px-4 capitalize transition-all duration-200 ease-in-out",
                     obj.id === selectedAssetBed?.id
-                      ? "border-b-primary-500 font-bold text-primary-500"
-                      : "font-medium text-secondary-700 hover:border-b-primary-300",
+                      ? "border-b-accent-500 font-bold text-accent-500"
+                      : "font-medium text-gray-700 hover:border-b-accent-300",
                   )}
                   onClick={() => setQuery({ bed: obj.bed_object.id })}
                 >
@@ -350,17 +350,17 @@ export default function ConfigureCamera(props: Props) {
                 <span
                   key={obj.id}
                   className={classNames(
-                    "cursor-pointer whitespace-nowrap border-b-2 bg-secondary-100 px-4 capitalize opacity-70 transition-all duration-200 ease-in-out",
+                    "cursor-pointer whitespace-nowrap border-b-2 bg-gray-100 px-4 capitalize opacity-70 transition-all duration-200 ease-in-out",
                     obj.id === query.bed
-                      ? "border-b-primary-300 font-bold text-primary-500"
-                      : "font-medium text-secondary-700 hover:border-b-primary-300",
+                      ? "border-b-accent-300 font-bold text-accent-500"
+                      : "font-medium text-gray-700 hover:border-b-accent-300",
                   )}
                   onClick={() => setQuery({ bed: obj.id })}
                 >
                   {obj.name}
                 </span>
               ))}
-              <div className="w-full bg-secondary-100" />
+              <div className="w-full bg-gray-100" />
             </nav>
             {cameraPresetsQuery.loading && <Loading />}
             {selectedAssetBed && (
@@ -434,10 +434,10 @@ export default function ConfigureCamera(props: Props) {
                     />
                   </div>
                 </DialogModal>
-                <div className="bg-white p-4">
+                <div className="bg-primary p-4">
                   <ul className="grid gap-4 py-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
                     <li
-                      className="flex h-full w-full cursor-pointer items-center justify-center gap-2 rounded border border-secondary-400 p-3 py-8 font-semibold text-secondary-700 transition-all duration-200 ease-in-out hover:bg-secondary-100"
+                      className="flex h-full w-full cursor-pointer items-center justify-center gap-2 rounded border border-gray-400 p-3 py-8 font-semibold text-gray-700 transition-all duration-200 ease-in-out hover:bg-gray-100"
                       onClick={async () => {
                         const { data } = await operate({ type: "get_status" });
                         if (!data) {
@@ -455,7 +455,7 @@ export default function ConfigureCamera(props: Props) {
                     {cameraPresetsQuery.data?.results.map((preset) => (
                       <li
                         key={preset.id}
-                        className="h-full w-full rounded border border-secondary-400 p-3 text-secondary-700 transition-all duration-200 ease-in-out"
+                        className="h-full w-full rounded border border-gray-400 p-3 text-gray-700 transition-all duration-200 ease-in-out"
                       >
                         <DialogModal
                           show={editPreset?.preset === preset.id}
@@ -634,7 +634,7 @@ export default function ConfigureCamera(props: Props) {
               </>
             )}
             {selectedUnlinkedBed && (
-              <div className="flex w-full items-center justify-center p-10 py-20 text-secondary-500">
+              <div className="flex w-full items-center justify-center p-10 py-20 text-gray-500">
                 <span className="text-center font-semibold">
                   <p>{t("bed_not_linked_to_camera")}</p>
                   <p>{t("create_preset_prerequisite")}</p>

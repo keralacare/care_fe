@@ -106,7 +106,7 @@ export default function SlideOver({
             ) : (
               <div
                 className={classNames(
-                  "flex flex-col bg-white md:rounded-xl",
+                  "flex flex-col bg-primary md:rounded-xl",
                   directionClasses[slideFrom].proportions,
                   dialogClass,
                 )}

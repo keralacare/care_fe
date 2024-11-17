@@ -169,7 +169,7 @@ const EligibilityChip = ({ eligible }: { eligible: boolean }) => {
   return (
     <div
       className={`flex items-center gap-1 rounded-full px-1.5 py-0.5 tracking-wider ${
-        eligible ? "bg-primary-100 text-primary-500" : "bg-red-500 text-white"
+        eligible ? "bg-accent-100 text-accent-500" : "bg-red-500 text-white"
       }`}
     >
       <CareIcon icon={eligible ? "l-check" : "l-times"} className="text-base" />

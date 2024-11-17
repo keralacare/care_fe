@@ -189,7 +189,7 @@ const AvatarEditModal = ({
                       className="h-full w-full object-cover"
                     />
                   </div>
-                  <p className="text-center font-medium text-secondary-700">
+                  <p className="text-center font-medium text-gray-700">
                     {commonHint}
                   </p>
                 </>
@@ -200,10 +200,10 @@ const AvatarEditModal = ({
                   onDrop={onDrop}
                   className={`mt-8 flex flex-1 flex-col items-center justify-center rounded-lg border-[3px] border-dashed px-3 py-6 ${
                     isDragging
-                      ? "border-primary-800 bg-primary-100"
+                      ? "border-accent-800 bg-accent-100"
                       : dragProps.dragOver
-                        ? "border-primary-500"
-                        : "border-secondary-500"
+                        ? "border-accent-500"
+                        : "border-gray-500"
                   } ${dragProps.fileDropError !== "" ? "border-red-500" : ""}`}
                 >
                   <svg
@@ -215,32 +215,30 @@ const AvatarEditModal = ({
                       isDragging
                         ? "text-green-500"
                         : dragProps.dragOver
-                          ? "text-primary-500"
-                          : "text-secondary-600"
+                          ? "text-accent-500"
+                          : "text-gray-600"
                     } ${
                       dragProps.fileDropError !== ""
                         ? "text-red-500"
-                        : "text-secondary-600"
+                        : "text-gray-600"
                     }`}
                   >
                     <path d="M28 8H12a4 4 0 0 0-4 4v20m32-12v8m0 0v8a4 4 0 0 1-4 4H12a4 4 0 0 1-4-4v-4m32-4-3.172-3.172a4 4 0 0 0-5.656 0L28 28M8 32l9.172-9.172a4 4 0 0 1 5.656 0L28 28m0 0 4 4m4-24h8m-4-4v8m-12 4h.02" />
                   </svg>
                   <p
                     className={`text-sm ${
-                      dragProps.dragOver
-                        ? "text-primary-500"
-                        : "text-secondary-700"
+                      dragProps.dragOver ? "text-accent-500" : "text-gray-700"
                     } ${
                       dragProps.fileDropError !== ""
                         ? "text-red-500"
-                        : "text-secondary-700"
+                        : "text-gray-700"
                     } text-center`}
                   >
                     {dragProps.fileDropError !== ""
                       ? dragProps.fileDropError
                       : `${t("drag_drop_image_to_upload")}`}
                   </p>
-                  <p className="mt-4 text-center font-medium text-secondary-700">
+                  <p className="mt-4 text-center font-medium text-gray-700">
                     {t("no_image_found")}. {commonHint}
                   </p>
                 </div>
@@ -250,7 +248,7 @@ const AvatarEditModal = ({
                 <div>
                   <label
                     id="upload-cover-image"
-                    className="button-size-default button-shape-square button-primary-default inline-flex h-min w-full cursor-pointer items-center justify-center gap-2 whitespace-pre font-medium shadow outline-offset-1 transition-all duration-200 ease-in-out enabled:hover:shadow-md disabled:cursor-not-allowed disabled:bg-secondary-200 disabled:text-secondary-500"
+                    className="button-size-default button-shape-square button-accent-default inline-flex h-min w-full cursor-pointer items-center justify-center gap-2 whitespace-pre font-medium shadow outline-offset-1 transition-all duration-200 ease-in-out enabled:hover:shadow-md disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-500"
                   >
                     <CareIcon icon="l-cloud-upload" className="text-lg" />
                     {t("upload_an_image")}

@@ -11,7 +11,7 @@ interface Props {
   handleCancel: () => void;
 }
 
-const tdClass = "border border-secondary-400 p-2 text-left";
+const tdClass = "border border-gray-400 p-2 text-left";
 
 const DuplicatePatientDialog = (props: Props) => {
   const { t } = useTranslation();
@@ -34,14 +34,14 @@ const DuplicatePatientDialog = (props: Props) => {
           </p>
         </div>
         <div>
-          <div className="max-h-[200px] overflow-auto rounded border border-y-secondary-400">
+          <div className="max-h-[200px] overflow-auto rounded border border-y-gray-400">
             <table className="relative w-full border-collapse">
               <thead>
                 <tr className="border-separate">
                   {["Patient Name and ID", "Gender"].map((heading, i) => (
                     <th
                       key={i}
-                      className={tdClass + " sticky top-0 bg-white/90"}
+                      className={tdClass + " sticky top-0 bg-primary/90"}
                     >
                       {heading}
                     </th>
@@ -71,7 +71,7 @@ const DuplicatePatientDialog = (props: Props) => {
         <div className="flex flex-col">
           <div className="mb-2 flex items-center">
             <label
-              className="mb-2 ml-0 flex w-full rounded-md bg-primary-500 py-2 pr-2 text-white"
+              className="mb-2 ml-0 flex w-full rounded-md bg-accent-500 py-2 pr-2 text-white"
               htmlFor="transfer"
             >
               <input

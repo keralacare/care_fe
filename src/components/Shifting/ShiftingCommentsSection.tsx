@@ -52,7 +52,7 @@ const CommentSection = (props: CommentSectionProps) => {
             value={commentBox}
             minLength={3}
             placeholder={t("type_your_comment")}
-            className="mt-4 rounded-lg border border-secondary-500 p-4 focus:ring-primary-500"
+            className="mt-4 rounded-lg border border-gray-500 p-4 focus:ring-accent-500"
             onChange={(e) => setCommentBox(e.target.value)}
           />
           <div className="flex w-full justify-end">
@@ -95,21 +95,21 @@ export const Comment = ({
   return (
     <div
       key={id}
-      className="mt-4 flex w-full flex-col rounded-lg border border-secondary-300 bg-white p-4 text-secondary-800"
+      className="mt-4 flex w-full flex-col rounded-lg border border-gray-300 bg-primary p-4 text-gray-800"
     >
       <div className="w-full">
         <p className="break-words">{comment}</p>
       </div>
       <div className="mt-3">
-        <span className="text-xs text-secondary-500">
+        <span className="text-xs text-gray-500">
           {modified_date ? formatDateTime(modified_date) : "-"}
         </span>
       </div>
-      <div className="mr-auto flex items-center rounded-md border bg-secondary-100 py-1 pl-2 pr-3">
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-700 p-1 uppercase text-white">
+      <div className="mr-auto flex items-center rounded-md border bg-gray-100 py-1 pl-2 pr-3">
+        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-700 p-1 uppercase text-white">
           {created_by_object?.first_name?.charAt(0) || t("unknown")}
         </div>
-        <span className="pl-2 text-sm text-secondary-700">
+        <span className="pl-2 text-sm text-gray-700">
           {formatName(created_by_object)}
         </span>
       </div>

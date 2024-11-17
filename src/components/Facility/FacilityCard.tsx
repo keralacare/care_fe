@@ -55,7 +55,7 @@ export const FacilityCard = (props: {
 
   return (
     <div key={`usr_${facility.id}`} className="w-full">
-      <div className="block h-full overflow-hidden rounded-lg border border-secondary-300 bg-white transition-all hover:border-secondary-400">
+      <div className="block h-full overflow-hidden rounded-lg border border-secondaryActive bg-primary transition-all hover:border-opaque">
         <div className="flex h-full">
           <div className="h-full w-full grow">
             <Link
@@ -83,7 +83,7 @@ export const FacilityCard = (props: {
                   </Link>
                   <div className="flow-root grow">
                     {facility.kasp_empanelled && (
-                      <div className="float-right ml-2 mt-2 inline-flex items-center rounded-md bg-yellow-100 px-2.5 py-0.5 text-sm font-medium leading-5 text-yellow-800">
+                      <div className="float-right ml-2 mt-2 inline-flex items-center rounded-md bg-yellow-300/20 px-2.5 py-0.5 text-sm font-medium leading-5 text-yellow-500">
                         {careConfig.kasp.string}
                       </div>
                     )}
@@ -100,7 +100,7 @@ export const FacilityCard = (props: {
                         </Link>
                         <div
                           data-test-id="occupancy-badge"
-                          className={`tooltip flex items-center gap-1 text-sm ${(facility.patient_count || 0) / (facility.bed_count || 0) > 0.85 ? "justify-center rounded-md border border-red-600 bg-red-500 p-1 font-bold text-white" : "text-secondary-700"}`}
+                          className={`tooltip flex items-center gap-1 text-sm ${(facility.patient_count || 0) / (facility.bed_count || 0) > 0.85 ? "justify-center rounded-md border border-red-600 bg-red-500 p-1 font-bold text-white" : "text-primaryFontLight"}`}
                         >
                           <span className="tooltip-text tooltip-top">
                             {t("live_patients_total_beds")}
@@ -131,7 +131,7 @@ export const FacilityCard = (props: {
                       <Chip
                         text={facility.facility_type || ""}
                         variant="custom"
-                        className="bg-blue-100 text-blue-900"
+                        className="bg-blue-500/20 text-blue-600"
                         hideBorder
                         size="small"
                       />
@@ -178,7 +178,7 @@ export const FacilityCard = (props: {
                   </div>
                 </div>
               </div>
-              <div className="flex flex-wrap border-t border-t-secondary-300 bg-secondary-50 px-2 py-1 md:px-3">
+              <div className="flex flex-wrap border-t border-t-secondaryActive bg-secondary px-2 py-1 md:px-3">
                 {/* <div className="flex justify-between py-2"> */}
                 <div className="flex w-full flex-wrap justify-between gap-2 py-2">
                   <div className="flex flex-wrap gap-2">
@@ -199,7 +199,7 @@ export const FacilityCard = (props: {
                           event.preventDefault();
                           handleNotifySubmit(notifyModalFor);
                         }}
-                        className="flex w-full flex-col bg-white text-center"
+                        className="flex w-full flex-col bg-primary text-center"
                       >
                         <TextAreaFormField
                           id="NotifyModalMessageInput"

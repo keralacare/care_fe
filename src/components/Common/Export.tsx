@@ -79,7 +79,7 @@ export const ExportMenu = ({
         disabled={isExporting || disabled}
         title={isExporting ? "Exporting..." : label}
         icon={<CareIcon icon="l-export" />}
-        className="tooltip border-primary-500 bg-white text-primary-500 hover:bg-primary-100 enabled:border"
+        className="tooltip border-accent-500 bg-primary text-accent-500 hover:bg-accent-100 enabled:border"
       >
         {exportItems.map((item) => (
           <DropdownItem
@@ -130,7 +130,7 @@ export const ExportButton = ({
             exportFile(action, props.filenamePrefix, type, parse);
           }
         }}
-        className="tooltip mx-2 p-4 text-lg text-secondary-800 disabled:bg-transparent disabled:text-secondary-500"
+        className="tooltip mx-2 p-4 text-lg text-gray-800 disabled:bg-transparent disabled:text-gray-500"
         variant="secondary"
         ghost
         circle

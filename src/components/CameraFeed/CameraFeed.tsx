@@ -199,7 +199,7 @@ export default function CameraFeed(props: Props) {
                 </span>
                 <AssetInfoPopover
                   asset={props.asset}
-                  className="absolute z-[100] mt-2 w-56 -translate-x-full -translate-y-4 rounded-md bg-white md:w-[350px] md:-translate-x-full md:-translate-y-2"
+                  className="absolute z-[100] mt-2 w-56 -translate-x-full -translate-y-4 rounded-md bg-primary md:w-[350px] md:-translate-x-full md:-translate-y-2"
                 />
               </div>
             )}
@@ -244,7 +244,7 @@ export default function CameraFeed(props: Props) {
                 return (
                   <NoFeedAvailable
                     message="Offline"
-                    className="text-secondary-500"
+                    className="text-gray-500"
                     icon="l-exclamation-triangle"
                     streamUrl=""
                     asset={props.asset}

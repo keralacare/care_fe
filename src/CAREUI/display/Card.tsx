@@ -9,7 +9,7 @@ export default function Card(
   return (
     <div
       {...rest}
-      className={"rounded-lg bg-white p-4 shadow " + props.className}
+      className={"rounded-lg bg-primary p-4 shadow " + props.className}
     >
       {children}
     </div>

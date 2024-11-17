@@ -131,10 +131,10 @@ export const PrimaryParametersPlot = ({
   return (
     <div>
       <div className="grid gap-4 md:grid-cols-2" id="vital-section">
-        <div className="m-2 overflow-x-auto rounded-lg border bg-white p-4 shadow md:w-full">
+        <div className="m-2 overflow-x-auto rounded-lg border bg-primary p-4 shadow md:w-full">
           <StackedLinePlot title="BP" xData={dates} yData={BPData} />
         </div>
-        <div className="m-2 overflow-x-auto rounded-lg border bg-white p-4 shadow md:w-full">
+        <div className="m-2 overflow-x-auto rounded-lg border bg-primary p-4 shadow md:w-full">
           <LinePlot
             title="Pulse"
             name="Pulse"
@@ -144,7 +144,7 @@ export const PrimaryParametersPlot = ({
             high={100}
           />
         </div>
-        <div className="m-2 overflow-x-auto rounded-lg border bg-white p-4 shadow md:w-full">
+        <div className="m-2 overflow-x-auto rounded-lg border bg-primary p-4 shadow md:w-full">
           <LinePlot
             title="Temperature (F)"
             name="Temperature"
@@ -152,7 +152,7 @@ export const PrimaryParametersPlot = ({
             yData={yAxisData("temperature")}
           />
         </div>
-        <div className="m-2 overflow-x-auto rounded-lg border bg-white p-4 shadow md:w-full">
+        <div className="m-2 overflow-x-auto rounded-lg border bg-primary p-4 shadow md:w-full">
           <LinePlot
             title="Resp"
             name="Resp"
@@ -160,10 +160,10 @@ export const PrimaryParametersPlot = ({
             yData={yAxisData("resp")}
           />
         </div>
-        <div className="m-2 overflow-x-auto rounded-lg border bg-white p-4 shadow md:w-full">
+        <div className="m-2 overflow-x-auto rounded-lg border bg-primary p-4 shadow md:w-full">
           <StackedLinePlot title="Insulin" xData={dates} yData={InsulinData} />
         </div>
-        <div className="m-2 overflow-x-auto rounded-lg border bg-white p-4 shadow md:w-full">
+        <div className="m-2 overflow-x-auto rounded-lg border bg-primary p-4 shadow md:w-full">
           <LinePlot
             title="SPO2 (%)"
             name="spo2"
@@ -173,7 +173,7 @@ export const PrimaryParametersPlot = ({
             high={100}
           />
         </div>
-        <div className="m-2 overflow-x-auto rounded-lg border bg-white p-4 shadow md:w-full">
+        <div className="m-2 overflow-x-auto rounded-lg border bg-primary p-4 shadow md:w-full">
           <LinePlot
             title="Ventilator FIO2 (%)"
             name="fio2"
@@ -183,7 +183,7 @@ export const PrimaryParametersPlot = ({
             high={60}
           />
         </div>
-        <div className="m-2 overflow-x-auto rounded-lg border bg-white p-4 shadow md:w-full">
+        <div className="m-2 overflow-x-auto rounded-lg border bg-primary p-4 shadow md:w-full">
           <h3 className="text-sm">Rhythm</h3>
           {Object.keys(rhythmValues).length === 0 ? (
             <div className="flex h-64 items-center justify-center">
@@ -198,7 +198,7 @@ export const PrimaryParametersPlot = ({
                       <div className="relative pb-8">
                         {rhythmIdx !== obj[1].length ? (
                           <span
-                            className="absolute left-4 top-4 -ml-px h-full w-0.5 bg-secondary-200"
+                            className="absolute left-4 top-4 -ml-px h-full w-0.5 bg-gray-200"
                             aria-hidden="true"
                           />
                         ) : null}
@@ -241,7 +241,7 @@ export const PrimaryParametersPlot = ({
                                 <span>{rhythmDetails.rhythm_detail}</span>
                               </p>
                             </div>
-                            <div className="whitespace-nowrap text-right text-sm text-secondary-500">
+                            <div className="whitespace-nowrap text-right text-sm text-gray-500">
                               <p>
                                 {rhythmDetails.time}, {obj[0]}
                               </p>

@@ -68,7 +68,7 @@ export const ZoomControls = (props: { disabled?: boolean }) => {
   }
 
   return (
-    <div className="absolute bottom-8 right-8 flex flex-col items-center justify-center gap-1 rounded-full border border-secondary-400 bg-white p-0.5 shadow-lg md:flex-row-reverse md:gap-2">
+    <div className="absolute bottom-8 right-8 flex flex-col items-center justify-center gap-1 rounded-full border border-gray-400 bg-primary p-0.5 shadow-lg md:flex-row-reverse md:gap-2">
       <ButtonV2
         disabled={props.disabled}
         circle
@@ -80,7 +80,7 @@ export const ZoomControls = (props: { disabled?: boolean }) => {
       >
         <CareIcon icon="l-search-plus" className="text-lg" />
       </ButtonV2>
-      <span className="text-sm font-semibold text-secondary-800">
+      <span className="text-sm font-semibold text-gray-800">
         {Math.round(ctx.scale * 100)}%
       </span>
       <ButtonV2

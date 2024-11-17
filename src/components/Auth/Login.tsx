@@ -173,7 +173,7 @@ const Login = (props: { forgot?: boolean }) => {
                   className="h-16 rounded-lg py-3"
                   alt="state logo"
                 />
-                <div className="h-10 w-0.5 rounded-full bg-white/50" />
+                <div className="h-10 w-0.5 rounded-full bg-primary/50" />
               </>
             )}
             <a
@@ -196,14 +196,14 @@ const Login = (props: { forgot?: boolean }) => {
             {customDescriptionHtml ? (
               <div className="py-6">
                 <div
-                  className="max-w-xl text-secondary-400"
+                  className="max-w-xl text-gray-400"
                   dangerouslySetInnerHTML={{
                     __html: __CUSTOM_DESCRIPTION_HTML__,
                   }}
                 />
               </div>
             ) : (
-              <div className="max-w-xl py-6 pl-1 text-base font-semibold text-secondary-400 md:text-lg lg:text-xl">
+              <div className="max-w-xl py-6 pl-1 text-base font-semibold text-gray-400 md:text-lg lg:text-xl">
                 {t("goal")}
               </div>
             )}
@@ -223,7 +223,7 @@ const Login = (props: { forgot?: boolean }) => {
                   alt="Logo of Digital Public Goods Alliance"
                 />
               </a>
-              <div className="ml-2 h-8 w-px rounded-full bg-white/50" />
+              <div className="ml-2 h-8 w-px rounded-full bg-primary/50" />
               <a href={urls.ohcn} rel="noopener noreferrer" target="_blank">
                 <img
                   src="/images/ohc_logo_light.svg"
@@ -236,7 +236,7 @@ const Login = (props: { forgot?: boolean }) => {
               href={urls.ohcn}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-secondary-500"
+              className="text-gray-500"
             >
               {t("footer_body")}
             </a>
@@ -245,16 +245,16 @@ const Login = (props: { forgot?: boolean }) => {
                 href={urls.github}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary-400 hover:text-primary-500"
+                className="text-accent-400 hover:text-accent-500"
               >
                 {t("contribute_github")}
               </a>
-              <span className="mx-2 text-primary-400">|</span>
+              <span className="mx-2 text-accent-400">|</span>
               <Link
                 href="/licenses"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary-400 hover:text-primary-500"
+                className="text-accent-400 hover:text-accent-500"
               >
                 {t("third_party_software_licenses")}
               </Link>
@@ -273,7 +273,7 @@ const Login = (props: { forgot?: boolean }) => {
                     className="h-14 rounded-lg py-3"
                     alt="state logo"
                   />
-                  <div className="mx-4 h-8 w-px rounded-full bg-secondary-600" />
+                  <div className="mx-4 h-8 w-px rounded-full bg-gray-600" />
                 </>
               )}
               <img
@@ -290,7 +290,7 @@ const Login = (props: { forgot?: boolean }) => {
                   forgotPassword && "hidden",
                 )}
               >
-                <div className="mb-8 w-64 max-w-full text-2xl font-black text-primary-600 lg:w-72 lg:text-4xl">
+                <div className="mb-8 w-64 max-w-full text-2xl font-black text-accent-600 lg:w-72 lg:text-4xl">
                   {t("auth_login_title")}
                 </div>
                 <form onSubmit={handleSubmit}>
@@ -336,7 +336,7 @@ const Login = (props: { forgot?: boolean }) => {
                           }}
                           type="button"
                           id="forgot-pass-btn"
-                          className="text-sm text-primary-400 hover:text-primary-500"
+                          className="text-sm text-accent-400 hover:text-accent-500"
                         >
                           {t("forget_password")}
                         </button>
@@ -344,13 +344,13 @@ const Login = (props: { forgot?: boolean }) => {
 
                       {loading ? (
                         <div className="flex items-center justify-center">
-                          <CircularProgress className="text-primary-500" />
+                          <CircularProgress className="text-accent-500" />
                         </div>
                       ) : (
                         <button
                           id="login-button"
                           type="submit"
-                          className="inline-flex w-full cursor-pointer items-center justify-center rounded bg-primary-500 px-4 py-2 text-sm font-semibold text-white"
+                          className="inline-flex w-full cursor-pointer items-center justify-center rounded bg-accent-500 px-4 py-2 text-sm font-semibold text-white"
                         >
                           {t("login")}
                         </button>
@@ -373,7 +373,7 @@ const Login = (props: { forgot?: boolean }) => {
                   }}
                   type="button"
                   id="back-to-login-btn"
-                  className="mb-4 text-sm text-primary-400 hover:text-primary-500"
+                  className="mb-4 text-sm text-accent-400 hover:text-accent-500"
                 >
                   <div className="flex justify-center">
                     <CareIcon icon="l-arrow-left" className="text-lg" />
@@ -381,7 +381,7 @@ const Login = (props: { forgot?: boolean }) => {
                   </div>
                 </button>
                 <div
-                  className="mb-8 w-[300px] text-4xl font-black text-primary-600"
+                  className="mb-8 w-[300px] text-4xl font-black text-accent-600"
                   id="forgot-password-heading"
                 >
                   {t("forget_password")}
@@ -404,13 +404,13 @@ const Login = (props: { forgot?: boolean }) => {
                     <div className="justify-start">
                       {loading ? (
                         <div className="flex items-center justify-center">
-                          <CircularProgress className="text-primary-500" />
+                          <CircularProgress className="text-accent-500" />
                         </div>
                       ) : (
                         <button
                           type="submit"
                           id="send-reset-link-btn"
-                          className="inline-flex w-full cursor-pointer items-center justify-center rounded bg-primary-500 px-4 py-2 text-sm font-semibold text-white"
+                          className="inline-flex w-full cursor-pointer items-center justify-center rounded bg-accent-500 px-4 py-2 text-sm font-semibold text-white"
                         >
                           {t("send_reset_link")}
                         </button>

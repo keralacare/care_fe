@@ -25,7 +25,7 @@ export default function SortDropdownMenu(props: Props) {
     <DropdownMenu
       title={props.label ?? t("sort_by")}
       variant="secondary"
-      className="w-full border border-primary-500 bg-white md:w-auto"
+      className="w-full border border-accent-500 bg-primary md:w-auto"
       icon={<CareIcon icon="l-sort" />}
       containerClassName="w-full md:w-auto"
     >
@@ -34,7 +34,7 @@ export default function SortDropdownMenu(props: Props) {
           key={i}
           className={
             props.selected === value
-              ? "bg-primary-100 !font-medium text-primary-500"
+              ? "bg-accent-100 !font-medium text-accent-500"
               : ""
           }
           onClick={() => props.onSelect({ ordering: value })}

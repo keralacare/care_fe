@@ -107,12 +107,12 @@ export default function VentilatorTable(props: VentilatorTableProps) {
   );
 
   return (
-    <div className="my-3 w-full overflow-x-scroll rounded-lg border bg-white px-4 pt-3 shadow">
+    <div className="my-3 w-full overflow-x-scroll rounded-lg border bg-primary px-4 pt-3 shadow">
       <table className="w-full">
         <caption className="mb-2 caption-top text-lg font-bold">
           {t("ventilator_log")}
         </caption>
-        <thead className="border-b-2 border-secondary-400 bg-secondary-50">
+        <thead className="border-b-2 border-gray-400 bg-gray-50">
           <tr className="max-w-52 px-2 py-2 text-start text-sm">
             <th className="max-w-52 p-1">{t("start_datetime")}</th>
             <th className="p-1">{t("end_datetime")}</th>

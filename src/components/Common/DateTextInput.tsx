@@ -125,10 +125,10 @@ export default function DateTextInput(props: {
     <div className="w-full">
       <div
         className={classNames(
-          `cui-input-base relative flex w-full cursor-text items-center overflow-hidden bg-secondary-50 px-4 py-0 text-gray-600`,
+          `cui-input-base relative flex w-full cursor-text items-center overflow-hidden bg-gray-50 px-4 py-0 text-gray-600`,
           error && `!border-red-500`,
           !!document.activeElement?.getAttribute("data-time-input") &&
-            "border-primary-500",
+            "border-accent-500",
         )}
         onClick={(e) =>
           e.target === e.currentTarget &&
@@ -185,7 +185,7 @@ export default function DateTextInput(props: {
           ))}
 
         <button
-          className="absolute inset-y-0 right-0 px-2 text-xl text-secondary-500 hover:text-secondary-700"
+          className="absolute inset-y-0 right-0 px-2 text-xl text-gray-500 hover:text-gray-700"
           type="button"
           data-test-id="clear-date-input"
           onClick={() => {

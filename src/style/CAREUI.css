@@ -18,15 +18,15 @@
 }
 
 .cui-input-base {
-    @apply text-sm block w-full py-3 px-4 text-black placeholder:text-secondary-600 bg-white disabled:bg-secondary-200 border border-secondary-400 focus:border-primary-400 ring-0 focus:ring-1 ring-primary-400 outline-none focus:outline-none shadow-none rounded transition-colors duration-300 !important
+    @apply text-sm block w-full py-3 px-4 text-primaryFont placeholder:text-gray-600 bg-primary disabled:bg-secondary border border-secondaryActive focus:border-accent-400 ring-0 focus:ring-1 ring-accent-400 outline-none focus:outline-none shadow-none rounded transition-colors duration-300 !important
 }
 
 .cui-dropdown-base {
-    @apply z-40 w-full rounded-b-md xl:rounded-b-lg shadow-lg overflow-auto max-h-96 bg-secondary-100 divide-y divide-secondary-300 ring-1 ring-secondary-400 focus:outline-none
+    @apply z-40 w-full rounded-b-md xl:rounded-b-lg shadow-lg overflow-auto max-h-96 bg-gray-100 divide-y divide-gray-300 ring-1 ring-gray-400 focus:outline-none
 }
 
 .cui-card {
-    @apply bg-white p-5 rounded-lg shadow
+    @apply bg-primary p-5 rounded-lg shadow
 }
 
 .tooltip {
@@ -99,13 +99,13 @@
     @apply h-full md:h-[300px] w-full
 }
 
-.button-primary-default { @apply accent-primary-500 bg-primary-500 hover:bg-primary-400 text-white !important }
-.button-primary-ghost { @apply accent-primary-500 hover:bg-primary-100 text-primary-500 !important }
-.button-primary-border { @apply border border-primary-500 }
+.button-accent-default { @apply accent-accent-500 bg-accent-500 hover:bg-accent-400 text-white !important }
+.button-accent-ghost { @apply accent-accent-500 hover:bg-accent-400/10 text-accent-500 !important }
+.button-accent-border { @apply border border-accent-500 }
 
-.button-secondary-default { @apply accent-secondary-200 bg-white hover:bg-secondary-200 text-secondary-800 !important }
-.button-secondary-ghost { @apply accent-secondary-300 hover:bg-secondary-400 text-secondary-700 !important }
-.button-secondary-border { @apply border border-secondary-300 }
+.button-gray-default { @apply accent-gray-200 bg-primary hover:bg-gray-200 text-gray-800 !important }
+.button-gray-ghost { @apply accent-gray-300 hover:bg-gray-400 text-gray-700 !important }
+.button-gray-border { @apply border border-gray-300 }
 
 .button-danger-default { @apply accent-danger-500 bg-danger-500 hover:bg-danger-400 text-white !important }
 .button-danger-ghost { @apply accent-danger-500 hover:bg-danger-100 text-danger-500 !important }
@@ -126,17 +126,17 @@
 .button-size-default { @apply py-2 px-4 text-sm }
 .button-size-large { @apply py-3 px-5 text-base }
 
-.dropdown-item-primary { @apply accent-primary-500 hover:bg-primary-100 text-black hover:text-primary-500 }
-.dropdown-item-secondary { @apply accent-secondary-200 hover:bg-secondary-200 text-secondary-700 }
+.dropdown-item-primary { @apply accent-accent-500 hover:bg-accent-100 text-black hover:text-accent-500 }
+.dropdown-item-secondary { @apply accent-gray-200 hover:bg-gray-200 text-gray-700 }
 .dropdown-item-danger { @apply accent-danger-500 hover:bg-danger-100 text-danger-500 }
 .dropdown-item-warning { @apply accent-warning-500 hover:bg-warning-100 text-warning-500 }
 .dropdown-item-alert { @apply accent-alert-600 hover:bg-alert-100 text-alert-600 }
 
-a.button-primary-default { @apply hover:bg-primary-400 }
-a.button-primary-ghost { @apply hover:bg-primary-100 }
+a.button-accent-default { @apply hover:bg-accent-400 }
+a.button-accent-ghost { @apply hover:bg-accent-400/10 }
 
-a.button-secondary-default { @apply hover:bg-secondary-200 }
-a.button-secondary-ghost { @apply hover:bg-secondary-100 }
+a.button-gray-default { @apply hover:bg-gray-200 }
+a.button-gray-ghost { @apply hover:bg-gray-100 }
 
 a.button-danger-default { @apply hover:bg-danger-400 }
 a.button-danger-ghost { @apply hover:bg-danger-100 }
@@ -147,11 +147,11 @@ a.button-warning-ghost { @apply hover:bg-warning-100 }
 a.button-alert-default { @apply hover:bg-alert-500 }
 a.button-alert-ghost { @apply hover:bg-alert-100 }
 
-button.button-primary-default { @apply enabled:hover:bg-primary-400 }
-button.button-primary-ghost { @apply enabled:hover:bg-primary-100 }
+button.button-accent-default { @apply enabled:hover:bg-accent-400 }
+button.button-accent-ghost { @apply enabled:hover:bg-accent-400/10 }
 
-button.button-secondary-default { @apply enabled:hover:bg-secondary-200 }
-button.button-secondary-ghost { @apply enabled:hover:bg-secondary-100 }
+button.button-gray-default { @apply enabled:hover:bg-gray-200 }
+button.button-gray-ghost { @apply enabled:hover:bg-gray-100 }
 
 button.button-danger-default { @apply enabled:hover:bg-danger-400 }
 button.button-danger-ghost { @apply enabled:hover:bg-danger-100 }
@@ -176,5 +176,5 @@ button.button-alert-ghost { @apply enabled:hover:bg-alert-100 }
     @apply appearance-none w-5 aspect-square bg-black border border-black rounded-full cursor-pointer
 } 
 hr {
-    @apply border border-secondary-300
+    @apply border border-gray-300
 }

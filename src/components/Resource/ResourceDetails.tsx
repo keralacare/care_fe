@@ -24,7 +24,7 @@ export default function ResourceDetails(props: { id: string }) {
   });
   const showFacilityCard = (facilityData: any) => {
     return (
-      <div className="mt-2 h-full rounded-lg border bg-white p-4 text-black shadow">
+      <div className="mt-2 h-full rounded-lg border bg-primary p-4 text-black shadow">
         <div>
           <span className="mr-1 font-semibold leading-relaxed">Name: </span>
           {facilityData?.name || "--"}
@@ -55,7 +55,7 @@ export default function ResourceDetails(props: { id: string }) {
 
   const ApprovalLetter = (data: any) => {
     return (
-      <div id="section-to-print" className="print bg-white">
+      <div id="section-to-print" className="print bg-primary">
         <div className="mx-4 p-2 lg:mx-20">
           <div className="mt-6 text-center text-xl font-bold">
             APPROVAL LETTER
@@ -215,10 +215,10 @@ export default function ResourceDetails(props: { id: string }) {
             </ButtonV2>
           </div>
           {data.assigned_to_object && (
-            <div className="relative rounded-lg bg-primary-200 shadow">
+            <div className="relative rounded-lg bg-accent-200 shadow">
               <div className="mx-auto max-w-screen-xl p-3 sm:px-6 lg:px-8">
                 <div className="pr-16 sm:px-16 sm:text-center">
-                  <p className="font-bold text-primary-800">
+                  <p className="font-bold text-accent-800">
                     <span className="inline">
                       Assigned to: {formatName(data.assigned_to_object)} -{" "}
                       {data.assigned_to_object.user_type}
@@ -228,7 +228,7 @@ export default function ResourceDetails(props: { id: string }) {
               </div>
             </div>
           )}
-          <div className="mt-4 h-full rounded-lg border bg-white p-4 text-black shadow">
+          <div className="mt-4 h-full rounded-lg border bg-primary p-4 text-black shadow">
             <div className="mb-4 flex flex-col sm:flex-row sm:justify-between">
               <div className="text-xl font-semibold">{data.title || "--"}</div>
               <ButtonV2
@@ -308,12 +308,12 @@ export default function ResourceDetails(props: { id: string }) {
           </div>
           <h4 className="mt-8">Audit Log</h4>
 
-          <div className="mt-2 flex justify-between rounded-lg bg-white p-2 px-4 text-center shadow">
+          <div className="mt-2 flex justify-between rounded-lg bg-primary p-2 px-4 text-center shadow">
             <div className="w-1/2 border-r-2 px-1">
               <div className="text-sm font-medium leading-5 text-black">
                 Created
               </div>
-              <div className="mt-1 text-sm leading-5 text-secondary-900">
+              <div className="mt-1 text-sm leading-5 text-gray-900">
                 <div className="text-sm">
                   {data.created_by_object && formatName(data.created_by_object)}
                 </div>
@@ -326,7 +326,7 @@ export default function ResourceDetails(props: { id: string }) {
               <div className="text-sm font-medium leading-5 text-black">
                 Last Edited
               </div>
-              <div className="mt-1 text-sm leading-5 text-secondary-900">
+              <div className="mt-1 text-sm leading-5 text-gray-900">
                 <div className="text-sm">
                   {formatName(data.last_edited_by_object)}
                 </div>

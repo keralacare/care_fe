@@ -116,7 +116,7 @@ export default function AudioCaptureDialog(props: AudioCaptureDialogProps) {
           <h2 className="font-bold text-white">
             {t("audio__allow_permission")}
           </h2>
-          <div className="text-secondary-200">
+          <div className="text-gray-200">
             {t("audio__allow_permission_helper")}{" "}
             {/* TODO: find a better link that supports all browsers */}
             <Link
@@ -132,11 +132,11 @@ export default function AudioCaptureDialog(props: AudioCaptureDialogProps) {
       {status === "WAITING_TO_RECORD" && (
         <div>
           <h2 className="font-bold text-white">{t("audio__record")}</h2>
-          <div className="text-secondary-200">{t("audio__record_helper")}</div>
+          <div className="text-gray-200">{t("audio__record_helper")}</div>
           <div className="mt-4">
             <button
               onClick={handleStartRecording}
-              className="inline-flex aspect-square w-32 items-center justify-center rounded-full bg-white/10 text-6xl text-white hover:bg-white/20"
+              className="inline-flex aspect-square w-32 items-center justify-center rounded-full bg-primary/10 text-6xl text-white hover:bg-primary/20"
             >
               <CareIcon icon="l-microphone" />
             </button>
@@ -149,7 +149,7 @@ export default function AudioCaptureDialog(props: AudioCaptureDialogProps) {
             <div className="aspect-square w-5 rounded-full bg-red-500" />
             {t("audio__recording")}
           </h2>
-          <div className="text-secondary-200">
+          <div className="text-gray-200">
             {t("audio__recording_helper")}
             <br />
             {t("audio__recording_helper_2")}
@@ -168,7 +168,7 @@ export default function AudioCaptureDialog(props: AudioCaptureDialogProps) {
       {status === "RECORDED" && (
         <div>
           <h2 className="font-bold text-white">{t("audio__recorded")}</h2>
-          <div className="text-secondary-200">
+          <div className="text-gray-200">
             {audioURL && (
               <div className="my-4">
                 <audio
@@ -183,7 +183,7 @@ export default function AudioCaptureDialog(props: AudioCaptureDialogProps) {
           <div className="mt-4 inline-flex items-center gap-2">
             <button
               onClick={handleSubmit}
-              className="rounded-md bg-primary-500 px-4 py-2 text-white transition-all hover:bg-primary-600"
+              className="rounded-md bg-accent-500 px-4 py-2 text-white transition-all hover:bg-accent-600"
               id="save-recording"
             >
               <CareIcon icon="l-check" className="mr-2 text-lg" />
@@ -191,7 +191,7 @@ export default function AudioCaptureDialog(props: AudioCaptureDialogProps) {
             </button>
             <button
               onClick={handleRestartRecording}
-              className="rounded-md bg-white/10 px-4 py-2 text-white transition-all hover:bg-white/20"
+              className="rounded-md bg-primary/10 px-4 py-2 text-white transition-all hover:bg-primary/20"
             >
               <CareIcon icon="l-history" className="mr-2 text-lg" />
               {t("audio__start_again")}
@@ -205,7 +205,7 @@ export default function AudioCaptureDialog(props: AudioCaptureDialogProps) {
           onHide();
           resetRecording();
         }}
-        className="rounded-md bg-white/10 px-4 py-2 text-white transition-all hover:bg-white/20"
+        className="rounded-md bg-primary/10 px-4 py-2 text-white transition-all hover:bg-primary/20"
       >
         <CareIcon icon="l-times" className="mr-2 text-lg" />
         {t("cancel")}

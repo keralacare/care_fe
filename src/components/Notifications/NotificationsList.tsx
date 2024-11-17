@@ -100,8 +100,8 @@ const NotificationTile = ({
         setShowNotifications(false);
       }}
       className={classNames(
-        "relative cursor-pointer rounded px-4 py-5 transition duration-200 ease-in-out hover:bg-secondary-200 focus:bg-secondary-200 md:rounded-lg lg:px-8",
-        result.read_at && "text-secondary-500",
+        "relative cursor-pointer rounded px-4 py-5 transition duration-200 ease-in-out hover:bg-gray-200 focus:bg-gray-200 md:rounded-lg lg:px-8",
+        result.read_at && "text-gray-500",
       )}
     >
       <div className="flex justify-between">
@@ -119,12 +119,12 @@ const NotificationTile = ({
         {result.message}
       </div>
       <div className="flex flex-col justify-end gap-2">
-        <div className="py-1 text-right text-xs text-secondary-700">
+        <div className="py-1 text-right text-xs text-gray-700">
           {formatDateTime(result.created_date)}
         </div>
         <div className="flex justify-end gap-2">
           <ButtonV2
-            className="bg-white px-2 py-1 font-semibold hover:bg-secondary-300"
+            className="bg-primary px-2 py-1 font-semibold hover:bg-gray-300"
             variant="secondary"
             border
             ghost
@@ -155,7 +155,7 @@ const NotificationTile = ({
           <ButtonV2
             border
             ghost
-            className="shrink-0 bg-white px-2 py-1 font-semibold hover:bg-secondary-300"
+            className="shrink-0 bg-primary px-2 py-1 font-semibold hover:bg-gray-300"
           >
             <CareIcon icon="l-envelope-open" />
             <span className="text-xs">{t("open")}</span>
@@ -474,7 +474,7 @@ export default function NotificationsList({
   } else if (data && data.length === 0) {
     manageResults = (
       <div className="flex justify-center px-4 pt-3 lg:px-8">
-        <h5 className="text-xl font-bold text-secondary-600">
+        <h5 className="text-xl font-bold text-gray-600">
           {t("no_results_found")}
         </h5>
       </div>

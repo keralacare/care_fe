@@ -336,7 +336,7 @@ const DateInputV2: React.FC<Props> = ({
                   <div className="absolute right-0 top-1/2 -translate-y-1/2 p-2">
                     <CareIcon
                       icon="l-calendar-alt"
-                      className="text-lg text-secondary-600"
+                      className="text-lg text-gray-600"
                     />
                   </div>
                 </PopoverButton>
@@ -379,7 +379,7 @@ const DateInputV2: React.FC<Props> = ({
                                   datePickerHeaderDate.getMonth() - 1,
                                 )
                               }
-                              className="inline-flex aspect-square cursor-pointer items-center justify-center rounded p-2 transition duration-100 ease-in-out hover:bg-secondary-300"
+                              className="inline-flex aspect-square cursor-pointer items-center justify-center rounded p-2 transition duration-100 ease-in-out hover:bg-gray-300"
                               onClick={decrement}
                               data-test-id="decrement-date-range"
                             >
@@ -393,14 +393,14 @@ const DateInputV2: React.FC<Props> = ({
                               {type === "date" && (
                                 <div
                                   onClick={() => setType("month")}
-                                  className="cursor-pointer rounded px-3 py-1 text-center font-medium text-black hover:bg-secondary-300"
+                                  className="cursor-pointer rounded px-3 py-1 text-center font-medium text-black hover:bg-gray-300"
                                 >
                                   {dayjs(datePickerHeaderDate).format("MMMM")}
                                 </div>
                               )}
                               <div
                                 onClick={() => setType("year")}
-                                className="cursor-pointer rounded px-3 py-1 font-medium text-black hover:bg-secondary-300"
+                                className="cursor-pointer rounded px-3 py-1 font-medium text-black hover:bg-gray-300"
                               >
                                 <p className="text-center">
                                   {type == "year"
@@ -419,7 +419,7 @@ const DateInputV2: React.FC<Props> = ({
                                     year.getFullYear()) ||
                                 !isDateWithinConstraints(getLastDay())
                               }
-                              className="inline-flex aspect-square cursor-pointer items-center justify-center rounded p-2 transition duration-100 ease-in-out hover:bg-secondary-300"
+                              className="inline-flex aspect-square cursor-pointer items-center justify-center rounded p-2 transition duration-100 ease-in-out hover:bg-gray-300"
                               onClick={increment}
                               data-test-id="increment-date-range"
                             >
@@ -439,7 +439,7 @@ const DateInputV2: React.FC<Props> = ({
                                     id={`day-${i}`}
                                     className="aspect-square w-[14.26%]"
                                   >
-                                    <div className="text-center text-sm font-medium text-secondary-800">
+                                    <div className="text-center text-sm font-medium text-gray-800">
                                       {day}
                                     </div>
                                   </div>
@@ -473,14 +473,14 @@ const DateInputV2: React.FC<Props> = ({
                                   if (withinConstraints) {
                                     if (selected) {
                                       conditionalClasses =
-                                        "bg-primary-500 font-bold text-white";
+                                        "bg-accent-500 font-bold text-white";
                                     } else {
                                       conditionalClasses =
-                                        "hover:bg-secondary-300 cursor-pointer";
+                                        "hover:bg-gray-300 cursor-pointer";
                                     }
                                   } else {
                                     conditionalClasses =
-                                      "!cursor-not-allowed !text-secondary-400";
+                                      "!cursor-not-allowed !text-gray-400";
                                   }
                                   return (
                                     <div
@@ -512,8 +512,8 @@ const DateInputV2: React.FC<Props> = ({
                                     className={classNames(
                                       "w-1/4 cursor-pointer rounded-lg px-2 py-4 text-center text-sm font-semibold",
                                       value && isSelectedMonth(i)
-                                        ? "bg-primary-500 text-white"
-                                        : "text-secondary-700 hover:bg-secondary-300",
+                                        ? "bg-accent-500 text-white"
+                                        : "text-gray-700 hover:bg-gray-300",
                                     )}
                                     onClick={setMonthValue(i)}
                                   >
@@ -541,8 +541,8 @@ const DateInputV2: React.FC<Props> = ({
                                       className={classNames(
                                         "w-1/4 cursor-pointer rounded-lg px-2 py-4 text-center text-sm font-semibold",
                                         value && isSelectedYear(y)
-                                          ? "bg-primary-500 text-white"
-                                          : "text-secondary-700 hover:bg-secondary-300",
+                                          ? "bg-accent-500 text-white"
+                                          : "text-gray-700 hover:bg-gray-300",
                                       )}
                                       onClick={setYearValue(y)}
                                     >
@@ -635,7 +635,7 @@ const DateInputV2: React.FC<Props> = ({
                                   <button
                                     type="button"
                                     key={j}
-                                    className={`flex aspect-square w-9 shrink-0 items-center justify-center rounded-md border transition-all ${(input.name === "Hours" && option === 12 ? [0, 12].includes(input.value) : input.value === option) ? "border-primary-600 bg-primary-500 font-bold text-white" : "border-gray-200 hover:bg-secondary-300"} text-sm`}
+                                    className={`flex aspect-square w-9 shrink-0 items-center justify-center rounded-md border transition-all ${(input.name === "Hours" && option === 12 ? [0, 12].includes(input.value) : input.value === option) ? "border-accent-600 bg-accent-500 font-bold text-white" : "border-gray-200 hover:bg-gray-300"} text-sm`}
                                     onClick={() =>
                                       input.onChange(option as any)
                                     }

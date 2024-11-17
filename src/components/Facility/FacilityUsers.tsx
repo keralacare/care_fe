@@ -141,7 +141,7 @@ export default function FacilityUsers(props: any) {
           key={`usr_${user.id}`}
           className="mt-6 w-full md:px-4 lg:w-1/2 xl:w-1/3"
         >
-          <div className="block h-full cursor-pointer overflow-hidden rounded-lg bg-white shadow hover:border-primary-500">
+          <div className="block h-full cursor-pointer overflow-hidden rounded-lg bg-primary shadow hover:border-accent-500">
             <div className="flex h-full flex-col justify-between">
               <div className="px-6 py-4">
                 <div className="flex flex-col justify-between lg:flex-row">
@@ -153,15 +153,13 @@ export default function FacilityUsers(props: any) {
                       {user.username}
                     </div>
                   )}
-                  <div className="min-width-50 shrink-0 text-sm text-secondary-600">
+                  <div className="min-width-50 shrink-0 text-sm text-gray-600">
                     {t("last_online")}{" "}
                     <span
                       aria-label="Online"
                       className={
                         "inline-block h-2 w-2 shrink-0 rounded-full " +
-                        (isUserOnline(user)
-                          ? "bg-primary-400"
-                          : "bg-secondary-300")
+                        (isUserOnline(user) ? "bg-accent-400" : "bg-gray-300")
                       }
                     ></span>
                     <span className="pl-2">
@@ -187,10 +185,10 @@ export default function FacilityUsers(props: any) {
                 </div>
                 <div className="flex justify-between">
                   {user.phone_number && (
-                    <div className="mt-2 border-t bg-secondary-50 px-6 py-2">
+                    <div className="mt-2 border-t bg-gray-50 px-6 py-2">
                       <div className="flex justify-between py-4">
                         <div>
-                          <div className="leading-relaxed text-secondary-500">
+                          <div className="leading-relaxed text-gray-500">
                             {t("phone_number")}
                           </div>
                           <a

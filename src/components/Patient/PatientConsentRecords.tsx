@@ -232,7 +232,7 @@ export default function PatientConsentRecords(props: {
               <>
                 <label
                   className={
-                    "button-size-default button-shape-square button-primary-default inline-flex h-min w-full cursor-pointer items-center justify-center gap-2 whitespace-pre font-medium outline-offset-1 transition-all duration-200 ease-in-out"
+                    "button-size-default button-shape-square button-accent-default inline-flex h-min w-full cursor-pointer items-center justify-center gap-2 whitespace-pre font-medium outline-offset-1 transition-all duration-200 ease-in-out"
                   }
                 >
                   <CareIcon icon={"l-file-upload-alt"} className="text-lg" />
@@ -259,7 +259,7 @@ export default function PatientConsentRecords(props: {
                   f.associating_id === r.id && f.is_archived === showArchived,
               ).length,
           ).length === 0 ? (
-            <div className="flex h-32 items-center justify-center text-secondary-500">
+            <div className="flex h-32 items-center justify-center text-gray-500">
               No consent records found
             </div>
           ) : (

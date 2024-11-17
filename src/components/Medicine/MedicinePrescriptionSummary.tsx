@@ -59,13 +59,13 @@ export const MedicinePrescriptionSummary = ({
 
   return (
     <div className="pt-6">
-      <p className="text-xl font-bold text-secondary-700">{t("summary")}</p>
+      <p className="text-xl font-bold text-gray-700">{t("summary")}</p>
       <div className="flex flex-col gap-2 pt-4">
         {medicinesList && medicinesList.length > 0 ? (
           medicinesList?.map((med: MedibaseMedicine) => (
             <div
               key={med.id}
-              className="flex cursor-pointer items-center justify-between rounded-lg border bg-white p-4 shadow hover:bg-secondary-200"
+              className="flex cursor-pointer items-center justify-between rounded-lg border bg-primary p-4 shadow hover:bg-gray-200"
             >
               <div>{med.name}</div>
               <button
@@ -84,7 +84,7 @@ export const MedicinePrescriptionSummary = ({
           ))
         ) : (
           <div className="rounded-lg border shadow">
-            <div className="my-16 flex w-full flex-col items-center justify-center gap-4 text-secondary-500">
+            <div className="my-16 flex w-full flex-col items-center justify-center gap-4 text-gray-500">
               <h3 className="text-lg font-medium">{"No Medicine Summary"}</h3>
             </div>
           </div>
@@ -347,7 +347,7 @@ export default function ConsultationMedicineLogs({
   return (
     <div>
       <Timeline
-        className="rounded-lg bg-white p-2 shadow"
+        className="rounded-lg bg-primary p-2 shadow"
         name={data?.results[0].medicine_object?.name ?? ""}
       >
         {data?.results &&

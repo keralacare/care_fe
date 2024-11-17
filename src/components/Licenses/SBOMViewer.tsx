@@ -95,7 +95,7 @@ const BOMDisplay: React.FC = () => {
           Care Backend
         </button>
       </div>
-      <Card className="rounded-lg bg-white p-4 shadow-md transition-all duration-300">
+      <Card className="rounded-lg bg-primary p-4 shadow-md transition-all duration-300">
         <div className="mb-4">
           <h2 className="mb-2 text-xl font-semibold text-primary md:text-2xl">
             {bomData.bomFormat || "N/A"} BOM (Version:{" "}
@@ -125,7 +125,7 @@ const BOMDisplay: React.FC = () => {
                 }
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-primary-dark block text-primary"
+                className="hover:text-accent-dark block text-primary"
               >
                 <strong className="text-lg">
                   {component.name || "N/A"} v{component.version || "N/A"}
@@ -140,7 +140,7 @@ const BOMDisplay: React.FC = () => {
                     }
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hover:text-primary-dark text-primary"
+                    className="hover:text-accent-dark text-primary"
                   >
                     {component.licenses[0].license.id || "N/A"}
                   </a>
@@ -168,7 +168,7 @@ const BOMDisplay: React.FC = () => {
                       <li key={idx}>
                         <a
                           href={ref.url || "#"}
-                          className="hover:text-primary-dark block break-words text-primary"
+                          className="hover:text-accent-dark block break-words text-primary"
                         >
                           {ref.url || "N/A"}
                         </a>
@@ -186,7 +186,7 @@ const BOMDisplay: React.FC = () => {
             text={JSON.stringify(bomData, null, 2)}
             onCopy={handleCopy}
           >
-            <button className="text-md hover:bg-primary-dark w-full rounded-md bg-primary px-4 py-2 text-white transition-all duration-300 focus:outline-none md:w-auto">
+            <button className="text-md hover:bg-accent-dark w-full rounded-md bg-primary px-4 py-2 text-white transition-all duration-300 focus:outline-none md:w-auto">
               Copy BOM JSON
             </button>
           </CopyToClipboard>

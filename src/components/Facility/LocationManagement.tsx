@@ -109,7 +109,7 @@ export default function LocationManagement({ facilityId }: Props) {
             </ButtonV2>
           </div>
           <div className="w-full @container">
-            <PaginatedList.WhenEmpty className="flex w-full justify-center border-b border-secondary-200 bg-white p-5 text-center text-2xl font-bold text-secondary-500">
+            <PaginatedList.WhenEmpty className="flex w-full justify-center border-b border-gray-200 bg-primary p-5 text-center text-2xl font-bold text-gray-500">
               <span>No locations available</span>
             </PaginatedList.WhenEmpty>
 
@@ -239,7 +239,7 @@ const Location = ({
   const totalBeds = bedsQuery.data?.count;
 
   return (
-    <div className="flex h-full w-full flex-col rounded border border-secondary-300 bg-white p-6 shadow-sm transition-all duration-200 ease-in-out hover:border-primary-400">
+    <div className="flex h-full w-full flex-col rounded border border-gray-300 bg-primary p-6 shadow-sm transition-all duration-200 ease-in-out hover:border-accent-400">
       <div className="flex-1">
         <div className="flex w-full items-start justify-between gap-2">
           <div className="flex items-end gap-3">
@@ -250,26 +250,26 @@ const Location = ({
               {name}
             </p>
             <div
-              className="mt-2 h-fit rounded-full border-2 border-primary-500 bg-primary-100 px-3 py-[3px]"
+              className="mt-2 h-fit rounded-full border-2 border-accent-500 bg-accent-100 px-3 py-[3px]"
               id="location-type"
             >
-              <p className="text-xs font-bold text-primary-500">
+              <p className="text-xs font-bold text-accent-500">
                 {location_type}
               </p>
             </div>
           </div>
         </div>
         <p
-          className="mt-3 break-all text-sm font-medium text-secondary-700"
+          className="mt-3 break-all text-sm font-medium text-gray-700"
           id="view-location-description"
         >
           {description || "-"}
         </p>
-        <p className="mt-3 text-sm font-semibold text-secondary-700">
+        <p className="mt-3 text-sm font-semibold text-gray-700">
           Middleware Address:
         </p>
         <p
-          className="mt-1 break-all font-mono text-sm font-bold text-secondary-700"
+          className="mt-1 break-all font-mono text-sm font-bold text-gray-700"
           id="view-location-middleware"
         >
           {middleware_address || "-"}
@@ -278,7 +278,7 @@ const Location = ({
           route={routes.listFacilityAssetLocationAvailability}
           params={{ external_id: id, facility_external_id: facilityId }}
           header={
-            <p className="mt-3 text-sm font-semibold text-secondary-700">
+            <p className="mt-3 text-sm font-semibold text-gray-700">
               Middleware Uptime
             </p>
           }
@@ -335,7 +335,7 @@ const Location = ({
         </div>
       </div>
 
-      <div className="mt-3 flex items-center justify-between gap-4 text-sm font-medium text-secondary-700">
+      <div className="mt-3 flex items-center justify-between gap-4 text-sm font-medium text-gray-700">
         <RecordMeta time={created_date} prefix="Created:" />
         <RecordMeta time={modified_date} prefix="Modified:" />
       </div>

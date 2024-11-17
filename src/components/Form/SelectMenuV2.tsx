@@ -78,7 +78,7 @@ const SelectMenuV2 = <T, V>(props: SelectMenuProps<T, V>) => {
   const defaultOption = {
     label: placeholder,
     selectedLabel: (
-      <span className="font-normal text-secondary-600">{placeholder}</span>
+      <span className="font-normal text-gray-600">{placeholder}</span>
     ),
     description: undefined,
     icon: undefined,
@@ -133,7 +133,7 @@ const SelectMenuV2 = <T, V>(props: SelectMenuProps<T, V>) => {
               <div className="relative z-0 flex w-full items-center">
                 <div className="relative flex flex-1 items-center focus:z-10">
                   {props.showIconWhenSelected && value?.icon && (
-                    <div className="ml-2 text-sm text-secondary-700">
+                    <div className="ml-2 text-sm text-gray-700">
                       {value.icon}
                     </div>
                   )}
@@ -145,7 +145,7 @@ const SelectMenuV2 = <T, V>(props: SelectMenuProps<T, V>) => {
                   <CareIcon
                     id="dropdown-toggle"
                     icon="l-angle-down"
-                    className="-mb-0.5 text-lg text-secondary-900"
+                    className="-mb-0.5 text-lg text-gray-900"
                   />
                 )}
               </div>
@@ -185,10 +185,10 @@ const SelectMenuV2 = <T, V>(props: SelectMenuProps<T, V>) => {
                             className={classNames(
                               "text-sm font-normal",
                               option.disabled
-                                ? "text-secondary-700"
+                                ? "text-gray-700"
                                 : focus
-                                  ? "text-primary-200"
-                                  : "text-secondary-700",
+                                  ? "text-accent-200"
+                                  : "text-gray-700",
                             )}
                           >
                             {option.description}

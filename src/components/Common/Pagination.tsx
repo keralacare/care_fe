@@ -109,7 +109,7 @@ const Pagination = ({
       </div>
 
       {/* Desktop view */}
-      <nav className="relative hidden rounded-lg border border-secondary-300 bg-white sm:inline-flex sm:flex-1 sm:items-center sm:justify-between">
+      <nav className="relative hidden rounded-lg border border-gray-300 bg-primary sm:inline-flex sm:flex-1 sm:items-center sm:justify-between">
         <NavButton
           id="first-page"
           tooltip="Jump to first page"
@@ -176,7 +176,7 @@ const NavButton = (props: NavButtonProps) => {
       disabled={props.disabled}
       onClick={props.onClick}
       ghost={!props.selected}
-      variant={props.selected === undefined ? "secondary" : "primary"}
+      variant={props.selected === undefined ? "secondary" : "accent"}
       className="tooltip rounded-none text-sm font-bold"
     >
       {props.children}

@@ -24,7 +24,7 @@ interface DropdownMenuProps {
 }
 
 export default function DropdownMenu({
-  variant = "primary",
+  variant = "accent",
   size = "default",
   ...props
 }: DropdownMenuProps) {
@@ -36,7 +36,7 @@ export default function DropdownMenu({
       <Menu as="div" className="relative inline-block w-full text-left">
         <MenuButton
           disabled={props.disabled}
-          className={`button-size-${size} button-${variant}-default button-shape-square flex w-full cursor-pointer items-center justify-center gap-2 font-medium outline-offset-1 transition-all duration-200 ease-in-out disabled:cursor-not-allowed disabled:bg-secondary-200 disabled:text-secondary-500 lg:justify-between ${props.className}`}
+          className={`button-size-${size} button-${variant}-default button-shape-square flex w-full cursor-pointer items-center justify-center gap-2 font-medium outline-offset-1 transition-all duration-200 ease-in-out disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-500 lg:justify-between ${props.className}`}
         >
           <div
             className={classNames(
@@ -55,7 +55,7 @@ export default function DropdownMenu({
 
         <MenuItems
           modal={false}
-          className={`absolute right-0 z-10 mt-2 min-w-full origin-top-right rounded-lg bg-white py-1 shadow-lg ring-1 ring-black/5 focus:outline-none sm:min-w-[250px] md:w-max ${props.itemClassName}`}
+          className={`absolute right-0 z-10 mt-2 min-w-full origin-top-right rounded-lg bg-primary py-1 shadow-lg ring-1 ring-black/5 focus:outline-none sm:min-w-[250px] md:w-max ${props.itemClassName}`}
         >
           <>{props.children}</>
         </MenuItems>
@@ -78,7 +78,7 @@ export type DropdownItemProps = RawDivProps &
 
 export function DropdownItem({
   authorizeFor = Anyone,
-  variant = "primary",
+  variant = "accent",
   className,
   icon,
   children,
@@ -101,8 +101,8 @@ export function DropdownItem({
           className={classNames(
             "text-lg",
             {
-              primary: "text-primary-500",
-              secondary: "text-secondary-500",
+              accent: "text-accent-500",
+              secondary: "text-gray-500",
               success: "text-success-500",
               warning: "text-warning-500",
               danger: "text-danger-500",

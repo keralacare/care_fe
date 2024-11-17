@@ -169,9 +169,9 @@ export const NutritionPlots = (props: any) => {
 
   return (
     <div>
-      <section className="my-4 h-full space-y-2 rounded-lg bg-white p-4 text-secondary-100 shadow">
+      <section className="my-4 h-full space-y-2 rounded-lg bg-primary p-4 text-gray-100 shadow">
         <div
-          className="flex justify-between border-b border-dashed pb-2 text-left text-lg font-semibold text-secondary-900"
+          className="flex justify-between border-b border-dashed pb-2 text-left text-lg font-semibold text-gray-900"
           onClick={() => setShowIO(!showIO)}
         >
           <div> IO Balance Plots</div>
@@ -185,7 +185,7 @@ export const NutritionPlots = (props: any) => {
         <div
           className={showIO ? "grid-row-1 grid gap-4 md:grid-cols-2" : "hidden"}
         >
-          <div className="rounded-lg border bg-white p-4 md:col-span-2">
+          <div className="rounded-lg border bg-primary p-4 md:col-span-2">
             <LinePlot
               title="IO Balance"
               name="IO Balance"
@@ -193,7 +193,7 @@ export const NutritionPlots = (props: any) => {
               yData={IOvalues}
             />
           </div>
-          <div className="rounded-lg border bg-white p-4">
+          <div className="rounded-lg border bg-primary p-4">
             <LinePlot
               title="Total Intake"
               name="Total Intake"
@@ -201,7 +201,7 @@ export const NutritionPlots = (props: any) => {
               yData={yAxisData("total_intake_calculated")}
             />
           </div>
-          <div className="rounded-lg border bg-white p-4">
+          <div className="rounded-lg border bg-primary p-4">
             <LinePlot
               title="Total Output"
               name="Total Output"
@@ -211,9 +211,9 @@ export const NutritionPlots = (props: any) => {
           </div>
         </div>
       </section>
-      <section className="my-4 h-full space-y-2 rounded-lg bg-white p-4 text-secondary-100 shadow">
+      <section className="my-4 h-full space-y-2 rounded-lg bg-primary p-4 text-gray-100 shadow">
         <div
-          className="flex justify-between border-b border-dashed pb-2 text-left text-lg font-semibold text-secondary-900"
+          className="flex justify-between border-b border-dashed pb-2 text-left text-lg font-semibold text-gray-900"
           onClick={() => setShowIntake(!showIntake)}
         >
           <div>Intake</div>
@@ -224,7 +224,7 @@ export const NutritionPlots = (props: any) => {
           )}
         </div>
         <div className={showIntake ? "grid gap-4 md:grid-cols-2" : "hidden"}>
-          <div className="rounded-lg border bg-white p-4 md:col-span-2">
+          <div className="rounded-lg border bg-primary p-4 md:col-span-2">
             <LinePlot
               title="Total Intake"
               name="Total Intake"
@@ -232,14 +232,14 @@ export const NutritionPlots = (props: any) => {
               yData={yAxisData("total_intake_calculated")}
             />
           </div>
-          <div className="rounded-lg border bg-white p-4">
+          <div className="rounded-lg border bg-primary p-4">
             <StackedLinePlot
               title="Infusions"
               xData={dates}
               yData={Object.values(infusionsData)}
             />
           </div>
-          <div className="rounded-lg border bg-white p-4 text-secondary-900">
+          <div className="rounded-lg border bg-primary p-4 text-gray-900">
             <h3 className="text-lg">Infusions:</h3>
             <div className="h-72 overflow-y-auto pb-2">
               {Object.entries(results).map((obj: any) => {
@@ -260,14 +260,14 @@ export const NutritionPlots = (props: any) => {
               })}
             </div>
           </div>
-          <div className="rounded-lg border bg-white p-4">
+          <div className="rounded-lg border bg-primary p-4">
             <StackedLinePlot
               title="IV Fluids"
               xData={dates}
               yData={Object.values(IVFluidsData)}
             />
           </div>
-          <div className="rounded-lg border bg-white p-4 text-secondary-900">
+          <div className="rounded-lg border bg-primary p-4 text-gray-900">
             <h3 className="text-lg">IV Fluids:</h3>
             <div className="h-72 overflow-y-auto pb-2">
               {Object.entries(results).map((obj: any) => {
@@ -288,14 +288,14 @@ export const NutritionPlots = (props: any) => {
               })}
             </div>
           </div>
-          <div className="rounded-lg border bg-white p-4">
+          <div className="rounded-lg border bg-primary p-4">
             <StackedLinePlot
               title="Feeds"
               xData={dates}
               yData={Object.values(FeedsData)}
             />
           </div>
-          <div className="rounded-lg border bg-white p-4 text-secondary-900">
+          <div className="rounded-lg border bg-primary p-4 text-gray-900">
             <h3 className="text-lg">Feeds:</h3>
             <div className="h-72 overflow-y-auto pb-2">
               {Object.entries(results).map((obj: any) => {
@@ -318,9 +318,9 @@ export const NutritionPlots = (props: any) => {
           </div>
         </div>
       </section>
-      <section className="my-4 h-full space-y-2 rounded-lg bg-white p-4 text-secondary-100 shadow">
+      <section className="my-4 h-full space-y-2 rounded-lg bg-primary p-4 text-gray-100 shadow">
         <div
-          className="flex justify-between border-b border-dashed pb-2 text-left text-lg font-semibold text-secondary-900"
+          className="flex justify-between border-b border-dashed pb-2 text-left text-lg font-semibold text-gray-900"
           onClick={() => setShowOutput(!showOutput)}
         >
           <div> Output</div>
@@ -335,7 +335,7 @@ export const NutritionPlots = (props: any) => {
             showOutput ? "grid-row-1 grid gap-4 md:grid-cols-2" : "hidden"
           }
         >
-          <div className="rounded-lg border bg-white p-4 md:col-span-2">
+          <div className="rounded-lg border bg-primary p-4 md:col-span-2">
             <LinePlot
               title="Total Output"
               name="Total Output"
@@ -343,14 +343,14 @@ export const NutritionPlots = (props: any) => {
               yData={yAxisData("total_output_calculated")}
             />
           </div>
-          <div className="rounded-lg border bg-white p-4">
+          <div className="rounded-lg border bg-primary p-4">
             <StackedLinePlot
               title="Output"
               xData={dates}
               yData={Object.values(OutputData)}
             />
           </div>
-          <div className="rounded-lg border bg-white p-4 text-secondary-900">
+          <div className="rounded-lg border bg-primary p-4 text-gray-900">
             <h3 className="text-lg">Output:</h3>
             <div className="h-72 overflow-y-auto pb-2">
               {Object.entries(results).map((obj: any) => {

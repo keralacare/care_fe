@@ -34,7 +34,7 @@ const LiveMonitoringFilters = (props: Props) => {
     <div className="flex flex-row-reverse items-center gap-4 md:flex-row">
       <Popover className="relative">
         <PopoverButton>
-          <ButtonV2 variant={qParams.location ? "primary" : "secondary"} border>
+          <ButtonV2 variant={qParams.location ? "accent" : "secondary"} border>
             <CareIcon icon="l-setting" className="text-lg" />
             {t("settings_and_filters")}
           </ButtonV2>
@@ -48,16 +48,16 @@ const LiveMonitoringFilters = (props: Props) => {
           leaveTo="opacity-0 translate-y-1"
         >
           <PopoverPanel className="absolute z-30 mt-1 w-80 -translate-x-1/3 px-4 sm:px-0 md:w-96 md:-translate-x-1/2 lg:max-w-3xl">
-            <div className="rounded-lg shadow-lg ring-1 ring-secondary-400">
-              <div className="rounded-t-lg bg-secondary-100 px-6 py-4">
+            <div className="rounded-lg shadow-lg ring-1 ring-gray-400">
+              <div className="rounded-t-lg bg-gray-100 px-6 py-4">
                 <div className="flow-root rounded-md">
-                  <span className="block text-sm text-secondary-800">
+                  <span className="block text-sm text-gray-800">
                     <span className="font-bold">{props.totalCount}</span>{" "}
                     Camera(s) present
                   </span>
                 </div>
               </div>
-              <div className="relative flex flex-col gap-8 rounded-b-lg bg-white p-6">
+              <div className="relative flex flex-col gap-8 rounded-b-lg bg-primary p-6">
                 <div>
                   <FieldLabel className="text-sm">
                     Filter by Location

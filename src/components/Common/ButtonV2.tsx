@@ -13,7 +13,7 @@ import { classNames } from "@/Utils/utils";
 export type ButtonSize = "small" | "default" | "large";
 export type ButtonShape = "square" | "circle";
 export type ButtonVariant =
-  | "primary"
+  | "accent"
   | "secondary"
   | "danger"
   | "warning"
@@ -41,7 +41,7 @@ export type ButtonStyleProps = {
    */
   circle?: boolean | undefined;
   /**
-   * - `"primary"` is ideal for form submissions, etc.
+   * - `"accent"` is ideal for form submissions, etc.
    * - `"secondary"` is ideal for things that have secondary importance.
    * - `"danger"` is ideal for destructive or dangerous actions, such as delete.
    * - `"warning"` is ideal for actions that require caution such as archive.
@@ -95,13 +95,13 @@ export type ButtonProps = RawButtonProps &
 export const buttonStyles = ({
   size = "default",
   circle = false,
-  variant = "primary",
+  variant = "accent",
   ghost = false,
   border = false,
   shadow = !ghost,
 }: ButtonStyleProps) => {
   return classNames(
-    "inline-flex h-min cursor-pointer items-center justify-center gap-2 whitespace-pre font-medium outline-offset-1 transition-all duration-200 ease-in-out disabled:cursor-not-allowed disabled:bg-secondary-200 disabled:text-secondary-500",
+    "inline-flex h-min cursor-pointer items-center justify-center gap-2 whitespace-pre font-medium outline-offset-1 transition-all duration-200 ease-in-out disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-500",
     `button-size-${size}`,
     `button-shape-${circle ? "circle" : "square"}`,
     ghost ? `button-${variant}-ghost` : `button-${variant}-default`,

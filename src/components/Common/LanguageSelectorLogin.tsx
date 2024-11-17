@@ -24,7 +24,7 @@ export const LanguageSelectorLogin = () => {
   );
 
   return (
-    <div className="mt-8 flex flex-col items-center text-sm text-secondary-800">
+    <div className="mt-8 flex flex-col items-center text-sm text-gray-800">
       {t("available_in")}
       <br />
       <div className="inline-flex flex-wrap items-center justify-center gap-3">
@@ -33,10 +33,10 @@ export const LanguageSelectorLogin = () => {
             key={e}
             onClick={() => handleLanguage(e)}
             className={classNames(
-              "text-primary-400 hover:text-primary-600",
+              "text-accent-400 hover:text-accent-600",
               (i18n.language === e ||
                 (i18n.language === "en-US" && e === "en")) &&
-                "text-primary-600 underline",
+                "text-accent-600 underline",
             )}
           >
             {LANGUAGES[e]}

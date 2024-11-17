@@ -33,10 +33,11 @@ const SidebarItemBase = forwardRef<HTMLAnchorElement, SidebarItemBaseProps>(
       <Link
         ref={ref}
         id={props?.id}
-        className={`tooltip relative ml-1 mr-2 h-12 flex-1 cursor-pointer rounded-md py-1 font-medium text-gray-600 transition md:flex-none ${
+        className={`tooltip relative ml-1 mr-2 h-12 flex-1 cursor-pointer rounded-md py-1 font-medium  transition md:flex-none ${
           props.selected
-            ? "bg-white text-green-800 shadow"
-            : "font-normal" + (props.to || props.do ? " hover:bg-gray-200" : "")
+            ? "bg-primary text-accent-500"
+            : "font-normal text-primaryFontLight" +
+              (props.to || props.do ? " hover:bg-secondaryActive" : "")
         }`}
         target={external && "_blank"}
         rel={external && "noreferrer"}
@@ -77,7 +78,7 @@ const SidebarItemBase = forwardRef<HTMLAnchorElement, SidebarItemBaseProps>(
 
         {!!props.badgeCount && (
           <span
-            className={`absolute flex items-center justify-center bg-primary-500 font-semibold text-white ${
+            className={`absolute flex items-center justify-center bg-accent-500 font-semibold text-white ${
               shrinked
                 ? "right-3 top-0.5 h-4 w-5 rounded-md text-xs"
                 : "inset-y-0 right-4 my-auto h-6 rounded-md px-2 text-xs"

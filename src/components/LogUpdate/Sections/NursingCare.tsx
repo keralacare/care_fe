@@ -39,10 +39,10 @@ const NursingCare = ({ log, onChange }: LogUpdateSectionProps) => {
           <tbody>
             {nursing.map((obj) => (
               <tr key={obj.procedure}>
-                <td className="whitespace-nowrap border border-r-2 border-secondary-400 border-r-secondary-300 bg-secondary-50 p-2 pr-4 text-left text-sm font-semibold md:pr-16">
+                <td className="whitespace-nowrap border border-r-2 border-gray-400 border-r-gray-300 bg-gray-50 p-2 pr-4 text-left text-sm font-semibold md:pr-16">
                   {t(`NURSING_CARE_PROCEDURE__${obj.procedure}`)}
                 </td>
-                <td className="w-full border border-secondary-400">
+                <td className="w-full border border-gray-400">
                   <AutoExpandingTextInputFormField
                     innerClassName="border-none rounded-none"
                     name={`${obj.procedure}__description`}

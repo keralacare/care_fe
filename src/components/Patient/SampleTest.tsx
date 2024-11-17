@@ -208,7 +208,7 @@ export const SampleTest = ({ facilityId, patientId }: any) => {
     >
       <form
         onSubmit={handleSubmit}
-        className="mx-auto w-full max-w-5xl rounded bg-white px-8 py-5 md:px-16 md:py-11"
+        className="mx-auto w-full max-w-5xl rounded bg-primary px-8 py-5 md:px-16 md:py-11"
       >
         <SelectFormField
           {...field("sample_type", "Sample Test Type")}

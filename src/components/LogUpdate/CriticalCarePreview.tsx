@@ -62,7 +62,7 @@ export default function CriticalCarePreview(props: Props) {
       <Card className="md:rounded-xl lg:p-8">
         <h2 className="mb-3 flex flex-col gap-4 text-black md:flex-row md:items-center">
           <span>Consultation Updates</span>
-          <div className="max-w-min whitespace-nowrap rounded-full border border-primary-300 bg-primary-100 px-2.5 py-1.5 text-sm font-semibold text-primary-500">
+          <div className="max-w-min whitespace-nowrap rounded-full border border-accent-300 bg-accent-100 px-2.5 py-1.5 text-sm font-semibold text-accent-500">
             <span>{t(`ROUNDS_TYPE__${data.rounds_type}`)}</span>
           </div>
         </h2>
@@ -112,7 +112,7 @@ export default function CriticalCarePreview(props: Props) {
               {(["left", "right"] as const).map((dir) => (
                 <div
                   key={dir}
-                  className="rounded border border-secondary-300 bg-secondary-100 p-3"
+                  className="rounded border border-gray-300 bg-gray-100 p-3"
                 >
                   <h5 className="capitalize">{dir} Pupil</h5>
                   <Detail
@@ -171,7 +171,7 @@ export default function CriticalCarePreview(props: Props) {
             ).map((key) => (
               <div
                 key={key}
-                className="w-full border border-secondary-300 bg-secondary-100 px-2 py-6 text-center"
+                className="w-full border border-gray-300 bg-gray-100 px-2 py-6 text-center"
               >
                 <Detail
                   label={
@@ -238,7 +238,7 @@ export default function CriticalCarePreview(props: Props) {
 
         <Section title="Vitals" show={!!data.pain_scale_enhanced?.length}>
           {data.bp && (
-            <div className="mb-2 max-w-96 space-y-1 rounded border border-secondary-300 bg-secondary-100 p-3">
+            <div className="mb-2 max-w-96 space-y-1 rounded border border-gray-300 bg-gray-100 p-3">
               <h5>Blood Pressure</h5>
               <RangeDetail
                 label="Systolic"
@@ -339,8 +339,8 @@ export default function CriticalCarePreview(props: Props) {
               {IOBalanceSections.map(({ name, fields }) => (
                 <div key={name} className="space-y-2">
                   <h5>{name}</h5>
-                  <table className="border-collapse rounded bg-secondary-100 text-sm">
-                    <thead className="border border-secondary-400">
+                  <table className="border-collapse rounded bg-gray-100 text-sm">
+                    <thead className="border border-gray-400">
                       <tr>
                         <th className="min-w-48 px-2 py-1 text-left">Name</th>
                         <th className="min-w-32 px-2 py-1 text-right">
@@ -348,7 +348,7 @@ export default function CriticalCarePreview(props: Props) {
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="border border-secondary-400">
+                    <tbody className="border border-gray-400">
                       {fields.map((category) =>
                         data[category.key]?.map((row) => (
                           <tr>
@@ -365,7 +365,7 @@ export default function CriticalCarePreview(props: Props) {
                         )),
                       )}
                     </tbody>
-                    <tfoot className="border border-secondary-400 font-bold">
+                    <tfoot className="border border-gray-400 font-bold">
                       <tr>
                         <td className="px-2 py-1">Total {name}</td>
                         <td className="px-2 py-1 text-right">
@@ -560,7 +560,7 @@ const Section = (props: {
       <section
         id={props.title.toLowerCase().replaceAll(" ", "-")}
         className={classNames(
-          props.subSection ? "py-6" : "border-b border-b-secondary-400 py-4",
+          props.subSection ? "py-6" : "border-b border-b-gray-400 py-4",
           !hasValue && "hidden",
         )}
       >
@@ -609,7 +609,7 @@ const Detail = (props: {
           {value} {props.suffix}
         </span>
       ) : (
-        <span className="text-secondary-700">--</span>
+        <span className="text-gray-700">--</span>
       )}
     </p>
   );

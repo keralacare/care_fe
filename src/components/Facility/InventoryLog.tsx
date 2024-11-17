@@ -81,18 +81,18 @@ export default function InventoryLog(props: any) {
   let inventoryList: any = [];
   if (data?.results.length) {
     inventoryList = data.results.map((inventoryItem: any, index) => (
-      <tr id={`row-${index}`} key={inventoryItem.id} className="bg-white">
-        <td className="border-b border-secondary-200 p-5 text-sm hover:bg-secondary-100">
+      <tr id={`row-${index}`} key={inventoryItem.id} className="bg-primary">
+        <td className="border-b border-gray-200 p-5 text-sm hover:bg-gray-100">
           <div className="flex items-center">
             <div className="ml-3">
-              <p className="whitespace-nowrap text-secondary-900">
+              <p className="whitespace-nowrap text-gray-900">
                 {formatDateTime(inventoryItem.created_date)}
               </p>
             </div>
           </div>
         </td>
-        <td className="border-b border-secondary-200 p-5 text-sm hover:bg-secondary-100">
-          <p className="whitespace-nowrap lowercase text-secondary-900">
+        <td className="border-b border-gray-200 p-5 text-sm hover:bg-gray-100">
+          <p className="whitespace-nowrap lowercase text-gray-900">
             {inventoryItem.quantity_in_default_unit}{" "}
             {inventoryItem.item_object?.default_unit?.name}
             {inventoryItem.probable_accident && (
@@ -103,10 +103,10 @@ export default function InventoryLog(props: any) {
             )}
           </p>
         </td>
-        <td className="border-b border-secondary-200 p-5 text-sm hover:bg-secondary-100">
-          <p className="whitespace-nowrap lowercase text-secondary-900">
+        <td className="border-b border-gray-200 p-5 text-sm hover:bg-gray-100">
+          <p className="whitespace-nowrap lowercase text-gray-900">
             {inventoryItem.is_incoming ? (
-              <span className="ml-2 text-primary-600">Added Stock</span>
+              <span className="ml-2 text-accent-600">Added Stock</span>
             ) : (
               <span className="ml-2 text-red-600">Used Stock</span>
             )}
@@ -138,7 +138,7 @@ export default function InventoryLog(props: any) {
               <ButtonV2
                 onClick={(_) => flagFacility(inventoryItem.external_id)}
                 disabled={saving}
-                variant="primary"
+                variant="accent"
               >
                 <span>
                   <CareIcon
@@ -170,12 +170,9 @@ export default function InventoryLog(props: any) {
     ));
   } else if (data?.results && data.results.length === 0) {
     inventoryList = (
-      <tr className="bg-white">
-        <td
-          colSpan={3}
-          className="border-b border-secondary-200 p-5 text-center"
-        >
-          <p className="whitespace-nowrap text-secondary-500">
+      <tr className="bg-primary">
+        <td colSpan={3} className="border-b border-gray-200 p-5 text-center">
+          <p className="whitespace-nowrap text-gray-500">
             No log for this inventory available
           </p>
         </td>
@@ -193,16 +190,16 @@ export default function InventoryLog(props: any) {
             <table className="min-w-full overflow-x-clip rounded-lg leading-normal shadow">
               <thead>
                 <tr>
-                  <th className="border-b-2 border-secondary-200 bg-primary-400 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-white">
+                  <th className="border-b-2 border-gray-200 bg-accent-400 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-white">
                     Created On
                   </th>
-                  <th className="border-b-2 border-secondary-200 bg-primary-400 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-white">
+                  <th className="border-b-2 border-gray-200 bg-accent-400 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-white">
                     Quantity
                   </th>
-                  <th className="border-b-2 border-secondary-200 bg-primary-400 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-white">
+                  <th className="border-b-2 border-gray-200 bg-accent-400 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-white">
                     Status
                   </th>
-                  <th className="border-b-2 border-secondary-200 bg-primary-400 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-white">
+                  <th className="border-b-2 border-gray-200 bg-accent-400 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-white">
                     Actions
                   </th>
                 </tr>

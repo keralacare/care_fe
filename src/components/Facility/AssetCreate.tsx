@@ -386,18 +386,18 @@ const AssetCreate = (props: AssetProps) => {
       <Page
         title={assetId ? t("update_asset") : t("create_new_asset")}
         crumbsReplacements={{
-          assets: { style: "text-secondary-200 pointer-events-none" },
+          assets: { style: "text-gray-200 pointer-events-none" },
           [assetId || "????"]: { name },
         }}
         backUrl={`/facility/${facilityId}`}
       >
         <section className="text-center">
           <h1 className="flex flex-col items-center py-10 text-6xl">
-            <div className="flex h-40 w-40 items-center justify-center rounded-full bg-secondary-200 p-5">
+            <div className="flex h-40 w-40 items-center justify-center rounded-full bg-gray-200 p-5">
               <CareIcon icon="l-map-marker" className="text-green-600" />
             </div>
           </h1>
-          <p className="text-secondary-600">
+          <p className="text-gray-600">
             {t("you_need_at_least_a_location_to_create_an_assest")}
           </p>
           <button
@@ -458,10 +458,10 @@ const AssetCreate = (props: AssetProps) => {
         ref={section.ref as LegacyRef<HTMLDivElement>}
       >
         <CareIcon icon={section.icon} className="mr-3 text-lg" />
-        <label className="text-lg font-bold text-secondary-900">
+        <label className="text-lg font-bold text-gray-900">
           {sectionTitle}
         </label>
-        <hr className="ml-6 flex-1 border border-secondary-400" />
+        <hr className="ml-6 flex-1 border border-gray-400" />
       </div>
     );
   };
@@ -475,7 +475,7 @@ const AssetCreate = (props: AssetProps) => {
           [facilityId]: {
             name: locationsQuery.data?.results[0].facility?.name,
           },
-          assets: { style: "text-secondary-200 pointer-events-none" },
+          assets: { style: "text-gray-200 pointer-events-none" },
           [assetId || "????"]: { name },
         }}
         backUrl={
@@ -492,8 +492,8 @@ const AssetCreate = (props: AssetProps) => {
               return (
                 <button
                   className={`flex w-full items-center justify-start gap-3 rounded-l-lg px-5 py-3 font-medium ${
-                    isCurrent ? "bg-white text-primary-500" : "bg-transparent"
-                  } transition-all duration-100 ease-in hover:bg-white hover:tracking-wider`}
+                    isCurrent ? "bg-primary text-accent-500" : "bg-transparent"
+                  } transition-all duration-100 ease-in hover:bg-primary hover:tracking-wider`}
                   onClick={() => {
                     section.ref.current?.scrollIntoView({
                       behavior: "smooth",
@@ -512,7 +512,7 @@ const AssetCreate = (props: AssetProps) => {
             <div className="w-full max-w-3xl 2xl:max-w-4xl">
               <form
                 onSubmit={(e) => handleSubmit(e, false)}
-                className="rounded bg-white p-6 transition-all sm:rounded-xl sm:p-12"
+                className="rounded bg-primary p-6 transition-all sm:rounded-xl sm:p-12"
               >
                 <div className="grid grid-cols-1 items-start gap-x-12">
                   <div className="grid grid-cols-6 gap-x-6">
@@ -682,7 +682,7 @@ const AssetCreate = (props: AssetProps) => {
                         />
                       </div>
                       <div
-                        className="ml-1 mt-1 flex h-10 cursor-pointer items-center justify-self-end rounded border border-secondary-400 px-4 hover:bg-secondary-200"
+                        className="ml-1 mt-1 flex h-10 cursor-pointer items-center justify-self-end rounded border border-gray-400 px-4 hover:bg-gray-200"
                         onClick={() => setIsScannerActive(true)}
                       >
                         <CareIcon

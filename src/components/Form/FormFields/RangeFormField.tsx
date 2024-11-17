@@ -162,7 +162,7 @@ export default function RangeFormField(props: Props) {
                     errorClassName="hidden"
                   />
                 ) : (
-                  <p className="whitespace-nowrap text-xs font-bold text-secondary-700">
+                  <p className="whitespace-nowrap text-xs font-bold text-gray-700">
                     {unit.label}
                   </p>
                 )}

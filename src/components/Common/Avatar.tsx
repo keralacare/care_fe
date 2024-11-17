@@ -2,6 +2,8 @@ import React from "react";
 
 import { cn } from "@/lib/utils";
 
+import { useTheme } from "@/Utils/themes";
+
 const colors: string[] = [
   "#E6F3FF", // Light Blue
   "#FFF0E6", // Light Peach
@@ -17,6 +19,21 @@ const colors: string[] = [
   "#E6FFF0", // Light Mint
 ];
 
+const darkColors: string[] = [
+  "#1E3A8A", // Dark Blue
+  "#9A3412", // Dark Peach
+  "#065F46", // Dark Green
+  "#9B1C1C", // Dark Pink
+  "#6B21A8", // Dark Purple
+  "#92400E", // Dark Yellow
+  "#0E7490", // Dark Cyan
+  "#9D174D", // Dark Rose
+  "#4D7C0F", // Dark Lime
+  "#4338CA", // Dark Lavender
+  "#831843", // Dark Magenta
+  "#047857", // Dark Mint
+];
+
 const stringToInt = (name: string): number => {
   const aux = (sum: number, remains: string): number => {
     if (remains === "") return sum;
@@ -28,9 +45,9 @@ const stringToInt = (name: string): number => {
   return Math.floor(aux(0, name));
 };
 
-const toColor = (name: string): [string, string] => {
+const toColor = (name: string, dark: boolean = false): [string, string] => {
   const index = stringToInt(name) % colors.length;
-  const backgroundColor = colors[index];
+  const backgroundColor = (dark ? darkColors : colors)[index];
   return [backgroundColor, "#333333"]; // Using dark gray for text
 };
 
@@ -56,11 +73,12 @@ const Avatar: React.FC<AvatarProps> = ({
   imageUrl,
   className,
 }) => {
-  const [bgColor] = propColors || toColor(name);
+  const [theme] = useTheme();
+  const [bgColor] = propColors || toColor(name, theme?.type === "dark");
   return (
     <div
       className={cn(
-        `flex aspect-square w-full items-center justify-center overflow-hidden border border-black/10`,
+        `flex aspect-square w-full items-center justify-center overflow-hidden border ${imageUrl ? "border-primary" : "border-black/10"}`,
         className,
       )}
       style={{
@@ -82,7 +100,7 @@ const Avatar: React.FC<AvatarProps> = ({
           className="aspect-square h-full w-full object-cover"
         >
           <text
-            fill="black"
+            fill={theme?.type === "dark" ? "white" : "black"}
             fillOpacity="0.1"
             fontSize="40"
             fontWeight="900"

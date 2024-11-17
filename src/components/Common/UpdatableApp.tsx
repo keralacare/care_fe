@@ -157,7 +157,7 @@ interface AppUpdatedAlertProps {
 const AppUpdatedAlert = ({ show }: AppUpdatedAlertProps) => {
   return (
     <AlertTransition show={show}>
-      <Popover className="rounded-xl bg-primary-500 px-5 py-4 text-white shadow-2xl shadow-primary-500">
+      <Popover className="rounded-xl bg-accent-500 px-5 py-4 text-white shadow-2xl shadow-accent-500">
         <div className="flex items-center gap-4">
           <CareIcon icon="l-thumbs-up" className="text-2xl" />
           <span className="mr-4 flex flex-col">

@@ -28,7 +28,7 @@ export default function SessionExpired() {
           <br />
           <div
             onClick={signOut}
-            className="mt-5 inline-block cursor-pointer rounded-lg bg-primary-600 px-4 py-2 text-white hover:bg-primary-400"
+            className="mt-5 inline-block cursor-pointer rounded-lg bg-accent-600 px-4 py-2 text-white hover:bg-accent-400"
           >
             {t("return_to_login")}
           </div>

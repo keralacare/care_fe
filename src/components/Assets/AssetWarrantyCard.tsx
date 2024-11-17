@@ -31,7 +31,7 @@ export default function AssetWarrantyCard(props: { asset: AssetData }) {
   }, [isCopied]);
 
   return (
-    <div className="warranty-card relative z-10 flex h-full w-screen flex-col overflow-hidden p-6 text-white transition-all hover:scale-[1.01] hover:from-primary-600 hover:to-primary-700 md:w-full md:rounded-xl xl:w-96">
+    <div className="warranty-card relative z-10 flex h-full w-screen flex-col overflow-hidden p-6 text-white transition-all hover:scale-[1.01] hover:from-accent-600 hover:to-accent-700 md:w-full md:rounded-xl xl:w-96">
       <div className="mb-3 text-right text-lg font-bold italic">
         {asset.manufacturer}
       </div>
@@ -39,7 +39,7 @@ export default function AssetWarrantyCard(props: { asset: AssetData }) {
         <div className="flex h-full w-full flex-col gap-4 md:border-r xl:w-auto xl:border-r-0">
           {Object.keys(details).map((key) => (
             <div className="">
-              <div className="mb-1 text-xs uppercase italic tracking-widest text-secondary-200">
+              <div className="mb-1 text-xs uppercase italic tracking-widest text-gray-200">
                 {key}
               </div>
               <div className="flex items-center gap-2 font-semibold">
@@ -65,10 +65,10 @@ export default function AssetWarrantyCard(props: { asset: AssetData }) {
             </div>
           ))}
         </div>
-        <div className="mb-2 hidden h-px w-full bg-white/40 xl:block" />
+        <div className="mb-2 hidden h-px w-full bg-primary/40 xl:block" />
         <div className="shrink-0">
           <div>
-            <div className="mb-1 text-xs uppercase italic tracking-widest text-secondary-200">
+            <div className="mb-1 text-xs uppercase italic tracking-widest text-gray-200">
               Customer Support Details
             </div>
             <div className="font-semibold">{asset.support_name || "--"}</div>
@@ -81,14 +81,12 @@ export default function AssetWarrantyCard(props: { asset: AssetData }) {
               <div className="flex items-center">
                 {item[1] && (
                   <>
-                    <div className="w-16 italic text-secondary-200">
-                      {item[0]} :
-                    </div>
+                    <div className="w-16 italic text-gray-200">{item[0]} :</div>
                     <a
                       href={
                         (item[0] === "Email" ? "mailto:" : "tel:") + item[1]
                       }
-                      className="border-b border-primary-300 text-primary-300 hover:text-primary-400"
+                      className="border-b border-accent-300 text-accent-300 hover:text-accent-400"
                     >
                       <CareIcon icon={item[2] as IconName} className="mr-1" />
                       {item[1]}

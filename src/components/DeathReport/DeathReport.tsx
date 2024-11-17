@@ -161,7 +161,7 @@ export default function PrintDeathReport(props: { id: string }) {
         </button>
       </div>
 
-      <div id="section-to-print" className="print bg-white">
+      <div id="section-to-print" className="print bg-primary">
         <div></div>
         <div className="p-4 md:mx-20">
           <div className="my-6 text-center text-xl font-bold">

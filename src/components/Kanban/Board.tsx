@@ -49,7 +49,7 @@ export default function KanbanBoard<T extends { id: string }>(
                   behavior: "smooth",
                 });
               }}
-              className="inline-flex aspect-square h-8 items-center justify-center rounded-full border border-secondary-400 bg-secondary-200 text-2xl hover:bg-secondary-300"
+              className="inline-flex aspect-square h-8 items-center justify-center rounded-full border border-gray-400 bg-gray-200 text-2xl hover:bg-gray-300"
             >
               <CareIcon icon={`l-${button ? "arrow-right" : "arrow-left"}`} />
             </button>
@@ -145,15 +145,13 @@ export function KanbanSection<T extends { id: string }>(
       {(provided) => (
         <div
           ref={provided.innerRef}
-          className={
-            "relative mr-2 w-[300px] shrink-0 rounded-xl bg-secondary-200"
-          }
+          className={"relative mr-2 w-[300px] shrink-0 rounded-xl bg-gray-200"}
         >
-          <div className="sticky top-0 rounded-xl bg-secondary-200 pt-2">
-            <div className="mx-2 flex items-center justify-between rounded-lg border border-secondary-300 bg-white p-4">
+          <div className="sticky top-0 rounded-xl bg-gray-200 pt-2">
+            <div className="mx-2 flex items-center justify-between rounded-lg border border-gray-300 bg-primary p-4">
               <div>{section.title}</div>
               <div>
-                <span className="ml-2 rounded-lg bg-secondary-300 px-2">
+                <span className="ml-2 rounded-lg bg-gray-300 px-2">
                   {typeof totalCount === "undefined" ? "..." : totalCount}
                 </span>
               </div>
@@ -161,7 +159,7 @@ export function KanbanSection<T extends { id: string }>(
           </div>
           <div ref={sectionRef}>
             {!fetchingNextPage && totalCount === 0 && (
-              <div className="flex items-center justify-center py-10 text-secondary-500">
+              <div className="flex items-center justify-center py-10 text-gray-500">
                 {t("no_results_found")}
               </div>
             )}
@@ -174,7 +172,7 @@ export function KanbanSection<T extends { id: string }>(
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
-                      className="mx-2 mt-2 w-[284px] rounded-lg border border-secondary-300 bg-white"
+                      className="mx-2 mt-2 w-[284px] rounded-lg border border-gray-300 bg-primary"
                     >
                       {props.itemRender(item)}
                     </div>
@@ -182,7 +180,7 @@ export function KanbanSection<T extends { id: string }>(
                 </Draggable>
               ))}
             {fetchingNextPage && (
-              <div className="mt-2 h-[300px] w-[284px] animate-pulse rounded-lg bg-secondary-300" />
+              <div className="mt-2 h-[300px] w-[284px] animate-pulse rounded-lg bg-gray-300" />
             )}
           </div>
         </div>

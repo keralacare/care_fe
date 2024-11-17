@@ -15,10 +15,10 @@ export default function ManagePrescriptions() {
   return (
     <Page title={t("manage_prescriptions")}>
       <div
-        className="mx-auto flex w-full max-w-5xl flex-col gap-10 rounded bg-white p-6 transition-all sm:rounded-xl sm:p-12"
+        className="mx-auto flex w-full max-w-5xl flex-col gap-10 rounded bg-primary p-6 transition-all sm:rounded-xl sm:p-12"
         id="medicine-preview"
       >
-        <div className="flex flex-col gap-10 divide-y-2 divide-dashed divide-secondary-600">
+        <div className="flex flex-col gap-10 divide-y-2 divide-dashed divide-gray-600">
           <div>
             <div className="mb-4 flex flex-col items-center justify-between gap-2 md:flex-row">
               <h3 className="text-lg font-semibold">
@@ -48,7 +48,7 @@ export default function ManagePrescriptions() {
             <CareIcon icon="l-angle-left-b" className="text-lg" />
             {t("return_to_patient_dashboard")}
           </ButtonV2>
-          <span className="text-sm text-primary-500">
+          <span className="text-sm text-accent-500">
             <CareIcon icon="l-check" className="text-base" />
             <span className="pl-1">{t("all_changes_have_been_saved")}</span>
           </span>

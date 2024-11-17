@@ -190,7 +190,7 @@ const DischargeModal = ({
         variant="warning"
         className="md:max-w-xl"
       >
-        <div className="flex flex-col gap-2 py-2 text-secondary-900">
+        <div className="flex flex-col gap-2 py-2 text-gray-900">
           <p>
             Are you sure you want to close this encounter, noting that the
             patient has been admitted for{" "}
@@ -375,7 +375,7 @@ const DischargeModal = ({
         />
 
         <div className="py-4">
-          <span className="text-secondary-700">
+          <span className="text-gray-700">
             {t("encounter_duration_confirmation")}{" "}
             <strong>{encounterDuration.humanize()}</strong>.
           </span>

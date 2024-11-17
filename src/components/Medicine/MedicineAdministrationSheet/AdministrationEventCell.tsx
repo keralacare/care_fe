@@ -53,7 +53,7 @@ export default function AdministrationEventCell({
           className="w-full md:max-w-4xl"
           show={showTimeline}
         >
-          <div className="mt-6 text-sm font-medium text-secondary-700">
+          <div className="mt-6 text-sm font-medium text-gray-700">
             Administrations on{" "}
             <span className="text-black">
               {formatDateTime(start, "DD/MM/YYYY")}
@@ -75,16 +75,16 @@ export default function AdministrationEventCell({
           <div className="relative mx-auto max-w-min">
             <CareIcon
               icon="l-check-circle"
-              className="text-xl text-primary-500"
+              className="text-xl text-accent-500"
             />
             {administered.length > 1 && (
-              <span className="absolute -bottom-1 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-primary-500 text-xs font-semibold text-white">
+              <span className="absolute -bottom-1 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-accent-500 text-xs font-semibold text-white">
                 {administered.length}
               </span>
             )}
           </div>
           {hasComment && (
-            <CareIcon icon="l-notes" className="text-xl text-primary-500" />
+            <CareIcon icon="l-notes" className="text-xl text-accent-500" />
           )}
         </button>
       </>
@@ -93,9 +93,7 @@ export default function AdministrationEventCell({
 
   // Check if cell belongs to after prescription.created_date
   if (dayjs(start).isAfter(prescription.created_date)) {
-    return (
-      <CareIcon icon="l-minus-circle" className="text-xl text-secondary-400" />
-    );
+    return <CareIcon icon="l-minus-circle" className="text-xl text-gray-400" />;
   }
 
   // Check if cell belongs to a discontinued prescription
@@ -113,7 +111,7 @@ export default function AdministrationEventCell({
             "text-xl",
             dayjs(prescription.discontinued_date).isBetween(start, end)
               ? "text-danger-700"
-              : "text-secondary-400",
+              : "text-gray-400",
           )}
         />
         <span className="tooltip-text tooltip-top -translate-x-1/2 text-xs">

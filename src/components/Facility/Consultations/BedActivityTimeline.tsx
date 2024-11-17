@@ -152,7 +152,7 @@ const BedTimelineAsset = ({
       {newlyLinkedAssets.length === 0 &&
         existingAssets.length === 0 &&
         unlinkedAssets.length === 0 && (
-          <p className="text-secondary-500">No assets linked</p>
+          <p className="text-gray-500">No assets linked</p>
         )}
       {newlyLinkedAssets.length > 0 &&
         newlyLinkedAssets.map((newAsset) => (
@@ -170,7 +170,7 @@ const BedTimelineAsset = ({
         ))}
       {unlinkedAssets.length > 0 &&
         unlinkedAssets.map((unlinkedAsset) => (
-          <div key={unlinkedAsset.id} className="flex gap-1 text-secondary-500">
+          <div key={unlinkedAsset.id} className="flex gap-1 text-gray-500">
             <CareIcon icon="l-minus-circle" />
             <span className="line-through">{unlinkedAsset.name}</span>
           </div>
@@ -189,7 +189,7 @@ const BedTimelineNodeTitle = (props: {
   return (
     <TimelineNodeTitle event={event}>
       <div className="flex w-full justify-between gap-2">
-        <p className="flex-auto py-0.5 text-xs leading-5 text-secondary-600 md:w-2/3">
+        <p className="flex-auto py-0.5 text-xs leading-5 text-gray-600 md:w-2/3">
           {titleSuffix}
         </p>
         <div className="md:w-fit">
@@ -213,7 +213,7 @@ const BedTitleSuffix = ({
     <div className="flex flex-col">
       <div className="flex gap-x-2">
         <span>{formatDateTime(bed.start_date).split(";")[0]}</span>
-        <span className="text-secondary-500">-</span>
+        <span className="text-gray-500">-</span>
         <span>{formatDateTime(bed.start_date).split(";")[1]}</span>
       </div>
       <p>
@@ -226,7 +226,7 @@ const BedTitleSuffix = ({
             text="In Use"
             startIcon="l-notes"
             size="small"
-            variant="primary"
+            variant="accent"
             className="ml-5"
           />
         )}
@@ -242,11 +242,11 @@ const BedActivityIButtonPopover = ({
   bed?: CurrentBed;
 }) => {
   return (
-    <Popover className="relative text-sm text-secondary-500 md:text-base">
+    <Popover className="relative text-sm text-gray-500 md:text-base">
       <PopoverButton>
         <CareIcon
           icon="l-info-circle"
-          className="cursor-pointer text-secondary-500 hover:text-secondary-600"
+          className="cursor-pointer text-gray-500 hover:text-gray-600"
         />
       </PopoverButton>
       <Transition
@@ -257,8 +257,8 @@ const BedActivityIButtonPopover = ({
         leaveFrom="opacity-100 translate-y-0"
         leaveTo="opacity-0 translate-y-1"
       >
-        <PopoverPanel className="absolute z-10 -ml-20 mt-2 w-48 -translate-x-1/2 rounded-lg border border-secondary-200 bg-secondary-100 p-2 shadow">
-          <p className="text-xs text-secondary-600">
+        <PopoverPanel className="absolute z-10 -ml-20 mt-2 w-48 -translate-x-1/2 rounded-lg border border-gray-200 bg-gray-100 p-2 shadow">
+          <p className="text-xs text-gray-600">
             updated {relativeTime(bed?.start_date)}
           </p>
         </PopoverPanel>

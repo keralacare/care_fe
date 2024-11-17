@@ -35,7 +35,7 @@ export const DailyRoundListDetails = (props: any) => {
       backUrl={`/facility/${facilityId}/patient/${patientId}/consultation/${consultationId}/daily-rounds`}
     >
       <div
-        className="mt-4 h-full rounded-lg border bg-white p-4 text-black shadow hover:border-primary-500"
+        className="mt-4 h-full rounded-lg border bg-primary p-4 text-black shadow hover:border-accent-500"
         id="consultation-preview"
       >
         <div className="flex justify-between">

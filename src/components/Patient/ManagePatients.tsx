@@ -485,7 +485,7 @@ export const PatientManager = () => {
 
       const children = (
         <div
-          className={`ring/0 hover:ring/100 group relative h-full w-full rounded-lg border border-secondary-300 bg-white p-4 pl-5 text-black transition-all duration-200 ease-in-out hover:border-secondary-400 hover:pl-5 ${categoryClass}-ring overflow-hidden`}
+          className={`ring/0 hover:ring/100 group relative h-full w-full rounded-lg border border-gray-300 bg-primary p-4 pl-5 text-black transition-all duration-200 ease-in-out hover:border-gray-400 hover:pl-5 ${categoryClass}-ring overflow-hidden`}
         >
           <div
             className={`absolute inset-y-0 left-0 flex h-full w-1 items-center rounded-l-lg transition-all duration-200 ease-in-out group-hover:w-5 ${categoryClass}`}
@@ -497,11 +497,11 @@ export const PatientManager = () => {
             </span>
           </div>
           <div className="flex flex-col items-start gap-4 md:flex-row">
-            <div className="w-full min-w-20 rounded-lg border border-secondary-300 bg-secondary-50 md:h-20 md:w-20">
+            <div className="w-full min-w-20 rounded-lg border border-gray-300 bg-gray-50 md:h-20 md:w-20">
               {patient?.last_consultation?.current_bed &&
               patient?.last_consultation?.discharge_date === null ? (
                 <div className="tooltip flex h-full flex-col items-center justify-center">
-                  <span className="w-full truncate px-1 text-center text-sm text-secondary-900">
+                  <span className="w-full truncate px-1 text-center text-sm text-gray-900">
                     {
                       patient?.last_consultation?.current_bed?.bed_object
                         ?.location_object?.name
@@ -524,7 +524,7 @@ export const PatientManager = () => {
                   <div className="tooltip">
                     <CareIcon
                       icon="l-estate"
-                      className="text-3xl text-secondary-500"
+                      className="text-3xl text-gray-500"
                     />
                     <span className="tooltip-text tooltip-bottom -translate-x-1/2 text-sm font-medium">
                       Domiciliary Care
@@ -536,7 +536,7 @@ export const PatientManager = () => {
                   <Avatar
                     name={patient.name || ""}
                     colors={["#F9FAFB", "#BFB8CB"]}
-                    className="border-0 border-b border-b-secondary-300"
+                    className="border-0 border-b border-b-gray-300"
                   />
                 </div>
               )}
@@ -548,14 +548,14 @@ export const PatientManager = () => {
                   id="patient-name-list"
                 >
                   <span className="text-xl capitalize">{patient.name}</span>
-                  <span className="font-bold text-secondary-700">
+                  <span className="font-bold text-gray-700">
                     {formatPatientAge(patient, true)}
                   </span>
                 </div>
               </div>
 
               {patient.action && patient.action != 10 && (
-                <span className="text-sm font-semibold text-secondary-700">
+                <span className="text-sm font-semibold text-gray-700">
                   {
                     TELEMEDICINE_ACTIONS.find((i) => i.id === patient.action)
                       ?.desc
@@ -566,15 +566,13 @@ export const PatientManager = () => {
               {patient.facility_object && (
                 <div className="mb-2">
                   <div className="flex flex-wrap items-center">
-                    <p className="mr-2 text-sm font-medium text-secondary-700">
+                    <p className="mr-2 text-sm font-medium text-gray-700">
                       {patient.facility_object.name}
                     </p>
                     <RecordMeta
-                      className="text-sm text-secondary-900"
+                      className="text-sm text-gray-900"
                       prefix={
-                        <span className="text-secondary-600">
-                          {t("updated")}
-                        </span>
+                        <span className="text-gray-600">{t("updated")}</span>
                       }
                       time={patient.modified_date}
                     />
@@ -620,7 +618,7 @@ export const PatientManager = () => {
                       {patient.last_consultation?.patient_no && (
                         <Chip
                           size="small"
-                          variant="primary"
+                          variant="accent"
                           text={`${patient.last_consultation?.suggestion === "A" ? "IP No:" : "OP No:"} ${
                             patient.last_consultation?.patient_no
                           }`}
@@ -653,7 +651,7 @@ export const PatientManager = () => {
                     !patient.last_consultation.discharge_date && (
                       <Chip
                         size="small"
-                        variant="primary"
+                        variant="accent"
                         startIcon="l-clock-three"
                         text={`IP Day No: ${dayjs().diff(patient.last_consultation.encounter_date, "day") + 1}`}
                       />
@@ -724,7 +722,7 @@ export const PatientManager = () => {
               patient.last_consultation?.last_daily_round
                 ?.ventilator_interface !== "UNKNOWN" &&
               !patient.last_consultation?.discharge_date && (
-                <div className="mb-auto flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-primary-600 bg-primary-100 text-xs font-semibold text-primary-600">
+                <div className="mb-auto flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-accent-600 bg-accent-100 text-xs font-semibold text-accent-600">
                   {
                     RESPIRATORY_SUPPORT.find(
                       (resp) =>
@@ -771,10 +769,8 @@ export const PatientManager = () => {
     );
   } else if (data && data.count === 0) {
     managePatients = (
-      <div className="col-span-3 w-full rounded-lg bg-white p-2 py-8 pt-4 text-center">
-        <p className="text-2xl font-bold text-secondary-600">
-          No Patients Found
-        </p>
+      <div className="col-span-3 w-full rounded-lg bg-primary p-2 py-8 pt-4 text-center">
+        <p className="text-2xl font-bold text-gray-600">No Patients Found</p>
       </div>
     );
   }

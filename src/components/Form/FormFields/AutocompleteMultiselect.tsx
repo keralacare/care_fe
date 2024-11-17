@@ -173,7 +173,7 @@ export const AutocompleteMutliSelect = <T, V>(
                 ref={comboButtonRef}
                 className="absolute inset-y-0 right-0 flex items-center pr-2"
               >
-                <div className="absolute right-0 top-1 mr-2 flex items-center text-lg text-secondary-900">
+                <div className="absolute right-0 top-1 mr-2 flex items-center text-lg text-gray-900">
                   {props.isLoading ? (
                     <CareIcon icon="l-spinner" className="animate-spin" />
                   ) : (
@@ -210,7 +210,7 @@ export const AutocompleteMutliSelect = <T, V>(
               className="cui-dropdown-base absolute top-12 z-10 mt-0.5"
             >
               {props.minQueryLength && query.length < props.minQueryLength ? (
-                <div className="p-2 text-sm text-secondary-500">
+                <div className="p-2 text-sm text-gray-500">
                   {`Please enter at least ${props.minQueryLength} characters to search`}
                 </div>
               ) : props.isLoading ? (
@@ -258,10 +258,10 @@ export const AutocompleteMutliSelect = <T, V>(
                               className={classNames(
                                 "text-sm font-normal",
                                 option.disabled
-                                  ? "text-secondary-700"
+                                  ? "text-gray-700"
                                   : focus
-                                    ? "text-primary-200"
-                                    : "text-secondary-700",
+                                    ? "text-accent-200"
+                                    : "text-gray-700",
                               )}
                             >
                               {option.description}

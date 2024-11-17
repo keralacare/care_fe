@@ -52,11 +52,11 @@ export default function FileBlock(props: FileBlockProps) {
   return (
     <div
       id="file-div"
-      className={`flex flex-col justify-between gap-2 rounded-lg border border-secondary-300 lg:flex-row lg:items-center ${archived ? "text-secondary-600" : "bg-white"} px-4 py-2 transition-all hover:bg-secondary-100`}
+      className={`flex flex-col justify-between gap-2 rounded-lg border border-gray-300 lg:flex-row lg:items-center ${archived ? "text-gray-600" : "bg-primary"} px-4 py-2 transition-all hover:bg-gray-100`}
     >
       <div className="flex items-center gap-4">
         <div
-          className={`${archived ? "bg-secondary-100 text-secondary-500" : "bg-primary-500/10 text-primary-700"} flex aspect-square w-14 items-center justify-center rounded-full`}
+          className={`${archived ? "bg-gray-100 text-gray-500" : "bg-accent-500/10 text-accent-700"} flex aspect-square w-14 items-center justify-center rounded-full`}
         >
           <CareIcon icon={icons[filetype]} className="text-4xl" />
         </div>
@@ -65,7 +65,7 @@ export default function FileBlock(props: FileBlockProps) {
             {file.name}
             {file.extension} {file.is_archived && "(Archived)"}
           </div>
-          <div className="text-xs text-secondary-700">
+          <div className="text-xs text-gray-700">
             {dayjs(
               file.is_archived ? file.archived_datetime : file.created_date,
             ).format("DD MMM YYYY, hh:mm A")}{" "}
@@ -119,7 +119,7 @@ export default function FileBlock(props: FileBlockProps) {
           )}
           {(file.is_archived || editable) && archivable && (
             <ButtonV2
-              variant={file.is_archived ? "primary" : "secondary"}
+              variant={file.is_archived ? "accent" : "secondary"}
               onClick={() => fileManager.archiveFile(file, associating_id)}
               className="flex-1 md:flex-auto"
             >

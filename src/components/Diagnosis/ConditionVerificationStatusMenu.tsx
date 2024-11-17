@@ -33,13 +33,12 @@ export default function ConditionVerificationStatusMenu<
       className={classNames(
         props.className,
         props.value && StatusStyle[props.value].colors,
-        props.value &&
-          "border !border-secondary-400 bg-white hover:bg-secondary-300",
+        props.value && "border !border-gray-400 bg-primary hover:bg-gray-300",
       )}
       id="condition-verification-status-menu"
       title={props.value ? t(props.value) : (props.placeholder ?? t("add_as"))}
       disabled={props.disabled}
-      variant={props.value ? StatusStyle[props.value].variant : "primary"}
+      variant={props.value ? StatusStyle[props.value].variant : "accent"}
     >
       <>
         {props.options.map((status) => (
@@ -53,9 +52,7 @@ export default function ConditionVerificationStatusMenu<
                 icon="l-coronavirus"
                 className={classNames(
                   "hidden text-lg transition-all duration-200 ease-in-out group-hover:rotate-90 group-hover:text-inherit md:block",
-                  props.value === status
-                    ? "text-inherit-500"
-                    : "text-secondary-500",
+                  props.value === status ? "text-inherit-500" : "text-gray-500",
                 )}
               />
             }
@@ -71,7 +68,7 @@ export default function ConditionVerificationStatusMenu<
                   : ""}
                 {t(status)}
               </span>
-              <span className="hidden text-xs text-secondary-600 md:block">
+              <span className="hidden text-xs text-gray-600 md:block">
                 {t(`help_${status}`)}
               </span>
             </div>
@@ -102,17 +99,17 @@ export const StatusStyle = {
   provisional: {
     variant: "warning",
     // icon: "l-question",
-    colors: "text-secondary-800 border-secondary-800",
+    colors: "text-gray-800 border-gray-800",
   },
   differential: {
     variant: "warning",
     // icon: "l-question",
-    colors: "text-secondary-800 border-secondary-800",
+    colors: "text-gray-800 border-gray-800",
   },
   confirmed: {
-    variant: "primary",
+    variant: "accent",
     // icon: "l-check",
-    colors: "text-primary-500 border-primary-500",
+    colors: "text-accent-500 border-accent-500",
   },
   refuted: {
     variant: "danger",

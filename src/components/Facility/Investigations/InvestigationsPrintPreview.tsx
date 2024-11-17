@@ -18,9 +18,9 @@ const InvestigationEntry = ({
 }) => {
   const { t } = useTranslation();
   return (
-    <tr className="border-y border-y-secondary-400 text-center text-xs transition-all duration-200 ease-in-out even:bg-secondary-100">
+    <tr className="border-y border-y-gray-400 text-center text-xs transition-all duration-200 ease-in-out even:bg-gray-100">
       <td className="whitespace px-6 py-4 text-left">
-        <p className="text-sm font-medium text-secondary-900">
+        <p className="text-sm font-medium text-gray-900">
           {investigation.investigation_object.name || "---"}
         </p>
         <p className="flex flex-row gap-x-2">
@@ -31,15 +31,15 @@ const InvestigationEntry = ({
             {investigation.investigation_object.max_value || ""}
           </span>
         </p>
-        <p className="text-secondary-600">
+        <p className="text-gray-600">
           {t("investigations__unit")}:{" "}
           {investigation.investigation_object.unit || "---"}
         </p>
       </td>
-      <td className="whitespace-nowrap px-6 py-4 text-xs text-secondary-700">
+      <td className="whitespace-nowrap px-6 py-4 text-xs text-gray-700">
         {investigation.value || "---"}
       </td>
-      <td className="whitespace-nowrap px-6 py-4 text-xs text-secondary-700">
+      <td className="whitespace-nowrap px-6 py-4 text-xs text-gray-700">
         {investigation.investigation_object.ideal_value || "---"}
       </td>
     </tr>
@@ -54,18 +54,18 @@ const InvestigationsPreviewTable = ({
   const { t } = useTranslation();
   if (!investigations) {
     return (
-      <tr className="text-center text-secondary-500 print:text-black">
+      <tr className="text-center text-gray-500 print:text-black">
         <td className="col-span-6">{t("no_tests_taken")}</td>
       </tr>
     );
   }
 
   return (
-    <table className="mb-8 mt-4 w-full border-collapse border-2 border-secondary-400">
+    <table className="mb-8 mt-4 w-full border-collapse border-2 border-gray-400">
       <caption className="mb-2 caption-top text-lg font-bold">
         {t("investigations")}
       </caption>
-      <thead className="border-b-2 border-secondary-400 bg-secondary-50 px-6 text-center">
+      <thead className="border-b-2 border-gray-400 bg-gray-50 px-6 text-center">
         <tr>
           <th className="max-w-52 px-6 py-1 text-left">
             {t("investigations__name")}
@@ -74,7 +74,7 @@ const InvestigationsPreviewTable = ({
           <th className="max-w-32 p-1"> {t("investigations__ideal_value")}</th>
         </tr>
       </thead>
-      <tbody className="border-b-2 border-secondary-400">
+      <tbody className="border-b-2 border-gray-400">
         {investigations.map((item) => (
           <InvestigationEntry key={item.id} investigation={item} />
         ))}

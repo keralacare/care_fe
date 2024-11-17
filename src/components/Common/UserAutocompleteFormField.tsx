@@ -168,7 +168,7 @@ const userOnlineDot = (user: UserBareMinimum) => (
   <div
     className={classNames(
       "mr-4 size-2.5 rounded-full",
-      isUserOnline(user) ? "bg-primary-500" : "bg-secondary-400",
+      isUserOnline(user) ? "bg-accent-500" : "bg-gray-400",
     )}
   />
 );

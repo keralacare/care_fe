@@ -172,7 +172,7 @@ export default function ShowInvestigation(props: ShowInvestigationProps) {
         name: patientData?.name,
       })}
     >
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-10 rounded bg-white p-6 transition-all sm:rounded-xl sm:p-12">
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-10 rounded bg-primary p-6 transition-all sm:rounded-xl sm:p-12">
         <InvestigationTable
           title={t("investigation_report_for_{{name}}", {
             name: patientData?.name,

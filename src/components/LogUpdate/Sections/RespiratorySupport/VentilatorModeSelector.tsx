@@ -15,12 +15,12 @@ export default function VentilatorModeSelector(props: Props) {
   return (
     <div className="flex flex-col gap-2 pl-2 pt-4">
       <label>{t("VENTILATOR_MODE__CMV")}</label>
-      <div className="ml-1 border-l-4 border-secondary-200 pl-1">
+      <div className="ml-1 border-l-4 border-gray-200 pl-1">
         <Option value="VCV" props={props} />
         <Option value="PCV" props={props} />
       </div>
       <label>{t("VENTILATOR_MODE__SIMV")}</label>
-      <div className="ml-1 border-l-4 border-secondary-200 pl-1">
+      <div className="ml-1 border-l-4 border-gray-200 pl-1">
         <Option value="VC_SIMV" props={props} />
         <Option value="PC_SIMV" props={props} />
       </div>

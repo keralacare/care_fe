@@ -200,7 +200,7 @@ export const FacilityHome = ({ facilityId }: Props) => {
         onClose={() => setEditCoverImage(false)}
       />
 
-      <div className="rounded bg-white p-3 shadow-sm transition-all duration-200 ease-in-out md:p-6">
+      <div className="rounded bg-primary p-3 shadow-sm transition-all duration-200 ease-in-out md:p-6">
         <div className="justify-between gap-2 lg:flex">
           <div className="flex-col justify-between md:flex">
             <div className="flex flex-1 flex-col">
@@ -221,7 +221,7 @@ export const FacilityHome = ({ facilityId }: Props) => {
                       </h1>
                       {facilityData?.modified_date && (
                         <RecordMeta
-                          className="mt-1 text-sm text-secondary-700"
+                          className="mt-1 text-sm text-gray-700"
                           prefix={t("updated")}
                           time={facilityData?.modified_date}
                         />
@@ -446,7 +446,7 @@ export const FacilityHome = ({ facilityId }: Props) => {
             <div className="sm:grid sm:grid-cols-2 sm:gap-2 md:grid md:grid-cols-2 md:gap-2 lg:flex lg:flex-col lg:justify-end lg:gap-0">
               <ButtonV2
                 id="facility-detailspage-cns"
-                variant="primary"
+                variant="accent"
                 ghost
                 border
                 className="mt-2 flex w-full flex-row justify-center md:w-auto"
@@ -459,7 +459,7 @@ export const FacilityHome = ({ facilityId }: Props) => {
                 <LiveMonitoringButton />
               )}
               <ButtonV2
-                variant="primary"
+                variant="accent"
                 ghost
                 border
                 className="mt-2 flex w-full flex-row justify-center md:w-auto"
@@ -471,7 +471,7 @@ export const FacilityHome = ({ facilityId }: Props) => {
               </ButtonV2>
               <ButtonV2
                 id="view-patient-facility-list"
-                variant="primary"
+                variant="accent"
                 ghost
                 border
                 className="mt-2 flex w-full flex-row justify-center md:w-auto"
@@ -487,7 +487,7 @@ export const FacilityHome = ({ facilityId }: Props) => {
       <FacilityBedCapacity facilityId={facilityId} />
       <FacilityStaffList facilityId={facilityId} />
 
-      <div className="mt-5 rounded bg-white p-3 shadow-sm md:p-6">
+      <div className="mt-5 rounded bg-primary p-3 shadow-sm md:p-6">
         <h1 className="mb-6 text-xl font-bold">{t("oxygen_information")}</h1>
         <div
           className="overflow-x-auto overflow-y-hidden"
@@ -539,7 +539,7 @@ const LiveMonitoringButton = () => {
     <Popover className="relative">
       <PopoverButton className="mt-2 w-full">
         <ButtonV2
-          variant="primary"
+          variant="accent"
           ghost
           border
           className="w-full"
@@ -559,8 +559,8 @@ const LiveMonitoringButton = () => {
         leaveTo="opacity-0 translate-y-1"
       >
         <PopoverPanel className="absolute z-30 mt-1 w-full px-4 sm:px-0 md:w-96 lg:max-w-3xl lg:translate-x-[-168px]">
-          <div className="rounded-lg shadow-lg ring-1 ring-secondary-400">
-            <div className="relative flex flex-col gap-4 rounded-b-lg bg-white p-6">
+          <div className="rounded-lg shadow-lg ring-1 ring-gray-400">
+            <div className="relative flex flex-col gap-4 rounded-b-lg bg-primary p-6">
               <div>
                 <FieldLabel htmlFor="location" className="text-sm">
                   {t("choose_location")}

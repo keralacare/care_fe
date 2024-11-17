@@ -46,8 +46,8 @@ export default function PupilSizeSelect({
               className={classNames(
                 "flex aspect-square h-20 flex-col items-center justify-between rounded-lg border py-2 transition-all duration-200 ease-in-out",
                 size === pupilSize
-                  ? "border-primary-500 bg-primary-100 shadow-md"
-                  : "border-secondary-300 bg-white hover:bg-secondary-200",
+                  ? "border-accent-500 bg-accent-100 shadow-md"
+                  : "border-gray-300 bg-primary hover:bg-gray-200",
               )}
               onClick={() => onChange({ [`${side}_pupil_size`]: size })}
             >
@@ -77,7 +77,7 @@ export default function PupilSizeSelect({
                         }}
                     >
                         <div
-                            className="absolute rounded-full bg-white aspect-square w-[10px]"
+                            className="absolute rounded-full bg-primary aspect-square w-[10px]"
                             style={{
                                 bottom: "10%",
                                 right: "10%",
@@ -91,8 +91,7 @@ export default function PupilSizeSelect({
       <div
         className={classNames(
           "space-y-2 p-2",
-          pupilSize === 0 &&
-            "rounded-lg border border-secondary-400 bg-secondary-100",
+          pupilSize === 0 && "rounded-lg border border-gray-400 bg-gray-100",
         )}
       >
         <CheckBoxFormField

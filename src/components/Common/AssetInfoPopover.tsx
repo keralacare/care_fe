@@ -25,7 +25,7 @@ const AssetInfoPopover = ({ asset, className }: AssetInfoPopoverProps) => {
       <PopoverButton>
         <CareIcon
           icon="l-info-circle"
-          className="cursor-pointer text-sm text-secondary-500 hover:text-white md:text-base"
+          className="cursor-pointer text-sm text-gray-500 hover:text-white md:text-base"
         />
       </PopoverButton>
       <Transition
@@ -55,7 +55,7 @@ const AssetInfoPopover = ({ asset, className }: AssetInfoPopoverProps) => {
               <p className="text-sm text-black md:text-base">
                 {t("middleware_hostname")}:
               </p>
-              <p className="break-words text-secondary-600">
+              <p className="break-words text-gray-600">
                 {asset?.resolved_middleware?.hostname}
               </p>
             </div>
@@ -63,7 +63,7 @@ const AssetInfoPopover = ({ asset, className }: AssetInfoPopoverProps) => {
               <p className="text-sm text-black md:text-base">
                 {t("local_ip_address")}:
               </p>
-              <p className="break-words text-secondary-600">
+              <p className="break-words text-gray-600">
                 {asset?.meta?.local_ip_address}
               </p>
             </div>

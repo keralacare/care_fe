@@ -15,13 +15,13 @@ const TestRow = ({ data, i, onChange, showForm, value, isChanged }: any) => {
   return (
     <tr
       className={classNames(
-        i % 2 == 0 ? "bg-secondary-50" : "bg-white",
-        isChanged && "!bg-primary-300",
+        i % 2 == 0 ? "bg-gray-50" : "bg-primary",
+        isChanged && "!bg-accent-300",
       )}
       x-description="Even row"
     >
       <td className="whitespace-nowrap px-6 py-4 text-xs">
-        <p className="text-sm font-medium text-secondary-900">
+        <p className="text-sm font-medium text-gray-900">
           {data?.investigation_object.name || "---"}
         </p>
         <p className="flex flex-row gap-x-2">
@@ -32,12 +32,12 @@ const TestRow = ({ data, i, onChange, showForm, value, isChanged }: any) => {
             {data?.investigation_object.max_value || ""}
           </span>
         </p>
-        <p className="text-secondary-600">
+        <p className="text-gray-600">
           {t("investigations__unit")}:{" "}
           {data?.investigation_object.unit || "---"}
         </p>
       </td>
-      <td className="whitespace-nowrap px-3 py-4 text-center text-sm text-secondary-700 xl:px-6">
+      <td className="whitespace-nowrap px-3 py-4 text-center text-sm text-gray-700 xl:px-6">
         {showForm ? (
           data?.investigation_object?.investigation_type === "Choice" ? (
             <SelectFormField
@@ -65,7 +65,7 @@ const TestRow = ({ data, i, onChange, showForm, value, isChanged }: any) => {
           value || "---"
         )}
       </td>
-      <td className="whitespace-nowrap px-6 py-4 text-center text-sm text-secondary-700">
+      <td className="whitespace-nowrap px-6 py-4 text-center text-sm text-gray-700">
         {data.investigation_object.ideal_value || "---"}
       </td>
     </tr>
@@ -75,7 +75,7 @@ const TestRow = ({ data, i, onChange, showForm, value, isChanged }: any) => {
 const HeadingRow = () => {
   const { t } = useTranslation();
   const commonClass =
-    "px-6 py-3 text-xs font-semibold uppercase tracking-wider text-secondary-800";
+    "px-6 py-3 text-xs font-semibold uppercase tracking-wider text-gray-800";
   return (
     <tr>
       <th
@@ -135,7 +135,7 @@ export const InvestigationTable = ({
         <div className="flex flex-col py-2 sm:flex-row">
           <ButtonV2
             disabled={isDischargedPatient}
-            variant="primary"
+            variant="accent"
             className="my-2 mr-2"
             onClick={() => {
               showForm && handleUpdateCancel();
@@ -147,7 +147,7 @@ export const InvestigationTable = ({
           </ButtonV2>
           {showForm && (
             <ButtonV2
-              variant="primary"
+              variant="accent"
               onClick={() => {
                 handleSave();
                 setShowForm((prev) => !prev);
@@ -179,9 +179,9 @@ export const InvestigationTable = ({
         onChange={(e) => setSearchFilter(e.value)}
       />
       <br />
-      <div className="overflow-x-scroll border-b border-secondary-200 shadow sm:rounded-lg">
-        <table className="min-w-full divide-y divide-secondary-200">
-          <thead className="bg-secondary-50">
+      <div className="overflow-x-scroll border-b border-gray-200 shadow sm:rounded-lg">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
             <HeadingRow />
           </thead>
           <tbody>
@@ -217,7 +217,7 @@ export const InvestigationTable = ({
                 );
               })
             ) : (
-              <tr className="text-center text-secondary-500">
+              <tr className="text-center text-gray-500">
                 <td className="col-span-6">{t("no_tests_taken")}</td>
               </tr>
             )}

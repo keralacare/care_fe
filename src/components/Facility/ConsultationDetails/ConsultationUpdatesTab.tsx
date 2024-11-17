@@ -120,7 +120,7 @@ export const ConsultationUpdatesTab = (props: ConsultationTabProps) => {
       {!props.consultationData.discharge_date &&
         hl7SocketUrl &&
         ventilatorSocketUrl && (
-          <section className="flex w-full flex-col items-stretch overflow-auto rounded-md bg-white shadow-sm lg:flex-row">
+          <section className="flex w-full flex-col items-stretch overflow-auto rounded-md bg-primary shadow-sm lg:flex-row">
             <div className="mx-auto flex w-full flex-col justify-between gap-1 rounded bg-[#020617] lg:w-auto lg:min-w-[1280px] lg:flex-row">
               <div className="min-h-[400px] flex-1">
                 <HL7PatientVitalsMonitor
@@ -164,7 +164,7 @@ export const ConsultationUpdatesTab = (props: ConsultationTabProps) => {
             {!props.consultationData.discharge_date &&
               ((hl7SocketUrl && !ventilatorSocketUrl) ||
                 (!hl7SocketUrl && ventilatorSocketUrl)) && (
-                <section className="flex w-full flex-col items-stretch overflow-hidden rounded-md bg-white shadow-sm lg:col-span-2 lg:flex-row">
+                <section className="flex w-full flex-col items-stretch overflow-hidden rounded-md bg-primary shadow-sm lg:col-span-2 lg:flex-row">
                   {(hl7SocketUrl || ventilatorSocketUrl) && (
                     <div className="mx-auto flex w-full flex-col justify-between gap-1 rounded bg-[#020617] lg:w-auto lg:min-w-[640px] lg:flex-row">
                       {hl7SocketUrl && (
@@ -210,14 +210,14 @@ export const ConsultationUpdatesTab = (props: ConsultationTabProps) => {
               )}
             {props.consultationData.discharge_date && (
               <div
-                className={`gap-4 overflow-hidden rounded-lg bg-white shadow ${
+                className={`gap-4 overflow-hidden rounded-lg bg-primary shadow ${
                   props.consultationData.new_discharge_reason ===
                     DISCHARGE_REASONS.find((i) => i.text == "Recovered")?.id &&
                   "lg:col-span-2"
                 }`}
               >
                 <div className="px-4 py-5 sm:p-6" id="discharge-information">
-                  <h3 className="text-lg font-semibold leading-relaxed text-secondary-900">
+                  <h3 className="text-lg font-semibold leading-relaxed text-gray-900">
                     Discharge Information
                   </h3>
                   <div className="mt-2 grid gap-4">
@@ -269,7 +269,7 @@ export const ConsultationUpdatesTab = (props: ConsultationTabProps) => {
                             prescription_type="DISCHARGE"
                           />
                         </div>
-                        <hr className="my-2 border border-secondary-300"></hr>
+                        <hr className="my-2 border border-gray-300"></hr>
                         <div className="overflow-x-auto overflow-y-hidden">
                           <PrescriptionsTable
                             is_prn
@@ -334,14 +334,14 @@ export const ConsultationUpdatesTab = (props: ConsultationTabProps) => {
               </div>
             )}
 
-            <div className="rounded-lg bg-white px-4 py-5 shadow sm:p-6 md:col-span-2">
+            <div className="rounded-lg bg-primary px-4 py-5 shadow sm:p-6 md:col-span-2">
               <EncounterSymptomsCard />
             </div>
 
             {props.consultationData.history_of_present_illness && (
-              <div className="overflow-hidden rounded-lg bg-white shadow">
+              <div className="overflow-hidden rounded-lg bg-primary shadow">
                 <div className="px-4 py-5 sm:p-6" id="history-presentillness">
-                  <h3 className="text-lg font-semibold leading-relaxed text-secondary-900">
+                  <h3 className="text-lg font-semibold leading-relaxed text-gray-900">
                     History of Present Illness
                   </h3>
                   <div className="mt-2">
@@ -355,9 +355,9 @@ export const ConsultationUpdatesTab = (props: ConsultationTabProps) => {
             )}
 
             {props.consultationData.examination_details && (
-              <div className="overflow-hidden rounded-lg bg-white shadow">
+              <div className="overflow-hidden rounded-lg bg-primary shadow">
                 <div className="px-4 py-5 sm:p-6" id="examination-details">
-                  <h3 className="text-lg font-semibold leading-relaxed text-secondary-900">
+                  <h3 className="text-lg font-semibold leading-relaxed text-gray-900">
                     Examination details and Clinical conditions:{" "}
                   </h3>
                   <div className="mt-2">
@@ -370,9 +370,9 @@ export const ConsultationUpdatesTab = (props: ConsultationTabProps) => {
               </div>
             )}
             {props.consultationData.treatment_plan && (
-              <div className="overflow-hidden rounded-lg bg-white shadow">
+              <div className="overflow-hidden rounded-lg bg-primary shadow">
                 <div className="px-4 py-5 sm:p-6" id="treatment-summary">
-                  <h3 className="text-lg font-semibold leading-relaxed text-secondary-900">
+                  <h3 className="text-lg font-semibold leading-relaxed text-gray-900">
                     Treatment Summary
                   </h3>
                   <div className="mt-2">
@@ -385,9 +385,9 @@ export const ConsultationUpdatesTab = (props: ConsultationTabProps) => {
               </div>
             )}
             {props.consultationData.consultation_notes && (
-              <div className="overflow-hidden rounded-lg bg-white shadow">
+              <div className="overflow-hidden rounded-lg bg-primary shadow">
                 <div className="px-4 py-5 sm:p-6" id="general-instructions">
-                  <h3 className="text-lg font-semibold leading-relaxed text-secondary-900">
+                  <h3 className="text-lg font-semibold leading-relaxed text-gray-900">
                     General Instructions
                   </h3>
                   <div className="mt-2">
@@ -402,9 +402,9 @@ export const ConsultationUpdatesTab = (props: ConsultationTabProps) => {
 
             {(props.consultationData.operation ??
               props.consultationData.special_instruction) && (
-              <div className="overflow-hidden rounded-lg bg-white shadow">
+              <div className="overflow-hidden rounded-lg bg-primary shadow">
                 <div className="px-4 py-5 sm:p-6" id="consultation-notes">
-                  <h3 className="text-lg font-semibold leading-relaxed text-secondary-900">
+                  <h3 className="text-lg font-semibold leading-relaxed text-gray-900">
                     Notes
                   </h3>
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -434,26 +434,26 @@ export const ConsultationUpdatesTab = (props: ConsultationTabProps) => {
           </div>
           {props.consultationData.procedure &&
             props.consultationData.procedure.length > 0 && (
-              <div className="my-4 rounded-lg bg-white p-4 shadow">
+              <div className="my-4 rounded-lg bg-primary p-4 shadow">
                 <div className="overflow-x-auto" id="consultation-procedure">
-                  <table className="min-w-full divide-y divide-secondary-200">
+                  <table className="min-w-full divide-y divide-gray-200">
                     <thead>
                       <tr>
-                        <th className="bg-secondary-100 px-4 py-3 text-left text-sm font-medium uppercase tracking-wider text-secondary-600">
+                        <th className="bg-gray-100 px-4 py-3 text-left text-sm font-medium uppercase tracking-wider text-gray-600">
                           Procedure
                         </th>
-                        <th className="bg-secondary-100 px-4 py-3 text-left text-sm font-medium uppercase tracking-wider text-secondary-600">
+                        <th className="bg-gray-100 px-4 py-3 text-left text-sm font-medium uppercase tracking-wider text-gray-600">
                           Notes
                         </th>
-                        <th className="bg-secondary-100 px-4 py-3 text-left text-sm font-medium uppercase tracking-wider text-secondary-600">
+                        <th className="bg-gray-100 px-4 py-3 text-left text-sm font-medium uppercase tracking-wider text-gray-600">
                           Repetitive
                         </th>
-                        <th className="bg-secondary-100 px-4 py-3 text-left text-sm font-medium uppercase tracking-wider text-secondary-600">
+                        <th className="bg-gray-100 px-4 py-3 text-left text-sm font-medium uppercase tracking-wider text-gray-600">
                           Time / Frequency
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-secondary-200 bg-white">
+                    <tbody className="divide-y divide-gray-200 bg-primary">
                       {props.consultationData.procedure?.map(
                         (procedure, index) => (
                           <tr key={index}>
@@ -480,9 +480,9 @@ export const ConsultationUpdatesTab = (props: ConsultationTabProps) => {
               </div>
             )}
           {props.consultationData.intubation_start_date && (
-            <div className="mt-4 overflow-hidden rounded-lg bg-white shadow">
+            <div className="mt-4 overflow-hidden rounded-lg bg-primary shadow">
               <div className="px-4 py-5 sm:p-6">
-                <h3 className="text-lg font-semibold leading-relaxed text-secondary-900">
+                <h3 className="text-lg font-semibold leading-relaxed text-gray-900">
                   Date/Size/LL:{" "}
                 </h3>
                 <div className="mt-2 grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -521,9 +521,9 @@ export const ConsultationUpdatesTab = (props: ConsultationTabProps) => {
           )}
 
           {props.consultationData.lines?.length > 0 && (
-            <div className="mt-4 overflow-hidden rounded-lg bg-white shadow">
+            <div className="mt-4 overflow-hidden rounded-lg bg-primary shadow">
               <div className="px-4 py-5 sm:p-6">
-                <h3 className="text-lg font-semibold leading-relaxed text-secondary-900">
+                <h3 className="text-lg font-semibold leading-relaxed text-gray-900">
                   Lines and Catheters
                 </h3>
                 <div className="mt-2 grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -556,9 +556,9 @@ export const ConsultationUpdatesTab = (props: ConsultationTabProps) => {
             </div>
           )}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <div className="col-span-1 mt-4 overflow-hidden rounded-lg bg-white shadow">
+            <div className="col-span-1 mt-4 overflow-hidden rounded-lg bg-primary shadow">
               <div className="px-4 py-5 sm:p-6">
-                <h3 className="text-lg font-semibold leading-relaxed text-secondary-900">
+                <h3 className="text-lg font-semibold leading-relaxed text-gray-900">
                   Body Details
                 </h3>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -620,8 +620,8 @@ export const ConsultationUpdatesTab = (props: ConsultationTabProps) => {
             {((props.patientData.is_antenatal &&
               isAntenatal(props.patientData.last_menstruation_start_date)) ||
               isPostPartum(props.patientData.date_of_delivery)) && (
-              <div className="mt-4 rounded-lg bg-white px-4 py-5 shadow sm:p-6">
-                <h3 className="mb-4 text-lg font-semibold leading-relaxed text-secondary-900">
+              <div className="mt-4 rounded-lg bg-primary px-4 py-5 shadow sm:p-6">
+                <h3 className="mb-4 text-lg font-semibold leading-relaxed text-gray-900">
                   Perinatal Status
                 </h3>
 
@@ -698,7 +698,7 @@ export const ConsultationUpdatesTab = (props: ConsultationTabProps) => {
                 <PopoverButton>
                   <ButtonV2
                     className="border p-3"
-                    variant={eventsQuery?.ordering ? "primary" : "secondary"}
+                    variant={eventsQuery?.ordering ? "accent" : "secondary"}
                   >
                     <CareIcon icon="l-filter" />
                   </ButtonV2>
@@ -712,15 +712,15 @@ export const ConsultationUpdatesTab = (props: ConsultationTabProps) => {
                   leaveTo="opacity-0 translate-y-1"
                 >
                   <PopoverPanel className="absolute right-0 z-30">
-                    <div className="rounded-lg shadow-lg ring-1 ring-secondary-400">
-                      <div className="relative flex flex-col rounded-b-lg bg-white">
+                    <div className="rounded-lg shadow-lg ring-1 ring-gray-400">
+                      <div className="relative flex flex-col rounded-b-lg bg-primary">
                         {EVENTS_SORT_OPTIONS.map(({ isAscending, value }) => {
                           return (
                             <div
                               className={classNames(
                                 "dropdown-item-primary pointer-events-auto m-2 flex w-56 cursor-pointer items-center justify-start gap-3 rounded border-0 px-4 py-2 text-sm font-normal transition-all duration-200 ease-in-out",
                                 eventsQuery?.ordering?.toString() === value
-                                  ? "bg-primary-100 !font-medium text-primary-500"
+                                  ? "bg-accent-100 !font-medium text-accent-500"
                                   : "",
                               )}
                               onClick={() => {
@@ -730,7 +730,7 @@ export const ConsultationUpdatesTab = (props: ConsultationTabProps) => {
                               }}
                             >
                               <CareIcon
-                                className="text-primary-600"
+                                className="text-accent-600"
                                 icon={
                                   isAscending
                                     ? "l-sort-amount-up"

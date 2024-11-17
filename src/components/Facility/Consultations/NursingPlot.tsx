@@ -76,8 +76,8 @@ export const NursingPlot = ({ consultationId }: any) => {
         <div>
           <div className="flex flex-row overflow-x-scroll">
             {areFieldsEmpty() && (
-              <div className="mt-1 w-full rounded-lg border bg-white p-4 shadow">
-                <div className="flex items-center justify-center text-2xl font-bold text-secondary-500">
+              <div className="mt-1 w-full rounded-lg border bg-primary p-4 shadow">
+                <div className="flex items-center justify-center text-2xl font-bold text-gray-500">
                   {t("no_data_found")}
                 </div>
               </div>
@@ -87,7 +87,7 @@ export const NursingPlot = ({ consultationId }: any) => {
                 filterEmpty(f) && (
                   <div key={f} className="m-2 w-3/4">
                     <div className="sticky top-0 z-10 rounded pt-2">
-                      <div className="mx-2 flex items-center justify-between rounded border bg-secondary-200 p-4">
+                      <div className="mx-2 flex items-center justify-between rounded border bg-gray-200 p-4">
                         <h3 className="flex h-8 items-center text-sm">
                           {t(`NURSING_CARE_PROCEDURE__${f}`)}
                         </h3>
@@ -99,7 +99,7 @@ export const NursingPlot = ({ consultationId }: any) => {
                         .map((care: any, index: number) => (
                           <div
                             key={index}
-                            className="my-2 w-full divide-y rounded-lg border bg-white p-4 shadow"
+                            className="my-2 w-full divide-y rounded-lg border bg-primary p-4 shadow"
                           >
                             <div className="text-xs font-semibold">
                               {care.date}

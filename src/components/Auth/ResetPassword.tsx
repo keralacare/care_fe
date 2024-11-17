@@ -112,7 +112,7 @@ const ResetPassword = (props: ResetPasswordProps) => {
       <div>
         <div>
           <form
-            className="mx-auto max-w-xl rounded-lg bg-white shadow"
+            className="mx-auto max-w-xl rounded-lg bg-primary shadow"
             onSubmit={(e) => {
               handleSubmit(e);
             }}
@@ -131,7 +131,7 @@ const ResetPassword = (props: ResetPasswordProps) => {
                 onBlur={() => setPasswordInputInFocus(false)}
               />
               {passwordInputInFocus && (
-                <div className="text-small mb-2 pl-2 text-secondary-500">
+                <div className="text-small mb-2 pl-2 text-gray-500">
                   {validateRule(
                     form.password?.length >= 8,
                     "Password should be atleast 8 characters long",

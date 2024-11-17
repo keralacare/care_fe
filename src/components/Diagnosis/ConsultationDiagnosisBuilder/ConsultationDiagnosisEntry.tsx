@@ -73,16 +73,16 @@ export default function ConsultationDiagnosisEntry(props: Props) {
       <div
         className={classNames(
           "cui-input-base relative flex w-full flex-col gap-2 md:flex-row",
-          object.is_principal && "border-primary-500",
+          object.is_principal && "border-accent-500",
         )}
       >
         <span
           className={classNames(
             object.is_principal
-              ? "font-semibold text-primary-500"
+              ? "font-semibold text-accent-500"
               : "font-normal",
-            !isActive && "text-secondary-500 line-through",
-            !object.diagnosis_object?.label && "italic text-secondary-500",
+            !isActive && "text-gray-500 line-through",
+            !object.diagnosis_object?.label && "italic text-gray-500",
           )}
         >
           {object.diagnosis_object?.label ||

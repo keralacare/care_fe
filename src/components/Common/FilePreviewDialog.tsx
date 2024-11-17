@@ -105,7 +105,7 @@ const FilePreviewDialog = (props: FilePreviewProps) => {
   return (
     <DialogModal
       fixedWidth={false}
-      className="z-10 h-full w-full max-w-5xl flex-col gap-4 rounded-lg bg-white p-4 shadow-xl md:p-6"
+      className="z-10 h-full w-full max-w-5xl flex-col gap-4 rounded-lg bg-primary p-4 shadow-xl md:p-6"
       onClose={() => {
         handleClose();
       }}
@@ -115,7 +115,7 @@ const FilePreviewDialog = (props: FilePreviewProps) => {
       {fileUrl ? (
         <>
           <div className="mb-2 flex flex-col items-center justify-between md:flex-row">
-            <p className="text-md font-semibold text-secondary-700">
+            <p className="text-md font-semibold text-gray-700">
               {file_state.name}.{file_state.extension}
             </p>
             <div className="flex gap-4">
@@ -135,7 +135,7 @@ const FilePreviewDialog = (props: FilePreviewProps) => {
             </div>
           </div>
           <div className="flex flex-1 items-center justify-center">
-            <div className="flex h-[75vh] w-full items-center justify-center overflow-scroll rounded-lg border border-secondary-200">
+            <div className="flex h-[75vh] w-full items-center justify-center overflow-scroll rounded-lg border border-gray-200">
               {file_state.isImage ? (
                 <img
                   src={fileUrl}
@@ -167,7 +167,7 @@ const FilePreviewDialog = (props: FilePreviewProps) => {
                 <div className="flex h-full w-full flex-col items-center justify-center">
                   <CareIcon
                     icon="l-file"
-                    className="mb-4 text-5xl text-secondary-600"
+                    className="mb-4 text-5xl text-gray-600"
                   />
                   {t("file_preview_not_supported")}
                 </div>
@@ -217,7 +217,7 @@ const FilePreviewDialog = (props: FilePreviewProps) => {
                       ghost
                       key={index}
                       onClick={button[2] as () => void}
-                      className="z-50 rounded bg-white/60 px-4 py-2 text-black backdrop-blur transition hover:bg-white/70"
+                      className="z-50 rounded bg-primary/60 px-4 py-2 text-black backdrop-blur transition hover:bg-primary/70"
                       disabled={button[3] as boolean}
                     >
                       {button[1] && (
@@ -253,7 +253,7 @@ const FilePreviewDialog = (props: FilePreviewProps) => {
                       ghost
                       key={index}
                       onClick={button[2] as () => void}
-                      className="z-50 rounded bg-white/60 px-4 py-2 text-black backdrop-blur transition hover:bg-white/70"
+                      className="z-50 rounded bg-primary/60 px-4 py-2 text-black backdrop-blur transition hover:bg-primary/70"
                       disabled={button[3] as boolean}
                     >
                       {button[1] && (

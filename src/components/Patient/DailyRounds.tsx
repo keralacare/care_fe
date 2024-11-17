@@ -560,7 +560,7 @@ export const DailyRounds = (props: any) => {
     >
       <PLUGIN_Component __name="Scribe" />
       <form
-        className="w-full max-w-4xl rounded-lg bg-white px-3 py-5 shadow sm:px-6 md:py-11"
+        className="w-full max-w-4xl rounded-lg bg-primary px-3 py-5 shadow sm:px-6 md:py-11"
         data-scribe-form
       >
         <DraftSection
@@ -692,7 +692,7 @@ export const DailyRounds = (props: any) => {
                   },
                   {
                     value: 40,
-                    className: "text-primary-500",
+                    className: "text-accent-500",
                     label: "Normal",
                   },
                   {
@@ -721,7 +721,7 @@ export const DailyRounds = (props: any) => {
                   },
                   {
                     value: 69,
-                    className: "text-primary-500",
+                    className: "text-accent-500",
                     label: "Normal",
                   },
                   {
@@ -753,7 +753,7 @@ export const DailyRounds = (props: any) => {
                   },
                   {
                     value: 12,
-                    className: "text-primary-500",
+                    className: "text-accent-500",
                     label: "Normal",
                   },
                   {
@@ -778,7 +778,7 @@ export const DailyRounds = (props: any) => {
                   },
                   {
                     value: 90,
-                    className: "text-primary-500",
+                    className: "text-accent-500",
                     label: "Normal",
                   },
                   {
@@ -865,7 +865,7 @@ export const DailyRounds = (props: any) => {
           {state.form.rounds_type === "DOCTORS_LOG" && (
             <>
               <div
-                className="flex flex-col gap-10 divide-y-2 divide-dashed divide-secondary-600 border-t-2 border-dashed border-secondary-600 pt-6 md:col-span-2"
+                className="flex flex-col gap-10 divide-y-2 divide-dashed divide-gray-600 border-t-2 border-dashed border-gray-600 pt-6 md:col-span-2"
                 data-scribe-ignore
               >
                 <div id="diagnosis-list">
@@ -879,7 +879,7 @@ export const DailyRounds = (props: any) => {
                       onUpdate={() => setDiagnosisSuggestions([])}
                     />
                   ) : (
-                    <div className="flex animate-pulse justify-center py-4 text-center font-medium text-secondary-800">
+                    <div className="flex animate-pulse justify-center py-4 text-center font-medium text-gray-800">
                       Fetching existing diagnosis of patient...
                     </div>
                   )}

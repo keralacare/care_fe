@@ -939,7 +939,7 @@ export const PatientRegister = (props: PatientRegisterProps) => {
                   description={showAlertMessage.message}
                   onConfirm={() => goBack()}
                   onClose={() => goBack()}
-                  variant="primary"
+                  variant="accent"
                   action="Ok"
                   show
                 />
@@ -1068,7 +1068,7 @@ export const PatientRegister = (props: PatientRegisterProps) => {
                               errorClassName="hidden"
                               trailingPadding="pr-4"
                               trailing={
-                                <p className="absolute right-10 space-x-1 whitespace-nowrap text-xs text-secondary-700 sm:text-sm">
+                                <p className="absolute right-10 space-x-1 whitespace-nowrap text-xs text-gray-700 sm:text-sm">
                                   {field("age").value !== "" && (
                                     <>
                                       <span className="hidden sm:inline md:hidden lg:inline">
@@ -1245,7 +1245,7 @@ export const PatientRegister = (props: PatientRegisterProps) => {
                           icon="l-check-circle"
                           className="mr-2 text-sm text-green-500"
                         />
-                        <span className="text-sm text-primary-500">
+                        <span className="text-sm text-accent-500">
                           State and District auto-filled from Pincode
                         </span>
                       </div>
@@ -1670,7 +1670,7 @@ export const PatientRegister = (props: PatientRegisterProps) => {
                   </div>
                 </div>
               </div>
-              <div className="flex w-full flex-col gap-4 rounded border bg-white p-4">
+              <div className="flex w-full flex-col gap-4 rounded border bg-primary p-4">
                 <div className="flex w-full flex-col items-center justify-between gap-4 sm:flex-row">
                   <h1 className="text-left text-xl font-bold text-purple-500">
                     Insurance Details

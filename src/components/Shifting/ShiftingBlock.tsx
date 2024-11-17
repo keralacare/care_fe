@@ -27,7 +27,7 @@ export default function ShiftingBlock(props: {
             <div className="text-xl font-bold capitalize">
               {shift.patient_object.name}
             </div>
-            <div className="text-sm text-secondary-700">
+            <div className="text-sm text-gray-700">
               {shift.patient_object.age} old
             </div>
           </div>
@@ -74,7 +74,7 @@ export default function ShiftingBlock(props: {
                 className: dayjs()
                   .subtract(2, "hours")
                   .isBefore(shift.modified_date)
-                  ? "text-secondary-900"
+                  ? "text-gray-900"
                   : "rounded bg-red-500 border border-red-600 text-white w-full font-bold",
               },
               {
@@ -118,7 +118,7 @@ export default function ShiftingBlock(props: {
       <div className="flex flex-col gap-2 px-4 pb-4">
         <Link
           href={`/shifting/${shift.external_id}`}
-          className="flex w-full items-center justify-center gap-2 rounded-lg border border-secondary-300 bg-secondary-200 p-2 text-sm font-semibold text-inherit transition-all hover:bg-secondary-300"
+          className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-gray-200 p-2 text-sm font-semibold text-inherit transition-all hover:bg-gray-300"
         >
           <CareIcon icon="l-eye" className="text-lg" /> {t("all_details")}
         </Link>
@@ -126,7 +126,7 @@ export default function ShiftingBlock(props: {
         {shift.status === "COMPLETED" && shift.assigned_facility && (
           <>
             <button
-              className="flex w-full items-center justify-center gap-2 rounded-lg border border-secondary-300 bg-secondary-200 p-2 text-sm font-semibold text-inherit transition-all hover:bg-secondary-300"
+              className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-gray-200 p-2 text-sm font-semibold text-inherit transition-all hover:bg-gray-300"
               disabled={
                 !shift.patient_object.allow_transfer ||
                 !(

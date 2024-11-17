@@ -20,7 +20,7 @@ export default function Error404() {
           <br />
           <Link
             href="/"
-            className="inline-block rounded-lg bg-primary-600 px-4 py-2 text-white hover:bg-primary-700 hover:text-white"
+            className="inline-block rounded-lg bg-accent-600 px-4 py-2 text-white hover:bg-accent-700 hover:text-white"
           >
             {t("return_to_care")}
           </Link>

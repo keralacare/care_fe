@@ -24,7 +24,7 @@ export default function InvalidReset() {
           <br />
           <Link
             href="/forgot-password"
-            className="hover:bg-primary- inline-block cursor-pointer rounded-lg bg-primary-600 px-4 py-2 text-white hover:text-white"
+            className="hover:bg-accent- inline-block cursor-pointer rounded-lg bg-accent-600 px-4 py-2 text-white hover:text-white"
           >
             {t("return_to_password_reset")}
           </Link>

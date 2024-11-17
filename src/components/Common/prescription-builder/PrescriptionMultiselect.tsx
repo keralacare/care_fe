@@ -43,7 +43,7 @@ export function PrescriptionMultiDropdown(props: {
             return (
               <div
                 key={i}
-                className="inline-flex gap-2 rounded-lg border border-primary-600 bg-primary-100 px-3 py-1 text-primary-900"
+                className="inline-flex gap-2 rounded-lg border border-accent-600 bg-accent-100 px-3 py-1 text-accent-900"
               >
                 {selectedValue}
                 <button
@@ -73,7 +73,7 @@ export function PrescriptionMultiDropdown(props: {
       <div
         ref={dropRef}
         className={classNames(
-          "absolute left-0 top-[calc(100%+10px)] z-40 max-h-[300px] w-full overflow-auto rounded-md bg-white shadow-lg",
+          "absolute left-0 top-[calc(100%+10px)] z-40 max-h-[300px] w-full overflow-auto rounded-md bg-primary shadow-lg",
           !open && "hidden",
         )}
       >
@@ -86,10 +86,10 @@ export function PrescriptionMultiDropdown(props: {
                 id="investigation-group"
                 key={i}
                 className={classNames(
-                  "block w-full px-4 py-2 text-left text-sm leading-5 text-secondary-700 hover:text-secondary-900 focus:text-secondary-900 focus:outline-none",
+                  "block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:text-gray-900 focus:text-gray-900 focus:outline-none",
                   selectedValues.includes(option)
-                    ? "bg-primary-100 hover:bg-primary-200"
-                    : "hover:bg-secondary-100 focus:bg-secondary-100",
+                    ? "bg-accent-100 hover:bg-accent-200"
+                    : "hover:bg-gray-100 focus:bg-gray-100",
                 )}
                 onClick={() => {
                   setSelectedValues(

@@ -54,7 +54,7 @@ export default function ResourceBlock(props: { resource: ResourceModel }) {
                 className: dayjs()
                   .subtract(2, "hours")
                   .isBefore(resource.modified_date)
-                  ? "text-secondary-900"
+                  ? "text-gray-900"
                   : "rounded bg-red-500 border border-red-600 text-white w-full font-bold",
               },
               {
@@ -89,7 +89,7 @@ export default function ResourceBlock(props: { resource: ResourceModel }) {
       <div className="flex flex-col gap-2 px-4 pb-4">
         <Link
           href={`/resource/${resource.id}`}
-          className="flex w-full items-center justify-center gap-2 rounded-lg border border-secondary-300 bg-secondary-200 p-2 text-sm font-semibold text-inherit transition-all hover:bg-secondary-300"
+          className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-gray-200 p-2 text-sm font-semibold text-inherit transition-all hover:bg-gray-300"
         >
           <CareIcon icon="l-eye" className="text-lg" /> {t("all_details")}
         </Link>

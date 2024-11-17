@@ -62,7 +62,7 @@ export const PainDiagrams = (props: any) => {
         <div className="p-2">{t("choose_date_time")}</div>
         <select
           title="date"
-          className="relative rounded border-secondary-200 bg-white py-2 pl-3 pr-8 text-slate-600 shadow outline-none focus:border-secondary-300 focus:outline-none focus:ring-1 focus:ring-secondary-300"
+          className="relative rounded border-gray-200 bg-primary py-2 pl-3 pr-8 text-slate-600 shadow outline-none focus:border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-300"
           onChange={(e) => {
             setSelectedDateData(results, e.target.value);
           }}
@@ -80,7 +80,7 @@ export const PainDiagrams = (props: any) => {
       <div>
         <select
           title="date"
-          className="border-2 border-secondary-400 py-2 pl-3 pr-8"
+          className="border-2 border-gray-400 py-2 pl-3 pr-8"
           disabled={true}
         >
           <option>{t("no_data_found")}</option>

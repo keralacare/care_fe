@@ -56,10 +56,9 @@ export default function PainChart({ pain, onChange }: Props) {
         regionLabelClassName={(r) =>
           classNames(
             "border transition-all duration-200 ease-in-out",
-            valueDescription(r)?.className ||
-              "border-secondary-400 bg-secondary-100",
+            valueDescription(r)?.className || "border-gray-400 bg-gray-100",
             current?.region === r &&
-              "font-bold shadow-lg ring-2 ring-primary-400",
+              "font-bold shadow-lg ring-2 ring-accent-400",
           )
         }
         regionText={(region) =>
@@ -155,7 +154,7 @@ const valueDescriptions = [
     till: 0,
     color: "#ECECEC",
     text: "No Pain",
-    className: "bg-secondary-300 border border-secondary-400",
+    className: "bg-gray-300 border border-gray-400",
   },
   {
     till: 3,

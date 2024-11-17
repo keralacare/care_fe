@@ -41,7 +41,7 @@ const AvatarEditable: React.FC<AvatarEditableProps> = ({
       {editable && (
         <div
           className={
-            "flex h-full w-full cursor-pointer flex-col items-center justify-center bg-black text-sm text-secondary-300 opacity-0 transition-opacity [grid-area:stack] hover:opacity-60"
+            "flex h-full w-full cursor-pointer flex-col items-center justify-center bg-black text-sm text-gray-300 opacity-0 transition-opacity [grid-area:stack] hover:opacity-60"
           }
           style={{ borderRadius: "calc(100% / 15)" }}
           onClick={onClick}

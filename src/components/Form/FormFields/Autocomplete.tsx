@@ -209,14 +209,14 @@ export const Autocomplete = <T, V>(props: AutocompleteProps<T, V>) => {
             />
             {!props.disabled && (
               <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
-                <div className="absolute right-0 top-1 mr-2 flex h-full items-center gap-1 pb-2 text-lg text-secondary-900">
+                <div className="absolute right-0 top-1 mr-2 flex h-full items-center gap-1 pb-2 text-lg text-gray-900">
                   <span>{value?.icon}</span>
 
                   {value && !props.isLoading && !props.required && (
                     <div className="tooltip" id="clear-button">
                       <CareIcon
                         icon="l-times-circle"
-                        className="h-4 w-4 text-secondary-800 transition-colors duration-200 ease-in-out hover:text-secondary-500"
+                        className="h-4 w-4 text-gray-800 transition-colors duration-200 ease-in-out hover:text-gray-500"
                         onClick={(e) => {
                           e.preventDefault();
                           props.onChange(undefined);
@@ -245,11 +245,11 @@ export const Autocomplete = <T, V>(props: AutocompleteProps<T, V>) => {
               className="cui-dropdown-base absolute z-10 mt-0.5 origin-top-right"
             >
               {props.minQueryLength && query.length < props.minQueryLength ? (
-                <div className="p-2 text-sm text-secondary-500">
+                <div className="p-2 text-sm text-gray-500">
                   {`Please enter at least ${props.minQueryLength} characters to search`}
                 </div>
               ) : filteredOptions.length === 0 ? (
-                <div className="p-2 text-sm text-secondary-500">
+                <div className="p-2 text-sm text-gray-500">
                   No options found
                 </div>
               ) : (
@@ -275,10 +275,10 @@ export const Autocomplete = <T, V>(props: AutocompleteProps<T, V>) => {
                               className={classNames(
                                 "text-sm font-normal",
                                 option.disabled
-                                  ? "text-secondary-700"
+                                  ? "text-gray-700"
                                   : focus
-                                    ? "text-primary-200"
-                                    : "text-secondary-700",
+                                    ? "text-accent-200"
+                                    : "text-gray-700",
                               )}
                             >
                               {option.description}

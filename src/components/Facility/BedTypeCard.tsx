@@ -74,15 +74,15 @@ export const BedTypeCard: React.FC<BedTypeCardProps> = ({
     <div
       className={`${
         facilityId
-          ? "border border-slate-200 bg-white"
-          : "border border-primary-300 bg-green-50"
+          ? "border border-slate-200 bg-primary"
+          : "border border-accent-300 bg-green-50"
       } flex h-full flex-col justify-between rounded-xl p-4 opacity-100 shadow-sm`}
     >
       <header className="flex items-start justify-between">
         <div className="text-md font-medium not-italic leading-[normal] text-[#453C52]">
           {label}
         </div>
-        <span className="flex items-center justify-center rounded py-0 text-sm text-secondary-500">
+        <span className="flex items-center justify-center rounded py-0 text-sm text-gray-500">
           {usedPercent}%
         </span>
       </header>
@@ -90,7 +90,7 @@ export const BedTypeCard: React.FC<BedTypeCardProps> = ({
         {used} / {total}
       </div>
       <div className="mt-3 flex flex-col items-stretch justify-center rounded-md">
-        <div className="flex h-3 w-full rounded-md bg-secondary-300">
+        <div className="flex h-3 w-full rounded-md bg-gray-300">
           <div
             className="flex h-3 shrink-0 flex-col rounded-md bg-blue-600"
             style={{ width: `${usedPercent}%` }}
@@ -103,10 +103,10 @@ export const BedTypeCard: React.FC<BedTypeCardProps> = ({
         </div>
         {facilityId ? (
           <div className="mt-3 flex w-full flex-col items-start justify-between gap-5 sm:flex-row">
-            <div className="mt-4 text-xs italic text-secondary-500">
+            <div className="mt-4 text-xs italic text-gray-500">
               {lastUpdated && (
                 <RecordMeta
-                  className="py-0 text-xs font-normal text-secondary-600"
+                  className="py-0 text-xs font-normal text-gray-600"
                   prefix={"Last updated;"}
                   time={lastUpdated}
                 />
@@ -120,7 +120,7 @@ export const BedTypeCard: React.FC<BedTypeCardProps> = ({
                   setOpen(true);
                 }}
                 authorizeFor={NonReadOnlyUsers}
-                className="tooltip bg-opacity/20 flex aspect-square h-7 w-7 flex-col items-center justify-center rounded bg-secondary-300 px-4 py-0"
+                className="tooltip bg-opacity/20 flex aspect-square h-7 w-7 flex-col items-center justify-center rounded bg-gray-300 px-4 py-0"
                 variant="secondary"
                 ghost
               >

@@ -148,8 +148,8 @@ export default function SampleViewAdmin() {
               item.result === "POSITIVE"
                 ? "border-red-700 bg-red-100"
                 : item.result === "NEGATIVE"
-                  ? "border-primary-700 bg-primary-100"
-                  : "bg-white"
+                  ? "border-accent-700 bg-accent-100"
+                  : "bg-primary"
             }`}
           >
             <div className="flex h-full flex-col justify-between px-6 py-4">
@@ -246,15 +246,15 @@ export default function SampleViewAdmin() {
               </div>
 
               <div className="mt-4">
-                <div className="text-sm font-bold text-secondary-600">
-                  <span className="text-secondary-800">Date of Sample:</span>{" "}
+                <div className="text-sm font-bold text-gray-600">
+                  <span className="text-gray-800">Date of Sample:</span>{" "}
                   {item.date_of_sample
                     ? formatDateTime(item.date_of_sample)
                     : "Not Available"}
                 </div>
 
-                <div className="text-sm font-bold text-secondary-600">
-                  <span className="text-secondary-800">Date of Result:</span>{" "}
+                <div className="text-sm font-bold text-gray-600">
+                  <span className="text-gray-800">Date of Result:</span>{" "}
                   {item.date_of_result
                     ? formatDateTime(item.date_of_result)
                     : "Not Available"}
@@ -266,7 +266,7 @@ export default function SampleViewAdmin() {
                   <div className="mt-2">
                     <button
                       onClick={() => showUpdateStatus(item)}
-                      className="w-full rounded border border-secondary-400 bg-primary-500 px-4 py-2 text-center text-sm font-semibold text-white shadow hover:bg-primary-700"
+                      className="w-full rounded border border-gray-400 bg-accent-500 px-4 py-2 text-center text-sm font-semibold text-white shadow hover:bg-accent-700"
                     >
                       UPDATE SAMPLE TEST STATUS
                     </button>
@@ -275,7 +275,7 @@ export default function SampleViewAdmin() {
 
                 <button
                   onClick={() => navigate(`/sample/${item.id}`)}
-                  className="mt-2 w-full rounded border border-secondary-400 bg-white px-4 py-2 text-center text-sm font-semibold text-secondary-800 shadow hover:bg-secondary-400"
+                  className="mt-2 w-full rounded border border-gray-400 bg-primary px-4 py-2 text-center text-sm font-semibold text-gray-800 shadow hover:bg-gray-400"
                 >
                   Sample Details
                 </button>
@@ -302,8 +302,8 @@ export default function SampleViewAdmin() {
     );
   } else if (sampeleData?.count === 0) {
     manageSamples = (
-      <div className="w-full rounded-lg bg-white p-3">
-        <div className="mt-4 flex w-full justify-center text-2xl font-bold text-secondary-600">
+      <div className="w-full rounded-lg bg-primary p-3">
+        <div className="mt-4 flex w-full justify-center text-2xl font-bold text-gray-600">
           No Sample Tests Found
         </div>
       </div>

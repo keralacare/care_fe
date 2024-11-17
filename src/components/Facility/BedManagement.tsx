@@ -87,7 +87,7 @@ const BedCard = ({
         handleCancel={handleDeleteCancel}
         handleOk={handleDeleteConfirm}
       />
-      <div className="flex h-full w-full flex-col rounded border border-secondary-300 bg-white p-6 shadow-sm transition-all duration-200 ease-in-out hover:border-primary-400">
+      <div className="flex h-full w-full flex-col rounded border border-gray-300 bg-primary p-6 shadow-sm transition-all duration-200 ease-in-out hover:border-accent-400">
         <div className="flex-1">
           <div className="flex w-full flex-col items-start justify-between gap-2">
             <div>
@@ -110,7 +110,7 @@ const BedCard = ({
                 className={`${
                   isOccupied
                     ? "bg-warning-100 text-warning-600"
-                    : "bg-primary-100 text-primary-600"
+                    : "bg-accent-100 text-accent-600"
                 } mb-1 ml-1 inline-flex w-fit items-center rounded-md px-2.5 py-0.5 text-sm font-medium capitalize leading-5`}
               >
                 {isOccupied ? t("occupied") : t("vacant")}
@@ -119,7 +119,7 @@ const BedCard = ({
           </div>
           {description && (
             <p
-              className="... my-3 truncate break-all text-sm font-medium text-secondary-700"
+              className="... my-3 truncate break-all text-sm font-medium text-gray-700"
               id="view-bed-description"
             >
               {description}
@@ -226,7 +226,7 @@ export const BedManagement = (props: BedManagementProps) => {
             </ButtonV2>
           </div>
           <div className="w-full @container">
-            <PaginatedList.WhenEmpty className="my-4 flex w-full justify-center border-b border-secondary-200 bg-white p-5 text-center text-2xl font-bold text-secondary-500">
+            <PaginatedList.WhenEmpty className="my-4 flex w-full justify-center border-b border-gray-200 bg-primary p-5 text-center text-2xl font-bold text-gray-500">
               <span>{t("no_beds_available")}</span>
             </PaginatedList.WhenEmpty>
 

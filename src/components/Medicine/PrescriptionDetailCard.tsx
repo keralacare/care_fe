@@ -40,10 +40,10 @@ export default function PrescriptionDetailCard({
       className={classNames(
         "flex flex-col rounded border-2 p-3 transition-all duration-200 ease-in-out md:flex-row",
         props.selected
-          ? "border-primary-500"
-          : "border-spacing-2 border-dashed border-secondary-500",
-        prescription.discontinued && "bg-secondary-200 opacity-80",
-        collapsible && "cursor-pointer hover:border-secondary-900",
+          ? "border-accent-500"
+          : "border-spacing-2 border-dashed border-gray-500",
+        prescription.discontinued && "bg-gray-200 opacity-80",
+        collapsible && "cursor-pointer hover:border-gray-900",
       )}
     >
       <div
@@ -60,7 +60,7 @@ export default function PrescriptionDetailCard({
               <h3
                 className={classNames(
                   "text-lg font-bold transition-all duration-200 ease-in-out",
-                  props.selected ? "text-black" : "text-secondary-700",
+                  props.selected ? "text-black" : "text-gray-700",
                 )}
               >
                 {isCollapsed ? (
@@ -79,7 +79,7 @@ export default function PrescriptionDetailCard({
                 )}
               </h3>
               {prescription.discontinued && (
-                <span className="rounded-full bg-secondary-700 px-2 py-1 text-xs font-semibold uppercase text-white">
+                <span className="rounded-full bg-gray-700 px-2 py-1 text-xs font-semibold uppercase text-white">
                   {t("discontinued")}
                 </span>
               )}
@@ -138,13 +138,13 @@ export default function PrescriptionDetailCard({
                   </span>
                 </div>
                 {medicine?.type === "brand" && (
-                  <span className="text-xs text-secondary-600">
+                  <span className="text-xs text-gray-600">
                     Generic:{" "}
-                    <span className="capitalize text-secondary-800">
+                    <span className="capitalize text-gray-800">
                       {medicine.generic}
                     </span>
                     ; Brand:{" "}
-                    <span className="capitalize text-secondary-800">
+                    <span className="capitalize text-gray-800">
                       {medicine.company}
                     </span>
                   </span>
@@ -243,7 +243,7 @@ export default function PrescriptionDetailCard({
             )}
           </div>
         )}
-        <div className="flex flex-col gap-1 text-xs text-secondary-600 md:mt-3 md:flex-row md:items-center">
+        <div className="flex flex-col gap-1 text-xs text-gray-600 md:mt-3 md:flex-row md:items-center">
           <span className="flex gap-1 font-medium">
             Prescribed
             <RecordMeta
@@ -275,7 +275,7 @@ const Detail = (props: {
   return (
     <div className={classNames("flex flex-col gap-1", props.className)}>
       {props.label && (
-        <label className="text-sm font-medium text-secondary-600">
+        <label className="text-sm font-medium text-gray-600">
           {props.label}
         </label>
       )}
@@ -283,7 +283,7 @@ const Detail = (props: {
         {props.children ? (
           <span className="font-medium">{props.children}</span>
         ) : (
-          <span className="whitespace-nowrap text-xs font-medium text-secondary-500">
+          <span className="whitespace-nowrap text-xs font-medium text-gray-500">
             {t("not_specified")}
           </span>
         )}

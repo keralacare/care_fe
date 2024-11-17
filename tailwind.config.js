@@ -1,19 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const colors = require("tailwindcss/colors");
 
-const secondary = {
-  50: "#F9FAFB",
-  100: "#FBFAFC",
-  200: "#F7F5FA",
-  300: "#F1EDF7",
-  400: "#DFDAE8",
-  500: "#BFB8CC",
-  600: "#9187A1",
-  700: "#7D728F",
-  800: "#6A5F7A",
-  900: "#453C52",
-};
-
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   important: true,
@@ -27,7 +14,7 @@ module.exports = {
         green: colors.emerald,
         yellow: colors.amber,
         purple: colors.violet,
-        primary: {
+        accent: {
           100: "#def7ec",
           200: "#bcf0da",
           300: "#84e1bc",
@@ -39,7 +26,6 @@ module.exports = {
           900: "#014737",
           DEFAULT: "#0d9f6e",
         },
-        secondary: secondary,
         danger: colors.red,
         warning: colors.amber,
         alert: colors.violet,
@@ -62,14 +48,26 @@ module.exports = {
             fore: colors.red[100],
           },
           unknown: {
-            DEFAULT: secondary[400],
-            fore: secondary[800],
+            DEFAULT: colors.gray[400],
+            fore: colors.gray[800],
           },
           activelydying: {
             DEFAULT: colors.red[800],
             fore: colors.red[100],
           },
         },
+        primary: "var(--cui-primary)",
+        primaryOpaque: "var(--cui-primaryOpaque)",
+        primaryDarkOpaque: "var(--cui-primaryDarkOpaque)",
+        secondary: "var(--cui-secondary)",
+        secondaryLight: "var(--cui-secondaryLight)",
+        secondaryActive: "var(--cui-secondaryActive)",
+        secondaryOpaque: "var(--cui-secondaryOpaque)",
+        primaryFont: "var(--cui-primaryFont)",
+        primaryFontLight: "var(--cui-primaryFontLight)",
+        lightOpaque: "var(--cui-lightOpaque)",
+        opaque: "var(--cui-opaque)",
+        opaqueActive: "var(--cui-opaqueActive)",
       },
       scale: {
         25: "0.25",
@@ -83,7 +81,11 @@ module.exports = {
       },
     },
   },
-  content: ["./src/**/*.{html,md,js,jsx,ts,tsx}", "./apps/**/*.{html,md,js,jsx,ts,tsx}", "./index.html"],
+  content: [
+    "./src/**/*.{html,md,js,jsx,ts,tsx}",
+    "./apps/**/*.{html,md,js,jsx,ts,tsx}",
+    "./index.html",
+  ],
   plugins: [
     require("@tailwindcss/forms"),
     require("@tailwindcss/typography"),

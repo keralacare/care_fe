@@ -75,10 +75,9 @@ const PressureSore = ({ log, onChange, readonly }: LogUpdateSectionProps) => {
         regionLabelClassName={(r) =>
           classNames(
             "border transition-all duration-200 ease-in-out",
-            valueDescription(r)?.className ||
-              "border-secondary-400 bg-secondary-100",
+            valueDescription(r)?.className || "border-gray-400 bg-gray-100",
             current?.region === r &&
-              "font-bold shadow-lg ring-2 ring-primary-400",
+              "font-bold shadow-lg ring-2 ring-accent-400",
           )
         }
         regionText={(r) => regionPushScore(r)?.toString() ?? ""}
@@ -215,25 +214,25 @@ const valueDescriptions = [
     till: 0,
     color: "#ECECEC",
     text: "",
-    className: "bg-secondary-300 border border-secondary-400",
+    className: "bg-gray-300 border border-gray-400",
   },
   {
     till: 3,
     color: "#f87171",
     text: "",
-    className: "bg-red-400 text-white border border-secondary-400",
+    className: "bg-red-400 text-white border border-gray-400",
   },
   {
     till: 7,
     color: "#dc2626",
     text: "",
-    className: "bg-red-600 text-white border border-secondary-400",
+    className: "bg-red-600 text-white border border-gray-400",
   },
   {
     till: 17,
     color: "#991b1b",
     text: "",
-    className: "bg-red-800 text-white border border-secondary-400",
+    className: "bg-red-800 text-white border border-gray-400",
   },
 ];
 

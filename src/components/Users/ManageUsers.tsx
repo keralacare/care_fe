@@ -200,7 +200,7 @@ export default function ManageUsers() {
       const cur_online = isUserOnline(user);
       return (
         <div key={`usr_${user.id}`} id={`usr_${idx}`}>
-          <div className="relative block h-full overflow-visible rounded-lg bg-white shadow hover:border-primary-500">
+          <div className="relative block h-full overflow-visible rounded-lg bg-primary shadow hover:border-accent-500">
             <div className="flex h-full flex-col justify-between @container">
               <div className="px-6 py-4">
                 <div className="mb-2 flex-none text-lg">
@@ -219,7 +219,7 @@ export default function ManageUsers() {
                       {user.username}
                     </div>
                   )}
-                  <div className="min-width-50 shrink-0 text-sm text-secondary-600">
+                  <div className="min-width-50 shrink-0 text-sm text-gray-600">
                     {user.last_login && cur_online ? (
                       <span>
                         {" "}
@@ -236,7 +236,7 @@ export default function ManageUsers() {
                           aria-label="Online"
                           className={classNames(
                             "inline-block h-2 w-2 shrink-0 rounded-full",
-                            cur_online ? "bg-primary-400" : "bg-secondary-300",
+                            cur_online ? "bg-accent-400" : "bg-gray-300",
                           )}
                         ></span>
                         <span className="pl-2">
@@ -258,7 +258,7 @@ export default function ManageUsers() {
 
                   {user.last_login && cur_online ? (
                     <div
-                      className="h-4 w-4 rounded-full bg-primary-500"
+                      className="h-4 w-4 rounded-full bg-accent-500"
                       aria-label="Online"
                     />
                   ) : null}
@@ -305,7 +305,7 @@ export default function ManageUsers() {
                               {user.qualification}
                             </span>
                           ) : (
-                            <span className="text-secondary-600">
+                            <span className="text-gray-600">
                               {t("unknown")}
                             </span>
                           )}
@@ -323,7 +323,7 @@ export default function ManageUsers() {
                               years
                             </span>
                           ) : (
-                            <span className="text-secondary-600">
+                            <span className="text-gray-600">
                               {t("unknown")}
                             </span>
                           )}
@@ -339,7 +339,7 @@ export default function ManageUsers() {
                               {user.doctor_medical_council_registration}
                             </span>
                           ) : (
-                            <span className="text-secondary-600">
+                            <span className="text-gray-600">
                               {t("unknown")}
                             </span>
                           )}
@@ -372,9 +372,7 @@ export default function ManageUsers() {
                             {user.qualification}
                           </span>
                         ) : (
-                          <span className="text-secondary-600">
-                            {t("unknown")}
-                          </span>
+                          <span className="text-gray-600">{t("unknown")}</span>
                         )}
                       </UserDetails>
                     </div>
@@ -414,7 +412,7 @@ export default function ManageUsers() {
                         {user.weekly_working_hours} hours
                       </span>
                     ) : (
-                      <span className="text-secondary-600">-</span>
+                      <span className="text-gray-600">-</span>
                     )}
                   </UserDetails>
                 </div>
@@ -487,8 +485,8 @@ export default function ManageUsers() {
   } else if (userListData?.results && userListData?.results.length === 0) {
     manageUsers = (
       <div>
-        <div className="h-full space-y-2 rounded-lg bg-white p-7 shadow">
-          <div className="flex w-full items-center justify-center text-xl font-bold text-secondary-500">
+        <div className="h-full space-y-2 rounded-lg bg-primary p-7 shadow">
+          <div className="flex w-full items-center justify-center text-xl font-bold text-gray-500">
             No Users Found
           </div>
         </div>
@@ -808,7 +806,7 @@ export function UserFacilities(props: { user: any }) {
           {t("add")}
         </ButtonV2>
       </div>
-      <hr className="my-2 border-secondary-300" />
+      <hr className="my-2 border-gray-300" />
 
       {isLoading || userFacilitiesLoading ? (
         <div className="flex items-center justify-center">
@@ -819,7 +817,7 @@ export function UserFacilities(props: { user: any }) {
           {/* Home Facility section */}
           {user?.home_facility_object && (
             <div className="py-2" id="home-facility">
-              <div className="relative rounded p-2 transition hover:bg-secondary-200 focus:bg-secondary-200 md:rounded-lg">
+              <div className="relative rounded p-2 transition hover:bg-gray-200 focus:bg-gray-200 md:rounded-lg">
                 <div className="flex items-center justify-between">
                   <span>{user?.home_facility_object?.name}</span>
                   <span
@@ -873,7 +871,7 @@ export function UserFacilities(props: { user: any }) {
                         id={`facility_${i}`}
                         key={`facility_${i}`}
                         className={classNames(
-                          "relative rounded p-2 transition hover:bg-secondary-200 focus:bg-secondary-200 md:rounded-lg",
+                          "relative rounded p-2 transition hover:bg-gray-200 focus:bg-gray-200 md:rounded-lg",
                         )}
                       >
                         <div className="flex items-center justify-between">
@@ -885,7 +883,7 @@ export function UserFacilities(props: { user: any }) {
                             <div className="flex items-center gap-2">
                               {authUser.user_type !== "Nurse" && (
                                 <button
-                                  className="tooltip text-lg hover:text-primary-500"
+                                  className="tooltip text-lg hover:text-accent-500"
                                   id="home-facility-icon"
                                   onClick={() => {
                                     if (user?.home_facility_object) {

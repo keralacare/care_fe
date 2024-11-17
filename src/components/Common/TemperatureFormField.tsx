@@ -77,7 +77,7 @@ export default function TemperatureFormField({
 
       <ButtonV2
         type="button"
-        variant="primary"
+        variant="accent"
         className="absolute right-0 top-0 flex h-full items-center justify-center text-xs"
         size="small"
         ghost

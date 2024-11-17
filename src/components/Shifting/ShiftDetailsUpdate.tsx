@@ -349,7 +349,7 @@ export const ShiftDetailsUpdate = (props: patientShiftProps) => {
             }
             optionSelectedLabel={(option) => option.text}
             onChange={handleFormFieldChange}
-            className="w-full bg-white md:col-span-1 md:leading-5"
+            className="w-full bg-primary md:col-span-1 md:leading-5"
           />
 
           {careConfig.wartimeShifting &&
@@ -474,7 +474,7 @@ export const ShiftDetailsUpdate = (props: patientShiftProps) => {
                 optionLabel={(option) => option}
                 optionValue={(option) => option}
                 onChange={handleFormFieldChange}
-                className="mt-2 h-11 w-full bg-white shadow-sm md:leading-5"
+                className="mt-2 h-11 w-full bg-primary shadow-sm md:leading-5"
                 error={state.errors.preferred_vehicle_choice}
               />
               <SelectFormField
@@ -486,7 +486,7 @@ export const ShiftDetailsUpdate = (props: patientShiftProps) => {
                 optionLabel={(option) => option}
                 optionValue={(option) => option}
                 onChange={handleFormFieldChange}
-                className="mt-2 h-11 w-full bg-white shadow-sm md:col-span-1 md:leading-5"
+                className="mt-2 h-11 w-full bg-primary shadow-sm md:col-span-1 md:leading-5"
                 error={state.errors.assigned_facility_type}
               />
               <SelectFormField
@@ -498,7 +498,7 @@ export const ShiftDetailsUpdate = (props: patientShiftProps) => {
                 optionLabel={(option) => option}
                 optionValue={(option) => option}
                 onChange={handleFormFieldChange}
-                className="mt-2 h-11 w-full bg-white shadow-sm md:col-span-1 md:leading-5"
+                className="mt-2 h-11 w-full bg-primary shadow-sm md:col-span-1 md:leading-5"
               />
             </>
           )}

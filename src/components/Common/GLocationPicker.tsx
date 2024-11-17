@@ -218,13 +218,13 @@ const Map: React.FC<MapProps> = ({
           <PopoverButton>
             <div
               id="map-close"
-              className="m-[10px] cursor-pointer rounded bg-white p-2"
+              className="m-[10px] cursor-pointer rounded bg-primary p-2"
               ref={mapCloseRef}
               onClick={handleOnClose}
             >
               <CareIcon
                 icon="l-times-circle"
-                className="text-2xl text-secondary-800"
+                className="text-2xl text-gray-800"
               />
             </div>
           </PopoverButton>
@@ -232,7 +232,7 @@ const Map: React.FC<MapProps> = ({
         {handleOnSelectCurrentLocation && (
           <div
             id="current-loaction-select"
-            className="m-[10px] cursor-pointer rounded bg-white p-2"
+            className="m-[10px] cursor-pointer rounded bg-primary p-2"
             ref={currentLocationSelectRef}
             onClick={() =>
               handleOnSelectCurrentLocation((lat: number, lng: number) =>
@@ -242,7 +242,7 @@ const Map: React.FC<MapProps> = ({
           >
             <CareIcon
               icon="l-user-location"
-              className="text-2xl text-secondary-800"
+              className="text-2xl text-gray-800"
             />
           </div>
         )}

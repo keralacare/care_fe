@@ -47,7 +47,7 @@ export const FacilityStaffList = (props: any) => {
   let doctorList: any = null;
   if (!doctorsList || !doctorsList.results.length) {
     doctorList = (
-      <h5 className="flex w-full items-center justify-center rounded-lg bg-white p-4 text-xl font-bold text-secondary-500 shadow">
+      <h5 className="flex w-full items-center justify-center rounded-lg bg-primary p-4 text-xl font-bold text-gray-500 shadow">
         {t("no_staff")}
       </h5>
     );
@@ -55,9 +55,9 @@ export const FacilityStaffList = (props: any) => {
     doctorList = (
       <div className="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         <div className="w-full">
-          <div className="flex h-full flex-col rounded-sm border border-primary-500 bg-primary-100 shadow-sm">
+          <div className="flex h-full flex-col rounded-sm border border-accent-500 bg-accent-100 shadow-sm">
             <div className="flex flex-1 items-center justify-start gap-3 px-4 py-6">
-              <div className="rounded-full bg-primary-500 p-4">
+              <div className="rounded-full bg-accent-500 p-4">
                 <DoctorIcon className="h-5 w-5 fill-current text-white" />
               </div>
               <div id="facility-doctor-totalcapacity">
@@ -89,7 +89,7 @@ export const FacilityStaffList = (props: any) => {
 
   return (
     <section id="facility-doctor-capacity-details">
-      <div className="mt-5 rounded bg-white p-3 shadow-sm md:p-6">
+      <div className="mt-5 rounded bg-primary p-3 shadow-sm md:p-6">
         <div className="justify-between md:flex md:pb-2">
           <div className="mb-2 text-xl font-bold">Staff Capacity</div>
           <ButtonV2

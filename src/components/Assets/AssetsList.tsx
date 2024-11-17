@@ -228,11 +228,11 @@ const AssetsList = () => {
           >
             <div
               key={asset.id}
-              className="border-1 h-full w-full cursor-pointer items-center justify-center rounded-lg border border-transparent bg-white p-5 shadow hover:border-primary-500"
+              className="border-1 h-full w-full cursor-pointer items-center justify-center rounded-lg border border-transparent bg-primary p-5 shadow hover:border-accent-500"
             >
               <div className="md:flex">
                 <p className="flex break-words text-xl font-medium capitalize">
-                  <span className="mr-2 text-primary-500">
+                  <span className="mr-2 text-accent-500">
                     <CareIcon
                       icon={
                         (
@@ -263,14 +263,14 @@ const AssetsList = () => {
                 <span className="text-sm font-medium">
                   <CareIcon
                     icon="l-location-point"
-                    className="mr-1 text-primary-500"
+                    className="mr-1 text-accent-500"
                   />
                   {asset?.location_object?.name}
                 </span>
                 <span className="ml-2 text-sm font-medium">
                   <CareIcon
                     icon="l-hospital"
-                    className="mr-1 text-primary-500"
+                    className="mr-1 text-accent-500"
                   />
                   {asset?.location_object?.facility?.name}
                 </span>
@@ -298,8 +298,8 @@ const AssetsList = () => {
     );
   } else {
     manageAssets = (
-      <div className="col-span-3 w-full rounded-lg bg-white p-2 py-8 pt-4 text-center">
-        <p className="text-2xl font-bold text-secondary-600">No Assets Found</p>
+      <div className="col-span-3 w-full rounded-lg bg-primary p-2 py-8 pt-4 text-center">
+        <p className="text-2xl font-bold text-gray-600">No Assets Found</p>
       </div>
     );
   }

@@ -98,7 +98,7 @@ export default function CentralNursingStation({ facilityId }: Props) {
                 variant={
                   qParams.location ||
                   qParams.monitors_without_patient === "true"
-                    ? "primary"
+                    ? "accent"
                     : "secondary"
                 }
                 border
@@ -116,16 +116,16 @@ export default function CentralNursingStation({ facilityId }: Props) {
               leaveTo="opacity-0 translate-y-1"
             >
               <PopoverPanel className="absolute z-30 mt-1 w-80 -translate-x-1/3 px-4 sm:px-0 md:w-96 md:-translate-x-1/2 lg:max-w-3xl">
-                <div className="rounded-lg shadow-lg ring-1 ring-secondary-400">
-                  <div className="rounded-t-lg bg-secondary-100 px-6 py-4">
+                <div className="rounded-lg shadow-lg ring-1 ring-gray-400">
+                  <div className="rounded-t-lg bg-gray-100 px-6 py-4">
                     <div className="flow-root rounded-md">
-                      <span className="block text-sm text-secondary-800">
+                      <span className="block text-sm text-gray-800">
                         <span className="font-bold">{totalCount}</span>{" "}
                         {t("vitals_present")}
                       </span>
                     </div>
                   </div>
-                  <div className="relative flex flex-col gap-8 rounded-b-lg bg-white p-6">
+                  <div className="relative flex flex-col gap-8 rounded-b-lg bg-primary p-6">
                     <div>
                       <FieldLabel className="text-sm">
                         Filter by Location

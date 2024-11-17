@@ -49,7 +49,7 @@ const RecordMeta = ({
             <CareIcon icon="l-user" />
             {formatName(user)}
             {isOnline && (
-              <div className="h-1.5 w-1.5 rounded-full bg-primary-400" />
+              <div className="h-1.5 w-1.5 rounded-full bg-accent-400" />
             )}
           </span>
         )}

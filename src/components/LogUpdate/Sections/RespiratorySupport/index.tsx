@@ -150,7 +150,7 @@ const RespiratorySupport = ({ log, onChange }: LogUpdateSectionProps) => {
       </DialogModal>
 
       {log.ventilator_interface && log.ventilator_interface !== "UNKNOWN" && (
-        <div className="ml-2 space-y-4 border-l-4 border-l-secondary-300 pl-6">
+        <div className="ml-2 space-y-4 border-l-4 border-l-gray-300 pl-6">
           {log.ventilator_interface === "OXYGEN_SUPPORT" && (
             <OxygenRespiratorySupport log={log} onChange={onChange} />
           )}

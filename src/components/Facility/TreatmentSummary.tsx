@@ -264,7 +264,7 @@ function DiagnosisSection({ consultationData }: IDiagnosisSection) {
                     <li key={d.id}>
                       {d.diagnosis_object.label}
                       {d.is_principal && (
-                        <span className="ml-2 rounded-sm bg-secondary-800 px-2 py-1 text-xs font-normal text-white">
+                        <span className="ml-2 rounded-sm bg-gray-800 px-2 py-1 text-xs font-normal text-white">
                           {t(`diagnosis__${d.verification_status}`)}
                         </span>
                       )}

@@ -37,13 +37,13 @@ export default function Tabs(props: {
   return (
     <div
       className={classNames(
-        "relative inline-flex w-full items-center justify-between overflow-auto rounded-md bg-primary-500/10 p-2 md:w-auto",
+        "relative inline-flex w-full items-center justify-between overflow-auto rounded-md bg-accent-500/10 p-2 md:w-auto",
         className,
       )}
       ref={ref}
     >
       <div
-        className="absolute inset-y-2 z-10 rounded bg-primary-500 transition-all"
+        className="absolute inset-y-2 z-10 rounded bg-accent-500 transition-all"
         ref={tabSwitcherRef}
         style={{ left: 0 }}
       />
@@ -61,7 +61,7 @@ export default function Tabs(props: {
           <button
             key={i}
             onClick={() => onTabChange(tab.value)}
-            className={`${currentTab === tab.value ? "text-white" : "text-primary-500 hover:text-primary-600"} flex-1 whitespace-nowrap px-6 py-2 text-sm font-semibold transition-all`}
+            className={`${currentTab === tab.value ? "text-white" : "text-accent-500 hover:text-accent-600"} flex-1 whitespace-nowrap px-6 py-2 text-sm font-semibold transition-all`}
           >
             {tab.text}
           </button>

@@ -129,7 +129,7 @@ export default function ModelCrudEditor<TRes extends Identifier, TReq, TErr>(
   };
 
   return (
-    <div className="flex w-full flex-col items-start rounded-lg border border-secondary-400">
+    <div className="flex w-full flex-col items-start rounded-lg border border-gray-400">
       <ul
         className={classNames(
           "flex w-full flex-col gap-4 p-4",
@@ -143,12 +143,12 @@ export default function ModelCrudEditor<TRes extends Identifier, TReq, TErr>(
         ))}
 
         {items?.length === 0 && (
-          <div className="flex h-full w-full items-center justify-center py-10 text-center font-medium text-secondary-700">
+          <div className="flex h-full w-full items-center justify-center py-10 text-center font-medium text-gray-700">
             {emptyText}
           </div>
         )}
       </ul>
-      <div className="flex w-full items-center gap-4 rounded-b-lg border-t-2 border-dashed border-secondary-400 bg-secondary-100 p-4">
+      <div className="flex w-full items-center gap-4 rounded-b-lg border-t-2 border-dashed border-gray-400 bg-gray-100 p-4">
         <Form type="creating" item={empty} />
       </div>
     </div>

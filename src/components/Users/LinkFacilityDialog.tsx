@@ -39,7 +39,7 @@ const LinkFacilityDialog = ({ username, handleOk, handleCancel }: Props) => {
         </div>
       }
       action="Link"
-      variant="primary"
+      variant="accent"
       onClose={handleCancel}
       onConfirm={() => handleOk(username, facility)}
       disabled={!facility}

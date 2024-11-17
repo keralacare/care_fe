@@ -68,8 +68,8 @@ export default function StillWatching(props: { children: React.ReactNode }) {
         onClose={() => reset(true)}
       />
       {state === "timed-out" ? (
-        <div className="flex h-[50vh] w-full flex-col items-center justify-center gap-4 rounded-lg border-4 border-dashed border-secondary-400">
-          <span className="text-center text-xl font-bold text-secondary-700">
+        <div className="flex h-[50vh] w-full flex-col items-center justify-center gap-4 rounded-lg border-4 border-dashed border-gray-400">
+          <span className="text-center text-xl font-bold text-gray-700">
             {t("stream_stopped_due_to_inativity")}
           </span>
           <ButtonV2 onClick={() => reset(true)}>

@@ -55,7 +55,7 @@ export default function FeedAlert({ state }: Props) {
       leaveFrom="opacity-100 translate-y-0"
       leaveTo="opacity-0 -translate-y-5"
     >
-      <div className="absolute right-8 top-4 z-20 flex items-center gap-1.5 rounded bg-white/20 px-2 py-1 text-white">
+      <div className="absolute right-8 top-4 z-20 flex items-center gap-1.5 rounded bg-primary/20 px-2 py-1 text-white">
         {state && ALERT_ICON_MAP[state] && (
           <CareIcon
             className={classNames(

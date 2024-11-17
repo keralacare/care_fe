@@ -57,7 +57,7 @@ const VirtualNursingAssistantLogUpdateCard = (props: Props) => {
   const diffKeys = Object.keys(diff);
 
   return (
-    <div className="flex w-full flex-col gap-4 rounded-lg border border-green-300 bg-white p-4 shadow-primary-500/20">
+    <div className="flex w-full flex-col gap-4 rounded-lg border border-green-300 bg-primary p-4 shadow-accent-500/20">
       <div className="flex flex-col gap-1">
         {diffKeys.length > 0 ? (
           Object.keys(diff).map((key) => (
@@ -68,7 +68,7 @@ const VirtualNursingAssistantLogUpdateCard = (props: Props) => {
             />
           ))
         ) : (
-          <span className="text-sm italic text-secondary-600">
+          <span className="text-sm italic text-gray-600">
             {t("no_log_update_delta")}
           </span>
         )}

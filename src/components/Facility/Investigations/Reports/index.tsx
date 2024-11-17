@@ -320,14 +320,14 @@ const InvestigationReports = ({ id }: any) => {
             <ButtonV2
               onClick={() => fetchInvestigation()}
               disabled={getTestDisabled}
-              variant="primary"
+              variant="accent"
               className="my-2.5"
             >
               {t("get_tests")}
             </ButtonV2>
           )}
           {!!isLoading.investigationLoading && (
-            <CircularProgress className="text-primary-500" />
+            <CircularProgress className="text-accent-500" />
           )}
           {!!investigations.length && (
             <>
@@ -357,7 +357,7 @@ const InvestigationReports = ({ id }: any) => {
                   handleGenerateReports(1);
                 }}
                 disabled={generateReportDisabled}
-                variant="primary"
+                variant="accent"
                 className="my-2.5"
               >
                 {t("generate_report")}
@@ -366,7 +366,7 @@ const InvestigationReports = ({ id }: any) => {
           )}
           {isLoading.tableData && (
             <div className="flex w-full justify-center">
-              <CircularProgress className="text-primary-500" />
+              <CircularProgress className="text-accent-500" />
             </div>
           )}
           <section id="reports_section">
@@ -403,7 +403,7 @@ const InvestigationReports = ({ id }: any) => {
                     disabled={loadMoreDisabled}
                     onClick={handleLoadMore}
                     className="my-2.5 w-full"
-                    variant="primary"
+                    variant="accent"
                   >
                     {t("load_more")}
                   </ButtonV2>

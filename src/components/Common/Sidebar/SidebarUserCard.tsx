@@ -36,7 +36,7 @@ const SidebarUserCard: React.FC<SidebarUserCardProps> = ({ shrinked }) => {
           <Button
             variant="outline"
             size="lg"
-            className={`tooltip relative w-full cursor-pointer items-center justify-between rounded-lg bg-gray-200 p-2 font-normal text-gray-900 transition hover:bg-gray-200 focus:outline-none focus:ring focus:ring-primary-300 ${
+            className={`tooltip relative w-full cursor-pointer items-center justify-between rounded-lg bg-secondary p-2 font-normal text-primaryFontLight transition hover:bg-secondaryActive focus:outline-none focus:ring focus:ring-accent-300 ${
               shrinked ? "flex h-full flex-col-reverse" : "flex flex-row"
             }`}
           >

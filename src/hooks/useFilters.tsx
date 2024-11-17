@@ -212,7 +212,7 @@ export default function useFilters({
         {show && (
           <button
             id="clear-all-filters"
-            className="rounded-full border border-secondary-300 bg-white px-2 py-1 text-xs text-secondary-600 hover:text-secondary-800"
+            className="rounded-full border border-gray-300 bg-primary px-2 py-1 text-xs text-gray-600 hover:text-gray-800"
             onClick={() => removeFilters()}
           >
             {t("clear_all_filters")}

@@ -40,7 +40,7 @@ const IconIndex: React.FC = () => {
         {filteredIcons.map((iconName) => (
           <div
             key={iconName}
-            className="flex flex-col items-center rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
+            className="flex flex-col items-center rounded-lg border border-gray-200 bg-primary p-4 shadow-sm"
           >
             <CareIcon icon={iconName as IconName} className="mb-2 text-3xl" />
             <span className="mb-2 text-sm font-medium">{iconName}</span>

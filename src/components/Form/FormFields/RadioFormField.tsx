@@ -35,7 +35,7 @@ const RadioFormField = <T, V extends string>(props: Props<T, V>) => {
         {props.unselectLabel && (
           <div className="flex items-center gap-2">
             <input
-              className="h-4 w-4 rounded-full border-secondary-600 text-primary-600 focus:ring-2 focus:ring-primary-500"
+              className="h-4 w-4 rounded-full border-gray-600 text-accent-600 focus:ring-2 focus:ring-accent-500"
               type="radio"
               id="none"
               name={props.name}
@@ -78,7 +78,7 @@ export const RadioInput = (props: {
   return (
     <div className="flex items-center gap-2">
       <input
-        className="h-4 w-4 rounded-full border-secondary-600 text-primary-600 focus:ring-2 focus:ring-primary-500"
+        className="h-4 w-4 rounded-full border-gray-600 text-accent-600 focus:ring-2 focus:ring-accent-500"
         type="radio"
         id={props.id}
         name={props.name}

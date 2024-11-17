@@ -31,12 +31,12 @@ describe("Shifting Page", () => {
   it("switch between active/archived", () => {
     cy.intercept(/\/api\/v1\/shift/).as("shifting");
     cy.contains("button", "Archived").click().wait("@shifting");
-    cy.contains("button", "Active").should("have.class", "text-primary-500");
+    cy.contains("button", "Active").should("have.class", "text-accent-500");
     cy.contains("button", "Archived").should("have.class", "text-white");
     cy.intercept(/\/api\/v1\/shift/).as("shifting");
     cy.contains("button", "Active").click().wait("@shifting");
     cy.contains("button", "Active").should("have.class", "text-white");
-    cy.contains("button", "Archived").should("have.class", "text-primary-500");
+    cy.contains("button", "Archived").should("have.class", "text-accent-500");
   });
 
   afterEach(() => {

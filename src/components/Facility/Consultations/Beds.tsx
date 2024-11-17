@@ -121,11 +121,11 @@ const Beds = (props: BedsProps) => {
           >
             <div
               key={asset.id}
-              className="border-1 w-full cursor-pointer items-center justify-center rounded-lg border border-transparent bg-white p-5 shadow hover:border-primary-500"
+              className="border-1 w-full cursor-pointer items-center justify-center rounded-lg border border-transparent bg-primary p-5 shadow hover:border-accent-500"
             >
               <div className="md:flex">
                 <p className="flex break-words text-xl font-medium capitalize">
-                  <span className="mr-2 text-primary-500">
+                  <span className="mr-2 text-accent-500">
                     <CareIcon
                       icon={
                         (
@@ -149,14 +149,14 @@ const Beds = (props: BedsProps) => {
                 <span className="text-sm font-medium">
                   <CareIcon
                     icon="l-location-point"
-                    className="mr-1 text-primary-500"
+                    className="mr-1 text-accent-500"
                   />
                   {asset?.location_object?.name}
                 </span>
                 <span className="ml-2 text-sm font-medium">
                   <CareIcon
                     icon="l-hospital"
-                    className="mr-1 text-primary-500"
+                    className="mr-1 text-accent-500"
                   />
                   {asset?.location_object?.facility?.name}
                 </span>
@@ -175,7 +175,7 @@ const Beds = (props: BedsProps) => {
       </DialogModal>
       {!props.hideTitle && (
         <div className="mb-4 flex items-center justify-between">
-          <div className="font-bold text-secondary-500">
+          <div className="font-bold text-gray-500">
             {!discharged ? "Move to bed" : "Bed History"}
           </div>
           {props.setState && (
@@ -234,7 +234,7 @@ const Beds = (props: BedsProps) => {
           </div>
           <div className="mt-4 flex flex-row justify-end">
             <div>
-              <ButtonV2 variant="primary" type="submit" id="update-switchbed">
+              <ButtonV2 variant="accent" type="submit" id="update-switchbed">
                 <CareIcon icon="l-bed" className="text-xl" />
                 Update
               </ButtonV2>
@@ -253,8 +253,8 @@ const Beds = (props: BedsProps) => {
             loading={loading}
           />
         ) : (
-          <div className="flex w-full justify-center border-2 border-secondary-200 bg-white p-5 text-center text-2xl font-bold text-secondary-500">
-            <span className="flex justify-center rounded-lg bg-white p-3 text-secondary-700">
+          <div className="flex w-full justify-center border-2 border-gray-200 bg-primary p-5 text-center text-2xl font-bold text-gray-500">
+            <span className="flex justify-center rounded-lg bg-primary p-3 text-gray-700">
               No beds allocated yet
             </span>
           </div>

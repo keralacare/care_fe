@@ -111,7 +111,7 @@ export default function AppRouter() {
 
   return (
     <SidebarShrinkContext.Provider value={{ shrinked, setShrinked }}>
-      <div className="absolute inset-0 flex h-screen overflow-hidden bg-secondary-100 print:overflow-visible">
+      <div className="absolute inset-0 flex h-screen overflow-hidden bg-secondary print:overflow-visible">
         <>
           <div className="block md:hidden">
             <MobileSidebar open={sidebarOpen} setOpen={setSidebarOpen} />{" "}
@@ -122,10 +122,10 @@ export default function AppRouter() {
         </>
 
         <div className="flex w-full flex-1 flex-col overflow-hidden print:overflow-visible">
-          <div className="relative z-10 flex h-16 shrink-0 bg-white shadow md:hidden">
+          <div className="relative z-10 flex h-16 shrink-0 bg-primary shadow md:hidden">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="border-r border-secondary-200 px-4 text-secondary-500 focus:bg-secondary-100 focus:text-secondary-600 focus:outline-none md:hidden"
+              className="border-r border-gray-200 px-4 text-gray-500 focus:bg-gray-100 focus:text-gray-600 focus:outline-none md:hidden"
               aria-label="Open sidebar"
             >
               <svg
@@ -156,10 +156,10 @@ export default function AppRouter() {
 
           <main
             id="pages"
-            className="flex-1 overflow-y-scroll bg-gray-100 pb-4 focus:outline-none md:py-0"
+            className="flex-1 overflow-y-scroll bg-secondary pb-4 focus:outline-none md:py-0"
           >
             <div
-              className="max-w-8xl mx-auto mt-4 min-h-[96vh] rounded-lg border bg-gray-50 p-3 shadow"
+              className="max-w-8xl mx-auto mt-4 min-h-[96vh] rounded-l-xl border border-lightOpaque border-r-0 bg-secondaryLight p-3 text-primaryFont"
               data-cui-page
             >
               {pages}

@@ -12,26 +12,29 @@ import Routers from "@/Routers";
 import { FeatureFlagsProvider } from "@/Utils/featureFlags";
 
 import { PubSubProvider } from "./Utils/pubsubContext";
+import { ThemeProvider } from "./Utils/themes";
 
 const App = () => {
   return (
     <Suspense fallback={<Loading />}>
-      <PubSubProvider>
-        <PluginEngine>
-          <HistoryAPIProvider>
-            <AuthUserProvider unauthorized={<Routers.SessionRouter />}>
-              <FeatureFlagsProvider>
-                <Routers.AppRouter />
-              </FeatureFlagsProvider>
-            </AuthUserProvider>
+      <ThemeProvider>
+        <PubSubProvider>
+          <PluginEngine>
+            <HistoryAPIProvider>
+              <AuthUserProvider unauthorized={<Routers.SessionRouter />}>
+                <FeatureFlagsProvider>
+                  <Routers.AppRouter />
+                </FeatureFlagsProvider>
+              </AuthUserProvider>
 
-            {/* Integrations */}
-            <Integrations.Sentry disabled={!import.meta.env.PROD} />
-            <Integrations.Plausible />
-          </HistoryAPIProvider>
-          <Toaster />
-        </PluginEngine>
-      </PubSubProvider>
+              {/* Integrations */}
+              <Integrations.Sentry disabled={!import.meta.env.PROD} />
+              <Integrations.Plausible />
+            </HistoryAPIProvider>
+            <Toaster />
+          </PluginEngine>
+        </PubSubProvider>
+      </ThemeProvider>
     </Suspense>
   );
 };

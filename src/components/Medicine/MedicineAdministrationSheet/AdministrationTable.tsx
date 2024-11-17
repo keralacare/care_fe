@@ -28,9 +28,9 @@ export default function MedicineAdministrationTable({
   return (
     <div className="overflow-x-auto">
       <table className="w-full whitespace-nowrap">
-        <thead className="sticky top-0 z-10 bg-secondary-50 text-xs font-medium text-black">
+        <thead className="sticky top-0 z-10 bg-gray-50 text-xs font-medium text-black">
           <tr>
-            <th className="sticky left-0 z-20 bg-secondary-50 py-3 pl-4 text-left">
+            <th className="sticky left-0 z-20 bg-gray-50 py-3 pl-4 text-left">
               <span className="text-sm">{t("medicine")}</span>
             </th>
             <th>
@@ -67,8 +67,8 @@ export default function MedicineAdministrationTable({
                   className={classNames(
                     "leading-none",
                     start.getHours() === 0
-                      ? "text-base font-bold text-secondary-800"
-                      : "text-sm font-semibold text-secondary-700",
+                      ? "text-base font-bold text-gray-800"
+                      : "text-sm font-semibold text-gray-700",
                   )}
                 >
                   {formatDateTime(
@@ -100,7 +100,7 @@ export default function MedicineAdministrationTable({
           </tr>
         </thead>
 
-        <tbody className="divide-y divide-secondary-200">
+        <tbody className="divide-y divide-gray-200">
           {prescriptions.map((obj, index) => (
             <MedicineAdministrationTableRow
               key={obj.id}

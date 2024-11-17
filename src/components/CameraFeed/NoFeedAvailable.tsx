@@ -30,13 +30,13 @@ export default function NoFeedAvailable(props: Props) {
     >
       <CareIcon icon={props.icon} className="text-2xl" />
       <span className="text-xs font-bold">{props.message}</span>
-      <span className="hidden px-10 font-mono text-xs text-secondary-500 md:block">
+      <span className="hidden px-10 font-mono text-xs text-gray-500 md:block">
         {redactedURL}
       </span>
       <div className="mt-4 flex items-center gap-2">
         <ButtonV2
           variant="secondary"
-          className="bg-black text-white hover:bg-white/30"
+          className="bg-black text-white hover:bg-primary/30"
           border
           size="small"
           onClick={props.onResetClick}
@@ -46,7 +46,7 @@ export default function NoFeedAvailable(props: Props) {
         </ButtonV2>
         <ButtonV2
           variant="secondary"
-          className="bg-black text-white hover:bg-white/30"
+          className="bg-black text-white hover:bg-primary/30"
           border
           size="small"
           href={`/facility/${props.asset.location_object.facility?.id}/assets/${props.asset.id}/configure`}
