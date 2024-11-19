@@ -2,6 +2,12 @@ import careConfig from "@careConfig";
 import * as Sentry from "@sentry/browser";
 
 export function initSentry() {
+  if (!careConfig.sentry.dsn || !careConfig.sentry.environment) {
+    console.error(
+      "Sentry is not configured correctly. Please check your environment variables.",
+    );
+    return;
+  }
   Sentry.init(careConfig.sentry);
 }
 
