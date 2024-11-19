@@ -59,13 +59,20 @@ function getPluginAliases() {
   return aliases;
 }
 
+const SUPPORTED_INTEGRATIONS = {
+  Sentry: "REACT_SENTRY_ENABLED",
+  Plausible: "REACT_PLAUSIBLE_ENABLED",
+} as const;
+
 function getIntegrationsAlias(env: Record<string, string>) {
   const integrationsImportAlias = "@/Integrations";
   const integrationsImportPath = "./src/Integrations";
-  const integrations = {
-    Sentry: env.REACT_SENTRY_ENABLED === "true",
-    Plausible: env.REACT_PLAUSIBLE_ENABLED === "true",
-  };
+  const integrations = Object.fromEntries(
+    Object.entries(SUPPORTED_INTEGRATIONS).map(([name, envVar]) => [
+      name,
+      env[envVar] === "true",
+    ]),
+  );
   const importMap: Record<string, string> = {};
 
   Object.entries(integrations).forEach(([name, enabled]) => {

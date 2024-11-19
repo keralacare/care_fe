@@ -326,6 +326,7 @@ export default function NotificationsList({
       })
       .catch(function (_e) {
         captureException(_e);
+        Error({ msg: t("unsubscribe_failed") });
       });
   };
 
