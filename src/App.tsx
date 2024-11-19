@@ -26,7 +26,6 @@ const App = () => {
             </AuthUserProvider>
 
             {/* Integrations */}
-            <Integrations.Sentry disabled={!import.meta.env.PROD} />
             <Integrations.Plausible />
           </HistoryAPIProvider>
           <Toaster />

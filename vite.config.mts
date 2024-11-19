@@ -59,6 +59,27 @@ function getPluginAliases() {
   return aliases;
 }
 
+function getIntegrationsAlias(env: Record<string, string>) {
+  const integrationsImportAlias = "@/Integrations";
+  const integrationsImportPath = "./src/Integrations";
+  const integrations = {
+    Sentry: env.REACT_SENTRY_ENABLED === "true",
+    Plausible: env.REACT_PLAUSIBLE_ENABLED === "true",
+  };
+  const importMap: Record<string, string> = {};
+
+  Object.entries(integrations).forEach(([name, enabled]) => {
+    importMap[`${integrationsImportAlias}/${name}`] = path.resolve(
+      __dirname,
+      enabled
+        ? `${integrationsImportPath}/${name}`
+        : `${integrationsImportPath}/${name}-disabled`,
+    );
+  });
+
+  return importMap;
+}
+
 function getPluginDependencies(): string[] {
   const pluginsDir = path.resolve(__dirname, "apps");
   // Make sure the `apps` folder exists
@@ -181,6 +202,7 @@ export default defineConfig(({ mode }) => {
     ],
     resolve: {
       alias: {
+        ...getIntegrationsAlias(env),
         ...getPluginAliases(),
         "@": path.resolve(__dirname, "./src"),
         "@careConfig": path.resolve(__dirname, "./care.config.ts"),

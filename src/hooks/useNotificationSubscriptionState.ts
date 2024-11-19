@@ -1,8 +1,8 @@
-import * as Sentry from "@sentry/browser";
 import { useEffect, useState } from "react";
 
 import useAuthUser from "@/hooks/useAuthUser";
 
+import { captureException } from "@/Integrations/Sentry";
 import routes from "@/Utils/request/api";
 import request from "@/Utils/request/request";
 
@@ -45,7 +45,7 @@ export default function useNotificationSubscriptionState(
       }
     } catch (error) {
       setSubscriptionState("error");
-      Sentry.captureException(error);
+      captureException(error);
     }
   };
 

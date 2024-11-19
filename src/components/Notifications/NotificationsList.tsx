@@ -1,4 +1,3 @@
-import * as Sentry from "@sentry/browser";
 import { navigate } from "raviger";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -19,6 +18,7 @@ import useAuthUser from "@/hooks/useAuthUser";
 
 import { NOTIFICATION_EVENTS } from "@/common/constants";
 
+import { captureException } from "@/Integrations/Sentry";
 import { Error, Success, Warn } from "@/Utils/Notifications";
 import routes from "@/Utils/request/api";
 import request from "@/Utils/request/request";
@@ -238,7 +238,7 @@ export default function NotificationsList({
         setIsSubscribed("SubscribedOnAnotherDevice");
       }
     } catch (error) {
-      Sentry.captureException(error);
+      captureException(error);
     }
   };
 
@@ -325,7 +325,7 @@ export default function NotificationsList({
           });
       })
       .catch(function (_e) {
-        Sentry.captureException(_e);
+        captureException(_e);
       });
   };
 
