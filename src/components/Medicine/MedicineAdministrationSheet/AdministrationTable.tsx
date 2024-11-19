@@ -28,7 +28,7 @@ export default function MedicineAdministrationTable({
   return (
     <div className="overflow-x-auto">
       <table className="w-full whitespace-nowrap">
-        <thead className="sticky top-0 z-10 bg-gray-50 text-xs font-medium text-black">
+        <thead className="sticky top-0 z-10 bg-gray-50 text-xs font-medium text-primary-950">
           <tr>
             <th className="sticky left-0 z-20 bg-gray-50 py-3 pl-4 text-left">
               <span className="text-sm">{t("medicine")}</span>

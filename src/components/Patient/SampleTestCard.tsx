@@ -85,7 +85,7 @@ export const SampleTestCard = (props: SampleDetailsProps) => {
           : itemData.result === "NEGATIVE"
             ? "border-accent-500 bg-accent-100 hover:border-accent-700"
             : "bg-primary hover:border-accent-500"
-      } mt-4 block cursor-pointer rounded-lg border bg-primary p-4 text-black shadow`}
+      } mt-4 block cursor-pointer rounded-lg border bg-primary p-4 text-primary-950 shadow`}
     >
       <div
         onClick={(_e) =>
@@ -142,13 +142,17 @@ export const SampleTestCard = (props: SampleDetailsProps) => {
         <div className="flex flex-col justify-between gap-4 md:flex-row">
           <div>
             <div className="mb-2 text-sm text-gray-700">
-              <span className="font-medium text-black">Date of Sample:</span>{" "}
+              <span className="font-medium text-primary-950">
+                Date of Sample:
+              </span>{" "}
               {itemData.date_of_sample
                 ? formatDateTime(itemData.date_of_sample)
                 : "Not Available"}
             </div>
             <div className="text-sm text-gray-700">
-              <span className="font-medium text-black">Date of Result:</span>{" "}
+              <span className="font-medium text-primary-950">
+                Date of Result:
+              </span>{" "}
               {itemData.date_of_result
                 ? formatDateTime(itemData.date_of_result)
                 : "Not Available"}
@@ -157,7 +161,7 @@ export const SampleTestCard = (props: SampleDetailsProps) => {
         </div>
         <div className="flex flex-col gap-2">
           <div className="flex flex-col flex-nowrap items-center justify-end text-sm text-gray-700 md:flex-col md:items-start md:justify-start lg:flex-row lg:items-center">
-            <div className="font-medium text-black">Created: </div>
+            <div className="font-medium text-primary-950">Created: </div>
 
             <RelativeDateUserMention
               actionDate={itemData.created_date}
@@ -166,7 +170,7 @@ export const SampleTestCard = (props: SampleDetailsProps) => {
             />
           </div>
           <div className="flex flex-col items-center justify-end text-sm text-gray-700 md:flex-col md:items-start lg:flex-row lg:items-center">
-            <div className="font-medium text-black">Last Modified: </div>
+            <div className="font-medium text-primary-950">Last Modified: </div>
             <RelativeDateUserMention
               actionDate={itemData.modified_date}
               user={itemData.last_edited_by}
@@ -182,21 +186,21 @@ export const SampleTestCard = (props: SampleDetailsProps) => {
               e.stopPropagation();
               handleApproval(4, itemData);
             }}
-            className="border border-gray-500 bg-primary text-black hover:bg-gray-300"
+            className="border border-gray-500 bg-primary text-primary-950 hover:bg-gray-300"
           >
             Send to Collection Centre
           </ButtonV2>
         )}
         <ButtonV2
           onClick={() => showUpdateStatus(itemData)}
-          className="border border-gray-500 bg-primary text-black hover:bg-gray-300"
+          className="border border-gray-500 bg-primary text-primary-950 hover:bg-gray-300"
           authorizeFor={NonReadOnlyUsers}
         >
           Update Sample Test Status
         </ButtonV2>
         <ButtonV2
           onClick={(_e) => navigate(`/sample/${itemData.id}`)}
-          className="border border-gray-500 bg-primary text-black hover:bg-gray-300"
+          className="border border-gray-500 bg-primary text-primary-950 hover:bg-gray-300"
         >
           Sample Report
         </ButtonV2>

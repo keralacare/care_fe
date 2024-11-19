@@ -8,7 +8,7 @@ import { FieldChangeEvent } from "@/components/Form/FormFields/Utils";
 const TestRow = ({ data, value, onChange, i }: any) => {
   return (
     <tr className={i % 2 == 0 ? "bg-gray-50" : "bg-primary"}>
-      <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
+      <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-primary-900">
         {data.name}
       </td>
       <td className="min-w-[200px] whitespace-nowrap px-6 py-4 text-right text-sm text-gray-700">

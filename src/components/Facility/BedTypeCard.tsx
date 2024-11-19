@@ -86,7 +86,7 @@ export const BedTypeCard: React.FC<BedTypeCardProps> = ({
           {usedPercent}%
         </span>
       </header>
-      <div className="mt-4 text-xl font-extrabold text-black">
+      <div className="mt-4 text-xl font-extrabold text-primary-950">
         {used} / {total}
       </div>
       <div className="mt-3 flex flex-col items-stretch justify-center rounded-md">
@@ -106,7 +106,7 @@ export const BedTypeCard: React.FC<BedTypeCardProps> = ({
             <div className="mt-4 text-xs italic text-gray-500">
               {lastUpdated && (
                 <RecordMeta
-                  className="py-0 text-xs font-normal text-gray-600"
+                  className="py-0 text-xs font-normal text-primary-700"
                   prefix={"Last updated;"}
                   time={lastUpdated}
                 />
@@ -124,7 +124,10 @@ export const BedTypeCard: React.FC<BedTypeCardProps> = ({
                 variant="secondary"
                 ghost
               >
-                <CareIcon icon="l-edit-alt" className="h-5 w-5 text-black" />
+                <CareIcon
+                  icon="l-edit-alt"
+                  className="h-5 w-5 text-primary-950"
+                />
                 <span className="tooltip-text tooltip-bottom">Edit</span>
               </ButtonV2>
 

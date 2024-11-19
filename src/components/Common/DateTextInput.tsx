@@ -125,7 +125,7 @@ export default function DateTextInput(props: {
     <div className="w-full">
       <div
         className={classNames(
-          `cui-input-base relative flex w-full cursor-text items-center overflow-hidden bg-gray-50 px-4 py-0 text-gray-600`,
+          `cui-input-base relative flex w-full cursor-text items-center overflow-hidden bg-gray-50 px-4 py-0 text-primary-700`,
           error && `!border-red-500`,
           !!document.activeElement?.getAttribute("data-time-input") &&
             "border-accent-500",
@@ -144,7 +144,7 @@ export default function DateTextInput(props: {
                 type="text"
                 value={val}
                 autoFocus={i === 0}
-                className={`rounded-none border-none bg-transparent text-black shadow-none outline-none ring-0 ${
+                className={`rounded-none border-none bg-transparent text-primary-950 shadow-none outline-none ring-0 ${
                   key === "year" ? "w-[45px]" : "w-[20px]"
                 } px-0 placeholder:text-xs`}
                 placeholder={

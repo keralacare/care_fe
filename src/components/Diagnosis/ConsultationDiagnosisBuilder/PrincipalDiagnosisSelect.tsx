@@ -51,7 +51,7 @@ const PrincipalDiagnosisSelect = <T extends Option>(props: Props<T>) => {
         />
         {diagnosis &&
           (diagnosis.chapter ? (
-            <span className="mt-3 flex w-full flex-wrap justify-center gap-x-1 px-2 text-center text-gray-900">
+            <span className="mt-3 flex w-full flex-wrap justify-center gap-x-1 px-2 text-center text-primary-900">
               <p>This encounter will be categorised under:</p>
               <p className="font-bold">{diagnosis.chapter}</p>
             </span>

@@ -67,14 +67,14 @@ export default function ResponsiveMedicineTable(props: {
                     idx === props.maxWidthColumn
                   ) {
                     return (
-                      <td className="w-full px-6 py-4 text-sm font-medium leading-5 text-gray-900">
+                      <td className="w-full px-6 py-4 text-sm font-medium leading-5 text-primary-900">
                         {med[key]}
                       </td>
                     );
                   }
 
                   return (
-                    <td className="px-6 py-4 text-sm leading-5 text-gray-900">
+                    <td className="px-6 py-4 text-sm leading-5 text-primary-900">
                       {med[key]}
                     </td>
                   );

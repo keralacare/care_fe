@@ -284,7 +284,7 @@ export const ConsultationDetails = (props: any) => {
             </div>
           </nav>
           <div className="mt-2 flex w-full flex-col md:flex-row">
-            <div className="size-full rounded-lg border bg-primary text-black shadow">
+            <div className="size-full rounded-lg border bg-primary text-primary-950 shadow">
               <PatientInfoCard
                 patient={patientData}
                 consultation={consultationData}
@@ -330,7 +330,7 @@ export const ConsultationDetails = (props: any) => {
               <div className="flex flex-col justify-between gap-2 px-4 py-1 md:flex-row">
                 <div className="font-base flex flex-col text-xs leading-relaxed text-gray-700">
                   <div className="flex">
-                    <span className="text-gray-900">Created: </span>&nbsp;
+                    <span className="text-primary-900">Created: </span>&nbsp;
                     <RelativeDateUserMention
                       actionDate={consultationData.created_date}
                       user={consultationData.created_by}
@@ -341,7 +341,7 @@ export const ConsultationDetails = (props: any) => {
                 </div>
                 <div className="font-base flex flex-col text-xs leading-relaxed text-gray-700 md:text-right">
                   <div className="flex">
-                    <span className="text-gray-900">Last Modified: </span>
+                    <span className="text-primary-900">Last Modified: </span>
                     &nbsp;
                     <RelativeDateUserMention
                       actionDate={consultationData.modified_date}

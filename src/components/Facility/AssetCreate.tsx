@@ -397,7 +397,7 @@ const AssetCreate = (props: AssetProps) => {
               <CareIcon icon="l-map-marker" className="text-green-600" />
             </div>
           </h1>
-          <p className="text-gray-600">
+          <p className="text-primary-700">
             {t("you_need_at_least_a_location_to_create_an_assest")}
           </p>
           <button
@@ -458,7 +458,7 @@ const AssetCreate = (props: AssetProps) => {
         ref={section.ref as LegacyRef<HTMLDivElement>}
       >
         <CareIcon icon={section.icon} className="mr-3 text-lg" />
-        <label className="text-lg font-bold text-gray-900">
+        <label className="text-lg font-bold text-primary-900">
           {sectionTitle}
         </label>
         <hr className="ml-6 flex-1 border border-gray-400" />

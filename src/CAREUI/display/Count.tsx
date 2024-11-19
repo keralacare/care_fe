@@ -22,7 +22,7 @@ export default function CountBlock(props: Props) {
             {props.text}
           </dt>
           {props.loading ? (
-            <dd className="h-10 w-full max-w-[100px] animate-pulse rounded-lg bg-gray-300" />
+            <dd className="h-10 w-full max-w-[100px] animate-pulse rounded-lg bg-primary-200" />
           ) : (
             <dd id="count" className="text-5xl font-black leading-9">
               {props.count}

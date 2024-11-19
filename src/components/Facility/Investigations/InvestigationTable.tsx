@@ -21,7 +21,7 @@ const TestRow = ({ data, i, onChange, showForm, value, isChanged }: any) => {
       x-description="Even row"
     >
       <td className="whitespace-nowrap px-6 py-4 text-xs">
-        <p className="text-sm font-medium text-gray-900">
+        <p className="text-sm font-medium text-primary-900">
           {data?.investigation_object.name || "---"}
         </p>
         <p className="flex flex-row gap-x-2">
@@ -32,7 +32,7 @@ const TestRow = ({ data, i, onChange, showForm, value, isChanged }: any) => {
             {data?.investigation_object.max_value || ""}
           </span>
         </p>
-        <p className="text-gray-600">
+        <p className="text-primary-700">
           {t("investigations__unit")}:{" "}
           {data?.investigation_object.unit || "---"}
         </p>

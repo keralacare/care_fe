@@ -164,7 +164,7 @@ export const validateRule = (
       <span
         className={classNames(
           isInitialState
-            ? "text-black"
+            ? "text-primary-950"
             : condition
               ? "text-accent-500"
               : "text-red-500",
@@ -638,7 +638,7 @@ export const UserAdd = (props: UserProps) => {
       options={
         <Link
           href="https://school.ohc.network/targets/12953"
-          className="inline-block rounded border border-gray-600 bg-gray-50 px-4 py-2 text-gray-600 transition hover:bg-gray-100"
+          className="inline-block rounded border border-gray-600 bg-gray-50 px-4 py-2 text-primary-700 transition hover:bg-gray-100"
           target="_blank"
         >
           <CareIcon icon="l-question-circle" className="text-lg" /> &nbsp;Need

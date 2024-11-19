@@ -48,7 +48,7 @@ export default function ListView() {
   const showResourceCardList = (data: ResourceModel[]) => {
     if (data && !data.length) {
       return (
-        <div className="mt-64 flex flex-1 justify-center text-gray-600">
+        <div className="mt-64 flex flex-1 justify-center text-primary-700">
           {t("no_results_found")}
         </div>
       );

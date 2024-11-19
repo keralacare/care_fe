@@ -305,7 +305,7 @@ const DateInputV2: React.FC<Props> = ({
     <div>
       <div
         ref={dateInputRef}
-        className={`${containerClassName ?? "container mx-auto text-black"}`}
+        className={`${containerClassName ?? "container mx-auto text-primary-950"}`}
         data-cui-dateinput
         data-cui-dateinput-value={JSON.stringify(
           dayjs(value).format("YYYY-MM-DDTHH:mm"),
@@ -336,7 +336,7 @@ const DateInputV2: React.FC<Props> = ({
                   <div className="absolute right-0 top-1/2 -translate-y-1/2 p-2">
                     <CareIcon
                       icon="l-calendar-alt"
-                      className="text-lg text-gray-600"
+                      className="text-lg text-primary-700"
                     />
                   </div>
                 </PopoverButton>
@@ -393,14 +393,14 @@ const DateInputV2: React.FC<Props> = ({
                               {type === "date" && (
                                 <div
                                   onClick={() => setType("month")}
-                                  className="cursor-pointer rounded px-3 py-1 text-center font-medium text-black hover:bg-gray-300"
+                                  className="cursor-pointer rounded px-3 py-1 text-center font-medium text-primary-950 hover:bg-gray-300"
                                 >
                                   {dayjs(datePickerHeaderDate).format("MMMM")}
                                 </div>
                               )}
                               <div
                                 onClick={() => setType("year")}
-                                className="cursor-pointer rounded px-3 py-1 font-medium text-black hover:bg-gray-300"
+                                className="cursor-pointer rounded px-3 py-1 font-medium text-primary-950 hover:bg-gray-300"
                               >
                                 <p className="text-center">
                                   {type == "year"

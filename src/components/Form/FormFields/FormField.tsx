@@ -17,7 +17,7 @@ export const FieldLabel = (props: LabelProps) => {
     <label
       id={props.id}
       className={classNames(
-        "block text-base font-normal text-gray-900",
+        "block text-base font-normal text-primary-900",
         !props.noPadding && "mb-2",
         props.className,
       )}

@@ -216,11 +216,11 @@ const AvatarEditModal = ({
                         ? "text-green-500"
                         : dragProps.dragOver
                           ? "text-accent-500"
-                          : "text-gray-600"
+                          : "text-primary-700"
                     } ${
                       dragProps.fileDropError !== ""
                         ? "text-red-500"
-                        : "text-gray-600"
+                        : "text-primary-700"
                     }`}
                   >
                     <path d="M28 8H12a4 4 0 0 0-4 4v20m32-12v8m0 0v8a4 4 0 0 1-4 4H12a4 4 0 0 1-4-4v-4m32-4-3.172-3.172a4 4 0 0 0-5.656 0L28 28M8 32l9.172-9.172a4 4 0 0 1 5.656 0L28 28m0 0 4 4m4-24h8m-4-4v8m-12 4h.02" />

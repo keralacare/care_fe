@@ -189,7 +189,7 @@ const BedTimelineNodeTitle = (props: {
   return (
     <TimelineNodeTitle event={event}>
       <div className="flex w-full justify-between gap-2">
-        <p className="flex-auto py-0.5 text-xs leading-5 text-gray-600 md:w-2/3">
+        <p className="flex-auto py-0.5 text-xs leading-5 text-primary-700 md:w-2/3">
           {titleSuffix}
         </p>
         <div className="md:w-fit">
@@ -246,7 +246,7 @@ const BedActivityIButtonPopover = ({
       <PopoverButton>
         <CareIcon
           icon="l-info-circle"
-          className="cursor-pointer text-gray-500 hover:text-gray-600"
+          className="cursor-pointer text-gray-500 hover:text-primary-700"
         />
       </PopoverButton>
       <Transition
@@ -258,7 +258,7 @@ const BedActivityIButtonPopover = ({
         leaveTo="opacity-0 translate-y-1"
       >
         <PopoverPanel className="absolute z-10 -ml-20 mt-2 w-48 -translate-x-1/2 rounded-lg border border-gray-200 bg-gray-100 p-2 shadow">
-          <p className="text-xs text-gray-600">
+          <p className="text-xs text-primary-700">
             updated {relativeTime(bed?.start_date)}
           </p>
         </PopoverPanel>

@@ -85,7 +85,7 @@ const QRScanner = ({
           <CareIcon
             icon="l-focus"
             onClick={() => setShowScanner(true)}
-            className="z-50 cursor-pointer text-black"
+            className="z-50 cursor-pointer text-primary-950"
           />
         }
         error={error}

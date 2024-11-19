@@ -422,7 +422,7 @@ export const PatientHome = (props: any) => {
                     <div>
                       <a
                         href={`tel:${patientData.phone_number}`}
-                        className="text-sm font-medium text-black hover:text-gray-500"
+                        className="text-sm font-medium text-primary-950 hover:text-gray-500"
                       >
                         {patientData.phone_number || "-"}
                       </a>
@@ -443,11 +443,11 @@ export const PatientHome = (props: any) => {
                   <div className="text-sm font-semibold leading-5 text-zinc-400">
                     {t("patient_registration__contact")}
                   </div>
-                  <div className="mt-1 text-sm leading-5 text-gray-900">
+                  <div className="mt-1 text-sm leading-5 text-primary-900">
                     <div>
                       <a
                         href={`tel:${patientData.emergency_phone_number}`}
-                        className="text-sm font-medium text-black hover:text-gray-500"
+                        className="text-sm font-medium text-primary-950 hover:text-gray-500"
                       >
                         {patientData.emergency_phone_number || "-"}
                       </a>
@@ -596,7 +596,7 @@ export const PatientHome = (props: any) => {
                       <div className="text-sm font-normal leading-5 text-gray-500">
                         Status
                       </div>
-                      <div className="mt-1 text-xl font-semibold leading-5 text-gray-900">
+                      <div className="mt-1 text-xl font-semibold leading-5 text-primary-900">
                         {patientData.is_active ? "LIVE" : "DISCHARGED"}
                       </div>
                     </div>
@@ -604,7 +604,7 @@ export const PatientHome = (props: any) => {
                       <div className="text-sm font-normal leading-5 text-gray-500">
                         Last Discharged Reason
                       </div>
-                      <div className="mt-1 text-xl font-semibold leading-5 text-gray-900">
+                      <div className="mt-1 text-xl font-semibold leading-5 text-primary-900">
                         {patientData.is_active ? (
                           "-"
                         ) : !patientData.last_consultation
@@ -636,7 +636,7 @@ export const PatientHome = (props: any) => {
                     <div className="text-sm font-normal leading-5 text-gray-500">
                       Created
                     </div>
-                    <div className="mt-1 whitespace-normal text-sm font-semibold leading-5 text-gray-900">
+                    <div className="mt-1 whitespace-normal text-sm font-semibold leading-5 text-primary-900">
                       <div className="flex justify-center text-sm font-semibold">
                         <RelativeDateUserMention
                           actionDate={patientData.created_date}
@@ -649,7 +649,7 @@ export const PatientHome = (props: any) => {
                     <div className="text-sm font-normal leading-5 text-gray-500">
                       Last Edited
                     </div>
-                    <div className="mt-1 whitespace-normal text-sm leading-5 text-gray-900">
+                    <div className="mt-1 whitespace-normal text-sm leading-5 text-primary-900">
                       <div className="flex justify-center whitespace-normal text-sm font-semibold">
                         <RelativeDateUserMention
                           actionDate={patientData.modified_date}
@@ -734,7 +734,7 @@ export const PatientHome = (props: any) => {
         </section>
         <section className="mt-7 h-full space-y-2 rounded-lg bg-primary p-4 text-gray-100 shadow">
           <div
-            className="flex cursor-pointer justify-between border-b border-dashed pb-2 text-left text-lg font-semibold text-gray-900"
+            className="flex cursor-pointer justify-between border-b border-dashed pb-2 text-left text-lg font-semibold text-primary-900"
             onClick={() => {
               setShowShifts(!showShifts);
               setIsShiftClicked(true);
@@ -781,7 +781,7 @@ export const PatientHome = (props: any) => {
                                 icon="l-truck"
                                 className="mr-2 text-lg"
                               />
-                              <dd className="text-sm font-bold leading-5 text-gray-900">
+                              <dd className="text-sm font-bold leading-5 text-primary-900">
                                 {shift.status}
                               </dd>
                             </dt>
@@ -795,7 +795,7 @@ export const PatientHome = (props: any) => {
                                 icon="l-plane-fly"
                                 className="mr-2 text-lg"
                               />
-                              <dd className="text-sm font-bold leading-5 text-gray-900">
+                              <dd className="text-sm font-bold leading-5 text-primary-900">
                                 {(shift.origin_facility_object || {})?.name}
                               </dd>
                             </dt>
@@ -809,7 +809,7 @@ export const PatientHome = (props: any) => {
                                 icon="l-user-check"
                                 className="mr-2 text-lg"
                               />
-                              <dd className="text-sm font-bold leading-5 text-gray-900">
+                              <dd className="text-sm font-bold leading-5 text-primary-900">
                                 {
                                   (
                                     shift.shifting_approving_facility_object ||
@@ -828,7 +828,7 @@ export const PatientHome = (props: any) => {
                                 icon="l-plane-arrival"
                                 className="mr-2 text-lg"
                               />
-                              <dd className="text-sm font-bold leading-5 text-gray-900">
+                              <dd className="text-sm font-bold leading-5 text-primary-900">
                                 {(shift.assigned_facility_object || {})?.name ||
                                   "Yet to be decided"}
                               </dd>
@@ -843,7 +843,7 @@ export const PatientHome = (props: any) => {
                                 (dayjs()
                                   .subtract(2, "hours")
                                   .isBefore(shift.modified_date)
-                                  ? "text-gray-900"
+                                  ? "text-primary-900"
                                   : "rounded p-1 font-normal text-red-600")
                               }
                             >
@@ -919,7 +919,7 @@ export const PatientHome = (props: any) => {
         >
           <div className="w-full">
             <div className="h-full space-y-2 rounded-lg bg-primary p-7 shadow">
-              <div className="border-b border-dashed pb-2 text-xl font-bold text-gray-900">
+              <div className="border-b border-dashed pb-2 text-xl font-bold text-primary-900">
                 {t("location")}
               </div>
               <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
@@ -981,7 +981,7 @@ export const PatientHome = (props: any) => {
           </div>
           <div className="w-full">
             <div className="h-full space-y-2 rounded-lg bg-primary p-7 shadow">
-              <div className="border-b border-dashed pb-2 text-xl font-bold text-gray-900">
+              <div className="border-b border-dashed pb-2 text-xl font-bold text-primary-900">
                 Medical
               </div>
               {!patientData.present_health &&
@@ -1277,7 +1277,7 @@ export const PatientHome = (props: any) => {
                         "text-center text-sm font-medium",
                         isPatientInactive(patientData, facilityId)
                           ? "text-gray-700"
-                          : "text-black",
+                          : "text-primary-950",
                       )}
                     >
                       Assign to a volunteer
@@ -1289,7 +1289,7 @@ export const PatientHome = (props: any) => {
           </div>
           <div className="mx-2 w-full lg:hidden">
             <div className="h-full space-y-2 rounded-lg bg-primary p-4 shadow">
-              <div className="space-y-2 border-b border-dashed text-left text-lg font-semibold text-gray-900">
+              <div className="space-y-2 border-b border-dashed text-left text-lg font-semibold text-primary-900">
                 <div>
                   <ButtonV2
                     className="w-full"

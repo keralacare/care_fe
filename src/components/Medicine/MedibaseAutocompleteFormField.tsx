@@ -97,7 +97,7 @@ const OptionChip = (props: { name?: string; value: string }) => {
       <span className="font-normal text-gray-800">
         {props.name && props.name + ":"}
       </span>
-      <span className="font-medium text-gray-900">{props.value}</span>
+      <span className="font-medium text-primary-900">{props.value}</span>
     </div>
   );
 };

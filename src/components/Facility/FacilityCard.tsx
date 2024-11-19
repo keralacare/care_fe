@@ -55,7 +55,7 @@ export const FacilityCard = (props: {
 
   return (
     <div key={`usr_${facility.id}`} className="w-full">
-      <div className="block h-full overflow-hidden rounded-lg border border-secondaryActive bg-primary transition-all hover:border-opaque">
+      <div className="block h-full overflow-hidden rounded-lg border border-primary-200 bg-primary transition-all hover:border-primary-300">
         <div className="flex h-full">
           <div className="h-full w-full grow">
             <Link
@@ -100,7 +100,7 @@ export const FacilityCard = (props: {
                         </Link>
                         <div
                           data-test-id="occupancy-badge"
-                          className={`tooltip flex items-center gap-1 text-sm ${(facility.patient_count || 0) / (facility.bed_count || 0) > 0.85 ? "justify-center rounded-md border border-red-600 bg-red-500 p-1 font-bold text-white" : "text-primaryFontLight"}`}
+                          className={`tooltip flex items-center gap-1 text-sm ${(facility.patient_count || 0) / (facility.bed_count || 0) > 0.85 ? "justify-center rounded-md border border-red-600 bg-red-500 p-1 font-bold text-white" : "text-primary-800"}`}
                         >
                           <span className="tooltip-text tooltip-top">
                             {t("live_patients_total_beds")}
@@ -178,7 +178,7 @@ export const FacilityCard = (props: {
                   </div>
                 </div>
               </div>
-              <div className="flex flex-wrap border-t border-t-secondaryActive bg-secondary px-2 py-1 md:px-3">
+              <div className="flex flex-wrap border-t border-t-primary-200 bg-primary-100 px-2 py-1 md:px-3">
                 {/* <div className="flex justify-between py-2"> */}
                 <div className="flex w-full flex-wrap justify-between gap-2 py-2">
                   <div className="flex flex-wrap gap-2">

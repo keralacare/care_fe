@@ -68,7 +68,7 @@ const VirtualNursingAssistantLogUpdateCard = (props: Props) => {
             />
           ))
         ) : (
-          <span className="text-sm italic text-gray-600">
+          <span className="text-sm italic text-primary-700">
             {t("no_log_update_delta")}
           </span>
         )}

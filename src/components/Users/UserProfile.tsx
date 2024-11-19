@@ -3,6 +3,7 @@ import { FormEvent, useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import CareIcon from "@/CAREUI/icons/CareIcon";
+import { KeyboardShortcutKey } from "@/CAREUI/interactive/KeyboardShortcut";
 
 import AvatarEditModal from "@/components/Common/AvatarEditModal";
 import AvatarEditable from "@/components/Common/AvatarEditable";
@@ -35,6 +36,7 @@ import routes from "@/Utils/request/api";
 import request from "@/Utils/request/request";
 import uploadFile from "@/Utils/request/uploadFile";
 import useQuery from "@/Utils/request/useQuery";
+import { ThemePicker } from "@/Utils/themes";
 import {
   classNames,
   dateQueryString,
@@ -567,7 +569,7 @@ export default function UserProfile() {
       />
       <div className="lg:grid lg:grid-cols-3 lg:gap-6">
         <div className="lg:col-span-1">
-          <p className="my-1 text-sm leading-5 text-gray-600">
+          <p className="my-1 text-sm leading-5 text-primary-700">
             {t("local_body")}, {t("district")}, {t("state")}{" "}
             {t("are_non_editable_fields")}.
           </p>
@@ -580,10 +582,10 @@ export default function UserProfile() {
               className="h-20 w-20"
             />
             <div className="my-4 ml-4">
-              <h3 className="text-lg font-medium leading-6 text-gray-900">
+              <h3 className="text-lg font-medium leading-6 text-primary-900">
                 {authUser?.first_name} {authUser?.last_name}
               </h3>
-              <p className="text-sm leading-5 text-gray-500">
+              <p className="text-sm leading-5 text-primary-700">
                 @{authUser?.username}
               </p>
             </div>
@@ -610,10 +612,10 @@ export default function UserProfile() {
                   className="my-2 sm:col-span-1"
                   id="username-profile-details"
                 >
-                  <dt className="text-sm font-medium leading-5 text-black">
+                  <dt className="text-sm font-medium leading-5 text-primary-950">
                     {t("username")}
                   </dt>
-                  <dd className="mt-1 text-sm leading-5 text-gray-900">
+                  <dd className="mt-1 text-sm leading-5 text-primary-900">
                     {userData?.username || "-"}
                   </dd>
                 </div>
@@ -621,10 +623,10 @@ export default function UserProfile() {
                   className="my-2 sm:col-span-1"
                   id="contactno-profile-details"
                 >
-                  <dt className="text-sm font-medium leading-5 text-black">
+                  <dt className="text-sm font-medium leading-5 text-primary-950">
                     {t("phone_number")}
                   </dt>
-                  <dd className="mt-1 text-sm leading-5 text-gray-900">
+                  <dd className="mt-1 text-sm leading-5 text-primary-900">
                     {userData?.phone_number || "-"}
                   </dd>
                 </div>
@@ -633,10 +635,10 @@ export default function UserProfile() {
                   className="my-2 sm:col-span-1"
                   id="whatsapp-profile-details"
                 >
-                  <dt className="text-sm font-medium leading-5 text-black">
+                  <dt className="text-sm font-medium leading-5 text-primary-950">
                     {t("whatsapp_number")}
                   </dt>
-                  <dd className="mt-1 text-sm leading-5 text-gray-900">
+                  <dd className="mt-1 text-sm leading-5 text-primary-900">
                     {userData?.alt_phone_number || "-"}
                   </dd>
                 </div>
@@ -644,10 +646,10 @@ export default function UserProfile() {
                   className="my-2 sm:col-span-1"
                   id="emailid-profile-details"
                 >
-                  <dt className="text-sm font-medium leading-5 text-black">
+                  <dt className="text-sm font-medium leading-5 text-primary-950">
                     {t("email")}
                   </dt>
-                  <dd className="mt-1 text-sm leading-5 text-gray-900">
+                  <dd className="mt-1 text-sm leading-5 text-primary-900">
                     {userData?.email || "-"}
                   </dd>
                 </div>
@@ -655,10 +657,10 @@ export default function UserProfile() {
                   className="my-2 sm:col-span-1"
                   id="firstname-profile-details"
                 >
-                  <dt className="text-sm font-medium leading-5 text-black">
+                  <dt className="text-sm font-medium leading-5 text-primary-950">
                     {t("first_name")}
                   </dt>
-                  <dd className="mt-1 text-sm leading-5 text-gray-900">
+                  <dd className="mt-1 text-sm leading-5 text-primary-900">
                     {userData?.first_name || "-"}
                   </dd>
                 </div>
@@ -666,10 +668,10 @@ export default function UserProfile() {
                   className="my-2 sm:col-span-1"
                   id="lastname-profile-details"
                 >
-                  <dt className="text-sm font-medium leading-5 text-black">
+                  <dt className="text-sm font-medium leading-5 text-primary-950">
                     {t("last_name")}
                   </dt>
-                  <dd className="mt-1 text-sm leading-5 text-gray-900">
+                  <dd className="mt-1 text-sm leading-5 text-primary-900">
                     {userData?.last_name || "-"}
                   </dd>
                 </div>
@@ -677,17 +679,17 @@ export default function UserProfile() {
                   className="my-2 sm:col-span-1"
                   id="date_of_birth-profile-details"
                 >
-                  <dt className="text-sm font-medium leading-5 text-black">
+                  <dt className="text-sm font-medium leading-5 text-primary-950">
                     {t("date_of_birth")}
                   </dt>
-                  <dd className="mt-1 text-sm leading-5 text-gray-900">
+                  <dd className="mt-1 text-sm leading-5 text-primary-900">
                     {userData?.date_of_birth
                       ? formatDate(userData?.date_of_birth)
                       : "-"}
                   </dd>
                 </div>
                 <div className="my-2 sm:col-span-1">
-                  <dt className="text-sm font-medium leading-5 text-black">
+                  <dt className="text-sm font-medium leading-5 text-primary-950">
                     {t("access_level")}
                   </dt>
                   <dd className="badge badge-pill mt-1 bg-accent-500 text-sm text-white">
@@ -696,42 +698,42 @@ export default function UserProfile() {
                   </dd>
                 </div>
                 <div className="my-2 sm:col-span-1" id="gender-profile-details">
-                  <dt className="text-sm font-medium leading-5 text-black">
+                  <dt className="text-sm font-medium leading-5 text-primary-950">
                     {t("gender")}
                   </dt>
-                  <dd className="mt-1 text-sm leading-5 text-gray-900">
+                  <dd className="mt-1 text-sm leading-5 text-primary-900">
                     {userData?.gender || "-"}
                   </dd>
                 </div>
                 <div className="my-2 sm:col-span-1">
-                  <dt className="text-sm font-medium leading-5 text-black">
+                  <dt className="text-sm font-medium leading-5 text-primary-950">
                     {t("local_body")}
                   </dt>
-                  <dd className="mt-1 text-sm leading-5 text-gray-900">
+                  <dd className="mt-1 text-sm leading-5 text-primary-900">
                     {userData?.local_body_object?.name || "-"}
                   </dd>
                 </div>
                 <div className="my-2 sm:col-span-1">
-                  <dt className="text-sm font-medium leading-5 text-black">
+                  <dt className="text-sm font-medium leading-5 text-primary-950">
                     {t("district")}
                   </dt>
-                  <dd className="mt-1 text-sm leading-5 text-gray-900">
+                  <dd className="mt-1 text-sm leading-5 text-primary-900">
                     {userData?.district_object?.name || "-"}
                   </dd>
                 </div>
                 <div className="my-2 sm:col-span-1">
-                  <dt className="text-sm font-medium leading-5 text-black">
+                  <dt className="text-sm font-medium leading-5 text-primary-950">
                     {t("state")}
                   </dt>
-                  <dd className="mt-1 text-sm leading-5 text-gray-900">
+                  <dd className="mt-1 text-sm leading-5 text-primary-900">
                     {userData?.state_object?.name || "-"}
                   </dd>
                 </div>
                 <div className="my-2 sm:col-span-1">
-                  <dt className="text-sm font-medium leading-5 text-black">
+                  <dt className="text-sm font-medium leading-5 text-primary-950">
                     {t("skills")}
                   </dt>
-                  <dd className="mt-1 text-sm leading-5 text-gray-900">
+                  <dd className="mt-1 text-sm leading-5 text-primary-900">
                     <div
                       className="flex flex-wrap gap-2"
                       id="already-linked-skills"
@@ -739,7 +741,7 @@ export default function UserProfile() {
                       {skillsView?.results?.length
                         ? skillsView.results?.map((skill: SkillModel) => {
                             return (
-                              <span className="flex items-center gap-2 rounded-full border-gray-300 bg-gray-200 px-3 text-xs text-gray-700">
+                              <span className="flex items-center gap-2 rounded-full border border-primary-200 bg-primary-100 px-3 text-xs text-primary-800">
                                 <p className="py-1.5">
                                   {skill.skill_object.name}
                                 </p>
@@ -754,10 +756,10 @@ export default function UserProfile() {
                   className="my-2 sm:col-span-1"
                   id="averageworkinghour-profile-details"
                 >
-                  <dt className="text-sm font-medium leading-5 text-black">
+                  <dt className="text-sm font-medium leading-5 text-primary-950">
                     {t("average_weekly_working_hours")}
                   </dt>
-                  <dd className="mt-1 text-sm leading-5 text-gray-900">
+                  <dd className="mt-1 text-sm leading-5 text-primary-900">
                     {userData?.weekly_working_hours ?? "-"}
                   </dd>
                 </div>
@@ -765,10 +767,10 @@ export default function UserProfile() {
                   className="my-2 sm:col-span-2"
                   id="videoconnectlink-profile-details"
                 >
-                  <dt className="text-sm font-medium leading-5 text-black">
+                  <dt className="text-sm font-medium leading-5 text-primary-950">
                     {t("video_conference_link")}
                   </dt>
-                  <dd className="mt-1 break-words text-sm leading-5 text-gray-900">
+                  <dd className="mt-1 break-words text-sm leading-5 text-primary-900">
                     {userData?.video_connect_link ? (
                       <a
                         className="text-blue-500"
@@ -893,7 +895,7 @@ export default function UserProfile() {
                       />
                     </div>
                   </div>
-                  <div className="bg-gray-50 px-4 py-3 text-right sm:px-6">
+                  <div className="bg-primary-100 px-4 py-3 text-right sm:px-6">
                     <Submit
                       onClick={handleSubmit}
                       label={t("update")}
@@ -967,7 +969,7 @@ export default function UserProfile() {
                       </div>
                     </div>
                   </div>
-                  <div className="bg-gray-50 px-4 py-3 text-right sm:px-6">
+                  <div className="bg-primary-100 px-4 py-3 text-right sm:px-6">
                     <Submit
                       onClick={changePassword}
                       label={t("change_password")}
@@ -983,10 +985,10 @@ export default function UserProfile() {
       <div className="mb-8 mt-6 md:grid md:grid-cols-3 md:gap-6">
         <div className="md:col-span-1">
           <div className="px-4 sm:px-0">
-            <h3 className="text-lg font-medium leading-6 text-gray-900">
+            <h3 className="text-lg font-medium leading-6 text-primary-900">
               {t("language_selection")}
             </h3>
-            <p className="mt-1 text-sm leading-5 text-gray-600">
+            <p className="mt-1 text-sm leading-5 text-primary-700">
               {t("set_your_local_language")}
             </p>
           </div>
@@ -998,10 +1000,26 @@ export default function UserProfile() {
       <div className="mb-8 mt-6 md:grid md:grid-cols-3 md:gap-6">
         <div className="md:col-span-1">
           <div className="px-4 sm:px-0">
-            <h3 className="text-lg font-medium leading-6 text-gray-900">
+            <h3 className="text-lg font-medium leading-6 text-primary-900 mb-1">
+              {t("theme_selection")}
+            </h3>
+            <KeyboardShortcutKey shortcut={["Shift", "T"]} />
+            <p className="mt-1 text-sm leading-5 text-primary-700">
+              {t("set_your_local_language")}
+            </p>
+          </div>
+        </div>
+        <div className="mt-5 md:col-span-2 md:mt-0">
+          <ThemePicker />
+        </div>
+      </div>
+      <div className="mb-8 mt-6 md:grid md:grid-cols-3 md:gap-6">
+        <div className="md:col-span-1">
+          <div className="px-4 sm:px-0">
+            <h3 className="text-lg font-medium leading-6 text-primary-900">
               {t("software_update")}
             </h3>
-            <p className="mt-1 text-sm leading-5 text-gray-600">
+            <p className="mt-1 text-sm leading-5 text-primary-700">
               {t("check_for_available_update")}
             </p>
           </div>

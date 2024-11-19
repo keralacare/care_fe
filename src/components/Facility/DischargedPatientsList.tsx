@@ -459,7 +459,7 @@ const DischargedPatientsList = ({
                 <Link
                   key={patient.id}
                   href={`/facility/${facility_external_id}/patient/${patient.id}`}
-                  className="text-black"
+                  className="text-primary-950"
                 >
                   <PatientListItem patient={patient} />
                 </Link>
@@ -490,7 +490,7 @@ const PatientListItem = ({ patient }: { patient: PatientModel }) => {
         <CareIcon icon="l-user-injured" className="text-3xl text-gray-800" />
       </div>
       <div className="ml-5 flex flex-col">
-        <h2 className="text-lg font-bold capitalize text-black">
+        <h2 className="text-lg font-bold capitalize text-primary-950">
           {patient.name}
         </h2>
         <span className="text-sm font-medium text-gray-800">
@@ -507,7 +507,7 @@ const PatientListItem = ({ patient }: { patient: PatientModel }) => {
         )}
         <div className="flex-1" />
         <RecordMeta
-          className="text-end text-xs text-gray-600"
+          className="text-end text-xs text-primary-700"
           prefix="last updated"
           time={patient.modified_date}
         />

@@ -190,11 +190,11 @@ const DischargeModal = ({
         variant="warning"
         className="md:max-w-xl"
       >
-        <div className="flex flex-col gap-2 py-2 text-gray-900">
+        <div className="flex flex-col gap-2 py-2 text-primary-900">
           <p>
             Are you sure you want to close this encounter, noting that the
             patient has been admitted for{" "}
-            <span className="font-bold text-black">
+            <span className="font-bold text-primary-950">
               {Math.ceil(encounterDuration.asDays())} days
             </span>
             {" ?"}

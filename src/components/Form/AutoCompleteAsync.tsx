@@ -127,7 +127,7 @@ const AutoCompleteAsync = (props: Props) => {
             />
             {!disabled && (
               <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
-                <div className="absolute right-0 mr-2 flex items-center text-lg text-gray-900">
+                <div className="absolute right-0 mr-2 flex items-center text-lg text-primary-900">
                   {hasSelection && !loading && !required && (
                     <div className="tooltip" id="clear-button">
                       <CareIcon
@@ -177,7 +177,7 @@ const AutoCompleteAsync = (props: Props) => {
                         <div className="flex items-center gap-2">
                           {optionLabel(item)}
                           {optionLabelChip(item) && (
-                            <div className="mt-1 h-fit max-w-fit rounded-full border border-gray-400 bg-gray-100 px-2 text-center text-xs text-gray-900 sm:mt-0">
+                            <div className="mt-1 h-fit max-w-fit rounded-full border border-gray-400 bg-gray-100 px-2 text-center text-xs text-primary-900 sm:mt-0">
                               {optionLabelChip(item)}
                             </div>
                           )}

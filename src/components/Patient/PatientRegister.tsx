@@ -927,7 +927,7 @@ export const PatientRegister = (props: PatientRegisterProps) => {
                   />{" "}
                   Please enter the correct date of birth for the patient
                 </div>
-                <p className="text-sm font-normal text-black">
+                <p className="text-sm font-normal text-primary-950">
                   Each patient in the system is uniquely identifiable by the
                   number and date of birth. Adding incorrect date of birth can
                   result in duplication of patient records.

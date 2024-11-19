@@ -191,7 +191,7 @@ const BOMDisplay: React.FC = () => {
             </button>
           </CopyToClipboard>
           {copyStatus && (
-            <span className="mt-2 block text-sm text-gray-600">
+            <span className="mt-2 block text-sm text-primary-700">
               Copied to clipboard!
             </span>
           )}

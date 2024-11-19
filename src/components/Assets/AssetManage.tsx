@@ -142,22 +142,22 @@ const AssetManage = (props: AssetManageProps) => {
         transactions?.results.map((transaction: AssetTransaction) => (
           <tr key={`transaction_id_${transaction.id}`}>
             <td className="whitespace-nowrap px-6 py-4 text-left text-sm leading-5 text-gray-500">
-              <span className="font-medium text-gray-900">
+              <span className="font-medium text-primary-900">
                 {transaction.from_location.name}
               </span>
             </td>
             <td className="whitespace-nowrap px-6 py-4 text-center text-sm leading-5 text-gray-500">
-              <span className="font-medium text-gray-900">
+              <span className="font-medium text-primary-900">
                 {transaction.to_location.name}
               </span>
             </td>
             <td className="whitespace-nowrap px-6 py-4 text-center text-sm leading-5 text-gray-500">
-              <span className="font-medium text-gray-900">
+              <span className="font-medium text-primary-900">
                 {formatName(transaction.performed_by)}
               </span>
             </td>
             <td className="whitespace-nowrap px-6 py-4 text-right text-sm leading-5 text-gray-500">
-              <span className="font-medium text-gray-900">
+              <span className="font-medium text-primary-900">
                 {formatDateTime(transaction.modified_date)}
               </span>
             </td>
@@ -184,22 +184,22 @@ const AssetManage = (props: AssetManageProps) => {
         services?.results.map((service: AssetService) => (
           <tr key={`service_id_${service.id}`}>
             <td className="whitespace-nowrap px-6 py-4 text-left text-sm leading-5 text-gray-500">
-              <span className="font-medium text-gray-900">
+              <span className="font-medium text-primary-900">
                 {dayjs(service.serviced_on).format("DD MMM YYYY")}
               </span>
             </td>
             <td className="whitespace-nowrap px-6 py-4 text-center text-sm leading-5 text-gray-500">
-              <span className="whitespace-break-spaces break-words font-medium text-gray-900">
+              <span className="whitespace-break-spaces break-words font-medium text-primary-900">
                 {service.note || "--"}
               </span>
             </td>
             <td className="whitespace-nowrap px-6 py-4 text-center text-sm leading-5 text-gray-500">
-              <span className="font-medium text-gray-900">
+              <span className="font-medium text-primary-900">
                 {formatDate(service.created_date)}
               </span>
             </td>
             <td className="whitespace-nowrap px-6 py-4 text-center text-sm leading-5 text-gray-500">
-              <span className="flex justify-center font-medium text-gray-900">
+              <span className="flex justify-center font-medium text-primary-900">
                 {service.edits?.length > 1 ? (
                   <RelativeDateUserMention
                     actionDate={service.edits?.[0]?.edited_on}
@@ -492,7 +492,7 @@ const AssetManage = (props: AssetManageProps) => {
               </div>
             </div>
 
-            <div className="flex flex-col justify-end break-words text-sm text-gray-600">
+            <div className="flex flex-col justify-end break-words text-sm text-primary-700">
               {asset?.created_date && (
                 <RecordMeta prefix={t("created")} time={asset?.created_date} />
               )}

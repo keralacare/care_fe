@@ -63,11 +63,11 @@ const DialogModal = (props: DialogProps) => {
                 >
                   <DialogTitle
                     as="h4"
-                    className="flex w-full flex-col text-lg font-medium leading-6 text-gray-900"
+                    className="flex w-full flex-col text-lg font-medium leading-6 text-primary-900"
                   >
                     <div className="w-full">
                       <h4>{title}</h4>
-                      <p className="mt-2 text-sm text-gray-600">
+                      <p className="mt-2 text-sm text-primary-700">
                         {description}
                       </p>
                     </div>

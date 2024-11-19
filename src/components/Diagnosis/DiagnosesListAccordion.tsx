@@ -42,7 +42,7 @@ export default function DiagnosesListAccordion(props: Props) {
       <div className="flex justify-between">
         {!isVisible && (
           <ButtonV2
-            className="text-md w-full p-0 font-semibold text-black hover:bg-gray-200"
+            className="text-md w-full p-0 font-semibold text-primary-950 hover:bg-gray-200"
             ghost
             onClick={() => {
               setIsVisible((prev) => !prev);
@@ -58,7 +58,7 @@ export default function DiagnosesListAccordion(props: Props) {
           isVisible ? "overflow-visible" : "h-0 overflow-hidden"
         }`}
       >
-        <h3 className="my-2 text-lg font-semibold leading-relaxed text-gray-900">
+        <h3 className="my-2 text-lg font-semibold leading-relaxed text-primary-900">
           Diagnoses
         </h3>
         <div
@@ -73,7 +73,7 @@ export default function DiagnosesListAccordion(props: Props) {
           )}
         </div>
         <ButtonV2
-          className="text-md w-full rounded-lg p-0 text-gray-600 hover:bg-gray-200"
+          className="text-md w-full rounded-lg p-0 text-primary-700 hover:bg-gray-200"
           ghost
           onClick={() => {
             setIsVisible(false);

@@ -58,7 +58,7 @@ export default function InventoryList(props: any) {
       >
         <td className="border-b border-gray-200 p-5 text-sm">
           <div className="flex items-center">
-            <p className="whitespace-nowrap text-gray-900">
+            <p className="whitespace-nowrap text-primary-900">
               {inventoryItem.item_object?.name}
               {inventoryItem.is_low && (
                 <span className="badge badge-danger ml-2">Low Stock</span>
@@ -67,7 +67,7 @@ export default function InventoryList(props: any) {
           </div>
         </td>
         <td className="border-b border-gray-200 p-5 text-sm">
-          <p className="whitespace-nowrap lowercase text-gray-900">
+          <p className="whitespace-nowrap lowercase text-primary-900">
             {inventoryItem.quantity}{" "}
             {inventoryItem.item_object?.default_unit?.name}
           </p>

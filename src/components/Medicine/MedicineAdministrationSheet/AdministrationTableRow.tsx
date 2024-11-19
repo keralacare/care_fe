@@ -61,7 +61,7 @@ export default function MedicineAdministrationTableRow({
   );
   const DosageFrequencyInfo = () => (
     <div className="flex justify-center">
-      <div className="flex gap-1 text-xs font-semibold text-gray-900 lg:flex-col lg:px-2 lg:text-center">
+      <div className="flex gap-1 text-xs font-semibold text-primary-900 lg:flex-col lg:px-2 lg:text-center">
         {prescription.dosage_type !== "TITRATED" ? (
           <p>{prescription.base_dosage}</p>
         ) : (
@@ -212,7 +212,7 @@ export default function MedicineAdministrationTableRow({
                     "text-sm font-semibold uppercase",
                     prescription.discontinued
                       ? "text-gray-700"
-                      : "text-gray-900",
+                      : "text-primary-900",
                   )}
                 >
                   {prescription.medicine_object?.name ??

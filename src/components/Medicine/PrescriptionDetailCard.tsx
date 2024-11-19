@@ -60,7 +60,7 @@ export default function PrescriptionDetailCard({
               <h3
                 className={classNames(
                   "text-lg font-bold transition-all duration-200 ease-in-out",
-                  props.selected ? "text-black" : "text-gray-700",
+                  props.selected ? "text-primary-950" : "text-gray-700",
                 )}
               >
                 {isCollapsed ? (
@@ -138,7 +138,7 @@ export default function PrescriptionDetailCard({
                   </span>
                 </div>
                 {medicine?.type === "brand" && (
-                  <span className="text-xs text-gray-600">
+                  <span className="text-xs text-primary-700">
                     Generic:{" "}
                     <span className="capitalize text-gray-800">
                       {medicine.generic}
@@ -243,7 +243,7 @@ export default function PrescriptionDetailCard({
             )}
           </div>
         )}
-        <div className="flex flex-col gap-1 text-xs text-gray-600 md:mt-3 md:flex-row md:items-center">
+        <div className="flex flex-col gap-1 text-xs text-primary-700 md:mt-3 md:flex-row md:items-center">
           <span className="flex gap-1 font-medium">
             Prescribed
             <RecordMeta
@@ -275,7 +275,7 @@ const Detail = (props: {
   return (
     <div className={classNames("flex flex-col gap-1", props.className)}>
       {props.label && (
-        <label className="text-sm font-medium text-gray-600">
+        <label className="text-sm font-medium text-primary-700">
           {props.label}
         </label>
       )}

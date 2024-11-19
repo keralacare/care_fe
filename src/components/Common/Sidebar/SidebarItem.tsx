@@ -36,8 +36,8 @@ const SidebarItemBase = forwardRef<HTMLAnchorElement, SidebarItemBaseProps>(
         className={`tooltip relative ml-1 mr-2 h-12 flex-1 cursor-pointer rounded-md py-1 font-medium  transition md:flex-none ${
           props.selected
             ? "bg-primary text-accent-500"
-            : "font-normal text-primaryFontLight" +
-              (props.to || props.do ? " hover:bg-secondaryActive" : "")
+            : "font-normal text-primary-800" +
+              (props.to || props.do ? " hover:bg-primary-200" : "")
         }`}
         target={external && "_blank"}
         rel={external && "noreferrer"}

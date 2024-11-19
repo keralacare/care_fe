@@ -73,11 +73,11 @@ export default function PrescriptionsTable({
         </DialogModal>
       )}
       <div className="mb-2 flex flex-wrap items-center justify-between">
-        <div className="flex items-center font-semibold leading-relaxed text-gray-900">
+        <div className="flex items-center font-semibold leading-relaxed text-primary-900">
           <span className="mr-3 text-lg">
             {is_prn ? "PRN Prescriptions" : "Prescriptions"}
           </span>
-          <div className="text-gray-600">
+          <div className="text-primary-700">
             <CareIcon icon="l-history-alt" className="pr-2" />
             <span className="text-xs">
               {lastModified && formatDateTime(lastModified)}
@@ -119,7 +119,7 @@ export default function PrescriptionsTable({
               fieldsToDisplay={[2, 3]}
             />
             {data?.results.length === 0 && (
-              <div className="text-semibold flex items-center justify-center py-2 text-gray-600">
+              <div className="text-semibold flex items-center justify-center py-2 text-primary-700">
                 {t("no_data_found")}
               </div>
             )}

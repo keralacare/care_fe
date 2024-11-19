@@ -100,7 +100,7 @@ export default function ShiftDetails(props: { id: string }) {
     )?.text;
 
     return (
-      <div className="mr-3 mt-2 h-full rounded-lg border bg-primary p-4 text-black shadow md:mr-8">
+      <div className="mr-3 mt-2 h-full rounded-lg border bg-primary p-4 text-primary-950 shadow md:mr-8">
         <div className="mt-2 grid grid-cols-1 justify-between gap-4 md:grid-cols-2">
           <div>
             <span className="font-semibold leading-relaxed">{t("name")}: </span>
@@ -230,7 +230,7 @@ export default function ShiftDetails(props: { id: string }) {
 
   const showFacilityCard = (facilityData: any) => {
     return (
-      <div className="mt-2 h-full rounded-lg border bg-primary p-4 text-black shadow">
+      <div className="mt-2 h-full rounded-lg border bg-primary p-4 text-primary-950 shadow">
         <div>
           <span className="mr-1 font-semibold leading-relaxed">
             {t("name")}:{" "}
@@ -519,7 +519,7 @@ export default function ShiftDetails(props: { id: string }) {
               </div>
             </div>
           )}
-          <div className="mt-4 h-full rounded-lg border bg-primary p-4 text-black shadow">
+          <div className="mt-4 h-full rounded-lg border bg-primary p-4 text-primary-950 shadow">
             <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
               <div>
                 <span className="font-semibold leading-relaxed">
@@ -732,7 +732,7 @@ export default function ShiftDetails(props: { id: string }) {
                   <div className="text-sm font-medium leading-5 text-gray-500">
                     {t("created")}
                   </div>
-                  <div className="mt-1 whitespace-pre text-sm leading-5 text-gray-900">
+                  <div className="mt-1 whitespace-pre text-sm leading-5 text-primary-900">
                     <RecordMeta
                       time={data?.created_date}
                       user={data?.created_by_object}
@@ -745,7 +745,7 @@ export default function ShiftDetails(props: { id: string }) {
                   <div className="text-sm font-medium leading-5 text-gray-500">
                     {t("last_edited")}
                   </div>
-                  <div className="mt-1 whitespace-pre text-sm leading-5 text-gray-900">
+                  <div className="mt-1 whitespace-pre text-sm leading-5 text-primary-900">
                     <RecordMeta
                       time={data?.modified_date}
                       user={data?.last_edited_by_object}

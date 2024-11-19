@@ -14,7 +14,7 @@ export const InsuranceDetialsCard = (props: InsuranceDetails) => {
   return (
     <div className="w-full">
       <div className="h-full space-y-2 rounded-lg bg-primary p-7 shadow">
-        <div className="border-b border-dashed pb-2 text-xl font-bold text-gray-900">
+        <div className="border-b border-dashed pb-2 text-xl font-bold text-primary-900">
           Policy Details
         </div>
         {data ? (
@@ -61,7 +61,7 @@ export const InsuranceDetialsCard = (props: InsuranceDetails) => {
                         `/facility/${data.patient_object?.facility_object?.id}/patient/${data.patient_object?.id}/insurance`,
                       );
                     }}
-                    className="h-auto whitespace-pre-wrap border border-gray-500 bg-primary text-black hover:bg-gray-300"
+                    className="h-auto whitespace-pre-wrap border border-gray-500 bg-primary text-primary-950 hover:bg-gray-300"
                   >
                     View All Details
                   </ButtonV2>

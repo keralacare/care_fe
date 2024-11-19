@@ -83,7 +83,7 @@ export default function DoctorVideoSlideover(props: {
       dialogClass="md:w-[450px]"
     >
       {/* Title and close button */}
-      <p className="-mt-3 pb-4 text-sm text-gray-600">
+      <p className="-mt-3 pb-4 text-sm text-primary-700">
         Select a doctor to connect via video
       </p>
       <div className="flex justify-center" id="doctor-connect-filter-tabs">
@@ -260,7 +260,7 @@ function UserListItem({ user }: { user: UserAnnotatedWithGroup }) {
                 />
               </>
             ) : (
-              <CareIcon icon={icon} className="text-2xl text-gray-600" />
+              <CareIcon icon={icon} className="text-2xl text-primary-700" />
             )
           }
         </div>
@@ -275,12 +275,12 @@ function UserListItem({ user }: { user: UserAnnotatedWithGroup }) {
             />
           </div>
           {!!user.skills.length && (
-            <div className="mt-1 text-sm leading-5 text-gray-900">
+            <div className="mt-1 text-sm leading-5 text-primary-900">
               <div className="flex flex-wrap gap-2">
                 {user.skills?.map((skill: SkillObjectModel) => (
                   <span
                     key={skill.id}
-                    className="flex items-center gap-2 rounded-full border-gray-300 bg-gray-200 px-3 text-xs text-gray-900"
+                    className="flex items-center gap-2 rounded-full border-gray-300 bg-gray-200 px-3 text-xs text-primary-900"
                   >
                     <p className="py-1.5">{skill.name}</p>
                   </span>

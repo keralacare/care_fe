@@ -86,7 +86,7 @@ export default function CameraCaptureDialog(props: CameraCaptureDialogProps) {
             />
           </div>
           <div className="m-4">
-            <h1 className="text-xl text-black">{t("camera")}</h1>
+            <h1 className="text-xl text-primary-950">{t("camera")}</h1>
           </div>
         </div>
       }

@@ -85,14 +85,14 @@ export default function InventoryLog(props: any) {
         <td className="border-b border-gray-200 p-5 text-sm hover:bg-gray-100">
           <div className="flex items-center">
             <div className="ml-3">
-              <p className="whitespace-nowrap text-gray-900">
+              <p className="whitespace-nowrap text-primary-900">
                 {formatDateTime(inventoryItem.created_date)}
               </p>
             </div>
           </div>
         </td>
         <td className="border-b border-gray-200 p-5 text-sm hover:bg-gray-100">
-          <p className="whitespace-nowrap lowercase text-gray-900">
+          <p className="whitespace-nowrap lowercase text-primary-900">
             {inventoryItem.quantity_in_default_unit}{" "}
             {inventoryItem.item_object?.default_unit?.name}
             {inventoryItem.probable_accident && (
@@ -104,7 +104,7 @@ export default function InventoryLog(props: any) {
           </p>
         </td>
         <td className="border-b border-gray-200 p-5 text-sm hover:bg-gray-100">
-          <p className="whitespace-nowrap lowercase text-gray-900">
+          <p className="whitespace-nowrap lowercase text-primary-900">
             {inventoryItem.is_incoming ? (
               <span className="ml-2 text-accent-600">Added Stock</span>
             ) : (

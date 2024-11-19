@@ -24,7 +24,7 @@ export default function ResourceDetails(props: { id: string }) {
   });
   const showFacilityCard = (facilityData: any) => {
     return (
-      <div className="mt-2 h-full rounded-lg border bg-primary p-4 text-black shadow">
+      <div className="mt-2 h-full rounded-lg border bg-primary p-4 text-primary-950 shadow">
         <div>
           <span className="mr-1 font-semibold leading-relaxed">Name: </span>
           {facilityData?.name || "--"}
@@ -228,7 +228,7 @@ export default function ResourceDetails(props: { id: string }) {
               </div>
             </div>
           )}
-          <div className="mt-4 h-full rounded-lg border bg-primary p-4 text-black shadow">
+          <div className="mt-4 h-full rounded-lg border bg-primary p-4 text-primary-950 shadow">
             <div className="mb-4 flex flex-col sm:flex-row sm:justify-between">
               <div className="text-xl font-semibold">{data.title || "--"}</div>
               <ButtonV2
@@ -310,10 +310,10 @@ export default function ResourceDetails(props: { id: string }) {
 
           <div className="mt-2 flex justify-between rounded-lg bg-primary p-2 px-4 text-center shadow">
             <div className="w-1/2 border-r-2 px-1">
-              <div className="text-sm font-medium leading-5 text-black">
+              <div className="text-sm font-medium leading-5 text-primary-950">
                 Created
               </div>
-              <div className="mt-1 text-sm leading-5 text-gray-900">
+              <div className="mt-1 text-sm leading-5 text-primary-900">
                 <div className="text-sm">
                   {data.created_by_object && formatName(data.created_by_object)}
                 </div>
@@ -323,10 +323,10 @@ export default function ResourceDetails(props: { id: string }) {
               </div>
             </div>
             <div className="w-1/2 px-1">
-              <div className="text-sm font-medium leading-5 text-black">
+              <div className="text-sm font-medium leading-5 text-primary-950">
                 Last Edited
               </div>
-              <div className="mt-1 text-sm leading-5 text-gray-900">
+              <div className="mt-1 text-sm leading-5 text-primary-900">
                 <div className="text-sm">
                   {formatName(data.last_edited_by_object)}
                 </div>

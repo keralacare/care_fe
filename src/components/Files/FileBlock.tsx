@@ -52,7 +52,7 @@ export default function FileBlock(props: FileBlockProps) {
   return (
     <div
       id="file-div"
-      className={`flex flex-col justify-between gap-2 rounded-lg border border-gray-300 lg:flex-row lg:items-center ${archived ? "text-gray-600" : "bg-primary"} px-4 py-2 transition-all hover:bg-gray-100`}
+      className={`flex flex-col justify-between gap-2 rounded-lg border border-gray-300 lg:flex-row lg:items-center ${archived ? "text-primary-700" : "bg-primary"} px-4 py-2 transition-all hover:bg-gray-100`}
     >
       <div className="flex items-center gap-4">
         <div

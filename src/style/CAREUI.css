@@ -5,8 +5,8 @@
     right: -4px;
     top: calc(50% - 3px);
     height: 6px;
-    background: #fff;
     z-index: -1;
+    @apply bg-primary
 }
 
 .cui-label-required::after {
@@ -18,7 +18,7 @@
 }
 
 .cui-input-base {
-    @apply text-sm block w-full py-3 px-4 text-primaryFont placeholder:text-gray-600 bg-primary disabled:bg-secondary border border-secondaryActive focus:border-accent-400 ring-0 focus:ring-1 ring-accent-400 outline-none focus:outline-none shadow-none rounded transition-colors duration-300 !important
+    @apply text-sm block w-full py-3 px-4 text-primary-950 placeholder:text-primary-700 bg-primary disabled:bg-primary-100 border border-primary-200 focus:border-accent-400 ring-0 focus:ring-1 ring-accent-400 outline-none focus:outline-none shadow-none rounded transition-colors duration-300 !important
 }
 
 .cui-dropdown-base {
@@ -103,9 +103,9 @@
 .button-accent-ghost { @apply accent-accent-500 hover:bg-accent-400/10 text-accent-500 !important }
 .button-accent-border { @apply border border-accent-500 }
 
-.button-gray-default { @apply accent-gray-200 bg-primary hover:bg-gray-200 text-gray-800 !important }
-.button-gray-ghost { @apply accent-gray-300 hover:bg-gray-400 text-gray-700 !important }
-.button-gray-border { @apply border border-gray-300 }
+.button-gray-default { @apply accent-primary-200 bg-primary-100 hover:bg-primary-200 text-primary-800 !important }
+.button-gray-ghost { @apply accent-primary-300 hover:bg-primary-300 text-primary-800 !important }
+.button-gray-border { @apply border border-primary-300 }
 
 .button-danger-default { @apply accent-danger-500 bg-danger-500 hover:bg-danger-400 text-white !important }
 .button-danger-ghost { @apply accent-danger-500 hover:bg-danger-100 text-danger-500 !important }
@@ -126,8 +126,8 @@
 .button-size-default { @apply py-2 px-4 text-sm }
 .button-size-large { @apply py-3 px-5 text-base }
 
-.dropdown-item-primary { @apply accent-accent-500 hover:bg-accent-100 text-black hover:text-accent-500 }
-.dropdown-item-secondary { @apply accent-gray-200 hover:bg-gray-200 text-gray-700 }
+.dropdown-item-primary { @apply accent-accent-500 hover:bg-accent-100 text-primary-950 hover:text-accent-500 }
+.dropdown-item-primary-100 { @apply accent-gray-200 hover:bg-gray-200 text-gray-700 }
 .dropdown-item-danger { @apply accent-danger-500 hover:bg-danger-100 text-danger-500 }
 .dropdown-item-warning { @apply accent-warning-500 hover:bg-warning-100 text-warning-500 }
 .dropdown-item-alert { @apply accent-alert-600 hover:bg-alert-100 text-alert-600 }

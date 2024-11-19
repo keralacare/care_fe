@@ -50,7 +50,7 @@ export const ConsultationCard = (props: ConsultationProps) => {
           <div>Invalid Patient Data</div>
         )}
       </DialogModal>
-      <div className="mt-4 block cursor-pointer rounded-lg border bg-primary p-4 text-black shadow hover:border-accent-500">
+      <div className="mt-4 block cursor-pointer rounded-lg border bg-primary p-4 text-primary-950 shadow hover:border-accent-500">
         {itemData.is_kasp && (
           <div className="ml-3 mt-2 inline-flex items-center rounded-md bg-yellow-100 px-2.5 py-0.5 text-sm font-medium leading-5 text-yellow-800">
             {careConfig.kasp.string}
@@ -146,8 +146,8 @@ export const ConsultationCard = (props: ConsultationProps) => {
         <div className="mt-8 flex flex-col">
           {
             <div className="flex flex-col items-center text-sm text-gray-700 md:flex-row">
-              <div className="font-medium text-black">Created : </div>
-              <div className="ml-1 text-black">
+              <div className="font-medium text-primary-950">Created : </div>
+              <div className="ml-1 text-primary-950">
                 <RelativeDateUserMention
                   tooltipPosition="right"
                   actionDate={itemData.created_date}
@@ -157,7 +157,7 @@ export const ConsultationCard = (props: ConsultationProps) => {
             </div>
           }
           <div className="flex flex-col items-center text-sm text-gray-700 md:flex-row">
-            <div className="font-medium text-black">Last Modified : </div>
+            <div className="font-medium text-primary-950">Last Modified : </div>
             <div className="ml-1 text-gray-700">
               <RelativeDateUserMention
                 tooltipPosition="right"
@@ -170,7 +170,7 @@ export const ConsultationCard = (props: ConsultationProps) => {
         <div className="mt-4 flex w-full flex-col justify-between gap-1 md:flex-row">
           <ButtonV2
             id="view_consultation_updates"
-            className="h-auto whitespace-pre-wrap border border-gray-500 bg-primary text-black hover:bg-gray-300"
+            className="h-auto whitespace-pre-wrap border border-gray-500 bg-primary text-primary-950 hover:bg-gray-300"
             onClick={() =>
               navigate(
                 `/facility/${itemData.facility}/patient/${itemData.patient}/consultation/${itemData.id}`,
@@ -180,7 +180,7 @@ export const ConsultationCard = (props: ConsultationProps) => {
             View Consultation / Consultation Updates
           </ButtonV2>
           <ButtonV2
-            className="h-auto whitespace-pre-wrap border border-gray-500 bg-primary text-black hover:bg-gray-300"
+            className="h-auto whitespace-pre-wrap border border-gray-500 bg-primary text-primary-950 hover:bg-gray-300"
             onClick={() =>
               navigate(
                 `/facility/${itemData.facility}/patient/${itemData.patient}/consultation/${itemData.id}/files/`,
@@ -191,7 +191,7 @@ export const ConsultationCard = (props: ConsultationProps) => {
           </ButtonV2>
           {isLastConsultation && (
             <ButtonV2
-              className="h-auto whitespace-pre-wrap border border-gray-500 bg-primary text-black hover:bg-gray-300"
+              className="h-auto whitespace-pre-wrap border border-gray-500 bg-primary text-primary-950 hover:bg-gray-300"
               onClick={() => {
                 if (itemData.admitted && !itemData.current_bed) {
                   Notification.Error({

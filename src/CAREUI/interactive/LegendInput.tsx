@@ -86,7 +86,7 @@ export default function LegendInput(props: InputProps) {
             htmlFor={props.id || props.name}
             ref={legendRef}
             className={classNames(
-              "absolute z-10 flex cursor-text items-center font-semibold transition-all",
+              "absolute z-10 flex cursor-text items-center font-semibold transition-all text-primary-950",
               focused || ref.current?.value
                 ? "cui-input-legend h-auto"
                 : "top-0 h-full",
@@ -130,7 +130,7 @@ export default function LegendInput(props: InputProps) {
           required={props.required}
           autoComplete={props.autoComplete}
           className={classNames(
-            "cui-input w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-2 focus:border-accent-500 focus:bg-gray-100 focus:outline-none focus:ring-0",
+            "cui-input w-full rounded-md border-primary-200 bg-primary-50 shadow-sm focus:border-2 focus:border-accent-500 focus:bg-primary-100 focus:outline-none focus:ring-0",
             props.size === "small" && "px-3 py-2 text-xs",
             (!props.size || !["small", "large"].includes(props.size)) &&
               "px-4 py-3",

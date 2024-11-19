@@ -134,13 +134,13 @@ const DesktopView = (props: Props) => {
       ref={modal}
       style={positionAttributes}
       className={classNames(
-        "absolute z-10 rounded-lg border border-gray-400 bg-primary text-black shadow-lg transition-all",
+        "absolute z-10 rounded-lg border border-gray-400 bg-primary text-primary-950 shadow-lg transition-all",
         props.show ? "visible opacity-100" : "invisible opacity-0",
         props.className,
       )}
     >
       {children}
-      <div className="flex w-full items-center justify-end gap-2 rounded-b-lg border-t border-t-gray-300 bg-gray-100 p-2">
+      <div className="flex w-full items-center justify-end gap-2 rounded-b-lg border-t border-t-primary-300 bg-primary-100 p-2">
         <Cancel onClick={props.onHide} label={t("close")} shadow={false} />
         {props.onSubmit && (
           <Submit onClick={props.onSubmit} label={t("save")} shadow={false} />

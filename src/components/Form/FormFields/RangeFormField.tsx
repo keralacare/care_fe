@@ -210,7 +210,7 @@ export default function RangeFormField(props: Props) {
         ))}
       </div>
 
-      <div className="flex justify-between text-xs text-black/30">
+      <div className="flex justify-between text-xs text-primary-950/30">
         <span>{properRoundOf(sliderMin)}</span>
         <span>{properRoundOf(sliderMax)}</span>
       </div>

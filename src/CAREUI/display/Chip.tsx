@@ -37,8 +37,7 @@ export default function Chip({
         !hideBorder && "border",
         {
           accent: "border-accent-300 bg-accent-500/20 text-accent-600",
-          secondary:
-            "border-secondaryActive bg-secondary text-primaryFontLight",
+          secondary: "border-primary-200 bg-primary-100 text-primary-800",
           success: "border-success-300 bg-success-500/20 text-success-600",
           danger: "border-danger-300 bg-danger-500/20 text-danger-600",
           warning: "border-warning-300 bg-warning-500/20 text-warning-600",

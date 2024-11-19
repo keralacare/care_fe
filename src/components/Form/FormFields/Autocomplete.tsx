@@ -209,7 +209,7 @@ export const Autocomplete = <T, V>(props: AutocompleteProps<T, V>) => {
             />
             {!props.disabled && (
               <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
-                <div className="absolute right-0 top-1 mr-2 flex h-full items-center gap-1 pb-2 text-lg text-gray-900">
+                <div className="absolute right-0 top-1 mr-2 flex h-full items-center gap-1 pb-2 text-lg text-primary-900">
                   <span>{value?.icon}</span>
 
                   {value && !props.isLoading && !props.required && (

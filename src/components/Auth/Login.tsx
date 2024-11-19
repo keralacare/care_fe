@@ -17,6 +17,7 @@ import FiltersCache from "@/Utils/FiltersCache";
 import * as Notification from "@/Utils/Notifications";
 import routes from "@/Utils/request/api";
 import request from "@/Utils/request/request";
+import { useTheme } from "@/Utils/themes";
 import { classNames } from "@/Utils/utils";
 
 const Login = (props: { forgot?: boolean }) => {
@@ -159,10 +160,14 @@ const Login = (props: { forgot?: boolean }) => {
     }
   };
 
+  const [theme] = useTheme();
+
   return (
     <div className="relative flex flex-col-reverse overflow-hidden md:h-screen md:flex-row">
       {!forgotPassword && <BrowserWarning />}
-      <div className="login-hero relative flex flex-auto flex-col justify-between p-6 md:h-full md:w-[calc(50%+130px)] md:flex-none md:p-0 md:px-16 md:pr-[calc(4rem+130px)]">
+      <div
+        className={`login-hero ${theme?.theme.type === "dark" ? "dark-login-hero" : ""} relative flex flex-auto flex-col justify-between p-6 md:h-full md:w-[calc(50%+130px)] md:flex-none md:p-0 md:px-16 md:pr-[calc(4rem+130px)]`}
+      >
         <div></div>
         <div className="mt-4 flex flex-col items-start rounded-lg py-4 md:mt-12">
           <div className="mb-4 hidden items-center gap-6 md:flex">
@@ -203,7 +208,7 @@ const Login = (props: { forgot?: boolean }) => {
                 />
               </div>
             ) : (
-              <div className="max-w-xl py-6 pl-1 text-base font-semibold text-gray-400 md:text-lg lg:text-xl">
+              <div className="max-w-xl py-6 pl-1 text-base font-semibold text-gray-300 md:text-lg lg:text-xl">
                 {t("goal")}
               </div>
             )}
@@ -223,7 +228,7 @@ const Login = (props: { forgot?: boolean }) => {
                   alt="Logo of Digital Public Goods Alliance"
                 />
               </a>
-              <div className="ml-2 h-8 w-px rounded-full bg-primary/50" />
+              <div className="ml-2 h-8 w-px rounded-full bg-white/50" />
               <a href={urls.ohcn} rel="noopener noreferrer" target="_blank">
                 <img
                   src="/images/ohc_logo_light.svg"
@@ -236,7 +241,7 @@ const Login = (props: { forgot?: boolean }) => {
               href={urls.ohcn}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-500"
+              className="text-gray-400"
             >
               {t("footer_body")}
             </a>
@@ -262,7 +267,7 @@ const Login = (props: { forgot?: boolean }) => {
           </div>
         </div>
       </div>
-      <div className="login-hero-form my-4 w-full md:mt-0 md:h-full md:w-1/2">
+      <div className="login-hero-form my-4 w-full md:mt-0 md:h-full md:w-1/2 bg-primary">
         <div className="relative h-full items-center justify-center md:flex">
           <div className="p-8 md:w-4/5 md:p-0 lg:w-[400px]">
             <div className="flex items-center gap-1 md:hidden">

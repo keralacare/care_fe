@@ -38,7 +38,7 @@ const AssetInfoPopover = ({ asset, className }: AssetInfoPopoverProps) => {
       >
         <PopoverPanel className={className}>
           <div className="flex flex-col gap-3 p-5">
-            <div className="flex items-center gap-2 text-lg font-bold text-black">
+            <div className="flex items-center gap-2 text-lg font-bold text-primary-950">
               <CareIcon
                 icon={
                   (
@@ -52,18 +52,18 @@ const AssetInfoPopover = ({ asset, className }: AssetInfoPopoverProps) => {
               <p>{asset?.name}</p>
             </div>
             <div className="flex flex-col gap-1">
-              <p className="text-sm text-black md:text-base">
+              <p className="text-sm text-primary-950 md:text-base">
                 {t("middleware_hostname")}:
               </p>
-              <p className="break-words text-gray-600">
+              <p className="break-words text-primary-700">
                 {asset?.resolved_middleware?.hostname}
               </p>
             </div>
             <div className="flex flex-col gap-1">
-              <p className="text-sm text-black md:text-base">
+              <p className="text-sm text-primary-950 md:text-base">
                 {t("local_ip_address")}:
               </p>
-              <p className="break-words text-gray-600">
+              <p className="break-words text-primary-700">
                 {asset?.meta?.local_ip_address}
               </p>
             </div>

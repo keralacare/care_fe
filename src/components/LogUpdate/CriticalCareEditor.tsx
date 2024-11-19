@@ -71,7 +71,7 @@ export default function CriticalCareEditor(props: Props) {
         </ButtonV2>
       </div>
       <Card className="shadow-lg md:rounded-xl lg:p-8">
-        <h3 className="mb-6 text-black">
+        <h3 className="mb-6 text-primary-950">
           {current
             ? LogUpdateSections[current].meta.title
             : t("record_updates")}

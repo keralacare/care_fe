@@ -221,7 +221,7 @@ const ExcelViewer = ({
           </div>
           {fileData && fileData.length > 5 && (
             <div className="flex w-full flex-wrap items-center justify-between">
-              <p className="my-6 text-gray-600 md:w-auto">
+              <p className="my-6 text-primary-700 md:w-auto">
                 Showing {currentPage * rowsPerPage - rowsPerPage + 1} to{" "}
                 {currentPage * rowsPerPage > fileData.length
                   ? fileData.length
@@ -240,7 +240,7 @@ const ExcelViewer = ({
                 />
               )}
               <select
-                className="my-4 ml-2 h-9 w-[4.5rem] rounded-md border border-accent-400 py-0 pl-2 pr-4 text-gray-600"
+                className="my-4 ml-2 h-9 w-[4.5rem] rounded-md border border-accent-400 py-0 pl-2 pr-4 text-primary-700"
                 value={rowsPerPage}
                 onChange={(e) => {
                   setRowsPerPage(+e.target.value);

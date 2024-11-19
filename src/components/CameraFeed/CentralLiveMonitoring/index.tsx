@@ -60,7 +60,7 @@ export default function CentralLiveMonitoring(props: { facilityId: string }) {
       facilityQuery.loading ? (
         <Loading />
       ) : data.results.length === 0 ? (
-        <div className="flex h-[80vh] w-full items-center justify-center text-center text-black">
+        <div className="flex h-[80vh] w-full items-center justify-center text-center text-primary-950">
           No Camera present in this location or facility.
         </div>
       ) : (

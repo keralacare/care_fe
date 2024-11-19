@@ -35,7 +35,7 @@ export const NoticeBoard = () => {
                   {item.caused_by.user_type}
                 </span>
               </div>
-              <div className="text-xs text-gray-900">
+              <div className="text-xs text-primary-900">
                 {t("on")}: {formatDateTime(item.created_date)}
               </div>
             </div>

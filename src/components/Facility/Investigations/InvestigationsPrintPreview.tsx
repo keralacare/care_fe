@@ -20,7 +20,7 @@ const InvestigationEntry = ({
   return (
     <tr className="border-y border-y-gray-400 text-center text-xs transition-all duration-200 ease-in-out even:bg-gray-100">
       <td className="whitespace px-6 py-4 text-left">
-        <p className="text-sm font-medium text-gray-900">
+        <p className="text-sm font-medium text-primary-900">
           {investigation.investigation_object.name || "---"}
         </p>
         <p className="flex flex-row gap-x-2">
@@ -31,7 +31,7 @@ const InvestigationEntry = ({
             {investigation.investigation_object.max_value || ""}
           </span>
         </p>
-        <p className="text-gray-600">
+        <p className="text-primary-700">
           {t("investigations__unit")}:{" "}
           {investigation.investigation_object.unit || "---"}
         </p>
@@ -54,7 +54,7 @@ const InvestigationsPreviewTable = ({
   const { t } = useTranslation();
   if (!investigations) {
     return (
-      <tr className="text-center text-gray-500 print:text-black">
+      <tr className="text-center text-gray-500 print:text-primary-950">
         <td className="col-span-6">{t("no_tests_taken")}</td>
       </tr>
     );

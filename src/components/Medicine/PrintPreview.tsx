@@ -193,7 +193,7 @@ const PrescriptionEntry = ({ obj }: { obj: Prescription }) => {
           </strong>{" "}
         </p>
         {medicine?.type === "brand" && (
-          <span className="text-xs text-gray-600">
+          <span className="text-xs text-primary-700">
             <p>
               Generic:{" "}
               <span className="capitalize text-gray-800">

@@ -34,7 +34,7 @@ export default function Steps(props: { steps: Step[] }) {
                       aria-hidden="true"
                     />
                   </span>
-                  <span className="ml-4 text-sm font-medium text-gray-900">
+                  <span className="ml-4 text-sm font-medium text-primary-900">
                     {step.name}
                   </span>
                 </span>
@@ -67,11 +67,11 @@ export default function Steps(props: { steps: Step[] }) {
               >
                 <span className="flex items-center px-6 py-4 text-sm font-medium">
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-gray-300 group-hover:border-gray-400">
-                    <span className="text-gray-500 group-hover:text-gray-900">
+                    <span className="text-gray-500 group-hover:text-primary-900">
                       {step.id}
                     </span>
                   </span>
-                  <span className="ml-4 text-sm font-medium text-gray-500 group-hover:text-gray-900">
+                  <span className="ml-4 text-sm font-medium text-gray-500 group-hover:text-primary-900">
                     {step.name}
                   </span>
                 </span>

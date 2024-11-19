@@ -101,7 +101,7 @@ const PatientNoteCard = ({
                 </span>
               )}
             </div>
-            <div className="text-xs text-gray-600">
+            <div className="text-xs text-primary-700">
               <div className="tooltip inline">
                 <span className="tooltip-text tooltip-bottom">
                   {formatDateTime(note.created_date)}
@@ -117,7 +117,7 @@ const PatientNoteCard = ({
               ) && (
                 <div className="flex">
                   <div
-                    className="cursor-pointer text-xs text-gray-600"
+                    className="cursor-pointer text-xs text-primary-700"
                     onClick={() => {
                       fetchEditHistory();
                       setShowEditHistory(true);
@@ -243,14 +243,14 @@ const PatientNoteCard = ({
                         <p className="text-sm font-medium text-gray-500">
                           {isLast ? "Created" : "Edited"} On
                         </p>
-                        <p className="text-sm text-gray-900">
+                        <p className="text-sm text-primary-900">
                           {formatDateTime(edit.edited_date)}
                         </p>
                       </div>
                     </div>
                     <div className="mt-2 grow">
                       <p className="text-sm font-medium text-gray-500">Note</p>
-                      <p className="text-sm text-gray-900">{edit.note}</p>
+                      <p className="text-sm text-primary-900">{edit.note}</p>
                     </div>
                   </div>
                 );

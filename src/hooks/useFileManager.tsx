@@ -243,8 +243,8 @@ export default function useFileManager(
               />
             </div>
             <div className="text-sm">
-              <h1 className="text-xl text-black">Archive File</h1>
-              <span className="text-sm text-gray-600">
+              <h1 className="text-xl text-primary-950">Archive File</h1>
+              <span className="text-sm text-primary-700">
                 This action is irreversible. Once a file is archived it cannot
                 be unarchived.
               </span>
@@ -290,7 +290,7 @@ export default function useFileManager(
           archiveDialogueOpen.archived_datetime !== null
         }
         title={
-          <h1 className="text-xl text-black">
+          <h1 className="text-xl text-primary-950">
             {archiveDialogueOpen?.name} (Archived)
           </h1>
         }
@@ -368,7 +368,7 @@ export default function useFileManager(
               <CareIcon icon="l-edit-alt" className="text-lg text-accent-500" />
             </div>
             <div className="m-4">
-              <h1 className="text-xl text-black">Rename File</h1>
+              <h1 className="text-xl text-primary-950">Rename File</h1>
             </div>
           </div>
         }

@@ -35,7 +35,7 @@ const DoctorNoteReplyPreviewCard = ({
                     </span>
                   )}
                 </div>
-                <div className="text-xs text-gray-600">
+                <div className="text-xs text-primary-700">
                   <div className="tooltip inline">
                     <span className="tooltip-text tooltip-bottom">
                       {formatDateTime(parentNote.created_date)}
@@ -46,7 +46,7 @@ const DoctorNoteReplyPreviewCard = ({
               </div>
               {cancelReply && (
                 <div
-                  className="cursor-pointer text-xs text-gray-600"
+                  className="cursor-pointer text-xs text-primary-700"
                   onClick={cancelReply}
                 >
                   Cancel

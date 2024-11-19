@@ -37,7 +37,7 @@ export const SampleDetails = ({ id }: DetailRoute) => {
     param ? (
       <span className="badge badge-pill badge-warning">{t("yes")}</span>
     ) : (
-      <span className="badge badge-pill badge-secondary">{t("no")}</span>
+      <span className="badge badge-pill badge-primary-100">{t("no")}</span>
     );
 
   const showPatientCard = (patientData: any) => {
@@ -49,7 +49,7 @@ export const SampleDetails = ({ id }: DetailRoute) => {
     )?.text;
 
     return (
-      <div className="mr-3 mt-2 h-full rounded-lg border bg-primary p-4 text-black shadow md:mr-8">
+      <div className="mr-3 mt-2 h-full rounded-lg border bg-primary p-4 text-primary-950 shadow md:mr-8">
         <div className="grid grid-cols-1 md:grid-cols-2">
           <div className="mt-2 flex flex-col gap-2">
             <div>

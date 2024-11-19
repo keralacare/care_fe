@@ -13,7 +13,7 @@ import { formatDateTime } from "@/Utils/utils";
 const ReportRow = ({ data, name, min, max }: any) => {
   return (
     <tr className="bg-primary even:bg-gray-50">
-      <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
+      <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-primary-900">
         {name}
       </td>
       {data.map((d: any) => {

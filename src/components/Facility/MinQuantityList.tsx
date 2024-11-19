@@ -51,7 +51,7 @@ export default function MinQuantityList(props: any) {
       <tr key={inventoryItem.id} className="bg-primary">
         <td className="cursor-pointer border-b border-gray-200 p-5 hover:bg-gray-200 sm:cursor-default sm:text-sm sm:hover:bg-primary">
           <div className="hidden flex-col sm:flex">
-            <p className="whitespace-nowrap font-normal text-gray-900">
+            <p className="whitespace-nowrap font-normal text-primary-900">
               {inventoryItem.item_object?.name}
             </p>
           </div>
@@ -68,16 +68,16 @@ export default function MinQuantityList(props: any) {
           >
             <div className="flex w-full items-center justify-between sm:hidden">
               <div className="flex flex-col text-start">
-                <p className="whitespace-nowrap font-semibold text-gray-900">
+                <p className="whitespace-nowrap font-semibold text-primary-900">
                   {inventoryItem.item_object?.name}
                 </p>
-                <p className="mt-1 whitespace-nowrap text-sm text-gray-900">
+                <p className="mt-1 whitespace-nowrap text-sm text-primary-900">
                   {"Min Quantity: "}
                   {inventoryItem.min_quantity}{" "}
                   {inventoryItem.item_object?.default_unit?.name}
                 </p>
               </div>
-              <div className="text-gray-600">
+              <div className="text-primary-700">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -97,7 +97,7 @@ export default function MinQuantityList(props: any) {
           </ButtonV2>
         </td>
         <td className="hidden w-full justify-between border-b border-gray-200 p-5 text-sm sm:flex">
-          <p className="mt-2 whitespace-nowrap lowercase text-gray-900">
+          <p className="mt-2 whitespace-nowrap lowercase text-primary-900">
             {inventoryItem.min_quantity}{" "}
             {inventoryItem.item_object?.default_unit?.name}
           </p>

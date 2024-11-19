@@ -127,7 +127,7 @@ export const FacilityList = () => {
   } else if (permittedData.results && permittedData.results.length === 0) {
     manageFacilities = hasFiltersApplied(qParams) ? (
       <div className="w-full rounded-lg bg-primary p-3">
-        <div className="mt-4 flex w-full justify-center text-2xl font-bold text-gray-600">
+        <div className="mt-4 flex w-full justify-center text-2xl font-bold text-primary-700">
           {t("no_facilities")}
         </div>
       </div>

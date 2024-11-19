@@ -212,7 +212,7 @@ export default function CentralNursingStation({ facilityId }: Props) {
       {data === undefined || query.loading ? (
         <Loading />
       ) : data.length === 0 ? (
-        <div className="flex h-[80vh] w-full items-center justify-center text-center text-black">
+        <div className="flex h-[80vh] w-full items-center justify-center text-center text-primary-950">
           {t("no_vitals_present")}
         </div>
       ) : (

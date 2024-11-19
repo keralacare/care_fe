@@ -133,7 +133,7 @@ export default function InvestigationBuilder(
             key={i}
             className={`border-2 ${
               activeIdx === i ? "border-accent-500" : "border-gray-500"
-            } mb-2 border-spacing-2 rounded-md border-dashed p-3 text-sm text-gray-600`}
+            } mb-2 border-spacing-2 rounded-md border-dashed p-3 text-sm text-primary-700`}
           >
             <div className="mb-2 flex flex-wrap items-center gap-2 md:flex-row md:gap-4">
               <h4 className="text-base font-medium text-gray-700">
@@ -269,7 +269,7 @@ export default function InvestigationBuilder(
         onClick={() => {
           setInvestigations([...investigations, { repetitive: false }]);
         }}
-        className="mt-4 block w-full bg-gray-200 px-4 py-2 text-left text-sm font-bold leading-5 text-gray-700 shadow-sm hover:bg-gray-300 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-none"
+        className="mt-4 block w-full bg-gray-200 px-4 py-2 text-left text-sm font-bold leading-5 text-gray-700 shadow-sm hover:bg-gray-300 hover:text-primary-900 focus:bg-gray-100 focus:text-primary-900 focus:outline-none"
       >
         + Add Investigation
       </button>

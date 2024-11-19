@@ -56,7 +56,7 @@ const MultiSelectMenuV2 = <T, V>(props: Props<T, V>) => {
       disabled: props.optionDisabled?.(option),
       isSelected: props.value?.includes(value as any) ?? false,
       displayChip: (
-        <div className="rounded-full border border-gray-400 bg-gray-100 px-2 text-xs text-gray-900">
+        <div className="rounded-full border border-gray-400 bg-gray-100 px-2 text-xs text-primary-900">
           {selectedLabel}
         </div>
       ),
@@ -104,7 +104,7 @@ const MultiSelectMenuV2 = <T, V>(props: Props<T, V>) => {
               >
                 <div className="relative z-0 flex w-full items-center">
                   <div className="relative flex flex-1 items-center pr-4 focus:z-10">
-                    <p className="ml-2.5 text-sm font-normal text-gray-600">
+                    <p className="ml-2.5 text-sm font-normal text-primary-700">
                       <Placeholder />
                     </p>
 
@@ -131,7 +131,7 @@ const MultiSelectMenuV2 = <T, V>(props: Props<T, V>) => {
                   <CareIcon
                     id="dropdown-toggle"
                     icon="l-angle-down"
-                    className="-mb-0.5 text-lg text-gray-900"
+                    className="-mb-0.5 text-lg text-primary-900"
                   />
                 </div>
               </ListboxButton>
@@ -232,8 +232,8 @@ export const dropdownOptionClassNames = ({
     "group/option relative w-full cursor-default select-none p-4 text-sm transition-colors duration-75 ease-in-out",
     !disabled && focus && "bg-accent-500 text-white",
     !disabled && !focus && selected && "text-accent-500",
-    !disabled && !focus && !selected && "text-gray-900",
-    disabled && "cursor-not-allowed text-gray-600",
+    !disabled && !focus && !selected && "text-primary-900",
+    disabled && "cursor-not-allowed text-primary-700",
     selected ? "font-semibold" : "font-normal",
   );
 };

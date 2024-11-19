@@ -188,7 +188,7 @@ export default function PatientInfoCard(props: PatientInfoCardProps) {
                 {consultation?.current_bed &&
                 consultation?.discharge_date === null ? (
                   <div className="tooltip flex h-full flex-col items-center justify-center">
-                    <p className="w-full truncate px-2 text-center text-sm text-gray-900">
+                    <p className="w-full truncate px-2 text-center text-sm text-primary-900">
                       {
                         consultation?.current_bed?.bed_object?.location_object
                           ?.name
@@ -240,13 +240,13 @@ export default function PatientInfoCard(props: PatientInfoCardProps) {
                 id="patient-name-consultation"
               >
                 {patient.name}
-                <div className="ml-3 mr-2 mt-[6px] text-sm font-semibold text-gray-600">
+                <div className="ml-3 mr-2 mt-[6px] text-sm font-semibold text-primary-700">
                   {formatPatientAge(patient, true)} • {patient.gender}
                 </div>
                 <div className="mr-3 flex flex-col items-center">
                   <Link
                     href={`/facility/${consultation?.facility}`}
-                    className="mt-2 items-center justify-center text-sm font-semibold text-black hover:text-accent-600 lg:hidden"
+                    className="mt-2 items-center justify-center text-sm font-semibold text-primary-950 hover:text-accent-600 lg:hidden"
                   >
                     <CareIcon
                       icon="l-hospital"
@@ -263,7 +263,7 @@ export default function PatientInfoCard(props: PatientInfoCardProps) {
             <div className="flex flex-col items-center gap-2 sm:flex-row">
               <Link
                 href={`/facility/${consultation?.facility}`}
-                className="hidden font-semibold text-black hover:text-accent-600 lg:block"
+                className="hidden font-semibold text-primary-950 hover:text-accent-600 lg:block"
               >
                 <CareIcon
                   icon="l-hospital"
@@ -285,13 +285,13 @@ export default function PatientInfoCard(props: PatientInfoCardProps) {
                 id="patient-name-consultation"
               >
                 {patient.name}
-                <div className="ml-3 mr-2 mt-[6px] text-sm font-semibold text-gray-600">
+                <div className="ml-3 mr-2 mt-[6px] text-sm font-semibold text-primary-700">
                   {formatPatientAge(patient, true)} • {patient.gender}
                 </div>
               </div>
               <div className="flex flex-wrap items-center gap-2 text-sm sm:flex-row">
                 <div
-                  className="flex w-full flex-wrap items-center justify-center gap-2 text-sm text-gray-900 sm:flex-row sm:text-sm md:pr-10 lg:justify-normal"
+                  className="flex w-full flex-wrap items-center justify-center gap-2 text-sm text-primary-900 sm:flex-row sm:text-sm md:pr-10 lg:justify-normal"
                   id="patient-consultationbadges"
                 >
                   {consultation?.patient_no && (
@@ -541,7 +541,7 @@ export default function PatientInfoCard(props: PatientInfoCardProps) {
               <div className="text-sm font-normal leading-5 text-gray-500">
                 Discharge Reason
               </div>
-              <div className="mt-[6px] text-xl font-semibold leading-5 text-gray-900">
+              <div className="mt-[6px] text-xl font-semibold leading-5 text-primary-900">
                 {!consultation?.new_discharge_reason ? (
                   <span className="text-gray-800">
                     {consultation.suggestion === "OP"
@@ -848,7 +848,7 @@ export default function PatientInfoCard(props: PatientInfoCardProps) {
                     />
                   </Switch>
                   <Label as="span" className="ml-3 text-sm">
-                    <span className="font-medium text-gray-900">
+                    <span className="font-medium text-primary-900">
                       Medico-Legal Case
                     </span>{" "}
                   </Label>

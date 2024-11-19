@@ -32,7 +32,7 @@ const EncounterSymptomsCard = () => {
 
   return (
     <div id="encounter-symptoms">
-      <h3 className="mb-2 text-lg font-semibold leading-relaxed text-gray-900">
+      <h3 className="mb-2 text-lg font-semibold leading-relaxed text-primary-900">
         Symptoms
       </h3>
 
@@ -52,7 +52,7 @@ const SymptomsSection = (props: {
 }) => {
   return (
     <div>
-      <h4 className="text-base font-semibold leading-relaxed text-gray-900">
+      <h4 className="text-base font-semibold leading-relaxed text-primary-900">
         {props.title}
       </h4>
       <ul className="flex list-disc flex-col px-4">

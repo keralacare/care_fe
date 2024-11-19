@@ -35,7 +35,7 @@ export const DailyRoundListDetails = (props: any) => {
       backUrl={`/facility/${facilityId}/patient/${patientId}/consultation/${consultationId}/daily-rounds`}
     >
       <div
-        className="mt-4 h-full rounded-lg border bg-primary p-4 text-black shadow hover:border-accent-500"
+        className="mt-4 h-full rounded-lg border bg-primary p-4 text-primary-950 shadow hover:border-accent-500"
         id="consultation-preview"
       >
         <div className="flex justify-between">
@@ -149,7 +149,7 @@ export const DailyRoundListDetails = (props: any) => {
             {dailyRoundListDetailsData.recommend_discharge ? (
               <span className="badge badge-pill badge-warning">Yes</span>
             ) : (
-              <span className="badge badge-pill badge-secondary">No</span>
+              <span className="badge badge-pill badge-primary-100">No</span>
             )}
           </div>
         </div>

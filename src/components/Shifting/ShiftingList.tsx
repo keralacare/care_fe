@@ -77,7 +77,7 @@ export default function ListView() {
     }
     if (data && !data.length) {
       return (
-        <div className="mt-64 flex flex-1 justify-center text-gray-600">
+        <div className="mt-64 flex flex-1 justify-center text-primary-700">
           {t("no_patients_to_show")}
         </div>
       );
@@ -105,7 +105,7 @@ export default function ListView() {
                 className="flex items-center text-sm font-medium leading-5 text-gray-500"
               >
                 <CareIcon icon="l-mobile-android" className="mr-2" />
-                <dd className="text-sm font-bold leading-5 text-gray-900">
+                <dd className="text-sm font-bold leading-5 text-primary-900">
                   {shift.patient_object.phone_number || ""}
                 </dd>
               </dt>
@@ -116,7 +116,7 @@ export default function ListView() {
                 className="flex items-center text-sm font-medium leading-5 text-gray-500"
               >
                 <CareIcon icon="l-home" className="mr-2" />
-                <dd className="font-xs leading-5 text-gray-900">
+                <dd className="font-xs leading-5 text-primary-900">
                   {shift.patient_object.address || "--"}
                 </dd>
               </dt>
@@ -165,7 +165,7 @@ export default function ListView() {
               className="flex items-center text-left text-sm font-medium leading-5 text-gray-500"
             >
               <CareIcon icon="l-plane-departure" className="mr-2" />
-              <dd className="text-sm font-bold leading-5 text-gray-900">
+              <dd className="text-sm font-bold leading-5 text-primary-900">
                 {shift.origin_facility_object?.name}
               </dd>
             </dt>
@@ -176,7 +176,7 @@ export default function ListView() {
                 className="flex items-center text-left text-sm font-medium leading-5 text-gray-500"
               >
                 <CareIcon icon="l-user-check" className="mr-2" />
-                <dd className="text-sm font-bold leading-5 text-gray-900">
+                <dd className="text-sm font-bold leading-5 text-primary-900">
                   {shift.shifting_approving_facility_object?.name}
                 </dd>
               </dt>
@@ -187,7 +187,7 @@ export default function ListView() {
               className="flex items-center text-left text-sm font-medium leading-5 text-gray-500"
             >
               <CareIcon icon="l-plane-arrival" className="mr-2" />
-              <dd className="text-sm font-bold leading-5 text-gray-900">
+              <dd className="text-sm font-bold leading-5 text-primary-900">
                 {shift.assigned_facility_external ||
                   shift.assigned_facility_object?.name ||
                   t("yet_to_be_decided")}

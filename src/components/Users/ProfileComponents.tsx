@@ -7,7 +7,9 @@ export const ProfileLabel = (props: { text: string }) => (
 );
 
 export const ProfileValue = (props: { text: string }) => (
-  <dd className="mt-1 text-sm leading-5 text-gray-900">{props.text || "-"}</dd>
+  <dd className="mt-1 text-sm leading-5 text-primary-900">
+    {props.text || "-"}
+  </dd>
 );
 
 export const ValueBadge = (props: { text: string }) => (

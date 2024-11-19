@@ -68,7 +68,7 @@ export default function ConditionVerificationStatusMenu<
                   : ""}
                 {t(status)}
               </span>
-              <span className="hidden text-xs text-gray-600 md:block">
+              <span className="hidden text-xs text-primary-700 md:block">
                 {t(`help_${status}`)}
               </span>
             </div>

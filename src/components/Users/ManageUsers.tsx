@@ -207,7 +207,7 @@ export default function ManageUsers() {
                   <Avatar
                     name={formatDisplayName(user)}
                     imageUrl={user.read_profile_picture_url}
-                    className="mb-2 h-12 w-12 rounded-full text-black lg:mb-0"
+                    className="mb-2 h-12 w-12 rounded-full text-primary-950 lg:mb-0"
                   />
                 </div>
                 <div className="flex flex-col flex-wrap justify-between gap-3 @sm:flex-row">
@@ -219,7 +219,7 @@ export default function ManageUsers() {
                       {user.username}
                     </div>
                   )}
-                  <div className="min-width-50 shrink-0 text-sm text-gray-600">
+                  <div className="min-width-50 shrink-0 text-sm text-primary-700">
                     {user.last_login && cur_online ? (
                       <span>
                         {" "}
@@ -305,7 +305,7 @@ export default function ManageUsers() {
                               {user.qualification}
                             </span>
                           ) : (
-                            <span className="text-gray-600">
+                            <span className="text-primary-700">
                               {t("unknown")}
                             </span>
                           )}
@@ -323,7 +323,7 @@ export default function ManageUsers() {
                               years
                             </span>
                           ) : (
-                            <span className="text-gray-600">
+                            <span className="text-primary-700">
                               {t("unknown")}
                             </span>
                           )}
@@ -339,7 +339,7 @@ export default function ManageUsers() {
                               {user.doctor_medical_council_registration}
                             </span>
                           ) : (
-                            <span className="text-gray-600">
+                            <span className="text-primary-700">
                               {t("unknown")}
                             </span>
                           )}
@@ -372,7 +372,9 @@ export default function ManageUsers() {
                             {user.qualification}
                           </span>
                         ) : (
-                          <span className="text-gray-600">{t("unknown")}</span>
+                          <span className="text-primary-700">
+                            {t("unknown")}
+                          </span>
                         )}
                       </UserDetails>
                     </div>
@@ -412,7 +414,7 @@ export default function ManageUsers() {
                         {user.weekly_working_hours} hours
                       </span>
                     ) : (
-                      <span className="text-gray-600">-</span>
+                      <span className="text-primary-700">-</span>
                     )}
                   </UserDetails>
                 </div>
@@ -524,7 +526,7 @@ export default function ManageUsers() {
         dialogClass="md:w-[400px]"
       >
         <div className="px-2">
-          <dt className="mb-3 text-sm font-medium leading-5 text-black">
+          <dt className="mb-3 text-sm font-medium leading-5 text-primary-950">
             {t("set_average_weekly_working_hours_for")} {selectedUser}
           </dt>
           <TextFormField

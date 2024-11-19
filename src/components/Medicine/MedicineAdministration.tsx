@@ -132,7 +132,7 @@ export default function MedicineAdministration(props: Props) {
               }
               errorClassName="hidden"
             />
-            <div className="text-sm font-semibold leading-relaxed text-gray-600">
+            <div className="text-sm font-semibold leading-relaxed text-primary-700">
               <CareIcon icon="l-history-alt" className="pr-1" />{" "}
               {t("last_administered")}
               <span className="pl-1">

@@ -90,7 +90,7 @@ export function KeyboardShortcutKey(props: {
               : key}
           </kbd>
           {idx !== keys.length - 1 && (
-            <span className="px-1 text-zinc-300/60"> + </span>
+            <span className="px-1 text-primary-700"> + </span>
           )}
         </Fragment>
       ))}

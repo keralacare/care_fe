@@ -89,7 +89,7 @@ export default function SampleReport(props: ISamplePreviewProps) {
               </div>
             </div>
             <div className="flex justify-start border border-t-0 border-gray-800">
-              <div className="w-full p-5 py-2 text-black">
+              <div className="w-full p-5 py-2 text-primary-950">
                 <p className="text-lg font-bold">
                   ICMR Specimen Referral Data for COVID-19 (SARS-CoV2)
                 </p>

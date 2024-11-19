@@ -215,7 +215,7 @@ export const BedCapacity = (props: BedCapacityProps) => {
           <div role="status">
             <svg
               aria-hidden="true"
-              className="mr-2 h-8 w-8 animate-spin fill-primary text-gray-200 dark:text-gray-600"
+              className="mr-2 h-8 w-8 animate-spin fill-primary text-gray-200 dark:text-primary-700"
               viewBox="0 0 100 101"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"

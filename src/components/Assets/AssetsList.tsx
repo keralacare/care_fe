@@ -299,7 +299,7 @@ const AssetsList = () => {
   } else {
     manageAssets = (
       <div className="col-span-3 w-full rounded-lg bg-primary p-2 py-8 pt-4 text-center">
-        <p className="text-2xl font-bold text-gray-600">No Assets Found</p>
+        <p className="text-2xl font-bold text-primary-700">No Assets Found</p>
       </div>
     );
   }

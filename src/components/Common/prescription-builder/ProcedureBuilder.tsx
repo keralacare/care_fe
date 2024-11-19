@@ -46,7 +46,7 @@ export default function ProcedureBuilder(props: Props<ProcedureType>) {
             key={i}
             className={`border-2 ${
               activeIdx === i ? "border-accent-500" : "border-gray-500"
-            } mb-2 border-spacing-2 rounded-md border-dashed p-3 text-sm text-gray-600`}
+            } mb-2 border-spacing-2 rounded-md border-dashed p-3 text-sm text-primary-700`}
           >
             <div className="flex flex-col gap-2 md:flex-row">
               <div className="flex w-full flex-1 flex-col gap-2">
@@ -191,7 +191,7 @@ export default function ProcedureBuilder(props: Props<ProcedureType>) {
         onClick={() => {
           setProcedures([...procedures, { repetitive: false }]);
         }}
-        className="mt-4 block w-full bg-gray-200 px-4 py-2 text-left text-sm font-bold leading-5 text-gray-700 shadow-sm hover:bg-gray-300 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-none"
+        className="mt-4 block w-full bg-gray-200 px-4 py-2 text-left text-sm font-bold leading-5 text-gray-700 shadow-sm hover:bg-gray-300 hover:text-primary-900 focus:bg-gray-100 focus:text-primary-900 focus:outline-none"
       >
         + Add Procedures
       </button>

@@ -74,7 +74,7 @@ const Avatar: React.FC<AvatarProps> = ({
   className,
 }) => {
   const [theme] = useTheme();
-  const [bgColor] = propColors || toColor(name, theme?.type === "dark");
+  const [bgColor] = propColors || toColor(name, theme?.theme.type === "dark");
   return (
     <div
       className={cn(
@@ -100,7 +100,7 @@ const Avatar: React.FC<AvatarProps> = ({
           className="aspect-square h-full w-full object-cover"
         >
           <text
-            fill={theme?.type === "dark" ? "white" : "black"}
+            fill={theme?.theme.type === "dark" ? "white" : "black"}
             fillOpacity="0.1"
             fontSize="40"
             fontWeight="900"

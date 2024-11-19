@@ -23,7 +23,7 @@ import NotificationItem from "@/components/Notifications/NotificationsList";
 import useActiveLink from "@/hooks/useActiveLink";
 import { useCareAppNavItems } from "@/hooks/useCareApps";
 
-import { THEMES, useTheme } from "@/Utils/themes";
+import { useTheme } from "@/Utils/themes";
 import { classNames } from "@/Utils/utils";
 
 export const SIDEBAR_SHRINK_PREFERENCE_KEY = "sidebarShrinkPreference";
@@ -116,7 +116,7 @@ const StatelessSidebar = ({
     setOverflowVisisble(value);
   };
 
-  const [theme, setTheme] = useTheme();
+  const [theme] = useTheme();
 
   return (
     <nav
@@ -150,7 +150,7 @@ const StatelessSidebar = ({
             src={
               shrinked
                 ? LOGO_COLLAPSE
-                : theme?.type === "light"
+                : theme?.theme.type === "light"
                   ? careConfig.mainLogo?.light
                   : careConfig.mainLogo?.dark
             }
@@ -204,21 +204,6 @@ const StatelessSidebar = ({
           )}
         </div>
         <div className="hidden md:block md:flex-1" />
-        <button
-          onClick={() => setTheme(THEMES[0])}
-          className="text-primaryFont"
-        >
-          Light
-        </button>
-        <button
-          className="text-primaryFont"
-          onClick={() => setTheme(THEMES[1])}
-        >
-          Dark
-        </button>
-        <button className="text-primaryFont" onClick={() => setTheme(null)}>
-          System
-        </button>
         <SidebarUserCard shrinked={shrinked} />
       </div>
     </nav>
@@ -270,7 +255,7 @@ const ToggleShrink = ({ shrinked, toggle }: ToggleShrinkProps) => {
       <Tooltip>
         <TooltipTrigger asChild>
           <button
-            className={`flex h-6 w-6 cursor-pointer items-center justify-center rounded focus:outline-none focus:ring-2 text-primaryFontLight focus:ring-indigo-500 hover:bg-secondaryActive ${
+            className={`flex h-6 w-6 cursor-pointer items-center justify-center rounded focus:outline-none focus:ring-2 text-primary-800 focus:ring-indigo-500 hover:bg-primary-200 ${
               shrinked ? "mx-auto" : "mr-4"
             } transition-all ease-in-out`}
             onClick={toggle}

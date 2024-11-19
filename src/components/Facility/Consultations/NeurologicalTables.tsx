@@ -42,13 +42,13 @@ const DataTable = (props: any) => {
                 key={`${title}_${i}`}
                 className="flex flex-col justify-between divide-x divide-gray-200"
               >
-                <div className="w-20 bg-gray-50 px-2 py-4 text-center text-xs font-medium leading-4 text-gray-900">
+                <div className="w-20 bg-gray-50 px-2 py-4 text-center text-xs font-medium leading-4 text-primary-900">
                   {x.date}
                 </div>
-                <div className="whitespace-nowrap bg-primary px-2 py-5 text-center text-xs leading-4 text-gray-900">
+                <div className="whitespace-nowrap bg-primary px-2 py-5 text-center text-xs leading-4 text-primary-900">
                   {x.left}
                 </div>
-                <div className="whitespace-nowrap bg-primary px-2 py-5 text-center text-xs leading-4 text-gray-900">
+                <div className="whitespace-nowrap bg-primary px-2 py-5 text-center text-xs leading-4 text-primary-900">
                   {x.right}
                 </div>
               </div>

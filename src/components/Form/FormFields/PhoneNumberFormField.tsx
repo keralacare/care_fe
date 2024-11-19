@@ -115,7 +115,7 @@ export default function PhoneNumberFormField(props: Props) {
             return (
               <>
                 <PopoverButton className="absolute h-full">
-                  <div className="absolute inset-y-0 left-0 m-0.5 flex w-[4.5rem] cursor-pointer items-center justify-around bg-slate-100">
+                  <div className="absolute inset-y-0 left-0 m-0.5 flex w-[4.5rem] cursor-pointer items-center justify-around bg-primary-100">
                     <span className="rounded-md pl-4">
                       {country?.flag ?? "🇮🇳"}
                     </span>
@@ -246,7 +246,7 @@ const CountryCodesList = ({
             >
               <span>{flag}</span>
               <span>{name}</span>
-              <span className="text-gray-600">
+              <span className="text-primary-700">
                 {" "}
                 ({conditionPhoneCode(code)})
               </span>
@@ -262,7 +262,7 @@ const CountryCodesList = ({
         >
           <span>📞</span>
           <span>Support</span>
-          <span className="text-gray-600"> (1800)</span>
+          <span className="text-primary-700"> (1800)</span>
         </li>
         <li
           key={"other"}
@@ -274,7 +274,7 @@ const CountryCodesList = ({
         >
           <span>🌍</span>
           <span>Other</span>
-          <span className="text-gray-600"> (+)</span>
+          <span className="text-primary-700"> (+)</span>
         </li>
       </ul>
     </div>

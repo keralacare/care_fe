@@ -36,7 +36,7 @@ const SidebarUserCard: React.FC<SidebarUserCardProps> = ({ shrinked }) => {
           <Button
             variant="outline"
             size="lg"
-            className={`tooltip relative w-full cursor-pointer items-center justify-between rounded-lg bg-secondary p-2 font-normal text-primaryFontLight transition hover:bg-secondaryActive focus:outline-none focus:ring focus:ring-accent-300 ${
+            className={`tooltip relative w-full cursor-pointer items-center justify-between rounded-lg bg-primary-100 p-2 font-normal text-primary-800 transition hover:bg-primary-200 focus:outline-none focus:ring focus:ring-accent-500 ${
               shrinked ? "flex h-full flex-col-reverse" : "flex flex-row"
             }`}
           >
@@ -48,7 +48,7 @@ const SidebarUserCard: React.FC<SidebarUserCardProps> = ({ shrinked }) => {
                 <Avatar
                   name={formatDisplayName(user)}
                   imageUrl={user.read_profile_picture_url}
-                  className="h-8 rounded-full text-black/50"
+                  className="h-8 rounded-full text-primary-950/50"
                 />
               </div>
               <div className="max-w-32">
@@ -59,10 +59,10 @@ const SidebarUserCard: React.FC<SidebarUserCardProps> = ({ shrinked }) => {
                 )}
               </div>
             </div>
-            <div className="flex shrink-0 items-center justify-center rounded-full bg-gray-300/50">
+            <div className="flex shrink-0 items-center justify-center rounded-full bg-primary-300/50">
               <CareIcon
                 icon="l-angle-up"
-                className="text-xl text-gray-600"
+                className="text-xl text-primary-700"
                 aria-label="Up arrow icon"
               />
             </div>
@@ -71,7 +71,7 @@ const SidebarUserCard: React.FC<SidebarUserCardProps> = ({ shrinked }) => {
         <DropdownMenuContent align="end" className="w-full">
           <Link
             href="/user/profile"
-            className="block text-sm capitalize text-gray-900"
+            className="block text-sm capitalize text-primary-900"
           >
             <DropdownMenuItem className="cursor-pointer">
               <div id="profile-button">{t("profile")}</div>

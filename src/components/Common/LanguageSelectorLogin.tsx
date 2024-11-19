@@ -24,7 +24,7 @@ export const LanguageSelectorLogin = () => {
   );
 
   return (
-    <div className="mt-8 flex flex-col items-center text-sm text-gray-800">
+    <div className="mt-8 flex flex-col items-center text-sm text-primary-800">
       {t("available_in")}
       <br />
       <div className="inline-flex flex-wrap items-center justify-center gap-3">

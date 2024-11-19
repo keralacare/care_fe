@@ -78,7 +78,7 @@ const SelectMenuV2 = <T, V>(props: SelectMenuProps<T, V>) => {
   const defaultOption = {
     label: placeholder,
     selectedLabel: (
-      <span className="font-normal text-gray-600">{placeholder}</span>
+      <span className="font-normal text-primary-700">{placeholder}</span>
     ),
     description: undefined,
     icon: undefined,
@@ -145,7 +145,7 @@ const SelectMenuV2 = <T, V>(props: SelectMenuProps<T, V>) => {
                   <CareIcon
                     id="dropdown-toggle"
                     icon="l-angle-down"
-                    className="-mb-0.5 text-lg text-gray-900"
+                    className="-mb-0.5 text-lg text-primary-900"
                   />
                 )}
               </div>

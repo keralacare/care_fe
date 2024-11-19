@@ -144,7 +144,7 @@ export default function SampleViewAdmin() {
       return (
         <div key={`usr_${item.id}`} className="mt-6 w-full lg:w-1/2 lg:px-4">
           <div
-            className={`block h-full rounded-lg border text-black shadow hover:border-black ${
+            className={`block h-full rounded-lg border text-primary-950 shadow hover:border-black ${
               item.result === "POSITIVE"
                 ? "border-red-700 bg-red-100"
                 : item.result === "NEGATIVE"
@@ -246,14 +246,14 @@ export default function SampleViewAdmin() {
               </div>
 
               <div className="mt-4">
-                <div className="text-sm font-bold text-gray-600">
+                <div className="text-sm font-bold text-primary-700">
                   <span className="text-gray-800">Date of Sample:</span>{" "}
                   {item.date_of_sample
                     ? formatDateTime(item.date_of_sample)
                     : "Not Available"}
                 </div>
 
-                <div className="text-sm font-bold text-gray-600">
+                <div className="text-sm font-bold text-primary-700">
                   <span className="text-gray-800">Date of Result:</span>{" "}
                   {item.date_of_result
                     ? formatDateTime(item.date_of_result)
@@ -303,7 +303,7 @@ export default function SampleViewAdmin() {
   } else if (sampeleData?.count === 0) {
     manageSamples = (
       <div className="w-full rounded-lg bg-primary p-3">
-        <div className="mt-4 flex w-full justify-center text-2xl font-bold text-gray-600">
+        <div className="mt-4 flex w-full justify-center text-2xl font-bold text-primary-700">
           No Sample Tests Found
         </div>
       </div>

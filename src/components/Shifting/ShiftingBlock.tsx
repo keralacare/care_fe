@@ -74,7 +74,7 @@ export default function ShiftingBlock(props: {
                 className: dayjs()
                   .subtract(2, "hours")
                   .isBefore(shift.modified_date)
-                  ? "text-gray-900"
+                  ? "text-primary-900"
                   : "rounded bg-red-500 border border-red-600 text-white w-full font-bold",
               },
               {

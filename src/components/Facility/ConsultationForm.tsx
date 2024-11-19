@@ -819,7 +819,7 @@ export const ConsultationForm = ({ facilityId, patientId, id }: Props) => {
         ref={section.ref as LegacyRef<HTMLDivElement>}
       >
         <CareIcon icon={section.iconClass} className="mr-3 text-xl" />
-        <label className="text-lg font-bold text-gray-900">
+        <label className="text-lg font-bold text-primary-900">
           {sectionTitle}
           {required && <span className="text-danger-500">{" *"}</span>}
         </label>
@@ -1083,7 +1083,7 @@ export const ConsultationForm = ({ facilityId, patientId, id }: Props) => {
                   <div className="col-span-6">
                     <div className="flex items-center justify-between">
                       <FieldLabel>Body Surface Area</FieldLabel>
-                      <span className="mb-2 text-sm font-medium text-black">
+                      <span className="mb-2 text-sm font-medium text-primary-950">
                         {state.form.weight && state.form.height ? (
                           <>
                             {Math.sqrt(

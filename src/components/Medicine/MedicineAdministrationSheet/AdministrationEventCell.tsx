@@ -55,7 +55,7 @@ export default function AdministrationEventCell({
         >
           <div className="mt-6 text-sm font-medium text-gray-700">
             Administrations on{" "}
-            <span className="text-black">
+            <span className="text-primary-950">
               {formatDateTime(start, "DD/MM/YYYY")}
             </span>
           </div>

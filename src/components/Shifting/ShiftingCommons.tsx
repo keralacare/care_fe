@@ -73,7 +73,7 @@ export const formatFilter = (params: any) => {
 export const badge = (key: string, value: any) => {
   return (
     value && (
-      <span className="inline-flex items-center rounded-full border bg-primary px-3 py-1 text-xs font-medium leading-4 text-gray-600">
+      <span className="inline-flex items-center rounded-full border bg-primary px-3 py-1 text-xs font-medium leading-4 text-primary-700">
         {key}
         {": "}
         {value}

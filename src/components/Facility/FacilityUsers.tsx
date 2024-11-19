@@ -153,7 +153,7 @@ export default function FacilityUsers(props: any) {
                       {user.username}
                     </div>
                   )}
-                  <div className="min-width-50 shrink-0 text-sm text-gray-600">
+                  <div className="min-width-50 shrink-0 text-sm text-primary-700">
                     {t("last_online")}{" "}
                     <span
                       aria-label="Online"

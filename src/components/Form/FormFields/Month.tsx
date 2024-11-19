@@ -64,7 +64,7 @@ const MonthFormField = (props: Props) => {
         onChange={(event) => setYear(parseInt(event.value))}
       />
       {props.suffix && (
-        <span className="text-gray-600">{props.suffix(field.value)}</span>
+        <span className="text-primary-700">{props.suffix(field.value)}</span>
       )}
     </FormField>
   );

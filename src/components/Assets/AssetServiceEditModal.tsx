@@ -94,7 +94,7 @@ export const AssetServiceEditModal = (props: {
                     <p className="text-sm font-medium text-gray-500">
                       {isLast ? "Created" : "Edited"} On
                     </p>
-                    <p className="text-sm text-gray-900">
+                    <p className="text-sm text-primary-900">
                       {formatDateTime(edit.edited_on)}
                     </p>
                   </div>
@@ -102,7 +102,7 @@ export const AssetServiceEditModal = (props: {
                     <p className="text-sm font-medium text-gray-500">
                       {isLast ? "Created" : "Edited"} By
                     </p>
-                    <p className="text-sm text-gray-900">
+                    <p className="text-sm text-primary-900">
                       {edit.edited_by.username}
                     </p>
                   </div>
@@ -122,7 +122,7 @@ export const AssetServiceEditModal = (props: {
                   <p className="text-sm font-medium text-gray-500">
                     {t("edited_on")}
                   </p>
-                  <p className="text-gray-900">
+                  <p className="text-primary-900">
                     {formatDateTime(editRecord.edited_on)}
                   </p>
                 </div>
@@ -130,7 +130,7 @@ export const AssetServiceEditModal = (props: {
                   <p className="text-sm font-medium text-gray-500">
                     {t("edited_by")}
                   </p>
-                  <p className="text-gray-900">
+                  <p className="text-primary-900">
                     {editRecord.edited_by.username}
                   </p>
                 </div>
@@ -141,7 +141,7 @@ export const AssetServiceEditModal = (props: {
                     {t("serviced_on")}
                   </p>
                   <p
-                    className="text-gray-900"
+                    className="text-primary-900"
                     id="edit-history-asset-servicedon"
                   >
                     {formatDate(editRecord.serviced_on)}
@@ -151,7 +151,7 @@ export const AssetServiceEditModal = (props: {
                   <p className="text-sm font-medium text-gray-500">
                     {t("notes")}
                   </p>
-                  <p className="text-gray-900" id="edit-history-asset-note">
+                  <p className="text-primary-900" id="edit-history-asset-note">
                     {editRecord.note || "-"}
                   </p>
                 </div>

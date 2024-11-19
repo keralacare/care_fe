@@ -167,7 +167,7 @@ const FilePreviewDialog = (props: FilePreviewProps) => {
                 <div className="flex h-full w-full flex-col items-center justify-center">
                   <CareIcon
                     icon="l-file"
-                    className="mb-4 text-5xl text-gray-600"
+                    className="mb-4 text-5xl text-primary-700"
                   />
                   {t("file_preview_not_supported")}
                 </div>
@@ -217,7 +217,7 @@ const FilePreviewDialog = (props: FilePreviewProps) => {
                       ghost
                       key={index}
                       onClick={button[2] as () => void}
-                      className="z-50 rounded bg-primary/60 px-4 py-2 text-black backdrop-blur transition hover:bg-primary/70"
+                      className="z-50 rounded bg-primary/60 px-4 py-2 text-primary-950 backdrop-blur transition hover:bg-primary/70"
                       disabled={button[3] as boolean}
                     >
                       {button[1] && (
@@ -253,7 +253,7 @@ const FilePreviewDialog = (props: FilePreviewProps) => {
                       ghost
                       key={index}
                       onClick={button[2] as () => void}
-                      className="z-50 rounded bg-primary/60 px-4 py-2 text-black backdrop-blur transition hover:bg-primary/70"
+                      className="z-50 rounded bg-primary/60 px-4 py-2 text-primary-950 backdrop-blur transition hover:bg-primary/70"
                       disabled={button[3] as boolean}
                     >
                       {button[1] && (
