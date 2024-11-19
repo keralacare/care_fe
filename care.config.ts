@@ -90,10 +90,8 @@ const careConfig = {
   },
 
   sentry: {
-    dsn:
-      env.REACT_SENTRY_DSN ||
-      "https://8801155bd0b848a09de9ebf6f387ebc8@sentry.io/5183632",
-    environment: env.REACT_SENTRY_ENVIRONMENT || "staging",
+    dsn: env.REACT_SENTRY_DSN,
+    environment: env.REACT_SENTRY_ENVIRONMENT || "unknown",
   },
 
   hcx: {
