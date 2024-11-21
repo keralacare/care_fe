@@ -77,6 +77,9 @@ jobs:
           sudo wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
           sudo apt-get install ./google-chrome-stable_current_amd64.deb
 
+      - name: Start Frontend Application
+        run: npm run ci &
+
       - name: Wait for the Frontend Server to be Ready
         run: npx wait-on http://localhost:4000
 
