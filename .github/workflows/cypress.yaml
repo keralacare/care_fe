@@ -80,16 +80,17 @@ jobs:
       - name: Install Concurrently
         run: npm install -g concurrently
 
-      - name: Fix Permissions for Cypress Test Files
-        run: chmod -R +rwx cypress/e2e  
+      - name: Fix Permissions for Test Files
+        run: chmod -R +rwx cypress/e2e
+
+      - name: Debug Test File Discovery
+        run: find cypress/e2e -type f -name "*.cy.ts"
 
       - name: Run Cypress Tests in Parallel
         run: |
           mkdir -p results
-          TEST_FILES=$(find cypress/e2e -name "*.cy.ts")
-          COMMANDS=$(echo $TEST_FILES | xargs -n 1 -I {} echo "npx cypress run --spec {} > results/$(basename {}).log")
-          LABELS=$(echo $TEST_FILES | xargs -n 1 -I {} basename {} .cy.ts)
-          echo $COMMANDS | xargs npx concurrently -n $LABELS --kill-others-on-fail
+          TEST_FILES=$(find cypress/e2e -type f -name "*.cy.ts")
+          echo "$TEST_FILES" | xargs -P 4 -n 1 bash -c 'npx cypress run --spec "$0" > results/$(basename $0).log'
 
       - name: Upload Cypress Artifacts 📸
         uses: actions/upload-artifact@v3
