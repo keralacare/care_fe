@@ -111,7 +111,7 @@ export default function AppRouter() {
 
   return (
     <SidebarShrinkContext.Provider value={{ shrinked, setShrinked }}>
-      <div className="absolute inset-0 flex h-screen overflow-hidden bg-primary-100 print:overflow-visible">
+      <div className="absolute inset-0 flex h-screen overflow-hidden bg-primary-100/70 print:overflow-visible">
         <>
           <div className="block md:hidden">
             <MobileSidebar open={sidebarOpen} setOpen={setSidebarOpen} />{" "}
@@ -156,10 +156,10 @@ export default function AppRouter() {
 
           <main
             id="pages"
-            className="flex-1 overflow-y-scroll bg-primary-100 pb-4 focus:outline-none md:py-0"
+            className="flex-1 overflow-y-scroll pb-4 focus:outline-none md:py-0"
           >
             <div
-              className="max-w-8xl mx-auto mt-4 min-h-[96vh] rounded-l-xl border border-primary-200 border-r-0 bg-primary-50 p-3 text-primary-950"
+              className="max-w-8xl mx-auto mt-4 min-h-[96vh] rounded-l-xl border border-primary-200/60 border-r-0 bg-primary-50 p-3 text-primary-950"
               data-cui-page
             >
               {pages}
