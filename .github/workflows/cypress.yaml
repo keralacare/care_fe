@@ -80,6 +80,9 @@ jobs:
       - name: Install Concurrently
         run: npm install -g concurrently
 
+      - name: Fix Permissions for Cypress Test Files
+        run: chmod -R +rwx cypress/e2e  
+
       - name: Run Cypress Tests in Parallel
         run: |
           mkdir -p results
