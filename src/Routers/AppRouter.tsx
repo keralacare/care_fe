@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 
 import IconIndex from "@/CAREUI/icons/Index";
 
-import ABDMFacilityRecords from "@/components/ABDM/ABDMFacilityRecords";
-import HealthInformation from "@/components/ABDM/HealthInformation";
 import {
   DesktopSidebar,
   MobileSidebar,
@@ -59,13 +57,6 @@ const Routes: AppRoutes = {
 
   "/notifications/:id": ({ id }) => <ShowPushNotification id={id} />,
   "/notice_board": () => <NoticeBoard />,
-
-  "/abdm/health-information/:id": ({ id }) => (
-    <HealthInformation artefactId={id} />
-  ),
-  "/facility/:facilityId/abdm": ({ facilityId }) => (
-    <ABDMFacilityRecords facilityId={facilityId} />
-  ),
 
   "/session-expired": () => <SessionExpired />,
   "/not-found": () => <Error404 />,
@@ -167,7 +158,10 @@ export default function AppRouter() {
             id="pages"
             className="flex-1 overflow-y-auto bg-gray-100 focus:outline-none md:pb-2 md:pr-2"
           >
-            <div className="max-w-8xl mx-auto bg-gray-50 md:mt-2 md:min-h-[calc(100vh-1rem)] md:rounded-lg md:border md:shadow">
+            <div
+              className="max-w-8xl mx-auto mt-4 min-h-[96vh] rounded-lg border bg-gray-50 p-3 shadow"
+              data-cui-page
+            >
               {pages}
             </div>
           </main>
