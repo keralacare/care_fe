@@ -39,13 +39,6 @@ import Loading from "../Common/Loading";
 import Page from "../Common/Page";
 import { SkillModel } from "../Users/models";
 import { patientTabs } from "./PatientDetailsTab";
-import { Demography } from "./PatientDetailsTab/Demography";
-import EncounterHistory from "./PatientDetailsTab/EncounterHistory";
-import { HealthProfileSummary } from "./PatientDetailsTab/HealthProfileSummary";
-import { ImmunisationRecords } from "./PatientDetailsTab/ImmunisationRecords";
-import PatientNotes from "./PatientDetailsTab/Notes";
-import { SampleTestHistory } from "./PatientDetailsTab/SampleTestHistory";
-import ShiftingHistory from "./PatientDetailsTab/ShiftingHistory";
 import { isPatientMandatoryDataFilled } from "./Utils";
 import { PatientModel } from "./models";
 
@@ -53,7 +46,11 @@ export const parseOccupation = (occupation: string | undefined) => {
   return OCCUPATION_TYPES.find((i) => i.value === occupation)?.text;
 };
 
-export const PatientHome = (props: any) => {
+export const PatientHome = (props: {
+  facilityId?: string;
+  id: string;
+  page: (typeof patientTabs)[0]["route"];
+}) => {
   const { facilityId, id, page } = props;
   const [patientData, setPatientData] = useState<PatientModel>({});
   const [assignedVolunteerObject, setAssignedVolunteerObject] =
@@ -198,91 +195,13 @@ export const PatientHome = (props: any) => {
     });
   };
 
-  let content;
-
-  switch (page) {
-    case "demography":
-      content = (
-        <Demography
-          key="demography"
-          patientData={patientData}
-          facilityId={facilityId}
-          id={id}
-        />
-      );
-      break;
-    case "encounters":
-      content = (
-        <EncounterHistory
-          key="encounters"
-          patientData={patientData}
-          facilityId={facilityId}
-          id={id}
-        />
-      );
-      break;
-    case "health_profile":
-      content = (
-        <HealthProfileSummary
-          key="health_profile"
-          patientData={patientData}
-          facilityId={facilityId}
-          id={id}
-        />
-      );
-      break;
-    case "immunisation_records":
-      content = (
-        <ImmunisationRecords
-          key="immunisation_records"
-          patientData={patientData}
-          facilityId={facilityId}
-          id={id}
-        />
-      );
-      break;
-    case "shift_patient":
-      content = (
-        <ShiftingHistory
-          key="shift_patient"
-          patientData={patientData}
-          facilityId={facilityId}
-          id={id}
-        />
-      );
-      break;
-    case "request_sample_test":
-      content = (
-        <SampleTestHistory
-          key="request_sample_test"
-          patientData={patientData}
-          facilityId={facilityId}
-          id={id}
-        />
-      );
-      break;
-    case "patient_notes":
-      content = (
-        <PatientNotes key="patient_notes" facilityId={facilityId} id={id} />
-      );
-      break;
-    default:
-      content = (
-        <Demography
-          key="demography"
-          patientData={patientData}
-          facilityId={facilityId}
-          id={id}
-        />
-      );
-      break;
-  }
+  const Tab = patientTabs.find((t) => t.route === page)?.component;
 
   return (
     <Page
-      title={t("details_of_patient")}
+      title={t("patient_details")}
       crumbsReplacements={{
-        [facilityId]: { name: patientData?.facility_object?.name },
+        [facilityId || ""]: { name: patientData?.facility_object?.name },
         [id]: { name: patientData?.name },
       }}
       backUrl={facilityId ? `/facility/${facilityId}/patients` : "/patients"}
@@ -306,12 +225,11 @@ export const PatientHome = (props: any) => {
                     <div className="h-10 w-10 flex-shrink-0 md:h-14 md:w-14">
                       <Avatar
                         className="size-10 font-semibold text-secondary-800 md:size-auto"
-                        name={patientData.name || "Unknown"}
-                        colors={["#86efac", "#14532d"]}
+                        name={patientData.name || "-"}
                       />
                     </div>
                     <div>
-                      <h1 className="text-xl font-semibold capitalize text-gray-950">
+                      <h1 className="text-xl font-bold capitalize text-gray-950">
                         {patientData.name}
                       </h1>
                       <h3 className="text-sm font-medium text-gray-600">
@@ -529,7 +447,15 @@ export const PatientHome = (props: any) => {
         </div>
 
         <div className="h-full lg:flex">
-          <div className="h-full lg:mr-7 lg:basis-5/6">{content}</div>
+          <div className="h-full lg:mr-7 lg:basis-5/6">
+            {Tab && (
+              <Tab
+                facilityId={facilityId || ""}
+                id={id}
+                patientData={patientData}
+              />
+            )}
+          </div>
           <div className="sticky top-20 mt-8 h-full lg:basis-1/6">
             <section className="mb-4 space-y-2 md:flex">
               <div className="mx-3 w-full lg:mx-0">

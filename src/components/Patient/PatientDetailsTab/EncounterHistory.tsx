@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import PaginatedList from "@/CAREUI/misc/PaginatedList";
 
@@ -25,6 +26,8 @@ const EncounterHistory = (props: PatientProps) => {
   useEffect(() => {
     setPatientData(initialPatientData);
   }, [initialPatientData]);
+
+  const { t } = useTranslation();
 
   const { loading: isLoading, refetch } = useQuery(routes.getPatient, {
     pathParams: {
@@ -62,9 +65,9 @@ const EncounterHistory = (props: PatientProps) => {
               <CircularProgress />
             </PaginatedList.WhenLoading>
             <PaginatedList.WhenEmpty className="py-2">
-              <div className="h-full space-y-2 rounded-lg bg-white p-7 shadow">
-                <div className="flex w-full items-center justify-center text-xl font-bold text-secondary-500">
-                  No Consultation History Available
+              <div className="h-full space-y-2 rounded-lg bg-white p-7 border border-secondary-300">
+                <div className="flex w-full items-center justify-center text-xl text-secondary-600">
+                  {t("no_consultation_history")}
                 </div>
               </div>
             </PaginatedList.WhenEmpty>

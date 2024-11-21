@@ -7,15 +7,6 @@ import PatientNotes from "./Notes";
 import { SampleTestHistory } from "./SampleTestHistory";
 import ShiftingHistory from "./ShiftingHistory";
 
-export type TabRoute =
-  | "demography"
-  | "encounters"
-  | "health_profile"
-  | "immunisation_records"
-  | "shift_patient"
-  | "request_sample_test"
-  | "patient_notes";
-
 export interface PatientProps {
   facilityId: string;
   id: string;
@@ -35,27 +26,27 @@ export const patientTabs = [
   },
   {
     label: "Health Profile",
-    route: "health_profile",
+    route: "health-profile",
     component: HealthProfileSummary,
   },
   {
     label: "Immunisation",
-    route: "immunisation_records",
+    route: "immunisation-records",
     component: ImmunisationRecords,
   },
   {
     label: "Shift Patient",
-    route: "shift_patient",
+    route: "shift",
     component: ShiftingHistory,
   },
   {
     label: "Request Test",
-    route: "request_sample_test",
+    route: "request-sample-test",
     component: SampleTestHistory,
   },
   {
     label: "Notes",
-    route: "patient_notes",
+    route: "patient-notes",
     component: PatientNotes,
   },
 ];

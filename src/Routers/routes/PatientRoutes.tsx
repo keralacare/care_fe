@@ -3,6 +3,7 @@ import InvestigationReports from "@/components/Facility/Investigations/Reports";
 import FileUploadPage from "@/components/Patient/FileUploadPage";
 import { InsuranceDetails } from "@/components/Patient/InsuranceDetails";
 import { PatientManager } from "@/components/Patient/ManagePatients";
+import { patientTabs } from "@/components/Patient/PatientDetailsTab";
 import { PatientHome } from "@/components/Patient/PatientHome";
 import PatientNotes from "@/components/Patient/PatientNotes";
 import { PatientRegister } from "@/components/Patient/PatientRegister";
@@ -21,34 +22,13 @@ const PatientRoutes: AppRoutes = {
   "/facility/:facilityId/patient/:id": ({ facilityId, id }) => (
     <PatientHome facilityId={facilityId} id={id} page="demography" />
   ),
-  "/facility/:facilityId/patient/:id/demography": ({ facilityId, id }) => (
-    <PatientHome facilityId={facilityId} id={id} page="demography" />
-  ),
-  "/facility/:facilityId/patient/:id/encounters": ({ facilityId, id }) => (
-    <PatientHome facilityId={facilityId} id={id} page="encounters" />
-  ),
-  "/facility/:facilityId/patient/:id/health_profile": ({ facilityId, id }) => (
-    <PatientHome facilityId={facilityId} id={id} page="health_profile" />
-  ),
-  "/facility/:facilityId/patient/:id/immunisation_records": ({
-    facilityId,
-    id,
-  }) => (
-    <PatientHome facilityId={facilityId} id={id} page="immunisation_records" />
-  ),
-  "/facility/:facilityId/patient/:id/shift_patient": ({ facilityId, id }) => (
-    <PatientHome facilityId={facilityId} id={id} page="shift_patient" />
-  ),
-  "/facility/:facilityId/patient/:id/request_sample_test": ({
-    facilityId,
-    id,
-  }) => (
-    <PatientHome facilityId={facilityId} id={id} page="request_sample_test" />
-  ),
-  "/facility/:facilityId/patient/:id/patient_notes": ({ facilityId, id }) => (
-    <PatientHome facilityId={facilityId} id={id} page="patient_notes" />
-  ),
-
+  ...patientTabs.reduce((acc: AppRoutes, tab) => {
+    acc["/facility/:facilityId/patient/:id/" + tab.route] = ({
+      facilityId,
+      id,
+    }) => <PatientHome facilityId={facilityId} id={id} page={tab.route} />;
+    return acc;
+  }, {}),
   "/facility/:facilityId/patient/:id/insurance": ({ facilityId, id }) => (
     <InsuranceDetails facilityId={facilityId} id={id} />
   ),
