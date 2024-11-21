@@ -77,11 +77,8 @@ jobs:
           sudo wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
           sudo apt-get install ./google-chrome-stable_current_amd64.deb
 
-      - name: Fix Permissions for Test Files
-        run: chmod -R +rwx cypress/e2e
-
-      - name: Debug Test File Discovery
-        run: find cypress/e2e -type f -name "*.cy.ts"
+      - name: Wait for the Frontend Server to be Ready
+        run: npx wait-on http://localhost:4000
 
       - name: Run Cypress Tests in Parallel
         run: |

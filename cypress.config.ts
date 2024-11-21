@@ -30,7 +30,6 @@ export default defineConfig({
     baseUrl: "http://localhost:4000",
     retries: 2,
     requestTimeout: 15000,
-    specPattern: "cypress/e2e/**/*.cy.ts",
   },
   env: {
     API_URL: process.env.REACT_CARE_API_URL ?? "http://localhost:9000",
