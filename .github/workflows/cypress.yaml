@@ -85,7 +85,7 @@ jobs:
 
       - name: Run Cypress Tests in Parallel
         run: |
-          npx cypress-parallel -s "cypress/e2e/**/*.cy.ts" -t 4
+          npx cypress-parallel -s "cypress/e2e/**/*.cy.ts" -t 4 --base "cypress/e2e"
 
       - name: Upload Cypress Artifacts 📸
         uses: actions/upload-artifact@v3
