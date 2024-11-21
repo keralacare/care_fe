@@ -76,8 +76,8 @@ jobs:
           sudo wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
           sudo apt-get install ./google-chrome-stable_current_amd64.deb
 
-      - name: Run Cypress Tests in Parallel 🥬
-         run: |
+      - name: Run Cypress Tests in Parallel
+        run: |
           mkdir -p results
           TEST_FILES=$(find cypress/e2e -name "*.cy.ts")
           COMMANDS=$(echo $TEST_FILES | xargs -n 1 -I {} echo "npx cypress run --spec {} > results/$(basename {}).log")
