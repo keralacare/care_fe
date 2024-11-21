@@ -53,7 +53,7 @@ export const HealthProfileSummary = (props: PatientProps) => {
 
   return (
     <div className="mt-4 px-4 md:px-0">
-      <div className="group my-2 w-full rounded bg-white p-4 shadow lg:w-2/3">
+      <div className="group my-2 w-full rounded bg-white p-4 shadow">
         <hr className="mb-1 mr-5 h-1 w-5 border-0 bg-blue-500" />
         <div className="h-full space-y-2">
           <div className="flex flex-row">
@@ -61,13 +61,13 @@ export const HealthProfileSummary = (props: PatientProps) => {
               {t("medical")}
             </div>
             <button
-              className="flex rounded flex border border-secondary-400 bg-white px-1 py-1 text-sm font-semibold text-green-800 hover:bg-secondary-200"
+              className="flex rounded border border-secondary-400 bg-white px-1 py-1 text-sm font-semibold text-green-800 hover:bg-secondary-200"
               disabled={!patientData.is_active}
               aria-label="Edit medical history"
               onClick={() => {
                 if (!canEditPatient(authUser, patientData)) {
                   Notification.Error({
-                    msg: "Oops! Non-Home facility users don't have permission to perform this action.",
+                    msg: t("permission_denied"),
                   });
                 } else {
                   handleEditClick("medical-history");
@@ -75,7 +75,7 @@ export const HealthProfileSummary = (props: PatientProps) => {
               }}
             >
               <CareIcon icon="l-edit-alt" className="text-md mr-1 mt-1" />
-              Edit
+              {t("edit")}
             </button>
           </div>
 
@@ -122,7 +122,7 @@ export const HealthProfileSummary = (props: PatientProps) => {
                   {t("is_pregnant")}
                 </div>
                 <div className="mt-1 whitespace-normal break-words text-sm font-medium leading-5">
-                  Yes
+                  {t("yes")}
                 </div>
               </div>
             )}

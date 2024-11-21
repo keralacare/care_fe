@@ -15,37 +15,30 @@ export interface PatientProps {
 
 export const patientTabs = [
   {
-    label: "Demography",
     route: "demography",
     component: Demography,
   },
   {
-    label: "Encounters",
     route: "encounters",
     component: EncounterHistory,
   },
   {
-    label: "Health Profile",
     route: "health-profile",
     component: HealthProfileSummary,
   },
   {
-    label: "Immunisation",
     route: "immunisation-records",
     component: ImmunisationRecords,
   },
   {
-    label: "Shift Patient",
     route: "shift",
     component: ShiftingHistory,
   },
   {
-    label: "Request Test",
     route: "request-sample-test",
     component: SampleTestHistory,
   },
   {
-    label: "Notes",
     route: "patient-notes",
     component: PatientNotes,
   },

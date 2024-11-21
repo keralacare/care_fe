@@ -1,5 +1,6 @@
 import { navigate } from "raviger";
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import CareIcon from "@/CAREUI/icons/CareIcon";
 import PaginatedList from "@/CAREUI/misc/PaginatedList";
@@ -37,12 +38,14 @@ export const SampleTestHistory = (props: PatientProps) => {
     setShowAlertMessage(true);
   };
 
+  const { t } = useTranslation();
+
   return (
     <div className="mt-4 px-3 md:px-0">
       <div>
-        <div className="flex justify-between">
+        <div className="flex justify-between items-center">
           <h2 className="my-4 ml-0 text-2xl font-semibold leading-tight">
-            Sample Test History
+            {t("sample_test_history")}
           </h2>
           <ButtonV2
             className="bg-green-600 px-3 py-2 font-semibold text-white hover:bg-green-500"
@@ -57,7 +60,7 @@ export const SampleTestHistory = (props: PatientProps) => {
           >
             <span className="flex w-full items-center justify-start gap-2">
               <CareIcon icon="l-medkit" className="text-xl" />
-              Request Sample Test
+              {t("request_sample_test")}
             </span>
           </ButtonV2>
         </div>
@@ -76,7 +79,7 @@ export const SampleTestHistory = (props: PatientProps) => {
             <PaginatedList.WhenEmpty className="py-2">
               <div className="h-full space-y-2 rounded-lg bg-white p-7 shadow">
                 <div className="flex w-full items-center justify-center text-xl font-bold text-secondary-500">
-                  No Sample Test History Available
+                  {t("no_records_found")}
                 </div>
               </div>
             </PaginatedList.WhenEmpty>

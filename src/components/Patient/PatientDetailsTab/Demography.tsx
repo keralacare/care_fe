@@ -430,7 +430,7 @@ export const Demography = (props: PatientProps) => {
                       typeof detail === "object" &&
                       "label" in detail ? (
                         <div className="sm:col-span-1" key={j}>
-                          <div className="text-sm font-normal leading-5 text-gray-600">
+                          <div className="text-sm font-normal leading-5 text-gray-500">
                             {detail.label}
                           </div>
                           <div className="mt-1 text-sm font-semibold leading-5 text-gray-900">

@@ -37,7 +37,7 @@ export const ImmunisationRecords = (props: PatientProps) => {
 
   return (
     <div className="mt-4 px-4 md:px-0">
-      <div className="w-full rounded-md bg-white p-4 shadow-md lg:w-2/3">
+      <div className="w-full rounded-md bg-white p-4 shadow-md">
         <hr className="mb-1 mr-5 h-1 w-5 border-0 bg-blue-500" />
         <div>
           <div className="flex flex-row gap-x-4">
@@ -48,7 +48,7 @@ export const ImmunisationRecords = (props: PatientProps) => {
               onClick={() => {
                 if (!canEditPatient(authUser, patientData)) {
                   Notification.Error({
-                    msg: "Oops! Non-Home facility users don't have permission to perform this action.",
+                    msg: t("permission_denied"),
                   });
                 } else {
                   handleEditClick("covid-details");
@@ -56,7 +56,7 @@ export const ImmunisationRecords = (props: PatientProps) => {
               }}
             >
               <CareIcon icon="l-edit-alt" className="text-md mr-1 mt-1" />
-              Edit
+              {t("edit")}
             </button>
           </div>
 

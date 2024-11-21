@@ -26,10 +26,10 @@ export const ConsultationCard = (props: ConsultationProps) => {
   const { itemData, isLastConsultation, refetch } = props;
   const [open, setOpen] = useState(false);
   const bedDialogTitle = itemData.discharge_date
-    ? "Bed History"
+    ? t("bed_history")
     : !itemData.current_bed
-      ? "Assign Bed"
-      : "Switch Bed";
+      ? t("assign_bed")
+      : t("switch_bed");
   return (
     <>
       <DialogModal
@@ -49,7 +49,7 @@ export const ConsultationCard = (props: ConsultationProps) => {
             hideTitle
           />
         ) : (
-          <div>Invalid Patient Data</div>
+          <div>{t("invalid_patient_data")}</div>
         )}
       </DialogModal>
       <div className="pb-16 block relative cursor-pointer border-l-2 px-4 border-l-secondary-300 hover:border-primary-500 transition-all before:absolute before:-left-[7px] before:top-0 before:w-3 before:aspect-square before:bg-secondary-400 before:rounded-full hover:before:bg-primary-500 before:transition-all">
@@ -167,7 +167,7 @@ export const ConsultationCard = (props: ConsultationProps) => {
             onClick={() => {
               if (itemData.admitted && !itemData.current_bed) {
                 Notification.Error({
-                  msg: "Please assign a bed to the patient",
+                  msg: t("please_assign_bed_to_patient"),
                 });
                 setOpen(true);
               } else {

@@ -37,10 +37,10 @@ import { Avatar } from "../Common/Avatar";
 import ButtonV2 from "../Common/ButtonV2";
 import Loading from "../Common/Loading";
 import Page from "../Common/Page";
-import { SkillModel } from "../Users/models";
+import { SkillModel, UserBareMinimum } from "../Users/models";
 import { patientTabs } from "./PatientDetailsTab";
 import { isPatientMandatoryDataFilled } from "./Utils";
-import { PatientModel } from "./models";
+import { AssignedToObjectModel, PatientModel, SampleTestModel } from "./models";
 
 export const parseOccupation = (occupation: string | undefined) => {
   return OCCUPATION_TYPES.find((i) => i.value === occupation)?.text;
@@ -53,30 +53,28 @@ export const PatientHome = (props: {
 }) => {
   const { facilityId, id, page } = props;
   const [patientData, setPatientData] = useState<PatientModel>({});
-  const [assignedVolunteerObject, setAssignedVolunteerObject] =
-    useState<any>(null);
 
   const authUser = useAuthUser();
   const { t } = useTranslation();
   const [selectedStatus, _setSelectedStatus] = useState<{
     status: number;
-    sample: any;
+    sample: SampleTestModel | null;
   }>({ status: 0, sample: null });
+
+  const [assignedVolunteer, setAssignedVolunteer] = useState<
+    AssignedToObjectModel | undefined
+  >(patientData.assigned_to_object);
+
+  useEffect(() => {
+    setAssignedVolunteer(patientData.assigned_to_object);
+  }, [patientData.assigned_to_object]);
+
   const [showAlertMessage, setShowAlertMessage] = useState(false);
   const [openAssignVolunteerDialog, setOpenAssignVolunteerDialog] =
     useState(false);
 
   const initErr: any = {};
   const errors = initErr;
-
-  useEffect(() => {
-    setAssignedVolunteerObject(patientData.assigned_to_object);
-  }, [patientData.assigned_to_object]);
-
-  const handleVolunteerSelect = (volunteer: any) => {
-    setAssignedVolunteerObject(volunteer.value);
-  };
-
   const { loading: isLoading, refetch } = useQuery(routes.getPatient, {
     pathParams: {
       id,
@@ -98,20 +96,18 @@ export const PatientHome = (props: {
         id: patientData.id as string,
       },
       body: {
-        assigned_to: assignedVolunteerObject
-          ? assignedVolunteerObject.id
-          : null,
+        assigned_to: (assignedVolunteer as UserBareMinimum)?.id || null,
       },
     });
     if (res?.ok && data) {
       setPatientData(data);
-      if (assignedVolunteerObject) {
+      if (!assignedVolunteer) {
         Notification.Success({
-          msg: "Volunteer assigned successfully.",
+          msg: t("volunteer_assigned"),
         });
       } else {
         Notification.Success({
-          msg: "Volunteer unassigned successfully.",
+          msg: t("volunteer_unassigned"),
         });
       }
       refetch();
@@ -145,16 +141,16 @@ export const PatientHome = (props: {
   const handleApproval = async () => {
     const { status, sample } = selectedStatus;
     const sampleData = {
-      id: sample.id,
+      id: sample?.id,
       status: status.toString(),
-      consultation: sample.consultation,
+      consultation: sample?.consultation,
     };
     const statusName = SAMPLE_TEST_STATUS.find((i) => i.id === status)?.desc;
 
     await request(routes.patchSample, {
       body: sampleData,
       pathParams: {
-        id: sample.id,
+        id: sample?.id || "",
       },
       onResponse: ({ res }) => {
         if (res?.ok) {
@@ -188,7 +184,7 @@ export const PatientHome = (props: {
             allow_transfer: value,
           }));
           Notification.Success({
-            msg: "Transfer status updated.",
+            msg: t("transfer_status_updated"),
           });
         }
       },
@@ -207,10 +203,10 @@ export const PatientHome = (props: {
       backUrl={facilityId ? `/facility/${facilityId}/patients` : "/patients"}
     >
       <ConfirmDialog
-        title="Confirm send sample to collection centre"
-        description="Are you sure you want to send the sample to Collection Centre?"
+        title={t("send_sample_to_collection_centre_title")}
+        description={t("send_sample_to_collection_centre_description")}
         show={showAlertMessage}
-        action="Approve"
+        action={t("approve")}
         onConfirm={() => handleApproval()}
         onClose={() => setShowAlertMessage(false)}
       />
@@ -260,7 +256,7 @@ export const PatientHome = (props: {
                                   icon="l-chat-bubble-user"
                                   className="text-xl"
                                 />
-                                Add Consultation
+                                {t("add_consultation")}
                               </span>
                             </ButtonV2>
                           </div>
@@ -283,7 +279,7 @@ export const PatientHome = (props: {
                           size="small"
                           variant="danger"
                           startIcon="l-notes"
-                          text="No Consultation Filed"
+                          text={t("no_consultation_filed")}
                         />
                         <span className="absolute -right-1 -top-1 flex h-3 w-3 items-center justify-center">
                           <span className="center absolute inline-flex h-4 w-4 animate-ping rounded-full bg-red-400"></span>
@@ -297,7 +293,7 @@ export const PatientHome = (props: {
                       size="small"
                       className="bg-blue-100 text-blue-800"
                       startIcon="l-syringe"
-                      text="Vaccinated"
+                      text={t("vaccinated")}
                     />
                   )}
                   {patientData.allow_transfer ? (
@@ -305,13 +301,13 @@ export const PatientHome = (props: {
                       variant="warning"
                       size="small"
                       startIcon="l-unlock"
-                      text="Transfer Allowed"
+                      text={t("transfer_allowed")}
                     />
                   ) : (
                     <Chip
                       startIcon="l-lock"
                       size="small"
-                      text="Transfer Blocked"
+                      text={t("transfer_blocked")}
                     />
                   )}
 
@@ -326,7 +322,7 @@ export const PatientHome = (props: {
                             size="small"
                             className="border-pink-300 bg-pink-100 text-pink-600"
                             startIcon="l-baby-carriage"
-                            text="Antenatal"
+                            text={t("antenatal")}
                           />
                         )}
                       {isPostPartum(patientData.date_of_delivery) && (
@@ -335,7 +331,7 @@ export const PatientHome = (props: {
                           size="small"
                           className="border-pink-300 bg-pink-100 text-pink-600"
                           startIcon="l-baby-carriage"
-                          text="Post-partum"
+                          text={t("post_partum")}
                         />
                       )}
                     </>
@@ -345,14 +341,14 @@ export const PatientHome = (props: {
                       variant="alert"
                       size="small"
                       startIcon="l-phone"
-                      text="Telemedicine"
+                      text={t("TELEMEDICINE")}
                     />
                   )}
                   {patientData.allergies && (
                     <Chip
                       variant="danger"
                       size="small"
-                      text={`Allergies ${patientData.allergies.length}`}
+                      text={`${t("allergies")} ${patientData.allergies.length}`}
                     />
                   )}
                 </div>
@@ -361,7 +357,7 @@ export const PatientHome = (props: {
               <div className="mt-4 flex gap-4">
                 <div>
                   <p className="text-xs font-normal leading-tight text-gray-600">
-                    Facility:
+                    {t("facility")}:
                   </p>
                   <p className="mt-1 flex text-sm font-semibold leading-tight text-gray-900">
                     {patientData.facility_object?.name || "-"}
@@ -371,7 +367,7 @@ export const PatientHome = (props: {
                 {patientData?.last_consultation?.treating_physician_object && (
                   <div>
                     <h4 className="text-xs font-normal leading-tight text-gray-600">
-                      Treating Doctor:
+                      {t("treating_doctor")}:
                     </h4>
                     <div className="mt-1 flex space-x-2">
                       <p className="flex text-sm font-semibold leading-tight text-gray-900">
@@ -390,7 +386,7 @@ export const PatientHome = (props: {
                 {patientData?.last_consultation?.assigned_to_object && (
                   <div>
                     <p className="text-xs font-normal leading-tight text-gray-600">
-                      Assigned Doctor:
+                      {t("assigned_doctor")}:
                     </p>
                     <div className="mt-1 flex space-x-2 text-sm font-semibold leading-tight text-gray-900">
                       <p>
@@ -406,7 +402,8 @@ export const PatientHome = (props: {
                           rel="noreferrer"
                           className="flex items-center space-x-1 text-xs text-green-500"
                         >
-                          <CareIcon icon="l-whatsapp" /> <span>Video Call</span>
+                          <CareIcon icon="l-whatsapp" />{" "}
+                          <span>{t("video_call")}</span>
                         </a>
                       )}
                     </div>
@@ -416,7 +413,7 @@ export const PatientHome = (props: {
                 {patientData.assigned_to_object && (
                   <div>
                     <p className="text-xs font-normal leading-tight text-gray-600">
-                      Assigned Volunteer:
+                      {t("assigned_volunteer")}:
                     </p>
                     <p className="mt-1 text-sm font-semibold leading-tight text-gray-900">
                       {formatName(patientData.assigned_to_object)}
@@ -446,7 +443,7 @@ export const PatientHome = (props: {
                 aria-selected={page === tab.route}
                 aria-controls={`${tab.route}-panel`}
               >
-                {tab.label}
+                {t(tab.route)}
               </Link>
             ))}
           </div>
@@ -465,7 +462,9 @@ export const PatientHome = (props: {
           <div className="sticky top-20 mt-8 h-full lg:basis-1/6">
             <section className="mb-4 space-y-2 md:flex">
               <div className="mx-3 w-full lg:mx-0">
-                <div className="font-semibold text-secondary-900">Actions</div>
+                <div className="font-semibold text-secondary-900">
+                  {t("actions")}
+                </div>
                 <div className="mt-2 h-full space-y-2">
                   <div className="space-y-3 border-b border-dashed text-left text-lg font-semibold text-secondary-900">
                     <div>
@@ -481,7 +480,7 @@ export const PatientHome = (props: {
                             icon="l-file-search-alt"
                             className="text-xl"
                           />
-                          Investigations Summary
+                          {t("investigations_summary")}
                         </span>
                       </ButtonV2>
                     </div>
@@ -498,7 +497,7 @@ export const PatientHome = (props: {
                       >
                         <span className="flex w-full items-center justify-start gap-2">
                           <CareIcon icon="l-file-upload" className="text-xl" />
-                          View/Upload Patient Files
+                          {t("view_update_patient_files")}
                         </span>
                       </ButtonV2>
                     </div>
@@ -515,7 +514,7 @@ export const PatientHome = (props: {
                         >
                           <span className="flex w-full items-center justify-start gap-2">
                             <CareIcon icon="l-users-alt" className="text-lg" />{" "}
-                            Assign to a Volunteer
+                            {t("assign_to_volunteer")}
                           </span>
                         </ButtonV2>
                       </div>
@@ -543,8 +542,8 @@ export const PatientHome = (props: {
                             className="text-lg"
                           />
                           {patientData.allow_transfer
-                            ? "Disable Transfer"
-                            : "Allow Transfer"}
+                            ? t("disable_transfer")
+                            : t("allow_transfer")}
                         </span>
                       </ButtonV2>
                     </div>
@@ -573,8 +572,9 @@ export const PatientHome = (props: {
                       <CareIcon icon="l-clock" className="text-md mr-2" />
                       <p className="p-1">
                         {(dayjs().isBefore(patientData.review_time)
-                          ? "Review before: "
-                          : "Review Missed: ") +
+                          ? t("review_before")
+                          : t("review_missed")) +
+                          ": " +
                           formatDateTime(patientData.review_time)}
                       </p>
                     </div>
@@ -584,7 +584,7 @@ export const PatientHome = (props: {
                   <div className="my-1 flex justify-between">
                     <div>
                       <div className="text-xs font-normal leading-5 text-gray-600">
-                        Last Discharged Reason
+                        {t("last_discharge_reason")}
                       </div>
                       <div className="text-sm font-semibold text-gray-900">
                         {patientData.is_active ? (
@@ -593,14 +593,16 @@ export const PatientHome = (props: {
                             ?.new_discharge_reason ? (
                           <span className="text-secondary-800">
                             {patientData?.last_consultation?.suggestion === "OP"
-                              ? "OP file closed"
-                              : "UNKNOWN"}
+                              ? t("op_file_closed")
+                              : t("unknown")}
                           </span>
                         ) : patientData.last_consultation
                             ?.new_discharge_reason ===
                           DISCHARGE_REASONS.find((i) => i.text == "Expired")
                             ?.id ? (
-                          <span className="text-red-600">EXPIRED</span>
+                          <span className="text-red-600 uppercase">
+                            {t("expired")}
+                          </span>
                         ) : (
                           DISCHARGE_REASONS.find(
                             (reason) =>
@@ -616,7 +618,7 @@ export const PatientHome = (props: {
                 <div className="my-1 rounded-sm p-2">
                   <div>
                     <div className="text-xs font-normal text-gray-600">
-                      Last Updated by{" "}
+                      {t("last_updated_by")}{" "}
                       <span className="font-semibold text-gray-900">
                         {patientData.last_edited?.first_name}{" "}
                         {patientData.last_edited?.last_name}
@@ -637,7 +639,7 @@ export const PatientHome = (props: {
                   </div>
                   <div className="mt-4">
                     <div className="text-xs font-normal leading-5 text-gray-600">
-                      Patient profile created by{" "}
+                      {t("patient_profile_created_by")}{" "}
                       <span className="font-semibold text-gray-900">
                         {patientData.created_by?.first_name}{" "}
                         {patientData.created_by?.last_name}
@@ -669,7 +671,7 @@ export const PatientHome = (props: {
                       onClick={() => navigate(`/death_report/${id}`)}
                     >
                       <CareIcon icon="l-file-download" className="text-lg" />
-                      Death Report
+                      {t("death_report")}
                     </ButtonV2>
                   </div>
                 )}
@@ -681,21 +683,21 @@ export const PatientHome = (props: {
 
       <ConfirmDialog
         className="w-full justify-between"
-        title={`Assign a volunteer to ${patientData.name}`}
+        title={t("assign_a_volunteer_to", { name: patientData.name })}
         show={openAssignVolunteerDialog}
         onClose={() => setOpenAssignVolunteerDialog(false)}
         description={
           <div className="mt-6">
             <UserAutocomplete
-              value={assignedVolunteerObject}
-              onChange={handleVolunteerSelect}
+              value={assignedVolunteer as UserBareMinimum}
+              onChange={(user) => setAssignedVolunteer(user.value)}
               userType={"Volunteer"}
               name={"assign_volunteer"}
               error={errors.assignedVolunteer}
             />
           </div>
         }
-        action="Assign"
+        action={t("assign")}
         onConfirm={handleAssignedVolunteer}
       />
     </Page>
