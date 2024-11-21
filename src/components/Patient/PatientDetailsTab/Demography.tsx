@@ -247,19 +247,25 @@ export const Demography = (props: PatientProps) => {
         },
         {
           label: t("ration_card_category"),
-          value: t(`ration_card__${patientData.ration_card_category}`),
+          value:
+            !!patientData.ration_card_category &&
+            t(`ration_card__${patientData.ration_card_category}`),
         },
         {
           label: t("socioeconomic_status"),
-          value: t(
-            `SOCIOECONOMIC_STATUS__${patientData.meta_info?.socioeconomic_status}`,
-          ),
+          value:
+            patientData.meta_info?.socioeconomic_status &&
+            t(
+              `SOCIOECONOMIC_STATUS__${patientData.meta_info?.socioeconomic_status}`,
+            ),
         },
         {
           label: t("domestic_healthcare_support"),
-          value: t(
-            `DOMESTIC_HEALTHCARE_SUPPORT__${patientData.meta_info?.domestic_healthcare_support}`,
-          ),
+          value:
+            patientData.meta_info?.domestic_healthcare_support &&
+            t(
+              `DOMESTIC_HEALTHCARE_SUPPORT__${patientData.meta_info?.domestic_healthcare_support}`,
+            ),
         },
       ],
     },
@@ -284,6 +290,12 @@ export const Demography = (props: PatientProps) => {
           {insuranceDetials?.results.map((insurance) => (
             <InsuranceDetialsCard key={insurance.id} data={insurance} />
           ))}
+          {!!insuranceDetials?.results &&
+            insuranceDetials.results.length === 0 && (
+              <div className="text-gray-500 text-sm flex items-center justify-center py-10">
+                {t("no_data_found")}
+              </div>
+            )}
           <ButtonV2
             border
             className="mt-4"
