@@ -1,14 +1,15 @@
 import { defineConfig } from "cypress";
 import cypressSplit from "cypress-split";
+import * as dotenv from "dotenv";
 import fs from "fs";
+
+dotenv.config();
 
 export default defineConfig({
   projectId: "wf7d2m",
   defaultCommandTimeout: 10000,
   e2e: {
     setupNodeEvents(on, config) {
-      // implement node event listeners here
-
       require("cypress-localstorage-commands/plugin")(on, config); // eslint-disable-line
 
       on("task", {
@@ -16,7 +17,6 @@ export default defineConfig({
           if (fs.existsSync(filename)) {
             return fs.readFileSync(filename, "utf8");
           }
-
           return null;
         },
       });
