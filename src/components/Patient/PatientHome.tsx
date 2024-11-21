@@ -428,8 +428,11 @@ export const PatientHome = (props: {
           </div>
         </div>
 
-        <div className="sticky top-0 z-10 mt-4 w-full overflow-x-auto border-b bg-gray-50">
-          <div className="flex flex-row">
+        <div
+          className="sticky top-0 z-10 mt-4 w-full overflow-x-auto border-b bg-gray-50"
+          role="navigation"
+        >
+          <div className="flex flex-row" role="tablist">
             {patientTabs.map((tab) => (
               <Link
                 key={tab.route}
@@ -439,6 +442,9 @@ export const PatientHome = (props: {
                     ? "border-b-4 border-green-800 text-green-800 md:border-b-2"
                     : "rounded-t-lg text-gray-600 hover:bg-gray-100"
                 }`}
+                role="tab"
+                aria-selected={page === tab.route}
+                aria-controls={`${tab.route}-panel`}
               >
                 {tab.label}
               </Link>
@@ -645,7 +651,7 @@ export const PatientHome = (props: {
                             : "--:--"}
                         </span>
                         {patientData.modified_date
-                          ? relativeDate(patientData.created_date)
+                          ? relativeDate(patientData.modified_date)
                           : "--:--"}
                       </div>
                     </div>

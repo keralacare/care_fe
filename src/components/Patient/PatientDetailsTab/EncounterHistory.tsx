@@ -49,47 +49,41 @@ const EncounterHistory = (props: PatientProps) => {
   }
 
   return (
-    <div className="mt-4 px-3 md:px-0">
-      <h2 className="text-2xl font-semibold leading-tight">
-        Consultation History
-      </h2>
-
-      <PaginatedList
-        route={routes.getConsultationList}
-        query={{ patient: id }}
-        perPage={5}
-      >
-        {(_) => (
-          <div>
-            <PaginatedList.WhenLoading>
-              <CircularProgress />
-            </PaginatedList.WhenLoading>
-            <PaginatedList.WhenEmpty className="py-2">
-              <div className="h-full space-y-2 rounded-lg bg-white p-7 border border-secondary-300">
-                <div className="flex w-full items-center justify-center text-xl text-secondary-600">
-                  {t("no_consultation_history")}
-                </div>
+    <PaginatedList
+      route={routes.getConsultationList}
+      query={{ patient: id }}
+      perPage={5}
+    >
+      {(_) => (
+        <div className="mt-8">
+          <PaginatedList.WhenLoading>
+            <CircularProgress />
+          </PaginatedList.WhenLoading>
+          <PaginatedList.WhenEmpty className="py-2">
+            <div className="h-full space-y-2 rounded-lg bg-white p-7 border border-secondary-300">
+              <div className="flex w-full items-center justify-center text-xl text-secondary-600">
+                {t("no_consultation_history")}
               </div>
-            </PaginatedList.WhenEmpty>
-            <PaginatedList.Items<ConsultationModel>>
-              {(item) => (
-                <ConsultationCard
-                  itemData={item}
-                  isLastConsultation={
-                    !!patientData.last_consultation &&
-                    item.id === patientData.last_consultation.id
-                  }
-                  refetch={refetch}
-                />
-              )}
-            </PaginatedList.Items>
-            <div className="flex w-full items-center justify-center">
-              <PaginatedList.Paginator hideIfSinglePage />
             </div>
+          </PaginatedList.WhenEmpty>
+          <PaginatedList.Items<ConsultationModel>>
+            {(item) => (
+              <ConsultationCard
+                itemData={item}
+                isLastConsultation={
+                  !!patientData.last_consultation &&
+                  item.id === patientData.last_consultation.id
+                }
+                refetch={refetch}
+              />
+            )}
+          </PaginatedList.Items>
+          <div className="flex w-full items-center justify-center">
+            <PaginatedList.Paginator hideIfSinglePage />
           </div>
-        )}
-      </PaginatedList>
-    </div>
+        </div>
+      )}
+    </PaginatedList>
   );
 };
 

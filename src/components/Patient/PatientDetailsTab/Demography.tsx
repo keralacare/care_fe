@@ -19,7 +19,7 @@ import { formatName, formatPatientAge } from "@/Utils/utils";
 
 import { PatientProps } from ".";
 import * as Notification from "../../../Utils/Notifications";
-import { InsuranceDetialsCard } from "../InsuranceDetailsCard";
+import { InsuranceDetailsCard } from "../InsuranceDetailsCard";
 import { parseOccupation } from "../PatientHome";
 import { AssignedToObjectModel } from "../models";
 
@@ -142,6 +142,16 @@ export const Demography = (props: PatientProps) => {
       </div>
     </div>
   );
+
+  const withPermissionCheck = (action: () => void) => () => {
+    if (!hasEditPermission()) {
+      Notification.Error({
+        msg: t("permission_denied"),
+      });
+      return;
+    }
+    action();
+  };
 
   type Data = {
     id: string;
@@ -288,7 +298,7 @@ export const Demography = (props: PatientProps) => {
       details: [
         <div className="w-full md:col-span-2">
           {insuranceDetials?.results.map((insurance) => (
-            <InsuranceDetialsCard key={insurance.id} data={insurance} />
+            <InsuranceDetailsCard key={insurance.id} data={insurance} />
           ))}
           {!!insuranceDetials?.results &&
             insuranceDetials.results.length === 0 && (
@@ -301,18 +311,12 @@ export const Demography = (props: PatientProps) => {
             className="mt-4"
             ghost
             disabled={!patientData.is_active}
-            onClick={() => {
-              if (!hasEditPermission()) {
-                Notification.Error({
-                  msg: t("permission_denied"),
-                });
-              } else {
-                handleEditClick("insurance-details");
-              }
-            }}
+            onClick={withPermissionCheck(() =>
+              handleEditClick("insurance-details"),
+            )}
           >
             <CareIcon icon="l-plus" className="" />
-            Add Insurance Details
+            {t("add_insurance_details")}
           </ButtonV2>
         </div>,
       ],
@@ -366,17 +370,11 @@ export const Demography = (props: PatientProps) => {
                 className="mt-4  text-green-800 "
                 disabled={!patientData.is_active}
                 authorizeFor={NonReadOnlyUsers}
-                onClick={() => {
-                  if (!hasEditPermission()) {
-                    Notification.Error({
-                      msg: t("permission_denied"),
-                    });
-                  } else {
-                    navigate(
-                      `/facility/${patientData?.facility}/patient/${id}/update`,
-                    );
-                  }
-                }}
+                onClick={withPermissionCheck(() =>
+                  navigate(
+                    `/facility/${patientData?.facility}/patient/${id}/update`,
+                  ),
+                )}
               >
                 <CareIcon icon="l-edit-alt" className="text-lg" />
                 {t("edit_profile")}
@@ -408,21 +406,15 @@ export const Demography = (props: PatientProps) => {
                   className="group mt-4 rounded-md bg-white pb-2 pl-5 pt-5 shadow"
                 >
                   <hr className="mb-1 mr-5 h-1 w-5 border-0 bg-blue-500" />
-                  <div className="flex flex-row gap-x-4">
+                  <div className="flex flex-row gap-x-4 mb-4">
                     <h1 className="text-xl">{t(`patient__${subtab.id}`)}</h1>
                     {subtab.allowEdit && (
                       <button
                         className="flex rounded border border-secondary-400 bg-white px-2 py-1 text-sm font-semibold text-green-800 hover:bg-secondary-200"
                         disabled={!patientData.is_active}
-                        onClick={() => {
-                          if (!hasEditPermission()) {
-                            Notification.Error({
-                              msg: t("permission_denied"),
-                            });
-                          } else {
-                            handleEditClick(subtab.id);
-                          }
-                        }}
+                        onClick={withPermissionCheck(() =>
+                          handleEditClick(subtab.id),
+                        )}
                       >
                         <CareIcon
                           icon="l-edit-alt"

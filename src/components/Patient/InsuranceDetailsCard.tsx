@@ -6,7 +6,7 @@ interface InsuranceDetails {
   data: HCXPolicyModel;
 }
 
-export const InsuranceDetialsCard = (props: InsuranceDetails) => {
+export const InsuranceDetailsCard = (props: InsuranceDetails) => {
   const { data } = props;
 
   const { t } = useTranslation();
