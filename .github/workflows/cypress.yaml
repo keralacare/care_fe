@@ -12,10 +12,6 @@ jobs:
     permissions: write-all
     if: github.repository == 'ohcnetwork/care_fe'
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        containers: [1, 2, 3, 4]
     env:
       REACT_CARE_API_URL: http://localhost:9000
       REACT_ENABLED_APPS: "ohcnetwork/care_hcx_fe@main"
@@ -120,8 +116,6 @@ jobs:
           NODE_OPTIONS: --max_old_space_size=4096
           COMMIT_INFO_MESSAGE: ${{github.event.pull_request.title}}
           COMMIT_INFO_SHA: ${{github.event.pull_request.head.sha}}
-          SPLIT: ${{ strategy.job-total }}
-          SPLIT_INDEX: ${{ strategy.job-index }}
 
       - name: Upload cypress screenshots on failure 📸
         uses: actions/upload-artifact@v3
