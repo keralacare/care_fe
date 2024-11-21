@@ -87,9 +87,16 @@ jobs:
         run: |
           npm run cy:parallel
 
-      - name: Upload Cypress Artifacts 📸
+      -  name: Upload Cypress Screenshots
+         uses: actions/upload-artifact@v3
+         if: failure()
+         with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+
+      - name: Upload Cypress Videos
         uses: actions/upload-artifact@v3
         if: failure()
         with:
-          name: cypress-artifacts
-          path: cypress/{screenshots,videos}
+          name: cypress-videos
+          path: cypress/videos
