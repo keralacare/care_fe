@@ -381,7 +381,7 @@ export const Demography = (props: PatientProps) => {
               </ButtonV2>
             </div>
           </div>
-          <div className="mt-4 rounded-md border border-blue-400 bg-blue-50 p-5 grid grid-cols-1 gap-x-4 gap-y-2 md:grid-cols-2 md:gap-y-8 lg:grid-cols-2">
+          {/* <div className="mt-4 rounded-md border border-blue-400 bg-blue-50 p-5 grid grid-cols-1 gap-x-4 gap-y-2 md:grid-cols-2 md:gap-y-8 lg:grid-cols-2">
             {[
               { label: t("abha_number"), value: "-" },
               { label: t("abha_address"), value: "-" },
@@ -395,7 +395,7 @@ export const Demography = (props: PatientProps) => {
                 </p>
               </div>
             ))}
-          </div>
+          </div> */}
           <div className="flex h-full flex-col gap-y-4">
             {data
               .filter((s) => !s.hidden)
