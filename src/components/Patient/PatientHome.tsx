@@ -211,7 +211,7 @@ export const PatientHome = (props: {
         onClose={() => setShowAlertMessage(false)}
       />
 
-      <div className="mt-3">
+      <div className="mt-3" data-testid="patient-dashboard">
         <div className="px-3 md:px-0">
           <div className="rounded-md bg-white p-3 shadow-sm">
             <div>

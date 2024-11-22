@@ -61,6 +61,7 @@ export class SampleTestPage {
     fastTrack: string,
     sampleTestResult: string,
   ): void {
+    cy.get("a").contains("Sample Tests").click();
     cy.verifyContentPresence("#sample-test-status", [sampleTestStatus]);
     cy.verifyContentPresence("#sample-test-type", [sampleTestType]);
     cy.verifyContentPresence("#sample-test-fast-track", [fastTrack]);
