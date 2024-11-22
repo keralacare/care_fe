@@ -79,8 +79,8 @@ jobs:
 
       - name: Run Cypress Tests in Parallel
         run: |
-          (npm run preview &)
-          npx wait-on --timeout 60000 http://localhost:4000 || (  
+          (npm run preview -- --host 127.0.0.1 &)
+          npx wait-on --timeout 60000 http://127.0.0.1:4000 || (  
             echo "Frontend server failed to start within timeout"  
             exit 1  
           )
