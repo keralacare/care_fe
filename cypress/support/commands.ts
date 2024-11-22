@@ -22,13 +22,14 @@ Cypress.Commands.add("refreshApiLogin", (username, password) => {
     failOnStatusCode: false,
   }).then((response) => {
     if (response.status === 200) {
-      cy.writeFile("cypress/fixtures/token.json", {
+      cy.writeFile(`cypress/fixtures/token-${username}.json`, {
         username: username,
         access: response.body.access,
         refresh: response.body.refresh,
       });
       cy.setLocalStorage("care_access_token", response.body.access);
       cy.setLocalStorage("care_refresh_token", response.body.refresh);
+      console.log(cy.getLocalStorage("care_access_token"));
     } else {
       cy.log("An error occurred while logging in");
     }
@@ -37,7 +38,7 @@ Cypress.Commands.add("refreshApiLogin", (username, password) => {
 
 Cypress.Commands.add("loginByApi", (username, password) => {
   cy.log(`Logging in the user: ${username}:${password}`);
-  cy.task("readFileMaybe", "cypress/fixtures/token.json").then(
+  cy.task("readFileMaybe", `cypress/fixtures/token-${username}.json`).then(
     (tkn: unknown) => {
       const token = JSON.parse(tkn as string); // Cast tkn to string
       if (tkn && token.access && token.username === username) {
@@ -55,6 +56,7 @@ Cypress.Commands.add("loginByApi", (username, password) => {
           if (response.status === 200) {
             cy.setLocalStorage("care_access_token", token.access);
             cy.setLocalStorage("care_refresh_token", token.refresh);
+            console.log(cy.getLocalStorage("care_access_token"));
           } else {
             cy.refreshApiLogin(username, password);
           }

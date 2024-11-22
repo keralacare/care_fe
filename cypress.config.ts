@@ -1,4 +1,6 @@
 import { defineConfig } from "cypress";
+import localStorageCommands from "cypress-localstorage-commands/plugin";
+import { beforeRunHook } from "cypress-mochawesome-reporter/lib";
 import cypressSplit from "cypress-split";
 import * as dotenv from "dotenv";
 import fs from "fs";
@@ -10,7 +12,11 @@ export default defineConfig({
   defaultCommandTimeout: 10000,
   e2e: {
     setupNodeEvents(on, config) {
-      require("cypress-localstorage-commands/plugin")(on, config); // eslint-disable-line
+      localStorageCommands(on, config);
+
+      on("before:run", async (details) => {
+        await beforeRunHook(details);
+      });
 
       on("task", {
         readFileMaybe(filename) {

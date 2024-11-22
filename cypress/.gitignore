@@ -1,3 +1,7 @@
 # ignore cypress screenshots and videos
 screenshots
 videos
+reports
+.tmp
+downloads
+fixtures/token*.json
