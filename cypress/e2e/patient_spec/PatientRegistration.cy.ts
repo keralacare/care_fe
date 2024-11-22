@@ -217,8 +217,6 @@ describe("Patient Creation with consultation", () => {
       .contains("member id")
       .scrollIntoView();
     cy.wait(2000);
-    patientInsurance.clickPatientInsuranceViewDetail();
-    cy.wait(3000);
     patientInsurance.verifyPatientPolicyDetails(
       patientOneFirstSubscriberId,
       patientOneFirstPolicyId,
