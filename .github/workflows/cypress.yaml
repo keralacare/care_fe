@@ -77,9 +77,6 @@ jobs:
           sudo wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
           sudo apt-get install ./google-chrome-stable_current_amd64.deb
 
-      - name: Build Frontend Application
-        run: npm run build 
-
       - name: Run Cypress Tests in Parallel
         run: |
           npm run preview &
