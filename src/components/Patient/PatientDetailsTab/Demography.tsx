@@ -366,6 +366,7 @@ export const Demography = (props: PatientProps) => {
             </div>
             <div>
               <ButtonV2
+                id="update-patient-details"
                 variant="secondary"
                 className="mt-4  text-green-800 "
                 disabled={!patientData.is_active}
