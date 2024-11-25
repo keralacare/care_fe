@@ -46,7 +46,7 @@ jobs:
           echo DISABLE_RATELIMIT=True >> docker/.prebuilt.env
           echo "CORS_ALLOWED_ORIGINS=\"[\\\"http://localhost:4000\\\"]\"" >> docker/.prebuilt.env
           echo JWKS_BASE64=\"$(cat ../.github/runner-files/jwks.b64.txt)\" >> docker/.prebuilt.env
-          docker compose -f docker-compose.yaml -f $(docker_config_file) up -d db
+          docker compose -f docker-compose.yaml -f docker-compose.pre-built.yaml up -d db
           # load the db dump from the artifact if it exists else do the usual
           set -e
           {
