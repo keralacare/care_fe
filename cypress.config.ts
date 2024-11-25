@@ -38,7 +38,7 @@ export default defineConfig({
     requestTimeout: 15000,
   },
   env: {
-    API_URL: process.env.REACT_CARE_API_URL ?? "http://localhost:9000",
+    API_URL: process.env.REACT_CARE_API_URL,
     ENABLE_HCX: process.env.REACT_ENABLE_HCX ?? false,
   },
 });
