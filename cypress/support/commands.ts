@@ -29,7 +29,6 @@ Cypress.Commands.add("refreshApiLogin", (username, password) => {
       });
       cy.setLocalStorage("care_access_token", response.body.access);
       cy.setLocalStorage("care_refresh_token", response.body.refresh);
-      console.log(cy.getLocalStorage("care_access_token"));
     } else {
       cy.log("An error occurred while logging in");
     }
@@ -56,7 +55,6 @@ Cypress.Commands.add("loginByApi", (username, password) => {
           if (response.status === 200) {
             cy.setLocalStorage("care_access_token", token.access);
             cy.setLocalStorage("care_refresh_token", token.refresh);
-            console.log(cy.getLocalStorage("care_access_token"));
           } else {
             cy.refreshApiLogin(username, password);
           }
