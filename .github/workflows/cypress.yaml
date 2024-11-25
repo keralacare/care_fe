@@ -89,6 +89,14 @@ jobs:
             exit 1  
           )
           npm run cy:parallel
+          npx generate-mochawesome-report
+
+      - name: Upload Cypress Report
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: cypress-report
+          path: cypress/reports/html
 
       -  name: Upload Cypress Screenshots
          uses: actions/upload-artifact@v3
@@ -96,6 +104,7 @@ jobs:
          with:
           name: cypress-screenshots
           path: cypress/screenshots
+          retention-days: 7
 
       - name: Upload Cypress Videos
         uses: actions/upload-artifact@v3
@@ -103,3 +112,4 @@ jobs:
         with:
           name: cypress-videos
           path: cypress/videos
+          retention-days: 7
