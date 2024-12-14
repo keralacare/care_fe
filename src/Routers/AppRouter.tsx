@@ -1,8 +1,9 @@
 import careConfig from "@careConfig";
-import { Redirect, usePath, useRedirect, useRoutes } from "raviger";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Redirect, navigate, usePath, useRedirect, useRoutes } from "raviger";
+import { useCallback, useEffect, useState } from "react";
 
-import IconIndex from "@/CAREUI/icons/Index";
+import CareIcon from "@/CAREUI/icons/CareIcon";
 
 import ErrorBoundary from "@/components/Common/ErrorBoundary";
 import {
@@ -13,12 +14,13 @@ import {
 } from "@/components/Common/Sidebar/Sidebar";
 import ErrorPage from "@/components/ErrorPages/DefaultErrorPage";
 import SessionExpired from "@/components/ErrorPages/SessionExpired";
+import { FacilityModel } from "@/components/Facility/models";
 import { NoticeBoard } from "@/components/Notifications/NoticeBoard";
 import ShowPushNotification from "@/components/Notifications/ShowPushNotification";
 
 import { usePluginRoutes } from "@/hooks/useCareApps";
 
-import { BLACKLISTED_PATHS } from "@/common/constants";
+import { BLACKLISTED_PATHS, SELECTED_FACILITY_KEY } from "@/common/constants";
 
 import AssetRoutes from "@/Routers/routes/AssetRoutes";
 import ConsultationRoutes from "@/Routers/routes/ConsultationRoutes";
@@ -27,8 +29,13 @@ import PatientRoutes from "@/Routers/routes/PatientRoutes";
 import ResourceRoutes from "@/Routers/routes/ResourceRoutes";
 import ShiftingRoutes from "@/Routers/routes/ShiftingRoutes";
 import UserRoutes from "@/Routers/routes/UserRoutes";
+import apiRoutes from "@/Utils/request/api";
+import request from "@/Utils/request/request";
+import { PaginatedResponse, RequestResult } from "@/Utils/request/types";
+import useTanStackQueryInstead from "@/Utils/request/useQuery";
 import { PlugConfigEdit } from "@/pages/Apps/PlugConfigEdit";
 import { PlugConfigList } from "@/pages/Apps/PlugConfigList";
+import { FacilitySelectionPage } from "@/pages/Facility/FacilitySelectionPage";
 
 import { QuestionnaireList } from "../components/Questionnaire";
 import { QuestionnaireShow } from "../components/Questionnaire/show";
@@ -64,10 +71,12 @@ const Routes: AppRoutes = {
 
   "/session-expired": () => <SessionExpired />,
   "/not-found": () => <ErrorPage />,
-  "/icons": () => <IconIndex />,
+  "/icons": () => <CareIcon icon="l-spinner" className="h-8 w-8" />,
 
   // Only include the icon route in development environment
-  ...(import.meta.env.PROD ? { "/icons": () => <IconIndex /> } : {}),
+  ...(import.meta.env.PROD
+    ? { "/icons": () => <CareIcon icon="l-spinner" className="h-8 w-8" /> }
+    : {}),
 
   // Questionnaire Routes
   "/questionnaire": () => <QuestionnaireList />,
@@ -78,21 +87,63 @@ const Routes: AppRoutes = {
 
 export default function AppRouter() {
   const pluginRoutes = usePluginRoutes();
-
-  let routes = Routes;
-
-  useRedirect("/user", "/users");
-
-  // Merge in Plugin Routes
-  routes = {
-    ...pluginRoutes,
-    ...routes,
-  };
-
-  const pages = useRoutes(routes) || <ErrorPage />;
-
   const path = usePath();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [selectedFacility, setSelectedFacility] =
+    useState<FacilityModel | null>(() => {
+      const stored = localStorage.getItem(SELECTED_FACILITY_KEY);
+      if (stored) {
+        try {
+          return JSON.parse(stored);
+        } catch {
+          return null;
+        }
+      }
+      return null;
+    });
+
+  const [shrinked, setShrinked] = useState(
+    localStorage.getItem(SIDEBAR_SHRINK_PREFERENCE_KEY) === "true",
+  );
+
+  // Always initialize the query, but control its execution with enabled
+  const { data: permittedFacility, isLoading: isVerifyingAccess } = useQuery<
+    RequestResult<FacilityModel>
+  >({
+    queryKey: ["permittedFacility", selectedFacility?.id],
+    queryFn: async () => {
+      const response = await request(apiRoutes.getPermittedFacility, {
+        pathParams: { id: selectedFacility?.id || "" },
+      });
+      return response;
+    },
+    enabled: !!selectedFacility?.id,
+    retry: false,
+  });
+
+  const clearSelectedFacility = useCallback(() => {
+    localStorage.removeItem(SELECTED_FACILITY_KEY);
+    setSelectedFacility(null);
+    navigate("/");
+  }, []);
+
+  useEffect(() => {
+    if (selectedFacility && !isVerifyingAccess && !permittedFacility?.data) {
+      clearSelectedFacility();
+    }
+  }, [
+    selectedFacility,
+    isVerifyingAccess,
+    permittedFacility,
+    clearSelectedFacility,
+  ]);
+
+  useEffect(() => {
+    localStorage.setItem(
+      SIDEBAR_SHRINK_PREFERENCE_KEY,
+      shrinked ? "true" : "false",
+    );
+  }, [shrinked]);
 
   useEffect(() => {
     setSidebarOpen(false);
@@ -108,79 +159,134 @@ export default function AppRouter() {
     }
   }, [path]);
 
-  const [shrinked, setShrinked] = useState(
-    localStorage.getItem(SIDEBAR_SHRINK_PREFERENCE_KEY) === "true",
+  // Check if current path is in facility-exempt paths
+  const isFacilityExemptPath = (path: string) => {
+    const exemptPaths = [
+      "/facility",
+      "/icons",
+      "/session-expired",
+      "/not-found",
+      "/notice_board",
+      "/apps",
+      "/questionnaire",
+    ];
+    return exemptPaths.some((exemptPath) => path.startsWith(exemptPath));
+  };
+
+  let routes = Routes;
+  useRedirect("/user", "/users");
+
+  // Wrap the routes with facility check
+  const wrappedRoutes = Object.entries(routes).reduce(
+    (acc, [path, component]) => {
+      if (isFacilityExemptPath(path)) {
+        acc[path] = component;
+      } else {
+        acc[path] = (params: any) => {
+          if (!selectedFacility) {
+            return (
+              <FacilitySelectionPage
+                onSelect={(facility: FacilityModel) => {
+                  localStorage.setItem(
+                    SELECTED_FACILITY_KEY,
+                    JSON.stringify(facility),
+                  );
+                  setSelectedFacility(facility);
+                  // Redirect to the same path after facility selection
+                  if (path !== "/") {
+                    navigate(path);
+                  } else {
+                    navigate("/facility/" + facility.id);
+                  }
+                }}
+              />
+            );
+          }
+          return component(params);
+        };
+      }
+      return acc;
+    },
+    {} as AppRoutes,
   );
 
-  useEffect(() => {
-    localStorage.setItem(
-      SIDEBAR_SHRINK_PREFERENCE_KEY,
-      shrinked ? "true" : "false",
-    );
-  }, [shrinked]);
+  // Merge in Plugin Routes
+  routes = {
+    ...pluginRoutes,
+    ...wrappedRoutes,
+  };
+
+  const pages = useRoutes(routes) || <ErrorPage />;
 
   return (
-    <SidebarShrinkContext.Provider value={{ shrinked, setShrinked }}>
-      <div className="flex h-screen overflow-hidden bg-secondary-100 print:overflow-visible">
-        <>
-          <div className="block md:hidden">
-            <MobileSidebar open={sidebarOpen} setOpen={setSidebarOpen} />{" "}
-          </div>
-          <div className="hidden md:block">
-            <DesktopSidebar />
-          </div>
-        </>
-
-        <div className="relative flex w-full flex-1 flex-col overflow-hidden bg-gray-100 print:overflow-visible">
-          <div className="relative z-10 flex h-16 shrink-0 bg-white shadow md:hidden">
-            <button
-              onClick={() => setSidebarOpen(true)}
-              className="border-r border-secondary-200 px-4 text-secondary-500 focus:bg-secondary-100 focus:text-secondary-600 focus:outline-none md:hidden"
-              aria-label="Open sidebar"
-            >
-              <svg
-                className="h-6 w-6"
-                stroke="currentColor"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h16M4 18h7"
-                />
-              </svg>
-            </button>
-            <a
-              href="/"
-              className="flex h-full w-full items-center px-4 md:hidden"
-            >
-              <img
-                className="h-8 w-auto"
-                src={careConfig.mainLogo?.dark}
-                alt="care logo"
-              />
-            </a>
-          </div>
-
-          <main
-            id="pages"
-            className="flex-1 overflow-y-auto bg-gray-100 focus:outline-none md:pb-2 md:pr-2"
-          >
-            <div
-              className="max-w-8xl mx-auto mt-4 min-h-[96vh] rounded-lg border bg-gray-50 p-3 shadow"
-              data-cui-page
-            >
-              <ErrorBoundary
-                fallback={<ErrorPage forError="PAGE_LOAD_ERROR" />}
-              >
-                {pages}
-              </ErrorBoundary>
+    <SidebarShrinkContext.Provider
+      value={{
+        shrinked,
+        setShrinked,
+        selectedFacility,
+        clearSelectedFacility,
+      }}
+    >
+      {selectedFacility ? (
+        // Show the full layout with sidebar only when a facility is selected
+        <div className="flex h-screen overflow-hidden bg-secondary-100 print:overflow-visible">
+          <>
+            <div className="block md:hidden">
+              <MobileSidebar open={sidebarOpen} setOpen={setSidebarOpen} />
             </div>
-          </main>
+            <div className="hidden md:block">
+              <DesktopSidebar />
+            </div>
+          </>
+
+          <div className="relative flex w-full flex-1 flex-col overflow-hidden bg-gray-100 print:overflow-visible">
+            <div className="relative z-10 flex h-16 shrink-0 bg-white shadow md:hidden">
+              <button
+                onClick={() => setSidebarOpen(true)}
+                className="border-r border-secondary-200 px-4 text-secondary-500 focus:bg-secondary-100 focus:text-secondary-600 focus:outline-none md:hidden"
+                aria-label="Open sidebar"
+              >
+                <svg
+                  className="h-6 w-6"
+                  stroke="currentColor"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M4 6h16M4 12h16M4 18h7"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            <main
+              id="pages"
+              className="flex-1 overflow-y-auto bg-gray-100 focus:outline-none md:pb-2 md:pr-2"
+            >
+              <div
+                className="max-w-8xl mx-auto mt-4 min-h-[96vh] rounded-lg border bg-gray-50 p-3 shadow"
+                data-cui-page
+              >
+                <ErrorBoundary
+                  fallback={<ErrorPage forError="PAGE_LOAD_ERROR" />}
+                >
+                  {pages}
+                </ErrorBoundary>
+              </div>
+            </main>
+          </div>
         </div>
-      </div>
+      ) : (
+        // Show only the pages content when no facility is selected
+        <div className="h-screen w-full overflow-auto bg-gray-100">
+          <ErrorBoundary fallback={<ErrorPage forError="PAGE_LOAD_ERROR" />}>
+            {pages}
+          </ErrorBoundary>
+        </div>
+      )}
     </SidebarShrinkContext.Provider>
   );
 }

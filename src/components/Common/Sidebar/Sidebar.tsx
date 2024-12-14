@@ -6,6 +6,13 @@ import { useTranslation } from "react-i18next";
 import CareIcon, { IconName } from "@/CAREUI/icons/CareIcon";
 import SlideOver from "@/CAREUI/interactive/SlideOver";
 
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Tooltip,
   TooltipContent,
@@ -18,6 +25,7 @@ import {
   SidebarItem,
 } from "@/components/Common/Sidebar/SidebarItem";
 import SidebarUserCard from "@/components/Common/Sidebar/SidebarUserCard";
+import { FacilityModel } from "@/components/Facility/models";
 import NotificationItem from "@/components/Notifications/NotificationsList";
 
 import useActiveLink from "@/hooks/useActiveLink";
@@ -40,19 +48,63 @@ type StatelessSidebarProps =
       shrinkable: true;
       shrinked: boolean;
       setShrinked: (state: boolean) => void;
+      selectedFacility: FacilityModel | null;
+      clearSelectedFacility: () => void;
       onItemClick?: undefined;
     }
   | {
       shrinkable?: false;
       shrinked?: false;
       setShrinked?: undefined;
+      selectedFacility?: undefined;
+      clearSelectedFacility?: undefined;
       onItemClick: (open: boolean) => void;
     };
+
+const FacilityMenu = ({
+  facility,
+  onSwitchFacility,
+}: {
+  facility: FacilityModel | null;
+  onSwitchFacility: () => void;
+}) => {
+  if (!facility) return null;
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="flex items-center gap-2 w-full">
+          <div className="flex-1 text-left">
+            <div className="font-medium truncate">{facility.name}</div>
+            <div className="text-xs text-muted-foreground truncate">
+              {facility.facility_type}
+            </div>
+          </div>
+          <CareIcon icon="l-arrow-down" className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-[200px]">
+        <DropdownMenuItem asChild>
+          <Link href="/settings" className="flex items-center">
+            <CareIcon icon="l-cog" className="mr-2 h-4 w-4" />
+            Settings
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={onSwitchFacility}>
+          <CareIcon icon="l-exchange-alt" className="mr-2 h-4 w-4" />
+          Switch Facility
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
 
 const StatelessSidebar = ({
   shrinked = false,
   setShrinked,
   onItemClick,
+  selectedFacility,
+  clearSelectedFacility,
 }: StatelessSidebarProps) => {
   const { t } = useTranslation();
   const BaseNavItems: INavItem[] = [
@@ -155,6 +207,16 @@ const StatelessSidebar = ({
           </div>
         )}
       </div>
+
+      {!shrinked && selectedFacility && clearSelectedFacility && (
+        <div className="mt-4 px-3">
+          <FacilityMenu
+            facility={selectedFacility}
+            onSwitchFacility={clearSelectedFacility}
+          />
+        </div>
+      )}
+
       <div className="relative mt-4 flex h-full flex-col justify-between">
         <div className="relative flex flex-1 flex-col md:flex-none">
           <div
@@ -204,18 +266,25 @@ const StatelessSidebar = ({
 export const SidebarShrinkContext = createContext<{
   shrinked: boolean;
   setShrinked: (state: boolean) => void;
+  selectedFacility: FacilityModel | null;
+  clearSelectedFacility: () => void;
 }>({
   shrinked: false,
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setShrinked: () => {},
+  selectedFacility: null,
+  clearSelectedFacility: () => {},
 });
 
 export const DesktopSidebar = () => {
-  const { shrinked, setShrinked } = useContext(SidebarShrinkContext);
+  const { shrinked, setShrinked, selectedFacility, clearSelectedFacility } =
+    useContext(SidebarShrinkContext);
+
   return (
     <StatelessSidebar
       shrinked={shrinked}
       setShrinked={setShrinked}
+      selectedFacility={selectedFacility}
+      clearSelectedFacility={clearSelectedFacility}
       shrinkable
     />
   );

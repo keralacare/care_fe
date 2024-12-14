@@ -1669,3 +1669,5 @@ export const HEADER_CONTENT_TYPES = {
 } as const;
 
 export const ADMIN_USER_TYPES = ["DistrictAdmin", "StateAdmin"] as const;
+
+export const SELECTED_FACILITY_KEY = "care_selected_facility";
