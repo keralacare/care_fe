@@ -46,17 +46,6 @@ export class UserCreationPage {
   }
 
   clickSaveUserButton() {
-    cy.clickSubmitButton("Save User");
-  }
-
-  verifyErrorMessages(errorMessages: string[]) {
-    cy.get(".error-text").then(($errors) => {
-      const displayedErrorMessages = $errors
-        .map((_, el) => Cypress.$(el).text())
-        .get();
-      errorMessages.forEach((errorMessage) => {
-        expect(displayedErrorMessages).to.include(errorMessage);
-      });
-    });
+    cy.clickSubmitButton("Submit");
   }
 }
