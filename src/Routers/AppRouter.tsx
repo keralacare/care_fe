@@ -27,6 +27,8 @@ import ResourceRoutes from "@/Routers/routes/ResourceRoutes";
 import ShiftingRoutes from "@/Routers/routes/ShiftingRoutes";
 import UserRoutes from "@/Routers/routes/UserRoutes";
 
+import LabRoutes from "./routes/LabRoutes";
+
 export type RouteParams<T extends string> =
   T extends `${string}:${infer Param}/${infer Rest}`
     ? { [K in Param | keyof RouteParams<Rest>]: string }
@@ -52,6 +54,7 @@ const Routes: AppRoutes = {
   ...ResourceRoutes,
   ...ShiftingRoutes,
   ...UserRoutes,
+  ...LabRoutes,
 
   "/notifications/:id": ({ id }) => <ShowPushNotification id={id} />,
   "/notice_board": () => <NoticeBoard />,

@@ -57,6 +57,14 @@ import {
 } from "@/components/Facility/models";
 import { InsurerOptionModel } from "@/components/HCX/InsurerAutocomplete";
 import { HCXPolicyModel } from "@/components/HCX/models";
+import {
+  Annotation,
+  Coding,
+  DiagnosticReport,
+  Observation,
+  ServiceRequest,
+  Specimen,
+} from "@/components/Lab/types";
 import { MedibaseMedicine, Prescription } from "@/components/Medicine/models";
 import {
   NotificationData,
@@ -94,6 +102,19 @@ export interface JwtTokenObtainPair {
 export interface LoginCredentials {
   username: string;
   password: string;
+}
+
+export interface ValuesetExpandBody {
+  search?: string;
+  count?: number;
+}
+
+export interface ValuesetExpandResponse {
+  results: {
+    code: string;
+    display: string;
+    system: string;
+  }[];
 }
 
 const routes = {
@@ -1253,6 +1274,147 @@ const routes = {
         TBody: Type<{ policy: string }>(),
         TRes: Type<HCXPolicyModel>(),
       },
+    },
+  },
+
+  labs: {
+    labOrderCodes: {
+      method: "POST",
+      path: "/api/v1/valueset/system-lab-order-code/expand/",
+      TBody: Type<ValuesetExpandBody>(),
+      TRes: Type<ValuesetExpandResponse>(),
+    },
+
+    serviceRequest: {
+      create: {
+        method: "POST",
+        path: "/api/v1/service_request/",
+        TBody: Type<{
+          code: Coding;
+          subject: string;
+          encounter: string;
+          priority?: ServiceRequest["priority"];
+          note?: Annotation[];
+        }>(),
+        TRes: Type<ServiceRequest>(),
+      },
+      list: {
+        method: "GET",
+        path: "/api/v1/service_request/",
+        TRes: Type<PaginatedResponse<ServiceRequest>>(),
+      },
+    },
+
+    specimen: {
+      list: {
+        method: "GET",
+        path: "/api/v1/specimen/",
+        TRes: Type<PaginatedResponse<Specimen>>(),
+      },
+      get: {
+        method: "GET",
+        path: "/api/v1/specimen/{id}/",
+        TRes: Type<Specimen>(),
+      },
+      collect: {
+        method: "POST",
+        path: "/api/v1/specimen/{id}/collect/",
+        TBody: Type<{
+          identifier?: string;
+        }>(),
+        TRes: Type<Specimen>(),
+      },
+      sendToLab: {
+        method: "POST",
+        path: "/api/v1/specimen/{id}/send_to_lab/",
+        TBody: Type<{
+          lab?: string;
+        }>(),
+        TRes: Type<Specimen>(),
+      },
+      ReceiveAtLab: {
+        method: "POST",
+        path: "/api/v1/specimen/{id}/receive_at_lab/",
+        TBody: Type<{
+          accession_identifier?: string;
+          note?: Annotation;
+          condition?: Coding;
+        }>(),
+        TRes: Type<Specimen>(),
+      },
+      process: {
+        method: "POST",
+        path: "/api/v1/specimen/{id}/process/",
+        TBody: Type<{
+          process: {
+            description?: string;
+            method?: Coding;
+          }[];
+        }>(),
+        TRes: Type<Specimen>(),
+      },
+    },
+
+    diagnosticReport: {
+      create: {
+        method: "POST",
+        path: "/api/v1/diagnostic_report/",
+        TBody: Type<{
+          based_on: string;
+          specimen: string[];
+        }>(),
+        TRes: Type<DiagnosticReport>(),
+      },
+      observations: {
+        method: "POST",
+        path: "/api/v1/diagnostic_report/{id}/observations/",
+        TBody: Type<{
+          observations: {
+            id: string;
+            status: Observation["status"];
+            main_code: Coding;
+            value: string;
+            subject_type: "patient";
+            effective_datetime: string;
+            data_entered_by_id: number;
+          }[];
+        }>(),
+        TRes: Type<DiagnosticReport>(),
+      },
+      get: {
+        method: "GET",
+        path: "/api/v1/diagnostic_report/{id}/",
+        TRes: Type<DiagnosticReport>(),
+      },
+      list: {
+        method: "GET",
+        path: "/api/v1/diagnostic_report/",
+        TRes: Type<PaginatedResponse<DiagnosticReport>>(),
+      },
+      verify: {
+        method: "POST",
+        path: "/api/v1/diagnostic_report/{id}/verify/",
+        TBody: Type<{
+          is_approved: boolean;
+        }>(),
+        TRes: Type<DiagnosticReport>(),
+      },
+      review: {
+        method: "POST",
+        path: "/api/v1/diagnostic_report/{id}/review/",
+        TBody: Type<{
+          is_approved: boolean;
+          conclusion?: string;
+        }>(),
+        TRes: Type<DiagnosticReport>(),
+      },
+    },
+
+    labObservationCodes: {
+      method: "POST",
+      path: "/api/v1/valueset/system-lab-order-code/expand/", // TODO: change this to more appropriate path
+      TBody: Type<ValuesetExpandBody>(),
+      TRes: Type<ValuesetExpandResponse>(),
     },
   },
 } as const;
