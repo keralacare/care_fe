@@ -66,6 +66,7 @@ import {
   TELEMEDICINE_ACTIONS,
 } from "@/common/constants";
 
+import { PLUGIN_Component } from "@/PluginEngine";
 import { DraftSection, useAutoSaveReducer } from "@/Utils/AutoSave";
 import * as Notification from "@/Utils/Notifications";
 import dayjs from "@/Utils/dayjs";
@@ -935,8 +936,11 @@ export const ConsultationForm = ({ facilityId, patientId, id }: Props) => {
         </div>
         <div className="flex h-full w-full overflow-auto xl:ml-64 2xl:ml-72">
           <div className="w-full max-w-4xl">
+            <PLUGIN_Component __name="Scribe" />
+
             <form
               onSubmit={handleSubmit}
+              data-scribe-form
               className="relative z-10 rounded bg-white p-6 transition-all sm:rounded-xl sm:p-8"
             >
               <DraftSection
@@ -1020,6 +1024,7 @@ export const ConsultationForm = ({ facilityId, patientId, id }: Props) => {
                   <div
                     className="col-span-6"
                     id="symptoms"
+                    data-scribe-ignore
                     ref={fieldRef["create_symptoms"]}
                   >
                     <div className="mb-4 flex flex-col gap-4">
@@ -1335,7 +1340,7 @@ export const ConsultationForm = ({ facilityId, patientId, id }: Props) => {
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-4 pb-4">
+                <div className="flex flex-col gap-4 pb-4" data-scribe-ignore>
                   <div className="flex flex-col">
                     {sectionTitle("Diagnosis", true)}
                     <p className="-mt-4 space-x-1 text-sm text-secondary-700">
@@ -1360,7 +1365,10 @@ export const ConsultationForm = ({ facilityId, patientId, id }: Props) => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 gap-4 gap-x-6">
+                <div
+                  className="grid grid-cols-1 gap-4 gap-x-6"
+                  data-scribe-ignore
+                >
                   {sectionTitle("Treatment Plan")}
                   {state.form.suggestion !== "DD" && (
                     <>
@@ -1444,6 +1452,7 @@ export const ConsultationForm = ({ facilityId, patientId, id }: Props) => {
                       </div>
                       <div
                         className="col-span-6"
+                        data-scribe-ignore
                         ref={fieldRef["treating_physician"]}
                       >
                         <UserAutocomplete
@@ -1527,7 +1536,10 @@ export const ConsultationForm = ({ facilityId, patientId, id }: Props) => {
             </form>
             {state.form.suggestion === "A" && isUpdate && (
               <>
-                <div className="mx-auto mt-4 max-w-4xl rounded bg-white px-11 py-8">
+                <div
+                  className="mx-auto mt-4 max-w-4xl rounded bg-white px-11 py-8"
+                  data-scribe-ignore
+                >
                   {sectionTitle("Bed Status")}
                   <Beds
                     facilityId={facilityId}
