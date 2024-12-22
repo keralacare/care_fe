@@ -62,6 +62,18 @@ const handlers: {
       ];
     },
   },
+  medication_statement: {
+    getRequests: (medications, { encounterId }) => {
+      return [
+        {
+          url: `/api/v1/consultation/${encounterId}/medication/request/upsert/`,
+          method: "POST",
+          body: { datapoints: medications },
+          reference_id: "medication_statement",
+        },
+      ];
+    },
+  },
   symptom: {
     getRequests: (symptoms, { patientId, encounterId }) =>
       symptoms.map((symptom) => {

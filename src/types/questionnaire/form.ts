@@ -1,6 +1,7 @@
 import { AllergyIntolerance } from "@/types/emr/allergyIntolerance";
 import { Encounter } from "@/types/emr/encounter";
 import { MedicationRequest } from "@/types/emr/medicationRequest";
+import { MedicationStatement } from "@/types/emr/medicationStatement";
 import { Code } from "@/types/questionnaire/code";
 import { Quantity } from "@/types/questionnaire/quantity";
 import { StructuredQuestionType } from "@/types/questionnaire/question";
@@ -15,6 +16,7 @@ export type ResponseValue = {
     | "boolean"
     | "allergy_intolerance"
     | "medication_request"
+    | "medication_statement"
     | "symptom"
     | "diagnosis"
     | "encounter";
@@ -25,6 +27,7 @@ export type ResponseValue = {
     | boolean
     | AllergyIntolerance[]
     | MedicationRequest[]
+    | MedicationStatement[]
     | Symptom[]
     | Diagnosis[]
     | Encounter;
