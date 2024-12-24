@@ -1,12 +1,9 @@
 import careConfig from "@careConfig";
 import { Link } from "raviger";
 import { useContext } from "react";
-import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import CareIcon from "@/CAREUI/icons/CareIcon";
-import SlideOver from "@/CAREUI/interactive/SlideOver";
-
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -14,16 +11,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 
 import {
-  INavItem,
+  IParentNavItem,
+  NavItem,
   SidebarShrinkContext,
-  ToggleShrink,
 } from "@/components/Common/Sidebar/Sidebar";
-import {
-  ShrinkedSidebarItem,
-  SidebarItem,
-} from "@/components/Common/Sidebar/SidebarItem";
 
 import useActiveLink from "@/hooks/useActiveLink";
 
@@ -33,8 +27,6 @@ import { AppointmentPatient } from "@/pages/Patient/Utils";
 
 import { Avatar } from "../Avatar";
 import OTPPatientSidebarUserCard from "./OTPPatientSidebarUserCard";
-
-export const SIDEBAR_SHRINK_PREFERENCE_KEY = "sidebarShrinkPreference";
 
 const LOGO_COLLAPSE = "/images/care_logo_mark.svg";
 
@@ -46,7 +38,7 @@ const GetNavItems = (selectedUser: AppointmentPatient | null) => {
     (district ? `district=${district}&` : "") +
     (ward ? `ward=${ward}&` : "") +
     (local_body ? `local_body=${local_body}` : "");
-  const BaseNavItems: INavItem[] = [
+  const BaseNavItems: IParentNavItem[] = [
     { text: t("appointments"), to: "/patient/home", icon: "d-patient" },
     {
       text: t("nearby_facilities"),
@@ -62,58 +54,16 @@ const GetNavItems = (selectedUser: AppointmentPatient | null) => {
   return BaseNavItems;
 };
 
-export const OTPPatientDesktopSidebar = () => {
-  const { shrinked, setShrinked } = useContext(SidebarShrinkContext);
-  return (
-    <OTPPatientStatelessSidebar
-      shrinked={shrinked}
-      setShrinked={setShrinked}
-      shrinkable
-    />
-  );
-};
-
-interface MobileSidebarProps {
-  open: boolean;
-  setOpen: (state: boolean) => void;
+interface StatelessSidebarProps {
+  onItemClick?: (open: boolean) => void;
 }
 
-export const OTPPatientMobileSidebar = (props: MobileSidebarProps) => {
-  return (
-    <SlideOver {...props} slideFrom="left" onlyChild>
-      <OTPPatientStatelessSidebar onItemClick={props.setOpen} />
-    </SlideOver>
-  );
-};
-
-type StatelessSidebarProps =
-  | {
-      shrinkable: true;
-      shrinked: boolean;
-      setShrinked: (state: boolean) => void;
-      onItemClick?: undefined;
-    }
-  | {
-      shrinkable?: false;
-      shrinked?: false;
-      setShrinked?: undefined;
-      onItemClick: (open: boolean) => void;
-    };
-
 export const OTPPatientStatelessSidebar = ({
-  shrinked = false,
-  setShrinked,
   onItemClick,
 }: StatelessSidebarProps) => {
   const activeLink = useActiveLink();
-  const Item = shrinked ? ShrinkedSidebarItem : SidebarItem;
-
   const { t } = useTranslation();
-
-  const indicatorRef = useRef<HTMLDivElement>(null);
-  const activeLinkRef = useRef<HTMLAnchorElement>(null);
-  const [lastIndicatorPosition, setLastIndicatorPosition] = useState(0);
-  const [isOverflowVisible, setOverflowVisisble] = useState(false);
+  const { shrinked } = useContext(SidebarShrinkContext);
   const {
     users,
     selectedUser,
@@ -126,94 +76,33 @@ export const OTPPatientStatelessSidebar = ({
 
   const NavItems = GetNavItems(selectedUser);
 
-  const updateIndicator = () => {
-    if (!indicatorRef.current) return;
-    const index = NavItems.findIndex((item) => item.to === activeLink);
-    const navItemCount = NavItems.length + (careConfig.urls.dashboard ? 2 : 1);
-    if (index !== -1) {
-      const e = indicatorRef.current;
-      const itemHeight = activeLinkRef.current?.clientHeight || 0;
-      const itemOffset = index * itemHeight;
-
-      const indicatorHeight = indicatorRef.current.clientHeight;
-      const indicatorOffset = (itemHeight - indicatorHeight) / 2;
-
-      const top = `${itemOffset + indicatorOffset}px`;
-      const bottom = `${navItemCount * itemHeight - itemOffset - indicatorOffset}px`;
-
-      e.style.top = top;
-      e.style.bottom = bottom;
-
-      setLastIndicatorPosition(index);
-    } else {
-      indicatorRef.current.style.display = "none";
-    }
-  };
-
-  useEffect(() => {
-    updateIndicator();
-  }, [activeLink, lastIndicatorPosition]);
-
-  useEffect(() => {
-    addEventListener("resize", updateIndicator);
-    return () => removeEventListener("resize", updateIndicator);
-  }, []);
-
-  const handleOverflow = (value: boolean) => {
-    setOverflowVisisble(value);
-  };
-
   return (
-    <nav
-      className={`group flex h-dvh flex-1 flex-col bg-gray-100 py-3 md:py-5 ${
-        shrinked ? "w-14" : "w-60"
-      } transition-all duration-300 ease-in-out ${
-        isOverflowVisible && shrinked
-          ? "overflow-visible"
-          : "overflow-y-auto overflow-x-hidden"
-      }`}
-    >
-      {setShrinked && shrinked && (
-        <div>
-          <ToggleShrink
-            shrinked={shrinked}
-            toggle={() => setShrinked(!shrinked)}
-          />
-        </div>
+    <aside
+      className={classNames(
+        "flex h-dvh flex-col bg-white border-r transition-all duration-300",
+        shrinked ? "w-14" : "w-60",
       )}
-      <div
-        className={`flex items-center ${shrinked ? "mt-2 justify-center" : "justify-between"}`}
-      >
+    >
+      <div className="flex h-14 items-center justify-between border-b px-3">
         <Link
           href="/"
-          className={`${
-            shrinked ? "mx-auto" : "ml-3"
-          } flex items-center justify-between`}
-        >
-          <img
-            className="h-8 w-auto self-start transition md:h-10"
-            src={shrinked ? LOGO_COLLAPSE : careConfig.mainLogo?.light}
-          />
-        </Link>
-        {setShrinked && !shrinked && (
-          <div className="ml-1">
-            <ToggleShrink
-              shrinked={shrinked}
-              toggle={() => setShrinked(!shrinked)}
-            />
-          </div>
-        )}
-      </div>
-      <div className="relative mt-4 flex h-full flex-col justify-between">
-        <div
           className={classNames(
-            "mx-2 mb-2 flex flex-wrap",
-            shrinked ? "flex-row" : "flex-col",
+            "flex items-center gap-2",
+            shrinked && "justify-center",
           )}
         >
+          <img
+            src={shrinked ? LOGO_COLLAPSE : careConfig.mainLogo?.light}
+            alt="Care Logo"
+            className="h-8 w-auto"
+          />
+        </Link>
+      </div>
+      {!shrinked && (
+        <div className="border-b p-2">
           <Select
             disabled={users?.length === 0}
-            value={users ? selectedUser?.id : "Book "}
+            value={users ? selectedUser?.id : undefined}
             onValueChange={(value) => {
               const user = users?.find((user) => user.id === value);
               if (user) {
@@ -221,66 +110,76 @@ export const OTPPatientStatelessSidebar = ({
               }
             }}
           >
-            <SelectTrigger>
+            <SelectTrigger className="w-full">
               <SelectValue
-                asChild
                 placeholder={
-                  !shrinked &&
-                  (users?.length === 0 ? t("no_patients") : t("select_patient"))
+                  users?.length === 0 ? t("no_patients") : t("select_patient")
                 }
               >
-                <div className="flex flex-row justify-between items-center gap-2 w-full text-primary-800">
+                <div className="flex items-center gap-2">
                   <Avatar name={selectedUser?.name} className="h-4 w-4" />
-                  {!shrinked && (
-                    <div className="flex flex-row items-center justify-between w-full gap-2">
-                      <span className="font-semibold truncate max-w-32">
-                        {selectedUser?.name}
-                      </span>
-                      <span className="text-xs text-secondary-600">
-                        {t("switch")}
-                      </span>
-                    </div>
-                  )}
+                  <div className="flex items-center justify-between w-full gap-2">
+                    <span className="font-semibold truncate max-w-32">
+                      {selectedUser?.name}
+                    </span>
+                    <span className="text-xs text-secondary-600">
+                      {t("switch")}
+                    </span>
+                  </div>
                 </div>
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
               {users?.map((user) => (
                 <SelectItem key={user.id} value={user.id}>
-                  <div className="flex flex-row items-center gap-2">
+                  <div className="flex items-center gap-2">
                     <Avatar name={user.name} className="h-4 w-4" />
-                    {user.name}
+                    <span className="truncate">{user.name}</span>
                   </div>
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
-        <div className="relative flex flex-1 flex-col md:flex-none">
-          <div
-            ref={indicatorRef}
-            className={classNames(
-              "absolute right-2 z-10 block h-6 w-1 rounded-l bg-primary-500 transition-all",
-              activeLink ? "opacity-100" : "opacity-0",
-            )}
-          />
-          {NavItems.map((i) => {
-            return (
-              <Item
-                ref={i.to === activeLink ? activeLinkRef : undefined}
-                key={i.text}
-                {...i}
-                icon={<CareIcon icon={i.icon} className="h-5" />}
-                selected={i.to === activeLink}
-                onItemClick={() => onItemClick && onItemClick(false)}
-                handleOverflow={handleOverflow}
-              />
-            );
-          })}
+      )}
+      <ScrollArea className="flex-1 py-2">
+        <div className="space-y-1 px-2">
+          {NavItems.map((item) => (
+            <NavItem
+              key={item.text}
+              item={item}
+              isActive={item.to === activeLink}
+              isShrinked={shrinked}
+              onClick={() => onItemClick?.(false)}
+            />
+          ))}
         </div>
-        <div className="hidden md:block md:flex-1" />
+      </ScrollArea>
+      <div className="border-t p-2">
         <OTPPatientSidebarUserCard shrinked={shrinked} />
       </div>
-    </nav>
+    </aside>
+  );
+};
+
+export const OTPPatientDesktopSidebar = () => {
+  return <OTPPatientStatelessSidebar />;
+};
+
+interface MobileSidebarProps {
+  open: boolean;
+  setOpen: (state: boolean) => void;
+}
+
+export const OTPPatientMobileSidebar = ({
+  open,
+  setOpen,
+}: MobileSidebarProps) => {
+  return (
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetContent side="left" className="w-[300px] p-0">
+        <OTPPatientStatelessSidebar onItemClick={setOpen} />
+      </SheetContent>
+    </Sheet>
   );
 };

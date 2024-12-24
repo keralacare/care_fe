@@ -7,9 +7,11 @@ import ErrorBoundary from "@/components/Common/ErrorBoundary";
 import {
   OTPPatientDesktopSidebar,
   OTPPatientMobileSidebar,
-  SIDEBAR_SHRINK_PREFERENCE_KEY,
 } from "@/components/Common/Sidebar/OTPPatientSidebar";
-import { SidebarShrinkContext } from "@/components/Common/Sidebar/Sidebar";
+import {
+  SIDEBAR_SHRINK_PREFERENCE_KEY,
+  SidebarShrinkContext,
+} from "@/components/Common/Sidebar/Sidebar";
 import ErrorPage from "@/components/ErrorPages/DefaultErrorPage";
 
 import { CarePatientTokenKey } from "@/common/constants";

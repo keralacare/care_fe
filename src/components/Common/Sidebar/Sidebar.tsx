@@ -1,11 +1,13 @@
 import careConfig from "@careConfig";
 import { Link } from "raviger";
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import CareIcon, { IconName } from "@/CAREUI/icons/CareIcon";
-import SlideOver from "@/CAREUI/interactive/SlideOver";
 
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 import {
   Tooltip,
   TooltipContent,
@@ -13,10 +15,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import {
-  ShrinkedSidebarItem,
-  SidebarItem,
-} from "@/components/Common/Sidebar/SidebarItem";
 import SidebarUserCard from "@/components/Common/Sidebar/SidebarUserCard";
 import NotificationItem from "@/components/Notifications/NotificationsList";
 
@@ -25,200 +23,366 @@ import { useCareAppNavItems } from "@/hooks/useCareApps";
 
 import { classNames } from "@/Utils/utils";
 
-export const SIDEBAR_SHRINK_PREFERENCE_KEY = "sidebarShrinkPreference";
-
 const LOGO_COLLAPSE = "/images/care_logo_mark.svg";
 
 export interface INavItem {
   text: string;
   to?: string;
-  icon: IconName;
+  icon?: IconName;
 }
 
-type StatelessSidebarProps =
-  | {
-      shrinkable: true;
-      shrinked: boolean;
-      setShrinked: (state: boolean) => void;
-      onItemClick?: undefined;
-    }
-  | {
-      shrinkable?: false;
-      shrinked?: false;
-      setShrinked?: undefined;
-      onItemClick: (open: boolean) => void;
-    };
+export interface IParentNavItem extends INavItem {
+  icon: IconName;
+  children?: Omit<INavItem, "children">[];
+}
 
-const StatelessSidebar = ({
-  shrinked = false,
-  setShrinked,
-  onItemClick,
-}: StatelessSidebarProps) => {
-  const { t } = useTranslation();
-  const BaseNavItems: INavItem[] = [
-    { text: t("facilities"), to: "/facility", icon: "d-hospital" },
-    { text: t("appointments"), to: "/appointments", icon: "d-calendar" },
-    { text: t("patients"), to: "/patients", icon: "d-patient" },
-    { text: t("assets"), to: "/assets", icon: "d-folder" },
-    { text: t("shifting"), to: "/shifting", icon: "d-ambulance" },
-    { text: t("resource"), to: "/resource", icon: "d-book-open" },
-    { text: t("users"), to: "/users", icon: "d-people" },
-    { text: t("notice_board"), to: "/notice_board", icon: "d-notice-board" },
-  ];
+type StatelessSidebarProps = {
+  onItemClick?: (open: boolean) => void;
+};
 
-  const PluginNavItems = useCareAppNavItems();
+export interface NavItemProps {
+  item: IParentNavItem;
+  isActive: boolean;
+  isShrinked: boolean;
+  onClick?: () => void;
+}
 
-  const NavItems = [...BaseNavItems, ...PluginNavItems];
-
-  const activeLink = useActiveLink();
-  const Item = shrinked ? ShrinkedSidebarItem : SidebarItem;
-
-  const indicatorRef = useRef<HTMLDivElement>(null);
-  const activeLinkRef = useRef<HTMLAnchorElement>(null);
-  const [lastIndicatorPosition, setLastIndicatorPosition] = useState(0);
-  const [isOverflowVisible, setOverflowVisisble] = useState(false);
-
-  const updateIndicator = () => {
-    if (!indicatorRef.current) return;
-    const index = NavItems.findIndex((item) => item.to === activeLink);
-    const navItemCount = NavItems.length + (careConfig.urls.dashboard ? 2 : 1);
-    if (index !== -1) {
-      const e = indicatorRef.current;
-      const itemHeight = activeLinkRef.current?.clientHeight || 0;
-      const itemOffset = index * itemHeight;
-
-      const indicatorHeight = indicatorRef.current.clientHeight;
-      const indicatorOffset = (itemHeight - indicatorHeight) / 2;
-
-      const top = `${itemOffset + indicatorOffset}px`;
-      const bottom = `${navItemCount * itemHeight - itemOffset - indicatorOffset}px`;
-
-      e.style.top = top;
-      e.style.bottom = bottom;
-
-      setLastIndicatorPosition(index);
-    } else {
-      indicatorRef.current.style.display = "none";
-    }
-  };
-
-  useEffect(() => {
-    updateIndicator();
-  }, [activeLink, lastIndicatorPosition]);
-
-  useEffect(() => {
-    addEventListener("resize", updateIndicator);
-    return () => removeEventListener("resize", updateIndicator);
-  }, []);
-
-  const handleOverflow = (value: boolean) => {
-    setOverflowVisisble(value);
-  };
-
+export const NavItem = ({
+  item,
+  isActive,
+  isShrinked,
+  onClick,
+}: NavItemProps) => {
   return (
-    <nav
-      className={`group flex h-dvh flex-1 flex-col bg-gray-100 py-3 md:py-5 ${
-        shrinked ? "w-14" : "w-60"
-      } transition-all duration-300 ease-in-out ${
-        isOverflowVisible && shrinked
-          ? "overflow-visible"
-          : "overflow-y-auto overflow-x-hidden"
-      }`}
-    >
-      {setShrinked && shrinked && (
-        <div>
-          <ToggleShrink
-            shrinked={shrinked}
-            toggle={() => setShrinked(!shrinked)}
-          />
-        </div>
-      )}
-      <div
-        className={`flex items-center ${shrinked ? "mt-2 justify-center" : "justify-between"}`}
-      >
-        <Link
-          href="/"
-          className={`${
-            shrinked ? "mx-auto" : "ml-3"
-          } flex items-center justify-between`}
-        >
-          <img
-            className="h-8 w-auto self-start transition md:h-10"
-            src={shrinked ? LOGO_COLLAPSE : careConfig.mainLogo?.light}
-          />
-        </Link>
-        {setShrinked && !shrinked && (
-          <div className="ml-1">
-            <ToggleShrink
-              shrinked={shrinked}
-              toggle={() => setShrinked(!shrinked)}
-            />
-          </div>
-        )}
-      </div>
-      <div className="relative mt-4 flex h-full flex-col justify-between">
-        <div className="relative flex flex-1 flex-col md:flex-none">
-          <div
-            ref={indicatorRef}
-            className={classNames(
-              "absolute right-2 z-10 block h-6 w-1 rounded-l bg-primary-500 transition-all",
-              activeLink ? "opacity-100" : "opacity-0",
-            )}
-          />
-          {NavItems.map((i) => {
-            return (
-              <Item
-                ref={i.to === activeLink ? activeLinkRef : undefined}
-                key={i.text}
-                {...i}
-                icon={<CareIcon icon={i.icon} className="h-5" />}
-                selected={i.to === activeLink}
-                onItemClick={() => onItemClick && onItemClick(false)}
-                handleOverflow={handleOverflow}
-              />
-            );
-          })}
-
-          <NotificationItem
-            shrinked={shrinked}
-            handleOverflow={handleOverflow}
-            onClickCB={() => onItemClick && onItemClick(false)}
-          />
-          {careConfig.urls.dashboard && (
-            <Item
-              text="Dashboard"
-              to={careConfig.urls.dashboard}
-              icon={<CareIcon icon="l-dashboard" className="text-lg" />}
-              external
-              handleOverflow={handleOverflow}
-            />
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          {item.to ? (
+            <Link href={item.to} onClick={onClick} className="text-gray-500">
+              <Button
+                variant="ghost"
+                className={classNames(
+                  "group relative w-full justify-start gap-3",
+                  isActive ? "text-primary-600" : "text-gray-500",
+                  isShrinked ? "px-3" : "px-4",
+                )}
+                type="button"
+              >
+                <CareIcon icon={item.icon} className="h-5 w-5 shrink-0" />
+                {!isShrinked && (
+                  <span className="truncate text-sm">{item.text}</span>
+                )}
+                {!isShrinked && item.children && (
+                  <CareIcon
+                    icon="l-angle-right"
+                    className={classNames(
+                      "ml-auto h-4 w-4 shrink-0 transition-transform",
+                      isActive && "rotate-90",
+                    )}
+                  />
+                )}
+              </Button>
+            </Link>
+          ) : (
+            <Button
+              variant="ghost"
+              className={classNames(
+                "group relative w-full justify-start gap-3",
+                isActive ? "text-primary-600" : "text-gray-500",
+                isShrinked ? "px-3" : "px-4",
+              )}
+              onClick={onClick}
+            >
+              <CareIcon icon={item.icon} className="h-5 w-5 shrink-0" />
+              {!isShrinked && (
+                <span className="truncate text-sm">{item.text}</span>
+              )}
+              {!isShrinked && item.children && (
+                <CareIcon
+                  icon="l-angle-right"
+                  className={classNames(
+                    "ml-auto h-4 w-4 shrink-0 transition-transform",
+                    isActive && "rotate-90",
+                  )}
+                />
+              )}
+            </Button>
           )}
-        </div>
-        <div className="hidden md:block md:flex-1" />
-
-        <SidebarUserCard shrinked={shrinked} />
-      </div>
-    </nav>
+        </TooltipTrigger>
+        {isShrinked && (
+          <TooltipContent side="right" className="flex items-center gap-4">
+            <span className="text-sm">{item.text}</span>
+          </TooltipContent>
+        )}
+      </Tooltip>
+    </TooltipProvider>
   );
 };
+
+export const SIDEBAR_SHRINK_PREFERENCE_KEY = "sidebarShrinkPreference";
 
 export const SidebarShrinkContext = createContext<{
   shrinked: boolean;
   setShrinked: (state: boolean) => void;
 }>({
   shrinked: false,
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setShrinked: () => {},
 });
 
-export const DesktopSidebar = () => {
-  const { shrinked, setShrinked } = useContext(SidebarShrinkContext);
+const StatelessSidebar = ({ onItemClick }: StatelessSidebarProps) => {
+  const { t } = useTranslation();
+  const activeLink = useActiveLink();
+  const { shrinked } = useContext(SidebarShrinkContext);
+
+  const BaseNavItems: IParentNavItem[] = [
+    {
+      text: t("facilities"),
+      to: "/facility",
+      icon: "d-hospital",
+      children: [
+        { text: t("facility_list"), to: "/facility" },
+        { text: t("add_facility"), to: "/facility/create" },
+        { text: t("facility_types"), to: "/facility/types" },
+      ],
+    },
+    { text: t("appointments"), to: "/appointments", icon: "d-calendar" },
+    {
+      text: t("patients"),
+      to: "/patients",
+      icon: "d-patient",
+      children: [
+        { text: t("search"), to: "/patients" },
+        { text: t("live"), to: "/patients/live" },
+        { text: t("discharged"), to: "/patients/discharged" },
+      ],
+    },
+    { text: t("assets"), to: "/assets", icon: "d-folder" },
+    { text: t("shifting"), to: "/shifting", icon: "d-ambulance" },
+    { text: t("resource"), to: "/resource", icon: "d-book-open" },
+    { text: t("users"), to: "/users", icon: "d-people" },
+    { text: t("notice_board"), to: "/notice_board", icon: "d-notice-board" },
+  ] as const;
+
+  const PluginNavItems = useCareAppNavItems();
+  const NavItems = [...BaseNavItems, ...PluginNavItems] as IParentNavItem[];
+
+  // Helper function to find the parent nav item for a given URL
+  const findParentNavItem = (url: string | undefined) => {
+    if (!url) return null;
+
+    // Remove query parameters for matching
+    const urlPath = url.split("?")[0];
+
+    // First check exact matches for parent items
+    const exactParent = NavItems.find((item) => item.to === urlPath);
+    if (exactParent) return exactParent;
+
+    // Then check child items
+    return NavItems.find((item) =>
+      item.children?.some((child) => {
+        if (!child.to) return false;
+        // Check exact match without query params
+        if (child.to === urlPath) return true;
+        // Check if the URL starts with the child's path
+        if (urlPath.startsWith(child.to + "/")) return true;
+        return false;
+      }),
+    );
+  };
+
+  // Helper function to check if an item is active
+  const isItemActive = (item: IParentNavItem) => {
+    if (!activeLink) return false;
+
+    // Remove query parameters for matching
+    const urlPath = activeLink.split("?")[0];
+
+    if (item.children) {
+      return item.children.some((child) => {
+        if (!child.to) return false;
+        if (child.to === urlPath) return true;
+        if (urlPath.startsWith(child.to + "/")) return true;
+        return false;
+      });
+    }
+    if (!item.to) return false;
+    return item.to === urlPath || urlPath.startsWith(item.to + "/");
+  };
+
+  // Initialize activeSecondaryNav based on current route
+  const [activeSecondaryNav, setActiveSecondaryNav] = useState<string | null>(
+    () => {
+      const parent = findParentNavItem(activeLink);
+      return parent?.children ? parent.text : null;
+    },
+  );
+
+  // Update activeSecondaryNav when route changes
+  useEffect(() => {
+    const parent = findParentNavItem(activeLink);
+    if (parent?.children) {
+      setActiveSecondaryNav(parent.text);
+    }
+  }, [activeLink]);
+
   return (
-    <StatelessSidebar
-      shrinked={shrinked}
-      setShrinked={setShrinked}
-      shrinkable
-    />
+    <div className="flex">
+      <aside
+        className={classNames(
+          "flex h-dvh flex-col bg-white transition-all duration-300",
+          activeSecondaryNav || shrinked ? "w-14" : "w-60",
+          "border-r",
+        )}
+      >
+        <div className="flex h-14 items-center justify-between border-b px-3">
+          <Link
+            href="/"
+            className={classNames(
+              "flex items-center gap-2",
+              activeSecondaryNav || shrinked ? "justify-center" : "",
+            )}
+          >
+            <img
+              src={
+                activeSecondaryNav || shrinked
+                  ? LOGO_COLLAPSE
+                  : careConfig.mainLogo?.light
+              }
+              alt="Care Logo"
+              className="h-8 w-auto"
+            />
+          </Link>
+        </div>
+        <ScrollArea className="flex-1 py-2">
+          <div className="space-y-1 px-2">
+            {NavItems.map((item) => {
+              const isActive = isItemActive(item);
+
+              return (
+                <NavItem
+                  key={item.text}
+                  item={item}
+                  isActive={isActive}
+                  isShrinked={activeSecondaryNav !== null || shrinked}
+                  onClick={() => {
+                    if (item.children) {
+                      setActiveSecondaryNav(
+                        activeSecondaryNav === item.text ? null : item.text,
+                      );
+                    } else {
+                      setActiveSecondaryNav(null);
+                      if (onItemClick) {
+                        onItemClick(false);
+                      }
+                    }
+                  }}
+                />
+              );
+            })}
+
+            <NotificationItem
+              shrinked={activeSecondaryNav !== null || shrinked}
+              handleOverflow={() => {}}
+              onClickCB={() => {
+                setActiveSecondaryNav(null);
+                onItemClick?.(false);
+              }}
+            />
+
+            {careConfig.urls.dashboard && (
+              <NavItem
+                item={{
+                  text: "Dashboard",
+                  to: careConfig.urls.dashboard,
+                  icon: "l-dashboard",
+                }}
+                isActive={careConfig.urls.dashboard === activeLink}
+                isShrinked={activeSecondaryNav !== null || shrinked}
+                onClick={() => {
+                  setActiveSecondaryNav(null);
+                  onItemClick?.(false);
+                }}
+              />
+            )}
+          </div>
+        </ScrollArea>
+        <div className="border-t p-2">
+          <SidebarUserCard shrinked={activeSecondaryNav !== null || shrinked} />
+        </div>
+      </aside>
+      {activeSecondaryNav && (
+        <aside className="flex h-dvh w-56 flex-col border-r bg-white">
+          <div className="flex h-14 items-center justify-between border-b px-4">
+            <h2 className="text-sm font-semibold text-gray-700">
+              {NavItems.find((item) => item.text === activeSecondaryNav)?.text}
+            </h2>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-gray-500"
+              onClick={() => setActiveSecondaryNav(null)}
+            >
+              <CareIcon icon="l-times" className="h-4 w-4" />
+            </Button>
+          </div>
+          <ScrollArea className="flex-1">
+            <div className="space-y-1 p-2">
+              {NavItems.find(
+                (item) => item.text === activeSecondaryNav,
+              )?.children?.map((child) => {
+                if (!child.to || !activeLink) return null;
+                // Remove query parameters for matching
+                const urlPath = activeLink.split("?")[0];
+                const isChildActive =
+                  child.to === urlPath || urlPath.startsWith(child.to + "/");
+                return (
+                  <Button
+                    key={child.to}
+                    variant="ghost"
+                    className={classNames(
+                      "w-full justify-start",
+                      isChildActive ? "text-primary-600" : "text-gray-500",
+                    )}
+                    asChild
+                  >
+                    <Link
+                      href={child.to}
+                      onClick={() => {
+                        if (onItemClick) {
+                          onItemClick(false);
+                        }
+                      }}
+                    >
+                      <span className="truncate text-sm">{child.text}</span>
+                    </Link>
+                  </Button>
+                );
+              })}
+            </div>
+          </ScrollArea>
+        </aside>
+      )}
+    </div>
+  );
+};
+
+export const DesktopSidebar = () => {
+  const [shrinked, setShrinked] = useState(() => {
+    const stored = localStorage.getItem(SIDEBAR_SHRINK_PREFERENCE_KEY);
+    return stored ? JSON.parse(stored) : false;
+  });
+
+  useEffect(() => {
+    localStorage.setItem(
+      SIDEBAR_SHRINK_PREFERENCE_KEY,
+      JSON.stringify(shrinked),
+    );
+  }, [shrinked]);
+
+  return (
+    <SidebarShrinkContext.Provider value={{ shrinked, setShrinked }}>
+      <StatelessSidebar />
+    </SidebarShrinkContext.Provider>
   );
 };
 
@@ -227,41 +391,12 @@ interface MobileSidebarProps {
   setOpen: (state: boolean) => void;
 }
 
-export const MobileSidebar = (props: MobileSidebarProps) => {
+export const MobileSidebar = ({ open, setOpen }: MobileSidebarProps) => {
   return (
-    <SlideOver {...props} slideFrom="left" onlyChild>
-      <StatelessSidebar onItemClick={props.setOpen} />
-    </SlideOver>
-  );
-};
-
-interface ToggleShrinkProps {
-  shrinked: boolean;
-  toggle: () => void;
-}
-
-export const ToggleShrink = ({ shrinked, toggle }: ToggleShrinkProps) => {
-  const { t } = useTranslation();
-  return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <button
-            className={`flex h-6 w-6 cursor-pointer items-center justify-center rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 ${shrinked ? "bg-gray-200" : "bg-gray-100"} text-gray-600 hover:bg-primary-200 hover:text-primary-800 ${
-              shrinked ? "mx-auto" : "mr-4"
-            } transition-all ease-in-out`}
-            onClick={toggle}
-          >
-            <CareIcon
-              icon={shrinked ? "l-arrow-bar-right" : "l-layout-sidebar-alt"}
-              className="text-lg transition"
-            />
-          </button>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p>{shrinked ? t("expand_sidebar") : t("collapse_sidebar")}</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetContent side="left" className="w-[300px] p-0">
+        <StatelessSidebar onItemClick={setOpen} />
+      </SheetContent>
+    </Sheet>
   );
 };
