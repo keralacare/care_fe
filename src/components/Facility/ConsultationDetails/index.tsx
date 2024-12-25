@@ -5,7 +5,6 @@ import { useTranslation } from "react-i18next";
 import Loading from "@/components/Common/Loading";
 import PageTitle from "@/components/Common/PageTitle";
 import RelativeDateUserMention from "@/components/Common/RelativeDateUserMention";
-import DiagnosesListAccordion from "@/components/Diagnosis/DiagnosesListAccordion";
 import ErrorPage from "@/components/ErrorPages/DefaultErrorPage";
 import { ConsultationABGTab } from "@/components/Facility/ConsultationDetails/ConsultationABGTab";
 import { ConsultationDialysisTab } from "@/components/Facility/ConsultationDetails/ConsultationDialysisTab";
@@ -24,7 +23,6 @@ import DoctorVideoSlideover from "@/components/Facility/DoctorVideoSlideover";
 import PatientNotesSlideover from "@/components/Facility/PatientNotesSlideover";
 import { ConsultationModel } from "@/components/Facility/models";
 import PatientInfoCard from "@/components/Patient/PatientInfoCard";
-import { PatientModel } from "@/components/Patient/models";
 
 import useAuthUser from "@/hooks/useAuthUser";
 import { useCareAppConsultationTabs } from "@/hooks/useCareApps";
@@ -42,6 +40,7 @@ import {
   keysOf,
   relativeTime,
 } from "@/Utils/utils";
+import { PatientModel } from "@/types/emr/patient";
 
 import { ConsultationProvider } from "./ConsultationContext";
 
@@ -331,7 +330,7 @@ export const ConsultationDetails = (props: any) => {
               </div>
               <div className="flex flex-col justify-between gap-2 px-4 py-1 md:flex-row">
                 <div className="font-base flex flex-col text-xs leading-relaxed text-secondary-700">
-                  <div className="flex">
+                  <div className="flex items-center">
                     <span className="text-secondary-900">Created: </span>&nbsp;
                     <RelativeDateUserMention
                       actionDate={consultationData.created_date}
@@ -342,7 +341,7 @@ export const ConsultationDetails = (props: any) => {
                   </div>
                 </div>
                 <div className="font-base flex flex-col text-xs leading-relaxed text-secondary-700 md:text-right">
-                  <div className="flex">
+                  <div className="flex items-center">
                     <span className="text-secondary-900">Last Modified: </span>
                     &nbsp;
                     <RelativeDateUserMention
@@ -356,15 +355,6 @@ export const ConsultationDetails = (props: any) => {
               </div>
             </div>
           </div>
-          {!!consultationData.diagnoses?.length && (
-            <div className="col-span-1 mt-2 overflow-hidden rounded-lg bg-white shadow">
-              <div className="px-4 py-2">
-                <DiagnosesListAccordion
-                  diagnoses={consultationData.diagnoses ?? []}
-                />
-              </div>
-            </div>
-          )}
           <div className="mt-4 w-full border-b-2 border-secondary-200">
             <div className="overflow-x-auto sm:flex sm:items-baseline">
               <div className="mt-4 sm:mt-0">

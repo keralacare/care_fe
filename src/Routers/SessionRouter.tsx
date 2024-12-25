@@ -6,25 +6,61 @@ import ResetPassword from "@/components/Auth/ResetPassword";
 import InvalidReset from "@/components/ErrorPages/InvalidReset";
 import SessionExpired from "@/components/ErrorPages/SessionExpired";
 
-import { DoctorAppointmentsPage } from "@/pages/Facility/DoctorAppointmentsPage";
+import { PatientRegistration } from "@/pages/Appoinments/PatientRegistration";
+import PatientSelect from "@/pages/Appoinments/PatientSelect";
+import { ScheduleAppointment } from "@/pages/Appoinments/Schedule";
+import OTP from "@/pages/Appoinments/auth/OTP";
 import { FacilitiesPage } from "@/pages/Facility/FacilitiesPage";
 import { FacilityDetailsPage } from "@/pages/Facility/FacilityDetailsPage";
 import { LandingPage } from "@/pages/Landing/LandingPage";
 
 const LicensesPage = lazy(() => import("@/components/Licenses/LicensesPage"));
 
-const routes = {
+export const routes = {
   "/": () => <LandingPage />,
   "/facilities": () => <FacilitiesPage />,
   "/facility/:id": ({ id }: { id: string }) => <FacilityDetailsPage id={id} />,
-  "/facility/:id/appointments/:doctorUsername": ({
-    id,
-    doctorUsername,
+  "/facility/:facilityId/appointments/:staffUsername/otp/:page": ({
+    facilityId,
+    staffUsername,
+    page,
   }: {
-    id: string;
-    doctorUsername: string;
+    facilityId: string;
+    staffUsername: string;
+    page: string;
   }) => (
-    <DoctorAppointmentsPage facilityId={id} doctorUsername={doctorUsername} />
+    <OTP facilityId={facilityId} staffUsername={staffUsername} page={page} />
+  ),
+  "/facility/:facilityId/appointments/:staffExternalId/book-appointment": ({
+    facilityId,
+    staffExternalId,
+  }: {
+    facilityId: string;
+    staffExternalId: string;
+  }) => (
+    <ScheduleAppointment
+      facilityId={facilityId}
+      staffExternalId={staffExternalId}
+    />
+  ),
+  "/facility/:facilityId/appointments/:staffUsername/patient-select": ({
+    facilityId,
+    staffUsername,
+  }: {
+    facilityId: string;
+    staffUsername: string;
+  }) => <PatientSelect facilityId={facilityId} staffUsername={staffUsername} />,
+  "/facility/:facilityId/appointments/:staffUsername/patient-registration": ({
+    facilityId,
+    staffUsername,
+  }: {
+    facilityId: string;
+    staffUsername: string;
+  }) => (
+    <PatientRegistration
+      facilityId={facilityId}
+      staffUsername={staffUsername}
+    />
   ),
   "/login": () => <Login />,
   "/forgot-password": () => <Login forgot={true} />,

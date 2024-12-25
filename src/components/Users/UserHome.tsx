@@ -8,6 +8,7 @@ import { userChildProps } from "@/components/Common/UserColumns";
 import ErrorPage from "@/components/ErrorPages/DefaultErrorPage";
 import LinkedFacilitiesTab from "@/components/Users/LinkedFacilitiesTab";
 import LinkedSkillsTab from "@/components/Users/LinkedSkillsTab";
+import UserAvailabilityTab from "@/components/Users/UserAvailabilityTab";
 import UserBanner from "@/components/Users/UserBanner";
 import UserSummaryTab from "@/components/Users/UserSummary";
 import { UserModel } from "@/components/Users/models";
@@ -65,12 +66,11 @@ export default function UserHome(props: UserHomeProps) {
 
   const editPermissions = editUserPermissions(authUser, userData);
 
-  const TABS: {
-    PROFILE: tabChildProp;
-    SKILLS: tabChildProp;
-    FACILITIES: tabChildProp;
-  } = {
-    PROFILE: { body: UserSummaryTab },
+  const TABS = {
+    PROFILE: {
+      body: UserSummaryTab,
+      hidden: false,
+    },
     SKILLS: {
       body: LinkedSkillsTab,
       hidden: !editPermissions,
@@ -79,7 +79,11 @@ export default function UserHome(props: UserHomeProps) {
       body: LinkedFacilitiesTab,
       hidden: !editPermissions,
     },
-  };
+    AVAILABILITY: {
+      body: UserAvailabilityTab,
+      hidden: !editPermissions || !userData.home_facility_object,
+    },
+  } satisfies Record<string, tabChildProp>;
 
   const normalizedTab = tab.toUpperCase();
   const isValidTab = (tab: string): tab is keyof typeof TABS =>

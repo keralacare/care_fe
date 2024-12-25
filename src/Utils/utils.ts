@@ -1,9 +1,12 @@
-import { PatientModel } from "@/components/Patient/models";
+import { differenceInMinutes, format } from "date-fns";
+import html2canvas from "html2canvas";
 
 import { AREACODES, IN_LANDLINE_AREA_CODES } from "@/common/constants";
 import phoneCodesJson from "@/common/static/countryPhoneAndFlags.json";
 
 import dayjs from "@/Utils/dayjs";
+import { Time } from "@/Utils/types";
+import { PatientModel } from "@/types/emr/patient";
 
 interface ApacheParams {
   age: number;
@@ -93,6 +96,10 @@ export const formatDateTime = (date: DateLike, format?: string) => {
 
 export const formatDate = (date: DateLike, format = DATE_FORMAT) =>
   formatDateTime(date, format);
+
+export const formatTimeShort = (time: Time) => {
+  return format(new Date(`1970-01-01T${time}`), "h:mm a").replace(":00", "");
+};
 
 export const formatTime = (date: DateLike, format = TIME_FORMAT) =>
   formatDateTime(date, format);
@@ -233,6 +240,7 @@ export const parsePhoneNumber = (phoneNumber: string, countryCode?: string) => {
   if (phoneNumber === "+91") return "";
   const phoneCodes: Record<string, CountryData> = phoneCodesJson;
   let parsedNumber = phoneNumber.replace(/[-+() ]/g, "");
+  if (parsedNumber.length < 12) return "";
   if (countryCode && phoneCodes[countryCode]) {
     parsedNumber = phoneCodes[countryCode].code + parsedNumber;
   } else if (!phoneNumber.startsWith("+")) {
@@ -360,7 +368,7 @@ const getRelativeDateSuffix = (abbreviated: boolean) => {
   return {
     day: abbreviated ? "d" : "days",
     month: abbreviated ? "mo" : "months",
-    year: abbreviated ? "yr" : "years",
+    year: abbreviated ? "Y" : "years",
   };
 };
 
@@ -393,7 +401,7 @@ export const formatPatientAge = (obj: PatientModel, abbreviated = false) => {
 
   const years = end.diff(start, "years");
   if (years) {
-    return `${years}${suffixes.year}`;
+    return `${years} ${suffixes.year}`;
   }
 
   // Skip representing as no. of months/days if we don't know the date of birth
@@ -567,4 +575,51 @@ export const properCase = (str: string) => {
     .split("_")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(" ");
+};
+
+export const getMonthStartAndEnd = (date: Date) => {
+  return {
+    start: new Date(date.getFullYear(), date.getMonth(), 1),
+    end: new Date(date.getFullYear(), date.getMonth() + 1, 0),
+  };
+};
+
+export const conditionalObject = (condition: unknown, object?: object) => {
+  if (condition) return object;
+  else return {};
+};
+
+/**
+ * Returns hours and minutes between two dates.
+ *
+ * Eg.
+ * 1 hour and 30 minutes
+ * 2 hours
+ * 30 minutes
+ */
+export const getReadableDuration = (
+  start: string | Date,
+  end: string | Date,
+) => {
+  const duration = differenceInMinutes(end, start);
+  const hours = Math.floor(duration / 60);
+  const minutes = duration % 60;
+  if (hours === 0 && minutes === 0) return "0 minutes";
+  if (hours === 0) return `${minutes} minute${minutes > 1 ? "s" : ""}`;
+  if (minutes === 0) return `${hours} hour${hours > 1 ? "s" : ""}`;
+  return `${hours} hour${hours > 1 ? "s" : ""} and ${minutes} minute${
+    minutes > 1 ? "s" : ""
+  }`;
+};
+
+export const saveElementAsImage = async (id: string, filename: string) => {
+  const element = document.getElementById(id);
+  if (!element) return;
+
+  const canvas = await html2canvas(element);
+
+  const link = document.createElement("a");
+  link.download = filename;
+  link.href = canvas.toDataURL("image/png", 1);
+  link.click();
 };

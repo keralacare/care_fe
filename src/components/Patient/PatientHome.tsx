@@ -2,8 +2,21 @@ import { Link, navigate } from "raviger";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import Chip from "@/CAREUI/display/Chip";
+import CareIcon from "@/CAREUI/icons/CareIcon";
+
+import { Button } from "@/components/ui/button";
+
+import { Avatar } from "@/components/Common/Avatar";
+import ButtonV2 from "@/components/Common/ButtonV2";
 import ConfirmDialog from "@/components/Common/ConfirmDialog";
+import Loading from "@/components/Common/Loading";
+import Page from "@/components/Common/Page";
 import UserAutocomplete from "@/components/Common/UserAutocompleteFormField";
+import { patientTabs } from "@/components/Patient/PatientDetailsTab";
+import { isPatientMandatoryDataFilled } from "@/components/Patient/Utils";
+import { AssignedToObjectModel } from "@/components/Patient/models";
+import { SkillModel, UserBareMinimum } from "@/components/Users/models";
 
 import useAuthUser from "@/hooks/useAuthUser";
 
@@ -13,16 +26,13 @@ import {
   OCCUPATION_TYPES,
 } from "@/common/constants";
 
+import { triggerGoal } from "@/Integrations/Plausible";
+import { NonReadOnlyUsers } from "@/Utils/AuthorizeFor";
+import * as Notification from "@/Utils/Notifications";
 import dayjs from "@/Utils/dayjs";
 import routes from "@/Utils/request/api";
-
-import Chip from "../../CAREUI/display/Chip";
-import CareIcon from "../../CAREUI/icons/CareIcon";
-import { triggerGoal } from "../../Integrations/Plausible";
-import { NonReadOnlyUsers } from "../../Utils/AuthorizeFor";
-import * as Notification from "../../Utils/Notifications";
-import request from "../../Utils/request/request";
-import useTanStackQueryInstead from "../../Utils/request/useQuery";
+import request from "@/Utils/request/request";
+import useTanStackQueryInstead from "@/Utils/request/useQuery";
 import {
   formatDateTime,
   formatName,
@@ -31,15 +41,8 @@ import {
   isAntenatal,
   isPostPartum,
   relativeDate,
-} from "../../Utils/utils";
-import { Avatar } from "../Common/Avatar";
-import ButtonV2 from "../Common/ButtonV2";
-import Loading from "../Common/Loading";
-import Page from "../Common/Page";
-import { SkillModel, UserBareMinimum } from "../Users/models";
-import { patientTabs } from "./PatientDetailsTab";
-import { isPatientMandatoryDataFilled } from "./Utils";
-import { AssignedToObjectModel, PatientModel } from "./models";
+} from "@/Utils/utils";
+import { PatientModel } from "@/types/emr/patient";
 
 export const parseOccupation = (occupation: string | undefined) => {
   return OCCUPATION_TYPES.find((i) => i.value === occupation)?.text;
@@ -184,6 +187,17 @@ export const PatientHome = (props: {
         [id]: { name: patientData?.name },
       }}
       backUrl={facilityId ? `/facility/${facilityId}/patients` : "/patients"}
+      options={
+        <>
+          <Button asChild variant="primary">
+            <Link
+              href={`/facility/${facilityId}/patient/${id}/book-appointment`}
+            >
+              {t("schedule_appointment")}
+            </Link>
+          </Button>
+        </>
+      }
     >
       <div className="mt-3" data-testid="patient-dashboard">
         <div className="px-3 md:px-0">
@@ -215,7 +229,7 @@ export const PatientHome = (props: {
                 <div className="h-full space-y-2">
                   <div className="space-y-3 border-b border-dashed text-left text-lg font-semibold text-secondary-900">
                     <div>
-                      {patientData?.is_active &&
+                      {/* {patientData?.is_active &&
                         (!patientData?.last_consultation ||
                           patientData?.last_consultation?.discharge_date) && (
                           <div>
@@ -238,7 +252,7 @@ export const PatientHome = (props: {
                               </span>
                             </ButtonV2>
                           </div>
-                        )}
+                        )} */}
                     </div>
                   </div>
                 </div>
@@ -447,6 +461,7 @@ export const PatientHome = (props: {
                 facilityId={facilityId || ""}
                 id={id}
                 patientData={patientData}
+                refetch={refetch}
               />
             )}
           </div>
@@ -673,7 +688,6 @@ export const PatientHome = (props: {
           </div>
         </div>
       </div>
-
       <ConfirmDialog
         className="w-full justify-between"
         title={t("assign_a_volunteer_to", { name: patientData.name })}

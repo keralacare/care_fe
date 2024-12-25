@@ -5,9 +5,10 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
+import { Avatar } from "@/components/Common/Avatar";
 import { FacilityModel } from "@/components/Facility/models";
 
-import { FeatureBadge, FeatureId } from "../Utils";
+import { FeatureBadge } from "../Utils";
 
 interface Props {
   facility: FacilityModel;
@@ -21,13 +22,9 @@ export function FacilityCard({ facility, className }: Props) {
         <div className="p-6">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="h-32 w-32 shrink-0 overflow-hidden rounded-lg">
-              <img
-                src={
-                  facility.read_cover_image_url ||
-                  "/images/default-facility.png"
-                }
-                alt={facility.name}
-                className="h-full w-full object-cover"
+              <Avatar
+                imageUrl={facility.read_cover_image_url}
+                name={facility.name || ""}
               />
             </div>
 
@@ -49,7 +46,7 @@ export function FacilityCard({ facility, className }: Props) {
                 {facility.features?.map((featureId) => (
                   <FeatureBadge
                     key={featureId}
-                    featureId={featureId as FeatureId}
+                    featureId={featureId as number}
                   />
                 ))}
               </div>

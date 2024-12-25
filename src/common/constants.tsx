@@ -138,6 +138,8 @@ export const FACILITY_TYPES: Array<OptionsType> = [
   // { id: 1200, text: "Second Line Treatment Center" },
   // { id: 1400, text: "Covid Management Center" },
   // { id: 1600, text: "District War Room" },
+  { id: 3000, text: "Non Governmental Organization" },
+  { id: 4000, text: "Community Based Organization" },
 ];
 
 export const SHIFTING_CHOICES_WARTIME: Array<OptionsType> = [
@@ -632,11 +634,11 @@ export const BREATHLESSNESS_LEVEL = [
 ];
 
 export const RESOURCE_CATEGORY_CHOICES = [
-  "PATIENT_CARE",
-  "COMFORT_DEVICES",
-  "MEDICINES",
-  "FINANCIAL",
-  "OTHER",
+  { id: "PATIENT_CARE", text: "Clinical Care and Social Support" },
+  { id: "COMFORT_DEVICES", text: "Comfort Devices" },
+  { id: "MEDICINES", text: "Medicines" },
+  { id: "FINANCIAL", text: "Financial" },
+  { id: "OTHERS", text: "Other" },
 ];
 
 export const RESOURCE_CHOICES: Array<OptionsType> = [
@@ -890,36 +892,43 @@ export const FACILITY_FEATURE_TYPES: {
   id: number;
   name: string;
   icon: IconName;
+  variant: string;
 }[] = [
   {
     id: 1,
     name: "CT Scan",
     icon: "l-compact-disc",
+    variant: "green",
   },
   {
     id: 2,
     name: "Maternity Care",
     icon: "l-baby-carriage",
+    variant: "blue",
   },
   {
     id: 3,
     name: "X-Ray",
     icon: "l-clipboard-alt",
+    variant: "amber",
   },
   {
     id: 4,
     name: "Neonatal Care",
     icon: "l-baby-carriage",
+    variant: "teal",
   },
   {
     id: 5,
     name: "Operation Theater",
     icon: "l-syringe",
+    variant: "red",
   },
   {
     id: 6,
     name: "Blood Bank",
     icon: "l-medical-drip",
+    variant: "orange",
   },
 ];
 
@@ -1671,3 +1680,13 @@ export const HEADER_CONTENT_TYPES = {
 export const ADMIN_USER_TYPES = ["DistrictAdmin", "StateAdmin"] as const;
 
 export const SELECTED_FACILITY_KEY = "care_selected_facility";
+export const CarePatientTokenKey = "care_patient_token";
+
+// organisation_levels map based of type. for govt
+// thought: This might be better placed in the organisation types files
+export const ORGANISATION_LEVELS = {
+  govt: ["State", "District", "LocalBody", "Ward"],
+  team: ["Team"],
+  role: ["Role"],
+  other: ["Other"],
+};

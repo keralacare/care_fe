@@ -1,3 +1,4 @@
+import { usePathParams } from "raviger";
 import { useEffect, useState } from "react";
 
 import { cn } from "@/lib/utils";
@@ -11,6 +12,7 @@ import { Error, Success } from "@/Utils/Notifications";
 import routes from "@/Utils/request/api";
 import useMutation from "@/Utils/request/useMutation";
 import useQuery from "@/Utils/request/useQuery";
+import { Encounter } from "@/types/emr/encounter";
 import {
   DetailedValidationError,
   QuestionValidationError,
@@ -22,6 +24,7 @@ import { QuestionnaireDetail } from "@/types/questionnaire/questionnaire";
 
 import { QuestionRenderer } from "./QuestionRenderer";
 import { QuestionnaireSearch } from "./QuestionnaireSearch";
+import { FIXED_QUESTIONNAIRES } from "./data/StructuredFormData";
 import { getStructuredRequests } from "./structured/handlers";
 
 interface QuestionnaireFormState {
@@ -39,16 +42,18 @@ interface BatchRequest {
 
 export interface QuestionnaireFormProps {
   questionnaireSlug?: string;
-  resourceId: string;
-  encounterId: string;
+  patientId: string;
+  encounterId?: string;
+  subjectType?: string;
   onSubmit?: () => void;
   onCancel?: () => void;
 }
 
 export function QuestionnaireForm({
   questionnaireSlug,
-  resourceId,
+  patientId,
   encounterId,
+  subjectType,
   onSubmit,
   onCancel,
 }: QuestionnaireFormProps) {
@@ -59,13 +64,18 @@ export function QuestionnaireForm({
   const [activeGroupId, setActiveGroupId] = useState<string>();
   const [isInitialized, setIsInitialized] = useState(false);
 
+  const pathParams = usePathParams(
+    "/facility/:facilityId/patient/:patientId/*",
+  );
+  const facilityId = pathParams?.facilityId;
+
   const {
     data: questionnaireData,
     loading: isQuestionnaireLoading,
     error: questionnaireError,
   } = useQuery(routes.questionnaire.detail, {
     pathParams: { id: questionnaireSlug ?? "" },
-    prefetch: !!questionnaireSlug,
+    prefetch: !!questionnaireSlug && !FIXED_QUESTIONNAIRES[questionnaireSlug],
   });
 
   const { mutate: submitBatch, isProcessing } = useMutation(
@@ -74,17 +84,22 @@ export function QuestionnaireForm({
   );
 
   useEffect(() => {
-    if (questionnaireData && !isInitialized) {
-      setQuestionnaireForms([
-        {
-          questionnaire: questionnaireData,
-          responses: initializeResponses(questionnaireData.questions),
-          errors: [],
-        },
-      ]);
-      setIsInitialized(true);
+    if (!isInitialized && questionnaireSlug) {
+      const questionnaire =
+        FIXED_QUESTIONNAIRES[questionnaireSlug] || questionnaireData;
+
+      if (questionnaire) {
+        setQuestionnaireForms([
+          {
+            questionnaire,
+            responses: initializeResponses(questionnaire.questions),
+            errors: [],
+          },
+        ]);
+        setIsInitialized(true);
+      }
     }
-  }, [questionnaireData, isInitialized]);
+  }, [questionnaireData, isInitialized, questionnaireSlug]);
 
   if (isQuestionnaireLoading) {
     return <Loading />;
@@ -127,9 +142,11 @@ export function QuestionnaireForm({
   const handleSubmissionError = (results: ValidationErrorResponse[]) => {
     const updatedForms = [...questionnaireForms];
     const errorMessages: string[] = [];
+
     results.forEach((result, index) => {
       const form = updatedForms[index];
-      result.data.errors?.forEach?.(
+
+      result.data.errors.forEach(
         (error: QuestionValidationError | DetailedValidationError) => {
           // Handle question-specific errors
           if ("question_id" in error) {
@@ -144,16 +161,17 @@ export function QuestionnaireForm({
           else if ("loc" in error) {
             const fieldName = error.loc[0];
             errorMessages.push(
-              `Error in ${form.questionnaire.title}: ${fieldName} - ${error.msg}`,
+              `Error in ${form?.questionnaire?.title}: ${fieldName} - ${error.msg}`,
             );
           }
           // Handle generic errors
           else {
-            errorMessages.push(`Error in ${form.questionnaire.title}`);
+            errorMessages.push(`Error in ${form?.questionnaire?.title}`);
           }
         },
       );
     });
+
     setQuestionnaireForms(updatedForms);
   };
 
@@ -162,25 +180,85 @@ export function QuestionnaireForm({
   const handleSubmit = async () => {
     if (hasErrors) return;
 
-    const requests: BatchRequest[] = [];
-    const context = { resourceId, encounterId };
+    let requestEncounterId: string | undefined = encounterId;
+    // Loop through responses and check if there are any responses of structured_type = "encounter"
 
-    // First, collect all structured data requests
-    questionnaireForms.forEach((form) => {
-      form.responses.forEach((response) => {
-        if (response.structured_type) {
-          const structuredData = response.values?.[0]?.value;
-          if (Array.isArray(structuredData) && structuredData.length > 0) {
-            const structuredRequests = getStructuredRequests(
-              response.structured_type,
-              structuredData,
-              context,
-            );
-            requests.push(...structuredRequests);
+    if (!requestEncounterId) {
+      console.log("No encounterId found, Checking for encounter response");
+      const encounterResponse = questionnaireForms.reduce(
+        (found: QuestionnaireResponse | undefined, form) => {
+          return found
+            ? found
+            : form.responses.find((response) => {
+                if (response.structured_type === "encounter") {
+                  return response;
+                }
+              });
+        },
+        undefined,
+      );
+
+      // If there is a question of type encounter, a new encounter is being created, then use the /encounter/create endpoint, to create the encounter, and use the encounterId in the API call to save the questionnaire responses.
+
+      if (
+        encounterResponse &&
+        encounterResponse.values?.[0]?.type === "encounter"
+      ) {
+        console.log("Encounter response found, creating encounter");
+        const encounter = encounterResponse.values?.[0]?.value as Encounter;
+        console.log("Creating encounter", encounter);
+        // Create encounter first
+        const encounterRequests = getStructuredRequests(
+          "encounter",
+          [encounter],
+          {
+            patientId: patientId,
+            encounterId: "not-applicable",
+            facilityId: facilityId,
+          },
+        );
+
+        console.log("Encounter requests", encounterRequests);
+
+        if (encounterRequests.length) {
+          console.log("Creating encounter");
+          const encounterResponse = await submitBatch({
+            body: { requests: encounterRequests },
+          });
+
+          // Use the consultationId as encounterId for other requests
+          if (encounterResponse.data?.results[0]?.data?.id) {
+            requestEncounterId = encounterResponse.data.results[0].data.id;
+          } else {
+            Error({
+              msg: "Could not create an encounter",
+            });
+            return;
           }
         }
+      }
+    }
+
+    const requests: BatchRequest[] = [];
+    if (requestEncounterId) {
+      const context = { patientId, encounterId: requestEncounterId };
+      // First, collect all structured data requests if encounterId is provided
+      questionnaireForms.forEach((form) => {
+        form.responses.forEach((response) => {
+          if (response.structured_type) {
+            const structuredData = response.values?.[0]?.value;
+            if (Array.isArray(structuredData) && structuredData.length > 0) {
+              const structuredRequests = getStructuredRequests(
+                response.structured_type,
+                structuredData,
+                context,
+              );
+              requests.push(...structuredRequests);
+            }
+          }
+        });
       });
-    });
+    }
 
     // Then, add questionnaire submission requests
     questionnaireForms.forEach((form) => {
@@ -197,8 +275,9 @@ export function QuestionnaireForm({
           method: "POST",
           reference_id: form.questionnaire.id,
           body: {
-            resource_id: resourceId,
-            encounter: encounterId,
+            resource_id: requestEncounterId ?? patientId,
+            encounter: requestEncounterId,
+            patient: patientId,
             results: nonStructuredResponses
               .filter(
                 (response) =>
@@ -209,7 +288,7 @@ export function QuestionnaireForm({
                 values: response.values.map((value) => ({
                   ...(value.value_code
                     ? { value_code: value.value_code }
-                    : { value: String(value.value || "") }),
+                    : { value: String(value.value) }),
                 })),
                 note: response.note,
                 body_site: response.body_site,
@@ -229,8 +308,8 @@ export function QuestionnaireForm({
         handleSubmissionError(
           response.error.results as ValidationErrorResponse[],
         );
+        Error({ msg: "Failed to submit questionnaire" });
       }
-      Error({ msg: "Failed to submit questionnaire" });
       return;
     }
 
@@ -240,8 +319,8 @@ export function QuestionnaireForm({
 
   return (
     <div className="flex gap-4">
-      {/* Left Navigation | Desktop */}
-      <div className="w-64 border-r p-4 space-y-4 overflow-y-auto sticky top-6 h-screen hidden md:block">
+      {/* Left Navigation */}
+      <div className="w-64 border-r p-4 space-y-4 overflow-y-auto sticky top-6 h-screen lg:block hidden">
         {questionnaireForms.map((form) => (
           <div key={form.questionnaire.id} className="space-y-2">
             <button
@@ -281,39 +360,13 @@ export function QuestionnaireForm({
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 overflow-y-auto pb-8">
-        <div className="md:p-4 space-y-6">
-          {/* Search and Add Questionnaire */}
-
-          <div className="flex gap-4 items-center">
-            <QuestionnaireSearch
-              onSelect={(selected) => {
-                if (
-                  questionnaireForms.some(
-                    (form) => form.questionnaire.id === selected.id,
-                  )
-                ) {
-                  return;
-                }
-
-                setQuestionnaireForms((prev) => [
-                  ...prev,
-                  {
-                    questionnaire: selected,
-                    responses: initializeResponses(selected.questions),
-                    errors: [],
-                  },
-                ]);
-              }}
-              disabled={isProcessing}
-            />
-          </div>
-
+      <div className="flex-1 overflow-y-auto max-w-3xl pb-8">
+        <div className="p-4 space-y-6">
           {/* Questionnaire Forms */}
           {questionnaireForms.map((form, index) => (
             <div
               key={`${form.questionnaire.id}-${index}`}
-              className="border rounded-lg p-4 md:p-6 space-y-6"
+              className="border rounded-lg p-6 space-y-6"
             >
               <div className="flex justify-between items-center">
                 <div className="space-y-1">
@@ -379,6 +432,33 @@ export function QuestionnaireForm({
             </div>
           ))}
 
+          {/* Search and Add Questionnaire */}
+
+          <div className="flex gap-4 items-center">
+            <QuestionnaireSearch
+              subjectType={subjectType}
+              onSelect={(selected) => {
+                if (
+                  questionnaireForms.some(
+                    (form) => form.questionnaire.id === selected.id,
+                  )
+                ) {
+                  return;
+                }
+
+                setQuestionnaireForms((prev) => [
+                  ...prev,
+                  {
+                    questionnaire: selected,
+                    responses: initializeResponses(selected.questions),
+                    errors: [],
+                  },
+                ]);
+              }}
+              disabled={isProcessing}
+            />
+          </div>
+
           {/* Submit and Cancel Buttons */}
           {questionnaireForms.length > 0 && (
             <div className="flex justify-end gap-4 mt-4">
@@ -410,7 +490,7 @@ export function QuestionnaireForm({
             </div>
           )}
         </div>
-        {/* Add a Dev Preview of the QuestionnaireForm */}
+        {/* Add a Preview of the QuestionnaireForm */}
         {import.meta.env.DEV && (
           <div className="p-4 space-y-6">
             <h2 className="text-xl font-semibold">QuestionnaireForm</h2>

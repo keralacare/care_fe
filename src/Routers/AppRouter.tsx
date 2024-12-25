@@ -1,4 +1,3 @@
-import careConfig from "@careConfig";
 import { useQuery } from "@tanstack/react-query";
 import { Redirect, navigate, usePath, useRedirect, useRoutes } from "raviger";
 import { useCallback, useEffect, useState } from "react";
@@ -17,6 +16,7 @@ import SessionExpired from "@/components/ErrorPages/SessionExpired";
 import { FacilityModel } from "@/components/Facility/models";
 import { NoticeBoard } from "@/components/Notifications/NoticeBoard";
 import ShowPushNotification from "@/components/Notifications/ShowPushNotification";
+import ScheduleRoutes from "@/components/Schedule/routes";
 
 import { usePluginRoutes } from "@/hooks/useCareApps";
 
@@ -31,14 +31,14 @@ import ShiftingRoutes from "@/Routers/routes/ShiftingRoutes";
 import UserRoutes from "@/Routers/routes/UserRoutes";
 import apiRoutes from "@/Utils/request/api";
 import request from "@/Utils/request/request";
-import { PaginatedResponse, RequestResult } from "@/Utils/request/types";
-import useTanStackQueryInstead from "@/Utils/request/useQuery";
+import { RequestResult } from "@/Utils/request/types";
 import { PlugConfigEdit } from "@/pages/Apps/PlugConfigEdit";
 import { PlugConfigList } from "@/pages/Apps/PlugConfigList";
 import { FacilitySelectionPage } from "@/pages/Facility/FacilitySelectionPage";
 
 import { QuestionnaireList } from "../components/Questionnaire";
 import { QuestionnaireShow } from "../components/Questionnaire/show";
+import OrganisationRoutes from "./routes/OrganisationRouter";
 
 export type RouteParams<T extends string> =
   T extends `${string}:${infer Param}/${infer Rest}`
@@ -64,8 +64,9 @@ const Routes: AppRoutes = {
   ...PatientRoutes,
   ...ResourceRoutes,
   ...ShiftingRoutes,
+  ...ScheduleRoutes,
   ...UserRoutes,
-
+  ...OrganisationRoutes,
   "/notifications/:id": ({ id }) => <ShowPushNotification id={id} />,
   "/notice_board": () => <NoticeBoard />,
 

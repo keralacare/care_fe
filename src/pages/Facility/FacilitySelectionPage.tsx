@@ -138,7 +138,6 @@ export function FacilitySelectionPage({
             options={[
               {
                 key: "facility_district_name",
-                label: "Facility Name",
                 type: "text" as const,
                 placeholder: "Search facilities...",
                 value: qParams.search || "",

@@ -109,11 +109,13 @@ const StatelessSidebar = ({
   const { t } = useTranslation();
   const BaseNavItems: INavItem[] = [
     { text: t("facilities"), to: "/facility", icon: "d-hospital" },
+    { text: t("appointments"), to: "/appointments", icon: "d-calendar" },
     { text: t("patients"), to: "/patients", icon: "d-patient" },
     { text: t("assets"), to: "/assets", icon: "d-folder" },
     { text: t("shifting"), to: "/shifting", icon: "d-ambulance" },
     { text: t("resource"), to: "/resource", icon: "d-book-open" },
     { text: t("users"), to: "/users", icon: "d-people" },
+    { text: t("organisation"), to: "/organisation", icon: "d-people" },
     { text: t("notice_board"), to: "/notice_board", icon: "d-notice-board" },
   ];
 
@@ -308,7 +310,7 @@ interface ToggleShrinkProps {
   toggle: () => void;
 }
 
-const ToggleShrink = ({ shrinked, toggle }: ToggleShrinkProps) => {
+export const ToggleShrink = ({ shrinked, toggle }: ToggleShrinkProps) => {
   const { t } = useTranslation();
   return (
     <TooltipProvider>

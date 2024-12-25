@@ -1,4 +1,5 @@
 import {
+  MutationCache,
   QueryCache,
   QueryClient,
   QueryClientProvider,
@@ -6,6 +7,7 @@ import {
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Suspense } from "react";
 
+import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 
 import Loading from "@/components/Common/Loading";
@@ -16,7 +18,7 @@ import AuthUserProvider from "@/Providers/AuthUserProvider";
 import HistoryAPIProvider from "@/Providers/HistoryAPIProvider";
 import Routers from "@/Routers";
 import { FeatureFlagsProvider } from "@/Utils/featureFlags";
-import { handleQueryError } from "@/Utils/request/errorHandler";
+import { handleHttpError } from "@/Utils/request/errorHandler";
 
 import { PubSubProvider } from "./Utils/pubsubContext";
 
@@ -25,11 +27,13 @@ const queryClient = new QueryClient({
     queries: {
       retry: 2,
       refetchOnWindowFocus: false,
-      staleTime: 5 * 60 * 1000, // 5 minutes
     },
   },
   queryCache: new QueryCache({
-    onError: handleQueryError,
+    onError: handleHttpError,
+  }),
+  mutationCache: new MutationCache({
+    onError: handleHttpError,
   }),
 });
 
@@ -40,7 +44,10 @@ const App = () => {
         <PubSubProvider>
           <PluginEngine>
             <HistoryAPIProvider>
-              <AuthUserProvider unauthorized={<Routers.SessionRouter />}>
+              <AuthUserProvider
+                unauthorized={<Routers.SessionRouter />}
+                otpAuthorized={<Routers.OTPPatientRouter />}
+              >
                 <FeatureFlagsProvider>
                   <Routers.AppRouter />
                 </FeatureFlagsProvider>
@@ -50,6 +57,12 @@ const App = () => {
               <Integrations.Sentry disabled={!import.meta.env.PROD} />
               <Integrations.Plausible />
             </HistoryAPIProvider>
+            <Sonner
+              position="top-right"
+              theme="light"
+              richColors
+              toastOptions={{}}
+            />
             <Toaster />
           </PluginEngine>
         </PubSubProvider>

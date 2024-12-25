@@ -22,6 +22,26 @@ const consultationRoutes: AppRoutes = {
   "/facility/:facilityId/patient/:patientId/consultation": ({
     facilityId,
     patientId,
+  }) => (
+    <EncounterQuestionnaire
+      facilityId={facilityId}
+      patientId={patientId}
+      questionnaireSlug="encounter"
+    />
+  ),
+  "/facility/:facilityId/patient/:patientId/encounter": ({
+    facilityId,
+    patientId,
+  }) => (
+    <EncounterQuestionnaire
+      facilityId={facilityId}
+      patientId={patientId}
+      questionnaireSlug="encounter"
+    />
+  ),
+  "/facility/:facilityId/patient/:patientId/consultation_old": ({
+    facilityId,
+    patientId,
   }) => <ConsultationForm facilityId={facilityId} patientId={patientId} />,
   "/facility/:facilityId/patient/:patientId/consultation/:id/update": ({
     facilityId,
@@ -161,6 +181,16 @@ const consultationRoutes: AppRoutes = {
         consultationId={consultationId}
       />
     ),
+  "/facility/:facilityId/patient/:patientId/questionnaire": ({
+    facilityId,
+    patientId,
+  }) => (
+    <EncounterQuestionnaire
+      facilityId={facilityId}
+      patientId={patientId}
+      subjectType="patient"
+    />
+  ),
   "/facility/:facilityId/patient/:patientId/consultation/:consultationId/questionnaire":
     ({ facilityId, patientId, consultationId }) => (
       <EncounterQuestionnaire

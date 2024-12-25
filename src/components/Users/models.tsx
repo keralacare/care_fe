@@ -28,11 +28,13 @@ export type UserBareMinimum = {
   user_type: UserRole;
   last_login: string | undefined;
   read_profile_picture_url?: string;
+  external_id: string;
 };
 
 export type GenderType = "Male" | "Female" | "Transgender";
 
 export type UserModel = UserBareMinimum & {
+  external_id: string;
   local_body?: number;
   district?: number;
   state?: number;

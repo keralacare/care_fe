@@ -11,11 +11,6 @@ import {
 } from "@/components/Assets/AssetTypes";
 import { ICD11DiagnosisModel } from "@/components/Diagnosis/types";
 import {
-  IDeleteBedCapacity,
-  ILocalBodies,
-  ILocalBodyByDistrict,
-} from "@/components/ExternalResult/models";
-import {
   EventGeneric,
   type Type,
 } from "@/components/Facility/ConsultationDetails/Events/types";
@@ -27,7 +22,6 @@ import { Investigation } from "@/components/Facility/Investigations/Reports/type
 import { InvestigationSessionType } from "@/components/Facility/Investigations/investigationsTab";
 import {
   BedModel,
-  CapacityModal,
   CommentModel,
   ConsultationModel,
   CreateBedBody,
@@ -35,7 +29,6 @@ import {
   DailyRoundsBody,
   DailyRoundsRes,
   DistrictModel,
-  DoctorModal,
   FacilityModel,
   FacilityRequest,
   FacilitySpokeModel,
@@ -51,7 +44,6 @@ import {
   MinimumQuantityItemResponse,
   PatientNotesEditModel,
   PatientNotesModel,
-  PatientStatsModel,
   PatientTransferResponse,
   ResourceModel,
   ShiftingModel,
@@ -70,30 +62,51 @@ import {
   NotificationData,
   PNconfigData,
 } from "@/components/Notifications/models";
-import { DailyRoundsModel, PatientModel } from "@/components/Patient/models";
+import { DailyRoundsModel } from "@/components/Patient/models";
 import {
   CreateFileRequest,
   CreateFileResponse,
   FileUploadModel,
 } from "@/components/Patient/models";
 import {
+  Appointment,
+  AppointmentCreate,
+  SlotAvailability,
+} from "@/components/Schedule/types";
+import {
   SkillModel,
   SkillObjectModel,
   UpdatePasswordForm,
   UserAssignedModel,
+  UserBareMinimum,
   UserModel,
 } from "@/components/Users/models";
 
 import { PaginatedResponse } from "@/Utils/request/types";
+import {
+  AppointmentPatient,
+  AppointmentPatientRegister,
+} from "@/pages/Patient/Utils";
+import { AllergyIntolerance } from "@/types/emr/allergyIntolerance";
 import { Observation } from "@/types/emr/observation";
+import { PatientModel } from "@/types/emr/patient";
+import {
+  Organization,
+  OrganizationResponse,
+  OrganizationUser,
+  OrganizationUserResponse,
+  RoleResponse,
+} from "@/types/organisation/organisation";
 import { PlugConfig } from "@/types/plugConfig";
 import {
   BatchRequestBody,
   BatchSubmissionResult,
 } from "@/types/questionnaire/batch";
 import { Code } from "@/types/questionnaire/code";
+import { Diagnosis } from "@/types/questionnaire/diagnosis";
 import type { QuestionnaireDetail } from "@/types/questionnaire/questionnaire";
 import type { QuestionnaireResponse } from "@/types/questionnaire/questionnaireResponse";
+import { Symptom } from "@/types/questionnaire/symptom";
 
 /**
  * A fake function that returns an empty object casted to type T
@@ -112,6 +125,37 @@ export interface LoginCredentials {
   username: string;
   password: string;
 }
+
+type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+
+export const API = <TResponse = undefined, TBody = undefined>(
+  route: `${HttpMethod} ${string}`,
+) => {
+  const [method, path] = route.split(" ") as [HttpMethod, string];
+  return {
+    path,
+    method,
+    TRes: Type<TResponse>(),
+    TBody: Type<TBody>(),
+  };
+};
+
+export const ModelCrudApis = <
+  TModel extends object,
+  TCreate = TModel,
+  TListResponse = TModel,
+  TUpdate = TModel,
+>(
+  route: string,
+) => {
+  return {
+    list: API<PaginatedResponse<TListResponse>>(`GET ${route}/`),
+    create: API<TModel, TCreate>(`POST ${route}/`),
+    retrieve: API<TModel>(`GET ${route}/{id}/`),
+    update: API<TModel, TUpdate>(`PUT ${route}/{id}/`),
+    delete: API(`DELETE ${route}/{id}/`),
+  };
+};
 
 const routes = {
   // Auth Endpoints
@@ -539,23 +583,6 @@ const routes = {
     method: "GET",
     TRes: Type<string>(),
   },
-  downloadFacilityCapacity: {
-    path: "/api/v1/facility/?csv&capacity",
-    method: "GET",
-    TRes: Type<string>(),
-  },
-  downloadFacilityDoctors: {
-    path: "/api/v1/facility/?csv&doctors",
-    method: "GET",
-    TRes: Type<string>(),
-  },
-
-  downloadFacilityTriage: {
-    path: "/api/v1/facility/?csv&triage",
-    method: "GET",
-    TRes: Type<string>(),
-  },
-
   downloadPatients: {
     path: "/api/v1/patient/?csv",
     method: "GET",
@@ -642,86 +669,6 @@ const routes = {
     method: "GET",
     TRes: Type<PaginatedResponse<Type>>(),
   },
-
-  // Hospital Beds
-  createCapacity: {
-    path: "/api/v1/facility/{facilityId}/capacity/",
-    method: "POST",
-    TRes: Type<CapacityModal>(),
-  },
-
-  createDoctor: {
-    path: "/api/v1/facility/{facilityId}/hospital_doctor/",
-    method: "POST",
-    TRes: Type<DoctorModal>(),
-    TBody: Type<DoctorModal>(),
-  },
-
-  getCapacity: {
-    path: "/api/v1/facility/{facilityId}/capacity/",
-    TRes: Type<PaginatedResponse<CapacityModal>>(),
-  },
-
-  getCapacityBed: {
-    path: "/api/v1/facility/{facilityId}/capacity/{bed_id}/",
-    TRes: Type<CapacityModal>(),
-  },
-
-  deleteCapacityBed: {
-    path: "/api/v1/facility/{facilityId}/capacity/{bed_id}/",
-    method: "DELETE",
-    TRes: Type<IDeleteBedCapacity>(),
-  },
-
-  listDoctor: {
-    path: "/api/v1/facility/{facilityId}/hospital_doctor/",
-    TRes: Type<PaginatedResponse<DoctorModal>>(),
-  },
-  getDoctor: {
-    path: "/api/v1/facility/{facilityId}/hospital_doctor/{id}/",
-    TRes: Type<DoctorModal>(),
-  },
-
-  updateCapacity: {
-    path: "/api/v1/facility/{facilityId}/capacity/{bed_id}/",
-    method: "PUT",
-    TRes: Type<CapacityModal>(),
-  },
-
-  updateDoctor: {
-    path: "/api/v1/facility/{facilityId}/hospital_doctor/{id}/",
-    method: "PUT",
-    TRes: Type<DoctorModal>(),
-  },
-
-  deleteDoctor: {
-    path: "/api/v1/facility/{facilityId}/hospital_doctor/{area}/",
-    method: "DELETE",
-    TRes: Type<Record<string, never>>(),
-  },
-
-  //Triage
-  createTriage: {
-    path: "/api/v1/facility/{facilityId}/patient_stats/",
-    method: "POST",
-    TBody: Type<PatientStatsModel>(),
-    TRes: Type<PatientStatsModel>(),
-  },
-  getTriage: {
-    path: "/api/v1/facility/{facilityId}/patient_stats/",
-    TRes: Type<PaginatedResponse<PatientStatsModel>>(),
-  },
-
-  getTriageDetails: {
-    path: "/api/v1/facility/{facilityId}/patient_stats/{id}/",
-    TRes: Type<PatientStatsModel>(),
-  },
-
-  // //Care Center
-  // createCenter: {
-  //     path: "/api/v1/carecenter/",
-  //     method: 'POST'
-  // }
 
   // Patient
 
@@ -822,12 +769,12 @@ const routes = {
   getAllLocalBodyByDistrict: {
     path: "/api/v1/district/{id}/get_all_local_body/",
     method: "GET",
-    TRes: Type<ILocalBodyByDistrict[]>(),
+    TRes: Type<LocalBodyModel[]>(),
   },
   getLocalbodyByDistrict: {
     path: "/api/v1/district/{id}/local_bodies/",
     method: "GET",
-    TRes: Type<ILocalBodies[]>(),
+    TRes: Type<LocalBodyModel[]>(),
   },
 
   // Local Body
@@ -974,6 +921,11 @@ const routes = {
     path: "/api/v1/users/{username}/",
     method: "GET",
     TRes: Type<UserModel>(),
+  },
+  getUserBareMinimum: {
+    path: "/api/v1/facility/{facilityId}/get_users/{userExternalId}/",
+    method: "GET",
+    TRes: Type<UserBareMinimum>(),
   },
   updateUserDetails: {
     path: "/api/v1/users/",
@@ -1151,7 +1103,7 @@ const routes = {
     TRes: Type<MedibaseMedicine[]>(),
   },
 
-  // Resource
+  // Request
   createResource: {
     path: "/api/v1/resource/",
     method: "POST",
@@ -1431,7 +1383,8 @@ const routes = {
       TRes: Type<Record<string, never>>(),
       TBody: Type<{
         resource_id: string;
-        encounter: string;
+        encounter?: string;
+        patient: string;
         responses: Array<{
           question_id: string;
           value: string | number | boolean;
@@ -1503,6 +1456,130 @@ const routes = {
     path: "/api/v1/patient/{patientId}/observation/",
     method: "GET",
     TRes: Type<PaginatedResponse<Observation>>(),
+  },
+
+  // Diagnosis Routes
+  getDiagnosis: {
+    path: "/api/v1/patient/{patientId}/diagnosis/",
+    method: "GET",
+    TRes: Type<PaginatedResponse<Diagnosis>>(),
+  },
+  // Get Symptom
+  getSymptom: {
+    path: "/api/v1/patient/{patientId}/symptom/",
+    method: "GET",
+    TRes: Type<PaginatedResponse<Symptom>>(),
+  },
+
+  getAllergy: {
+    path: "/api/v1/patient/{patientId}/allergy_intolerance/",
+    method: "GET",
+    TRes: Type<PaginatedResponse<AllergyIntolerance>>(),
+  },
+
+  // Organisation Routes
+  organisation: {
+    listMine: {
+      path: "/api/v1/organization/mine/",
+      method: "GET",
+      TRes: {} as OrganizationResponse,
+    },
+    list: {
+      path: "/api/v1/organization/",
+      method: "GET",
+      TRes: {} as OrganizationResponse,
+    },
+    get: {
+      path: "/api/v1/organization/{id}/",
+      method: "GET",
+      TRes: {} as Organization,
+    },
+    listUsers: {
+      path: "/api/v1/organization/{id}/users/",
+      method: "GET",
+      TRes: {} as OrganizationUserResponse,
+    },
+    assignUser: {
+      path: "/api/v1/organization/{id}/users/",
+      method: "POST",
+      TRes: {} as OrganizationUser,
+      TBody: {} as { user: string; role: string },
+    },
+    removeUser: {
+      path: "/api/v1/organization/{id}/users/{userId}/",
+      method: "DELETE",
+      TRes: {} as Record<string, never>,
+    },
+  },
+
+  // Role Routes
+  role: {
+    list: {
+      path: "/api/v1/role/",
+      method: "GET",
+      TRes: {} as RoleResponse,
+    },
+  },
+
+  // OTP Routes
+  otp: {
+    sendOtp: {
+      path: "/api/v1/otp/send/",
+      method: "POST",
+      TBody: Type<{ phone_number: string }>(),
+      TRes: Type<Record<string, never>>(),
+      auth: {
+        key: "Authorization",
+        value: "{OTP_API_KEY}",
+        type: "header",
+      },
+    },
+    loginByOtp: {
+      path: "/api/v1/otp/login/",
+      method: "POST",
+      TBody: Type<{ phone_number: string; otp: string }>(),
+      TRes: Type<
+        { access: string } | { errors: Array<Record<string, string>> }
+      >(),
+    },
+    getPatient: {
+      path: "/api/v1/otp/patient/",
+      method: "GET",
+      TRes: Type<PaginatedResponse<AppointmentPatient>>(),
+      auth: {
+        key: "Authorization",
+        value: "Bearer {token}",
+        type: "header",
+      },
+    },
+    createPatient: {
+      path: "/api/v1/otp/patient/",
+      method: "POST",
+      TBody: Type<AppointmentPatientRegister>(),
+      TRes: Type<AppointmentPatient>(),
+      auth: {
+        key: "Authorization",
+        value: "Bearer {token}",
+        type: "header",
+      },
+    },
+    getSlotsForDay: {
+      path: "/api/v1/otp/slots/get_slots_for_day/",
+      method: "POST",
+      TRes: Type<{ results: SlotAvailability[] }>(),
+      TBody: Type<{ facility: string; resource: string; day: string }>(),
+    },
+    getAppointments: {
+      path: "/api/v1/otp/slots/get_appointments/",
+      method: "GET",
+      TRes: Type<{ results: Appointment[] }>(),
+    },
+    createAppointment: {
+      path: "/api/v1/otp/slots/{id}/create_appointment/",
+      method: "POST",
+      TRes: Type<Appointment>(),
+      TBody: Type<AppointmentCreate>(),
+    },
   },
 } as const;
 

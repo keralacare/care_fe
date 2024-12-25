@@ -12,7 +12,6 @@ import {
   DailyRoundsModel,
   FacilityNameModel,
   FileUploadModel,
-  PatientModel,
 } from "@/components/Patient/models";
 import { EncounterSymptom } from "@/components/Symptoms/types";
 import { UserBareMinimum } from "@/components/Users/models";
@@ -28,6 +27,7 @@ import {
 } from "@/common/constants";
 
 import { FeatureFlag } from "@/Utils/featureFlags";
+import { PatientModel } from "@/types/emr/patient";
 
 export interface LocalBodyModel {
   id: number;
@@ -63,20 +63,13 @@ export interface FacilityModel {
   facility_type?: string;
   address?: string;
   features?: number[];
+  description?: string;
   location?: {
     latitude: number;
     longitude: number;
   };
-  oxygen_capacity?: number;
   phone_number?: string;
-  type_b_cylinders?: number;
-  type_c_cylinders?: number;
-  type_d_cylinders?: number;
   middleware_address?: string;
-  expected_type_b_cylinders?: number;
-  expected_type_c_cylinders?: number;
-  expected_type_d_cylinders?: number;
-  expected_oxygen_requirement?: number;
   local_body_object?: LocalBodyModel;
   district_object?: DistrictModel;
   state_object?: StateModel;
@@ -114,20 +107,6 @@ export interface FacilitySpokeRequest {
 }
 
 export interface FacilitySpokeErrors {}
-
-export interface CapacityModal {
-  id?: number;
-  room_type?: number;
-  modified_date?: any;
-  total_capacity?: number;
-  current_capacity?: number;
-}
-
-export interface DoctorModal {
-  id?: number;
-  area?: number;
-  count?: number;
-}
 
 export interface OptionsType {
   id: number;
@@ -223,17 +202,6 @@ export interface ConsultationModel {
   medico_legal_case?: boolean;
   investigation?: InvestigationType[];
   has_consents?: (typeof CONSENT_TYPE_CHOICES)[number]["id"][];
-}
-
-export interface PatientStatsModel {
-  id?: string;
-  entryDate?: string;
-  num_patients_visited?: number;
-  num_patients_home_quarantine?: number;
-  num_patients_isolation?: number;
-  num_patient_referred?: number;
-  entry_date?: string;
-  num_patient_confirmed_positive?: number;
 }
 
 export interface DupPatientModel {
