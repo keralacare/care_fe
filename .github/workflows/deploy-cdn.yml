@@ -11,6 +11,8 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
+      with:
+        ref: ${{ github.event_name == 'workflow_dispatch' && 'kerala-care' || github.ref_name }}
 
     - name: Set up Node.js
       uses: actions/setup-node@v3
