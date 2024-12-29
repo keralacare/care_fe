@@ -1,7 +1,7 @@
 import { CaretDownIcon, CheckIcon, ReloadIcon } from "@radix-ui/react-icons";
-import { useQuery } from "@tanstack/react-query";
-import { format, formatDate } from "date-fns";
-import { Link, useQueryParams } from "raviger";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { format, formatDate, isPast } from "date-fns";
+import { Link, navigate, useQueryParams } from "raviger";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -35,6 +35,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { Avatar } from "@/components/Common/Avatar";
@@ -45,11 +53,16 @@ import {
 } from "@/components/Schedule/Appointments/utils";
 import { ScheduleAPIs } from "@/components/Schedule/api";
 import { getFakeTokenNumber } from "@/components/Schedule/helpers";
-import { Appointment, SlotAvailability } from "@/components/Schedule/types";
+import {
+  Appointment,
+  AppointmentStatuses,
+  SlotAvailability,
+} from "@/components/Schedule/types";
 
 import useAuthUser from "@/hooks/useAuthUser";
 
 import FiltersCache from "@/Utils/FiltersCache";
+import mutate from "@/Utils/request/mutate";
 import query from "@/Utils/request/query";
 import { dateQueryString, formatName, formatPatientAge } from "@/Utils/utils";
 
@@ -103,7 +116,8 @@ export default function AppointmentsPage(props: { facilityId?: string }) {
   return (
     <Page
       title={t("appointments")}
-      collapseSidebar
+      hideBack={true}
+      breadcrumbs={false}
       options={
         <Tabs
           value={viewMode}
@@ -273,30 +287,40 @@ export default function AppointmentsPage(props: { facilityId?: string }) {
         </div>
       </div>
 
-      <ScrollArea>
-        <div className="flex w-max space-x-4">
-          {(
-            [
-              "booked",
-              "checked_in",
-              "in_consultation",
-              "fulfilled",
-              "noshow",
-            ] as const
-          ).map((status) => (
-            <AppointmentColumn
-              key={status}
-              status={status}
-              facilityId={facilityId}
-              slot={slot?.id}
-              practitioner={qParams.practitioner}
-              date={date}
-              search={qParams.search?.toLowerCase()}
-            />
-          ))}
-        </div>
-        <ScrollBar orientation="horizontal" />
-      </ScrollArea>
+      {viewMode === "board" ? (
+        <ScrollArea>
+          <div className="flex w-max space-x-4">
+            {(
+              [
+                "booked",
+                "checked_in",
+                "in_consultation",
+                "fulfilled",
+                "noshow",
+              ] as const
+            ).map((status) => (
+              <AppointmentColumn
+                key={status}
+                status={status}
+                facilityId={facilityId}
+                slot={slot?.id}
+                practitioner={qParams.practitioner}
+                date={date}
+                search={qParams.search?.toLowerCase()}
+              />
+            ))}
+          </div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
+      ) : (
+        <AppointmentRow
+          facilityId={facilityId}
+          practitioner={qParams.practitioner}
+          slot={qParams.slot}
+          date={date}
+          search={qParams.search?.toLowerCase()}
+        />
+      )}
     </Page>
   );
 }
@@ -407,6 +431,250 @@ function AppointmentCard({ appointment }: { appointment: Appointment }) {
     </div>
   );
 }
+function AppointmentRow(props: {
+  facilityId: string;
+  practitioner?: string;
+  slot?: string;
+  date: string;
+  search?: string;
+}) {
+  const { t } = useTranslation();
+  const [status, setStatus] = useState<Appointment["status"]>("booked");
+
+  const { data } = useQuery({
+    queryKey: [
+      "appointments",
+      props.facilityId,
+      status,
+      props.practitioner,
+      props.slot,
+      props.date,
+    ],
+    queryFn: query(ScheduleAPIs.appointments.list, {
+      pathParams: { facility_id: props.facilityId },
+      queryParams: {
+        status: status,
+        limit: 100,
+        slot: props.slot,
+        resource: props.practitioner,
+        date: props.date,
+      },
+    }),
+  });
+
+  let appointments = data?.results ?? [];
+
+  if (props.search) {
+    appointments = appointments.filter(({ patient }) =>
+      patient.name.toLowerCase().includes(props.search!),
+    );
+  }
+  return (
+    <>
+      <div className={cn(!data && "animate-pulse")}>
+        <Tabs
+          value={status}
+          onValueChange={(value) => setStatus(value as Appointment["status"])}
+        >
+          <TabsList>
+            <TabsTrigger value="booked">{t("booked")}</TabsTrigger>
+            <TabsTrigger value="checked_in">{t("checked_in")}</TabsTrigger>
+            <TabsTrigger value="in_consultation">
+              {t("in_consultation")}
+            </TabsTrigger>
+            <TabsTrigger value="fulfilled">{t("fulfilled")}</TabsTrigger>
+            <TabsTrigger value="noshow">{t("noshow")}</TabsTrigger>
+          </TabsList>
+        </Tabs>
+        {appointments.length === 0 ? (
+          <div className="flex mt-2 bg-white justify-center items-center h-[calc(100vh-22rem)]">
+            <p className="text-gray-500">{t("no_appointments")}</p>
+          </div>
+        ) : (
+          <Table className="p-2 border-separate border-spacing-y-3 min-w-[900px]">
+            <TableHeader>
+              <TableRow>
+                <TableHead className="pl-8 font-semibold text-black text-xs">
+                  {t("patient")}
+                </TableHead>
+                <TableHead className="font-semibold text-black text-xs">
+                  {t("room_apt")}
+                </TableHead>
+                <TableHead className="font-semibold text-black text-xs">
+                  {t("consulting_doctor")}
+                </TableHead>
+                <TableHead className="font-semibold text-black text-xs">
+                  {t("labels")}
+                </TableHead>
+                <TableHead className="font-semibold text-black text-xs">
+                  {t("triage_category")}
+                </TableHead>
+                <TableHead className="font-semibold text-black text-xs">
+                  {t("current_status")}
+                </TableHead>
+                <TableHead className="font-semibold text-black text-xs">
+                  {t("token_no")}
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody className="">
+              {appointments.map((appointment) => (
+                <TableRow
+                  key={appointment.id}
+                  className="shadow rounded-lg cursor-pointer group"
+                  onClick={() =>
+                    navigate(
+                      `/facility/${props.facilityId}/patient/${appointment.patient.id}/appointments/${appointment.id}`,
+                    )
+                  }
+                >
+                  <AppointmentRowItem
+                    appointment={appointment}
+                    facilityId={props.facilityId}
+                  />
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
+      </div>
+    </>
+  );
+}
+
+function AppointmentRowItem({
+  appointment,
+  facilityId,
+}: {
+  appointment: Appointment;
+  facilityId: string;
+}) {
+  const { patient } = appointment;
+  const { t } = useTranslation();
+
+  return (
+    <>
+      <TableCell className="py-6 group-hover:bg-gray-100 bg-white rounded-l-lg">
+        <span className="flex flex-row items-center gap-2">
+          <CareIcon
+            icon="l-draggabledots"
+            className="size-4 invisible group-hover:visible"
+          />
+          <span className="flex flex-col">
+            <span className="text-sm font-semibold">{patient.name}</span>
+            <span className="text-xs text-gray-500">
+              {formatPatientAge(patient as any, true)},{" "}
+              {t(`GENDER__${patient.gender}`)}
+            </span>
+          </span>
+        </span>
+      </TableCell>
+      {/* TODO: Replace with relevant information */}
+      <TableCell className="py-6 group-hover:bg-gray-100 bg-white">
+        <p>{"Need Room Information"}</p>
+      </TableCell>
+      <TableCell className="py-6 group-hover:bg-gray-100 bg-white">
+        {formatName(appointment.resource)}
+      </TableCell>
+      <TableCell className="py-6 group-hover:bg-gray-100 bg-white">
+        <p>{"Need Labels"}</p>
+      </TableCell>
+      <TableCell className="py-6 group-hover:bg-gray-100 bg-white">
+        <p>{"Need Triage Category"}</p>
+      </TableCell>
+      <TableCell className="py-6 group-hover:bg-gray-100 bg-white">
+        <AppointmentStatusDropdown
+          appointment={appointment}
+          facilityId={facilityId}
+        />
+      </TableCell>
+      {/* TODO: replace this with token number once that's ready... */}
+      <TableCell className="py-6 group-hover:bg-gray-100 bg-white rounded-r-lg">
+        {getFakeTokenNumber(appointment)}
+      </TableCell>
+    </>
+  );
+}
+
+const AppointmentStatusDropdown = ({
+  appointment,
+  facilityId,
+}: {
+  appointment: Appointment;
+  facilityId: string;
+}) => {
+  const { t } = useTranslation();
+  const queryClient = useQueryClient();
+  const currentStatus = appointment.status;
+  const hasStarted = isPast(appointment.token_slot.start_datetime);
+
+  const { mutate: updateAppointment } = useMutation({
+    mutationFn: mutate(ScheduleAPIs.appointments.update, {
+      pathParams: {
+        facility_id: facilityId,
+        id: appointment.id,
+      },
+    }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["appointment", appointment.id],
+      });
+    },
+  });
+
+  // Get available status options based on current status
+  const getAvailableStatuses = () => {
+    if (
+      ["fulfilled", "cancelled", "entered_in_error"].includes(currentStatus)
+    ) {
+      return [currentStatus];
+    }
+
+    if (currentStatus === "booked") {
+      return ["booked", "checked_in", "in_consultation", "noshow", "cancelled"];
+    }
+
+    if (currentStatus === "checked_in") {
+      return ["checked_in", "in_consultation", "noshow", "cancelled"];
+    }
+
+    if (currentStatus === "in_consultation") {
+      return ["in_consultation", "fulfilled", "cancelled"];
+    }
+
+    return AppointmentStatuses;
+  };
+
+  return (
+    <div className="w-32">
+      <Select
+        value={currentStatus}
+        onValueChange={(value) =>
+          updateAppointment({ status: value as Appointment["status"] })
+        }
+      >
+        <SelectTrigger>
+          <CareIcon icon="l-schedule" className="size-4" />
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {getAvailableStatuses().map((status) => (
+            <SelectItem
+              key={status}
+              value={status}
+              disabled={
+                !hasStarted &&
+                ["checked_in", "in_consultation", "fulfilled"].includes(status)
+              }
+            >
+              {t(status)}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  );
+};
 
 interface SlotFilterProps {
   slots: SlotAvailability[];

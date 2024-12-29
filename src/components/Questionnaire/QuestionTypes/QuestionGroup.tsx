@@ -12,32 +12,38 @@ import { QuestionInput } from "./QuestionInput";
 
 interface QuestionGroupProps {
   question: Question;
+  encounterId?: string;
   questionnaireResponses: QuestionnaireResponse[];
   updateQuestionnaireResponseCB: (response: QuestionnaireResponse) => void;
   errors: QuestionValidationError[];
   clearError: (questionId: string) => void;
   disabled?: boolean;
   activeGroupId?: string;
+  facilityId: string;
 }
 
 export const QuestionGroup = memo(function QuestionGroup({
   question,
+  encounterId,
   questionnaireResponses,
   updateQuestionnaireResponseCB,
   errors,
   clearError,
   disabled,
   activeGroupId,
+  facilityId,
 }: QuestionGroupProps) {
   if (question.type !== "group") {
     return (
       <QuestionInput
         question={question}
         questionnaireResponses={questionnaireResponses}
+        encounterId={encounterId}
         updateQuestionnaireResponseCB={updateQuestionnaireResponseCB}
         errors={errors}
         clearError={() => clearError(question.id)}
         disabled={disabled}
+        facilityId={facilityId}
       />
     );
   }
@@ -73,6 +79,7 @@ export const QuestionGroup = memo(function QuestionGroup({
         >
           {question.questions?.map((subQuestion) => (
             <QuestionGroup
+              facilityId={facilityId}
               key={subQuestion.id}
               question={subQuestion}
               questionnaireResponses={questionnaireResponses}

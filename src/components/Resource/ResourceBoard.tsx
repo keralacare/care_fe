@@ -11,7 +11,6 @@ import { ExportButton } from "@/components/Common/Export";
 import Loading from "@/components/Common/Loading";
 import PageTitle from "@/components/Common/PageTitle";
 import Tabs from "@/components/Common/Tabs";
-import { ResourceModel } from "@/components/Facility/models";
 import SearchInput from "@/components/Form/SearchInput";
 import type { KanbanBoardType } from "@/components/Kanban/Board";
 import BadgesList from "@/components/Resource/ResourceBadges";
@@ -25,6 +24,7 @@ import { RESOURCE_CHOICES } from "@/common/constants";
 
 import routes from "@/Utils/request/api";
 import request from "@/Utils/request/request";
+import { ResourceRequest } from "@/types/resourceRequest/resourceRequest";
 
 const KanbanBoard = lazy(
   () => import("@/components/Kanban/Board"),
@@ -106,7 +106,7 @@ export default function BoardView() {
         </div>
       </div>
       <Suspense fallback={<Loading />}>
-        <KanbanBoard<ResourceModel>
+        <KanbanBoard<ResourceRequest>
           title={<BadgesList {...{ appliedFilters, FilterBadges }} />}
           sections={boardFilter.map((board) => ({
             id: board,

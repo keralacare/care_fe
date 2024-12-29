@@ -23,21 +23,16 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 
-import DialogModal from "@/components/Common/Dialog";
 import Loading from "@/components/Common/Loading";
 import Page from "@/components/Common/Page";
 import DuplicatePatientDialog from "@/components/Facility/DuplicatePatientDialog";
-import TransferPatientDialog from "@/components/Facility/TransferPatientDialog";
 
 import useAppHistory from "@/hooks/useAppHistory";
 
 import {
-  BLOOD_GROUPS,
-  DOMESTIC_HEALTHCARE_SUPPORT_CHOICES,
-  GENDER_TYPES,
-  OCCUPATION_TYPES,
-  RATION_CARD_CATEGORY,
-  SOCIOECONOMIC_STATUS_CHOICES,
+  BLOOD_GROUP_CHOICES, // DOMESTIC_HEALTHCARE_SUPPORT_CHOICES,
+  GENDER_TYPES, // OCCUPATION_TYPES,
+  //RATION_CARD_CATEGORY, // SOCIOECONOMIC_STATUS_CHOICES ,
 } from "@/common/constants";
 import countryList from "@/common/static/countries.json";
 import { validatePincode } from "@/common/validation";
@@ -51,7 +46,7 @@ import {
   getPincodeDetails,
   parsePhoneNumber,
 } from "@/Utils/utils";
-import OrganisationSelector from "@/pages/Organisation/components/OrganisationSelector";
+import OrganizationSelector from "@/pages/Organization/components/OrganizationSelector";
 import { PatientModel, validatePatient } from "@/types/emr/patient";
 
 import Autocomplete from "../ui/autocomplete";
@@ -83,12 +78,11 @@ export default function PatientRegistration(
   >({});
   const [suppressDuplicateWarning, setSuppressDuplicateWarning] =
     useState(!!patientId);
-  const [showTransferDialog, setShowTransferDialog] = useState(false);
   const [debouncedNumber, setDebouncedNumber] = useState<string>();
 
   const sidebarItems = [
     { label: t("patient__general-info"), id: "general-info" },
-    { label: t("social_profile"), id: "social-profile" },
+    // { label: t("social_profile"), id: "social-profile" },
     //{ label: t("volunteer_contact"), id: "volunteer-contact" },
     //{ label: t("patient__insurance-details"), id: "insurance-details" },
   ];
@@ -106,11 +100,6 @@ export default function PatientRegistration(
     "permanent_address",
     "pincode",
     "nationality",
-    "state",
-    "district",
-    "local_body",
-    "ward",
-    "village",
     "meta_info",
     "ration_card_category",
   ];
@@ -124,9 +113,6 @@ export default function PatientRegistration(
     date_of_birth:
       ageDob === "dob" ? dateQueryString(form.date_of_birth) : undefined,
     year_of_birth: ageDob === "age" ? form.year_of_birth : undefined,
-    is_active: true,
-    is_antenatal: false,
-    passport_no: form.nationality === "Indian" ? form.passport_no : undefined,
     meta_info: {
       ...(form.meta_info as any),
       occupation:
@@ -142,7 +128,17 @@ export default function PatientRegistration(
       Notification.Success({
         msg: t("patient_registration_success"),
       });
-      navigate(`/facility/${facilityId}/patient/${resp.id}/consultation`);
+      // Lets navigate the user to the verify page as the patient is not accessible to the user yet
+      navigate(`/facility/${facilityId}/patients/verify`, {
+        query: {
+          phone_number: resp.phone_number,
+          year_of_birth:
+            ageDob === "dob"
+              ? new Date(resp.date_of_birth!).getFullYear()
+              : resp.year_of_birth,
+          partial_id: resp?.id?.slice(0, 5),
+        },
+      });
     },
     onError: () => {
       Notification.Error({
@@ -245,12 +241,13 @@ export default function PatientRegistration(
 
   const handleDialogClose = (action: string) => {
     if (action === "transfer") {
-      setShowTransferDialog(true);
-    } else if (action === "back") {
-      setShowTransferDialog(false);
+      navigate(`/facility/${facilityId}/patients`, {
+        query: {
+          phone_number: form.phone_number,
+        },
+      });
     } else {
       setSuppressDuplicateWarning(true);
-      setShowTransferDialog(false);
     }
   };
 
@@ -293,7 +290,7 @@ export default function PatientRegistration(
   const patientPhoneSearch = useQuery({
     queryKey: ["patients", "phone-number", debouncedNumber],
     queryFn: query(routes.searchPatient, {
-      queryParams: {
+      body: {
         phone_number: parsePhoneNumber(debouncedNumber || "") || "",
       },
     }),
@@ -301,7 +298,7 @@ export default function PatientRegistration(
   });
 
   const duplicatePatients = patientPhoneSearch.data?.results.filter(
-    (p) => p.patient_id !== patientId,
+    (p) => p.id !== patientId,
   );
   if (patientId && patientQuery.isLoading) {
     return <Loading />;
@@ -313,16 +310,6 @@ export default function PatientRegistration(
       <div className="relative mt-4 flex flex-col md:flex-row gap-4">
         <SectionNavigator sections={sidebarItems} className="hidden md:flex" />
         <form className="md:w-[500px]" onSubmit={handleFormSubmit}>
-          {/*
-          // This will need to be updated
-          <PLUGIN_Component
-                __name="ExtendPatientRegisterForm"
-                facilityId={facilityId}
-                patientId={patientId}
-                state={state}
-                dispatch={dispatch}
-                field={field}
-              /> */}
           <div id={"general-info"}>
             <h2 className="text-lg font-semibold">
               {t("patient__general-info")}
@@ -406,7 +393,7 @@ export default function PatientRegistration(
               <RadioGroup
                 value={form.gender?.toString()}
                 onValueChange={(value) =>
-                  setForm((f) => ({ ...f, gender: Number(value) }))
+                  setForm((f) => ({ ...f, gender: value }))
                 }
                 className="flex items-center gap-4"
               >
@@ -434,9 +421,9 @@ export default function PatientRegistration(
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {BLOOD_GROUPS.map((bg) => (
-                    <SelectItem key={bg} value={bg}>
-                      {bg}
+                  {BLOOD_GROUP_CHOICES.map((bg) => (
+                    <SelectItem key={bg.id} value={bg.id}>
+                      {bg.text}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -635,15 +622,14 @@ export default function PatientRegistration(
                       setForm((f) => ({
                         ...f,
                         nationality: value,
-                        passport_no: undefined,
                       }));
                     }}
                   />
                 </InputWithError>
               </div>
-              {form.nationality === "India" ? (
+              {form.nationality === "India" && (
                 <>
-                  <OrganisationSelector
+                  <OrganizationSelector
                     required={true}
                     onChange={(value) =>
                       setForm((f) => ({
@@ -652,34 +638,17 @@ export default function PatientRegistration(
                       }))
                     }
                   />
-                  <div>
-                    <InputWithError
-                      label={t("village")}
-                      errors={errors["village"]}
-                    >
-                      <Input {...fieldProps("village")} />
-                    </InputWithError>
-                  </div>
                 </>
-              ) : (
-                <div>
-                  <InputWithError
-                    label={t("passport_number")}
-                    errors={errors["passport_no"]}
-                  >
-                    <Input {...fieldProps("passport_no")} />
-                  </InputWithError>
-                </div>
               )}
             </div>
           </div>
-          <div id="social-profile" className="mt-10">
-            <h2 className="text-lg font-semibold">
+          {/* <div id="social-profile" className="mt-10"> */}
+          {/* <h2 className="text-lg font-semibold">
               {t("patient__social-profile")}
             </h2>
             <div className="text-sm">{t("social_profile_detail")}</div>
-            <br />
-            <div>
+            <br /> */}
+          {/* <div>
               <InputWithError label={t("occupation")}>
                 <Autocomplete
                   options={OCCUPATION_TYPES.map((occupation) => ({
@@ -695,9 +664,9 @@ export default function PatientRegistration(
                   }
                 />
               </InputWithError>
-            </div>
-            <br />
-            <div>
+            </div> */}
+          {/* <br /> */}
+          {/* <div>
               <InputWithError
                 label={t("ration_card_category")}
                 errors={errors["ration_card_category"]}
@@ -715,9 +684,9 @@ export default function PatientRegistration(
                   </SelectContent>
                 </Select>
               </InputWithError>
-            </div>
-            <br />
-            <InputWithError label={t("socioeconomic_status")}>
+            </div> */}
+          {/* <br /> */}
+          {/* <InputWithError label={t("socioeconomic_status")}>
               <RadioGroup
                 value={form.meta_info?.socioeconomic_status}
                 onValueChange={(value) =>
@@ -740,9 +709,9 @@ export default function PatientRegistration(
                   </Fragment>
                 ))}
               </RadioGroup>
-            </InputWithError>
-            <br />
-            <InputWithError label={t("has_domestic_healthcare_support")}>
+            </InputWithError> */}
+          {/* <br /> */}
+          {/* <InputWithError label={t("has_domestic_healthcare_support")}>
               <RadioGroup
                 value={form.meta_info?.domestic_healthcare_support}
                 onValueChange={(value) =>
@@ -765,8 +734,8 @@ export default function PatientRegistration(
                   </Fragment>
                 ))}
               </RadioGroup>
-            </InputWithError>
-          </div>
+            </InputWithError> */}
+          {/* </div> */}
           {/* <div id="volunteer-contact" className="mt-10">
             <h2 className="text-lg font-semibold">
               {t("patient__volunteer-contact")}
@@ -812,25 +781,6 @@ export default function PatientRegistration(
             }}
           />
         )}
-      {!!duplicatePatients?.length && (
-        <DialogModal
-          show={showTransferDialog}
-          onClose={() => {
-            handleDialogClose("close");
-          }}
-          title="Patient Transfer Form"
-          className="max-w-md md:min-w-[600px]"
-        >
-          <TransferPatientDialog
-            patientList={duplicatePatients}
-            handleOk={() => handleDialogClose("close")}
-            handleCancel={() => {
-              handleDialogClose("close");
-            }}
-            facilityId={facilityId}
-          />
-        </DialogModal>
-      )}
     </Page>
   );
 }
