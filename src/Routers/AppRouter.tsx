@@ -16,12 +16,10 @@ import ScheduleRoutes from "@/components/Schedule/routes";
 import useAuthUser from "@/hooks/useAuthUser";
 import { usePluginRoutes } from "@/hooks/useCareApps";
 
-// import AssetRoutes from "@/Routers/routes/AssetRoutes";
 import ConsultationRoutes from "@/Routers/routes/ConsultationRoutes";
 import FacilityRoutes from "@/Routers/routes/FacilityRoutes";
 import PatientRoutes from "@/Routers/routes/PatientRoutes";
 import ResourceRoutes from "@/Routers/routes/ResourceRoutes";
-// import ShiftingRoutes from "@/Routers/routes/ShiftingRoutes";
 import UserRoutes from "@/Routers/routes/UserRoutes";
 import { PlugConfigEdit } from "@/pages/Apps/PlugConfigEdit";
 import { PlugConfigList } from "@/pages/Apps/PlugConfigList";
@@ -56,7 +54,6 @@ const Routes: AppRoutes = {
   ...FacilityRoutes,
   ...PatientRoutes,
   ...ResourceRoutes,
-  // ...ShiftingRoutes,
   ...ScheduleRoutes,
   ...UserRoutes,
   ...OrganizationRoutes,

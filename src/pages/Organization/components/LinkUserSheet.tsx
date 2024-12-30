@@ -1,10 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import CareIcon from "@/CAREUI/icons/CareIcon";
 
-import Autocomplete from "@/components/ui/autocomplete";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -23,30 +22,43 @@ import {
 } from "@/components/ui/sheet";
 
 import { Avatar } from "@/components/Common/Avatar";
-import { UserBareMinimum } from "@/components/Users/models";
+import UserSelector from "@/components/Common/UserSelector";
 
 import routes from "@/Utils/request/api";
 import mutate from "@/Utils/request/mutate";
 import query from "@/Utils/request/query";
+import { UserBase } from "@/types/user/user";
 
 interface Props {
   organizationId: string;
-  facilityId: string;
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  preSelectedUsername?: string;
 }
 
-interface UserListResponse {
-  results: UserBareMinimum[];
-  count: number;
-}
-
-export default function AddFacilityUserSheet({
-  facilityId,
+export default function LinkUserSheet({
   organizationId,
+  open,
+  setOpen,
+  preSelectedUsername,
 }: Props) {
   const queryClient = useQueryClient();
-  const [open, setOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<UserBareMinimum>();
+  const [selectedUser, setSelectedUser] = useState<UserBase>();
   const [selectedRole, setSelectedRole] = useState<string>("");
+
+  const { data: preSelectedUser } = useQuery({
+    queryKey: ["user", preSelectedUsername],
+    queryFn: query(routes.user.get, {
+      pathParams: { username: preSelectedUsername || "" },
+    }),
+    enabled: !!preSelectedUsername,
+  });
+
+  useEffect(() => {
+    if (preSelectedUser) {
+      setSelectedUser(preSelectedUser);
+    }
+  }, [preSelectedUser]);
 
   const { data: roles } = useQuery({
     queryKey: ["roles"],
@@ -54,21 +66,15 @@ export default function AddFacilityUserSheet({
     enabled: open,
   });
 
-  const { data: users } = useQuery<UserListResponse>({
-    queryKey: ["users", facilityId, organizationId],
-    queryFn: query(routes.userList),
-    enabled: open,
-  });
-
   const { mutate: assignUser } = useMutation({
     mutationFn: (body: { user: string; role: string }) =>
-      mutate(routes.facilityOrganization.assignUser, {
-        pathParams: { facilityId: facilityId, organizationId: organizationId },
+      mutate(routes.organization.assignUser, {
+        pathParams: { id: organizationId },
         body,
       })(body),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["facilityOrganizationUsers", facilityId, organizationId],
+        queryKey: ["organizationUsers", organizationId],
       });
       toast.success("User added to organization successfully");
       setOpen(false);
@@ -90,22 +96,13 @@ export default function AddFacilityUserSheet({
     }
 
     assignUser({
-      user: selectedUser.external_id,
+      user: selectedUser.id,
       role: selectedRole,
     });
   };
 
-  const userOptions =
-    users?.results?.map((user: UserBareMinimum) => ({
-      label: `${user.first_name} ${user.last_name} (${user.username})`,
-      value: user.external_id,
-    })) || [];
-
-  const handleUserChange = (value: string) => {
-    const user = users?.results?.find(
-      (u: UserBareMinimum) => u.external_id === value,
-    );
-    setSelectedUser(user);
+  const handleUserChange = (value: UserBase) => {
+    setSelectedUser(value);
     setSelectedRole("");
   };
 
@@ -114,27 +111,24 @@ export default function AddFacilityUserSheet({
       <SheetTrigger asChild>
         <Button>
           <CareIcon icon="l-plus" className="mr-2 h-4 w-4" />
-          Add User
+          Link User
         </Button>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Add User to Organization</SheetTitle>
+          <SheetTitle>Link User to Organization</SheetTitle>
           <SheetDescription>
-            Search for a user and assign a role to add them to the organization.
+            Search for an existing user and assign a role to link them to the
+            organization.
           </SheetDescription>
         </SheetHeader>
-        <div className="space-y-6 py-4 min-h-full">
-          <div className="space-y-4">
-            <h3 className="text-sm font-medium">Search User</h3>
-            <Autocomplete
-              options={userOptions}
-              value={selectedUser?.external_id || ""}
-              onChange={handleUserChange}
-              placeholder="Search users..."
-              noOptionsMessage="No users found"
-            />
-          </div>
+        <div className="space-y-6 py-4">
+          <UserSelector
+            selected={selectedUser}
+            onChange={handleUserChange}
+            placeholder="Search for a user"
+            noOptionsMessage="No users found"
+          />
           {selectedUser && (
             <div className="space-y-4">
               <div className="rounded-lg border p-4 space-y-4">
@@ -197,7 +191,7 @@ export default function AddFacilityUserSheet({
                 onClick={handleAddUser}
                 disabled={!selectedRole}
               >
-                Add to Organization
+                Link to Organization
               </Button>
             </div>
           )}

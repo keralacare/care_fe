@@ -41,16 +41,14 @@ import {
   LocalBodyModel,
   LocationModel,
   MinimumQuantityItemResponse,
+  PatientConsentModel,
   PatientNotesEditModel,
   PatientNotesModel,
+  PatientTransferRequest,
   PatientTransferResponse,
   ShiftingModel,
   StateModel,
   WardModel,
-} from "@/components/Facility/models";
-import {
-  PatientConsentModel,
-  PatientTransferRequest,
 } from "@/components/Facility/models";
 import { InsurerOptionModel } from "@/components/HCX/InsurerAutocomplete";
 import { HCXPolicyModel } from "@/components/HCX/models";
@@ -59,10 +57,10 @@ import {
   NotificationData,
   PNconfigData,
 } from "@/components/Notifications/models";
-import { DailyRoundsModel } from "@/components/Patient/models";
 import {
   CreateFileRequest,
   CreateFileResponse,
+  DailyRoundsModel,
   FileUploadModel,
 } from "@/components/Patient/models";
 import {
@@ -86,11 +84,14 @@ import {
 } from "@/pages/Patient/Utils";
 import { AllergyIntolerance } from "@/types/emr/allergyIntolerance";
 import { Encounter, EncounterEditRequest } from "@/types/emr/encounter";
+import { MedicationAdministration } from "@/types/emr/medicationAdministration";
+import { MedicationRequest } from "@/types/emr/medicationRequest";
 import { MedicationStatement } from "@/types/emr/medicationStatement";
 import { PartialPatientModel, Patient } from "@/types/emr/newPatient";
 import { Observation } from "@/types/emr/observation";
 import { ObservationAnalyzeResponse } from "@/types/emr/observation";
 import { PatientModel } from "@/types/emr/patient";
+import { BaseFacility, CreateFacility } from "@/types/facility/facility";
 import {
   FacilityOrganization,
   FacilityOrganizationCreate,
@@ -118,6 +119,7 @@ import {
   ResourceRequest,
   UpdateResourceRequest,
 } from "@/types/resourceRequest/resourceRequest";
+import { UserBase } from "@/types/user/user";
 
 /**
  * A fake function that returns an empty object casted to type T
@@ -239,6 +241,12 @@ const routes = {
     TRes: Type<PaginatedResponse<UserModel>>(),
   },
 
+  getUserList: {
+    path: "/api/v1/users/",
+    method: "GET",
+    TRes: Type<PaginatedResponse<UserBase>>(),
+  },
+
   userListSkill: {
     path: "/api/v1/users/{username}/skill/",
     method: "GET",
@@ -298,8 +306,8 @@ const routes = {
   partialUpdateUser: {
     path: "/api/v1/users/{username}/",
     method: "PATCH",
-    TRes: Type<UserModel>(),
-    TBody: Type<Partial<UserModel>>(),
+    TRes: Type<UserBase>(),
+    TBody: Type<Partial<UserBase>>(),
   },
 
   updateProfilePicture: {
@@ -322,7 +330,7 @@ const routes = {
   },
 
   addUser: {
-    path: "/api/v1/users/add_user/",
+    path: "/api/v1/users/",
     method: "POST",
     TRes: Type<UserModel>(),
   },
@@ -446,6 +454,16 @@ const routes = {
 
   getFacilityUsers: {
     path: "/api/v1/facility/{facility_id}/get_users/",
+    TRes: Type<PaginatedResponse<UserAssignedModel>>(),
+  },
+
+  getScheduleAbleFacilityUser: {
+    path: "/api/v1/facility/{facility_id}/schedulable_users/{user_id}/",
+    TRes: Type<UserAssignedModel>(),
+  },
+
+  getScheduleAbleFacilityUsers: {
+    path: "/api/v1/facility/{facility_id}/schedulable_users/",
     TRes: Type<PaginatedResponse<UserAssignedModel>>(),
   },
 
@@ -932,7 +950,7 @@ const routes = {
   getUserDetails: {
     path: "/api/v1/users/{username}/",
     method: "GET",
-    TRes: Type<UserModel>(),
+    TRes: Type<UserBase>(),
   },
   getUserBareMinimum: {
     path: "/api/v1/facility/{facilityId}/get_users/{userExternalId}/",
@@ -1344,7 +1362,18 @@ const routes = {
     getUsers: {
       path: "/api/v1/facility/{facility_id}/users/",
       method: "GET",
-      TRes: Type<PaginatedResponse<UserModel>>(),
+      TRes: Type<PaginatedResponse<UserBase>>(),
+    },
+    list: {
+      path: "/api/v1/facility/",
+      method: "GET",
+      TRes: Type<PaginatedResponse<BaseFacility>>(),
+    },
+    create: {
+      path: "/api/v1/facility/",
+      method: "POST",
+      TRes: Type<BaseFacility>(),
+      TBody: Type<CreateFacility>(),
     },
   },
 
@@ -1539,6 +1568,12 @@ const routes = {
       method: "DELETE",
       TRes: {} as Record<string, never>,
     },
+    listPatients: {
+      // TODO: change this to the correct endpoint
+      path: "/api/v1/patient/",
+      method: "GET",
+      TRes: Type<PaginatedResponse<Patient>>(),
+    },
   },
 
   facilityOrganization: {
@@ -1644,6 +1679,24 @@ const routes = {
         path: "/api/v1/patient/:patientId/allergy_intolerance/",
       },
     },
+    users: {
+      addUser: {
+        method: "POST",
+        path: "/api/v1/patient/{patientId}/add_user/",
+        TRes: Type<UserBase>(),
+        TBody: Type<{ user: string; role: string }>(),
+      },
+      listUsers: {
+        method: "GET",
+        path: "/api/v1/patient/{patientId}/get_users/",
+        TRes: Type<PaginatedResponse<UserBase>>(),
+      },
+      removeUser: {
+        method: "DELETE",
+        path: "/api/v1/patient/{patientId}/delete_user/",
+        TRes: Type<{ user: string }>(),
+      },
+    },
     search_retrieve: {
       path: "/api/v1/patient/search_retrieve/",
       method: "POST",
@@ -1653,6 +1706,26 @@ const routes = {
         year_of_birth: string;
         partial_id: string;
       }>(),
+    },
+  },
+
+  // New user routes
+  user: {
+    list: {
+      path: "/api/v1/users/",
+      method: "GET",
+      TRes: Type<PaginatedResponse<UserBase>>(),
+    },
+    create: {
+      path: "/api/v1/users/",
+      method: "POST",
+      TRes: Type<UserBase>(),
+      TBody: Type<UserBase>(),
+    },
+    get: {
+      path: "/api/v1/users/{username}/",
+      method: "GET",
+      TRes: Type<UserBase>(),
     },
   },
 
@@ -1716,6 +1789,36 @@ const routes = {
       TBody: Type<AppointmentCreate>(),
     },
   },
+
+  // Medication
+  medicationRequest: {
+    list: {
+      path: "/api/v1/patient/{patientId}/medication/request/",
+      method: "GET",
+      TRes: Type<PaginatedResponse<MedicationRequest>>(),
+    },
+    discontinue: {
+      path: "/api/v1/patient/{patientId}/medication/request/{id}/discontinue/",
+      method: "POST",
+      TBody: Type<{ status_reason: MedicationRequest["status_reason"] }>(),
+      TRes: Type<MedicationRequest>(),
+    },
+  },
+
+  medicationAdministration: {
+    list: {
+      path: "/api/v1/patient/{patientId}/medication/administration/",
+      method: "GET",
+      TRes: Type<PaginatedResponse<MedicationAdministration>>(),
+    },
+    create: {
+      path: "/api/v1/patient/{patientId}/medication/administration/",
+      method: "POST",
+      TBody: Type<MedicationAdministration>(),
+      TRes: Type<MedicationAdministration>(),
+    },
+  },
+
   medicationStatement: {
     list: {
       path: "/api/v1/patient/{patientId}/medication/statement/",

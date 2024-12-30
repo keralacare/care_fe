@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { useQueryParams } from "raviger";
 
 import CareIcon from "@/CAREUI/icons/CareIcon";
 
@@ -10,11 +11,12 @@ import { Avatar } from "@/components/Common/Avatar";
 
 import routes from "@/Utils/request/api";
 import query from "@/Utils/request/query";
+import AddUserSheet from "@/pages/Organization/components/AddUserSheet";
 import { OrganizationUserRole } from "@/types/organization/organization";
 
-import AddFacilityUserSheet from "./components/AddFacilityUserSheet";
 import EditFacilityUserRoleSheet from "./components/EditFacilityUserRoleSheet";
 import FacilityOrganizationLayout from "./components/FacilityOrganizationLayout";
+import LinkFacilityUserSheet from "./components/LinkFacilityUserSheet";
 
 interface Props {
   id: string;
@@ -22,6 +24,14 @@ interface Props {
 }
 
 export default function FacilityOrganizationUsers({ id, facilityId }: Props) {
+  const [qParams, setQueryParams] = useQueryParams<{
+    sheet: string;
+    username: string;
+  }>();
+
+  const openAddUserSheet = qParams.sheet === "add";
+  const openLinkUserSheet = qParams.sheet === "link";
+
   const { data: users, isLoading: isLoadingUsers } = useQuery({
     queryKey: ["facilityOrganizationUsers", facilityId, id],
     queryFn: query(routes.facilityOrganization.listUsers, {
@@ -61,7 +71,26 @@ export default function FacilityOrganizationUsers({ id, facilityId }: Props) {
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h2 className="text-lg font-semibold">Users</h2>
-          <AddFacilityUserSheet facilityId={facilityId} organizationId={id} />
+          <div className="flex gap-2">
+            <AddUserSheet
+              open={openAddUserSheet}
+              setOpen={(open) => {
+                setQueryParams({ sheet: open ? "add" : "", username: "" });
+              }}
+              onUserCreated={(user) => {
+                setQueryParams({ sheet: "link", username: user.username });
+              }}
+            />
+            <LinkFacilityUserSheet
+              facilityId={facilityId}
+              organizationId={id}
+              open={openLinkUserSheet}
+              setOpen={(open) => {
+                setQueryParams({ sheet: open ? "link" : "", username: "" });
+              }}
+              preSelectedUsername={qParams.username}
+            />
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

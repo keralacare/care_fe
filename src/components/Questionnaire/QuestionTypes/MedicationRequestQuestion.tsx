@@ -41,7 +41,7 @@ const MEDICATION_REQUEST_INITIAL_VALUE: MedicationRequest = {
   do_not_perform: false,
   medication: undefined,
   authored_on: new Date().toISOString(),
-  dosage_instruction: [],
+  dosage_instruction: {},
 };
 
 export function MedicationRequestQuestion({
@@ -131,19 +131,19 @@ export function MedicationRequestQuestion({
   );
 }
 
-const MedicationRequestItem: React.FC<{
+export const MedicationRequestItem: React.FC<{
   medication: MedicationRequest;
   disabled?: boolean;
-  onUpdate: (medication: Partial<MedicationRequest>) => void;
-  onRemove: () => void;
-  index: number;
-}> = ({ medication, disabled, onUpdate, onRemove, index }) => {
-  const dosageInstruction = medication.dosage_instruction[0];
+  onUpdate?: (medication: Partial<MedicationRequest>) => void;
+  onRemove?: () => void;
+  index?: number;
+}> = ({ medication, disabled, onUpdate, onRemove, index = 0 }) => {
+  const dosageInstruction = medication.dosage_instruction;
   const handleUpdateDosageInstruction = (
-    updates: Partial<MedicationRequest["dosage_instruction"][number]>,
+    updates: Partial<MedicationRequest["dosage_instruction"]>,
   ) => {
-    onUpdate({
-      dosage_instruction: [{ ...dosageInstruction, ...updates }],
+    onUpdate?.({
+      dosage_instruction: { ...dosageInstruction, ...updates },
     });
   };
 
@@ -159,7 +159,7 @@ const MedicationRequestItem: React.FC<{
             <Select
               value={medication.intent}
               onValueChange={(value: MedicationRequestIntent) =>
-                onUpdate({ intent: value })
+                onUpdate?.({ intent: value })
               }
               disabled={disabled}
             >
@@ -179,14 +179,16 @@ const MedicationRequestItem: React.FC<{
               </SelectContent>
             </Select>
           </div>
-          <Button
-            variant="secondary"
-            size="icon"
-            onClick={onRemove}
-            disabled={disabled}
-          >
-            <MinusCircledIcon className="size-4" />
-          </Button>
+          {onRemove && (
+            <Button
+              variant="secondary"
+              size="icon"
+              onClick={onRemove}
+              disabled={disabled}
+            >
+              <MinusCircledIcon className="size-4" />
+            </Button>
+          )}
         </div>
       </div>
       <div className="flex flex-col gap-4">
@@ -196,12 +198,11 @@ const MedicationRequestItem: React.FC<{
             <QuantityInput
               units={DOSAGE_UNITS}
               quantity={
-                medication.dosage_instruction[0]?.dose_and_rate?.[0]
-                  ?.dose_quantity
+                medication.dosage_instruction?.dose_and_rate?.dose_quantity
               }
               onChange={(value) =>
                 handleUpdateDosageInstruction({
-                  dose_and_rate: [{ type: "ordered", dose_quantity: value }],
+                  dose_and_rate: { type: "ordered", dose_quantity: value },
                 })
               }
               disabled={disabled}
@@ -211,7 +212,7 @@ const MedicationRequestItem: React.FC<{
             <Label className="mb-1 block text-sm font-medium">Route</Label>
             <ValueSetSelect
               system="system-route"
-              value={medication.dosage_instruction[0]?.route}
+              value={medication.dosage_instruction?.route}
               onSelect={(route) => handleUpdateDosageInstruction({ route })}
               placeholder="Select route"
               disabled={disabled}
@@ -223,7 +224,7 @@ const MedicationRequestItem: React.FC<{
             </Label>
             <ValueSetSelect
               system="system-administration-method"
-              value={medication.dosage_instruction[0]?.method}
+              value={medication.dosage_instruction?.method}
               onSelect={(method) => handleUpdateDosageInstruction({ method })}
               placeholder="Select method"
               disabled={disabled}
@@ -237,7 +238,7 @@ const MedicationRequestItem: React.FC<{
             <Label className="mb-1 block text-sm font-medium pr-4">Site</Label>
             <ValueSetSelect
               system="system-body-site"
-              value={medication.dosage_instruction[0]?.site}
+              value={medication.dosage_instruction?.site}
               onSelect={(site) => handleUpdateDosageInstruction({ site })}
               placeholder="Select site"
               disabled={disabled}
@@ -248,14 +249,12 @@ const MedicationRequestItem: React.FC<{
         <div className="flex items-center gap-2 mt-2">
           <Checkbox
             id={`prn-checkbox-${medication.medication?.code}`}
-            checked={
-              medication.dosage_instruction[0]?.as_needed_boolean ?? false
-            }
+            checked={medication.dosage_instruction?.as_needed_boolean ?? false}
             onCheckedChange={(checked) =>
               handleUpdateDosageInstruction({
                 as_needed_boolean: !!checked,
                 as_needed_for: checked
-                  ? medication.dosage_instruction[0]?.as_needed_for
+                  ? medication.dosage_instruction?.as_needed_for
                   : undefined,
               })
             }
@@ -266,12 +265,12 @@ const MedicationRequestItem: React.FC<{
           </Label>
         </div>
 
-        {medication.dosage_instruction[0]?.as_needed_boolean ? (
+        {medication.dosage_instruction?.as_needed_boolean ? (
           <div className="flex gap-2">
             <div className="flex-1">
               <ValueSetSelect
                 system="system-as-needed-reason"
-                value={medication.dosage_instruction[0]?.as_needed_for}
+                value={medication.dosage_instruction?.as_needed_for}
                 onSelect={(reason) =>
                   handleUpdateDosageInstruction({ as_needed_for: reason })
                 }
@@ -321,17 +320,13 @@ const MedicationRequestItem: React.FC<{
             </Label>
             <ValueSetSelect
               system="system-additional-instruction"
-              value={
-                medication.dosage_instruction[0]?.additional_instruction?.[0]
-              }
+              value={medication.dosage_instruction?.additional_instruction?.[0]}
               onSelect={(additionalInstruction) =>
-                onUpdate({
-                  dosage_instruction: [
-                    {
-                      ...medication.dosage_instruction[0],
-                      additional_instruction: [additionalInstruction],
-                    },
-                  ],
+                onUpdate?.({
+                  dosage_instruction: {
+                    ...medication.dosage_instruction,
+                    additional_instruction: [additionalInstruction],
+                  },
                 })
               }
               disabled={disabled}
@@ -348,7 +343,7 @@ const MedicationRequestItem: React.FC<{
 };
 
 const reverseFrequencyOption = (
-  option: MedicationRequest["dosage_instruction"][number]["timing"],
+  option: MedicationRequest["dosage_instruction"]["timing"],
 ) => {
   return Object.entries(FREQUENCY_OPTIONS).find(
     ([, value]) =>
@@ -400,6 +395,6 @@ const FREQUENCY_OPTIONS = {
   string,
   {
     display: string;
-    timing: MedicationRequest["dosage_instruction"][number]["timing"];
+    timing: MedicationRequest["dosage_instruction"]["timing"];
   }
 >;

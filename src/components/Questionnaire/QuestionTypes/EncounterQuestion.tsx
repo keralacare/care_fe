@@ -145,116 +145,119 @@ export function EncounterQuestion({
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      {/* Basic Details */}
-      <div className="space-y-2">
-        <Label>Encounter Status</Label>
-        <Select
-          value={encounter.status}
-          onValueChange={(value) =>
-            handleUpdateEncounter({
-              status: value as EncounterStatus,
-            })
-          }
-          disabled={disabled}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="planned">Planned</SelectItem>
-            <SelectItem value="in_progress">In Progress</SelectItem>
-            <SelectItem value="on_hold">On Hold</SelectItem>
-            <SelectItem value="discharged">Discharged</SelectItem>
-            <SelectItem value="completed">Completed</SelectItem>
-            <SelectItem value="cancelled">Cancelled</SelectItem>
-            <SelectItem value="discontinued">Discontinued</SelectItem>
-            <SelectItem value="entered_in_error">Entered in Error</SelectItem>
-            <SelectItem value="unknown">Unknown</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Basic Details */}
+        <div className="space-y-2">
+          <Label>Encounter Status</Label>
+          <Select
+            value={encounter.status}
+            onValueChange={(value) =>
+              handleUpdateEncounter({
+                status: value as EncounterStatus,
+              })
+            }
+            disabled={disabled}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="planned">Planned</SelectItem>
+              <SelectItem value="in_progress">In Progress</SelectItem>
+              <SelectItem value="on_hold">On Hold</SelectItem>
+              <SelectItem value="discharged">Discharged</SelectItem>
+              <SelectItem value="completed">Completed</SelectItem>
+              <SelectItem value="cancelled">Cancelled</SelectItem>
+              <SelectItem value="discontinued">Discontinued</SelectItem>
+              <SelectItem value="entered_in_error">Entered in Error</SelectItem>
+              <SelectItem value="unknown">Unknown</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
-      <div className="space-y-2">
-        <Label>Encounter Class</Label>
-        <Select
-          value={encounter.encounter_class}
-          onValueChange={(value) =>
-            handleUpdateEncounter({
-              encounter_class: value as EncounterClass,
-            })
-          }
-          disabled={disabled}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select class" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="imp">Inpatient (IP)</SelectItem>
-            <SelectItem value="amb">Ambulatory (OP)</SelectItem>
-            <SelectItem value="obsenc">Observation Room</SelectItem>
-            <SelectItem value="emer">Emergency</SelectItem>
-            <SelectItem value="vr">Virtual</SelectItem>
-            <SelectItem value="hh">Home Health</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+        <div className="space-y-2">
+          <Label>Encounter Class</Label>
+          <Select
+            value={encounter.encounter_class}
+            onValueChange={(value) =>
+              handleUpdateEncounter({
+                encounter_class: value as EncounterClass,
+              })
+            }
+            disabled={disabled}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select class" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="imp">Inpatient (IP)</SelectItem>
+              <SelectItem value="amb">Ambulatory (OP)</SelectItem>
+              <SelectItem value="obsenc">Observation Room</SelectItem>
+              <SelectItem value="emer">Emergency</SelectItem>
+              <SelectItem value="vr">Virtual</SelectItem>
+              <SelectItem value="hh">Home Health</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
-      <div className="space-y-2">
-        <Label>Priority</Label>
-        <Select
-          value={encounter.priority}
-          onValueChange={(value) =>
-            handleUpdateEncounter({
-              priority: value as EncounterPriority,
-            })
-          }
-          disabled={disabled}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select priority" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="ASAP">ASAP</SelectItem>
-            <SelectItem value="callback_results">Callback Results</SelectItem>
-            <SelectItem value="callback_for_scheduling">
-              Callback for Scheduling
-            </SelectItem>
-            <SelectItem value="elective">Elective</SelectItem>
-            <SelectItem value="emergency">Emergency</SelectItem>
-            <SelectItem value="preop">Pre-op</SelectItem>
-            <SelectItem value="as_needed">As Needed</SelectItem>
-            <SelectItem value="routine">Routine</SelectItem>
-            <SelectItem value="rush_reporting">Rush Reporting</SelectItem>
-            <SelectItem value="stat">Stat</SelectItem>
-            <SelectItem value="timing_critical">Timing Critical</SelectItem>
-            <SelectItem value="use_as_directed">Use as Directed</SelectItem>
-            <SelectItem value="urgent">Urgent</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+        <div className="space-y-2">
+          <Label>Priority</Label>
+          <Select
+            value={encounter.priority}
+            onValueChange={(value) =>
+              handleUpdateEncounter({
+                priority: value as EncounterPriority,
+              })
+            }
+            disabled={disabled}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select priority" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ASAP">ASAP</SelectItem>
+              <SelectItem value="callback_results">Callback Results</SelectItem>
+              <SelectItem value="callback_for_scheduling">
+                Callback for Scheduling
+              </SelectItem>
+              <SelectItem value="elective">Elective</SelectItem>
+              <SelectItem value="emergency">Emergency</SelectItem>
+              <SelectItem value="preop">Pre-op</SelectItem>
+              <SelectItem value="as_needed">As Needed</SelectItem>
+              <SelectItem value="routine">Routine</SelectItem>
+              <SelectItem value="rush_reporting">Rush Reporting</SelectItem>
+              <SelectItem value="stat">Stat</SelectItem>
+              <SelectItem value="timing_critical">Timing Critical</SelectItem>
+              <SelectItem value="use_as_directed">Use as Directed</SelectItem>
+              <SelectItem value="urgent">Urgent</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
-      <div className="space-y-2">
-        <Label>Hospital Identifier</Label>
-        <Input
-          value={encounter.external_identifier || ""}
-          onChange={(e) =>
-            handleUpdateEncounter({ external_identifier: e.target.value })
-          }
-          disabled={disabled}
-          placeholder="Ip/op/obs/emr number"
-        />
+        <div className="space-y-2">
+          <Label>Hospital Identifier</Label>
+          <Input
+            value={encounter.external_identifier || ""}
+            onChange={(e) =>
+              handleUpdateEncounter({ external_identifier: e.target.value })
+            }
+            disabled={disabled}
+            placeholder="Ip/op/obs/emr number"
+          />
+        </div>
       </div>
-
       {/* Hospitalization Details - Only show for relevant encounter classes */}
       {(encounter.encounter_class === "imp" ||
         encounter.encounter_class === "obsenc" ||
         encounter.encounter_class === "emer") && (
         <div className="col-span-2 border rounded-lg p-4 space-y-4">
-          <h3 className="text-lg font-semibold">Hospitalization Details</h3>
+          <h3 className="text-lg font-semibold break-words">
+            Hospitalization Details
+          </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 overflow-x-auto">
               <Switch
                 checked={encounter.hospitalization?.re_admission || false}
                 onCheckedChange={(checked: boolean) =>

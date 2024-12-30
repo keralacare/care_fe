@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { useQueryParams } from "raviger";
 
 import CareIcon from "@/CAREUI/icons/CareIcon";
 
@@ -14,6 +15,7 @@ import { OrganizationUserRole } from "@/types/organization/organization";
 
 import AddUserSheet from "./components/AddUserSheet";
 import EditUserRoleSheet from "./components/EditUserRoleSheet";
+import LinkUserSheet from "./components/LinkUserSheet";
 import OrganizationLayout from "./components/OrganizationLayout";
 
 interface Props {
@@ -22,6 +24,14 @@ interface Props {
 }
 
 export default function OrganizationUsers({ id, navOrganizationId }: Props) {
+  const [qParams, setQueryParams] = useQueryParams<{
+    sheet: string;
+    username: string;
+  }>();
+
+  const openAddUserSheet = qParams.sheet === "add";
+  const openLinkUserSheet = qParams.sheet === "link";
+
   const { data: users, isLoading: isLoadingUsers } = useQuery({
     queryKey: ["organizationUsers", id],
     queryFn: query(routes.organization.listUsers, {
@@ -61,7 +71,25 @@ export default function OrganizationUsers({ id, navOrganizationId }: Props) {
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h2 className="text-lg font-semibold">Users</h2>
-          <AddUserSheet organizationId={id} />
+          <div className="flex gap-2">
+            <AddUserSheet
+              open={openAddUserSheet}
+              setOpen={(open) => {
+                setQueryParams({ sheet: open ? "add" : "", username: "" });
+              }}
+              onUserCreated={(user) => {
+                setQueryParams({ sheet: "link", username: user.username });
+              }}
+            />
+            <LinkUserSheet
+              organizationId={id}
+              open={openLinkUserSheet}
+              setOpen={(open) => {
+                setQueryParams({ sheet: open ? "link" : "", username: "" });
+              }}
+              preSelectedUsername={qParams.username}
+            />
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
