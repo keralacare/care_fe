@@ -91,7 +91,11 @@ import { PartialPatientModel, Patient } from "@/types/emr/newPatient";
 import { Observation } from "@/types/emr/observation";
 import { ObservationAnalyzeResponse } from "@/types/emr/observation";
 import { PatientModel } from "@/types/emr/patient";
-import { BaseFacility, CreateFacility } from "@/types/facility/facility";
+import {
+  BaseFacility,
+  CreateFacility,
+  FacilityData,
+} from "@/types/facility/facility";
 import {
   FacilityOrganization,
   FacilityOrganizationCreate,
@@ -1374,6 +1378,11 @@ const routes = {
       method: "POST",
       TRes: Type<BaseFacility>(),
       TBody: Type<CreateFacility>(),
+    },
+    show: {
+      path: "/api/v1/facility/{id}/",
+      method: "GET",
+      TRes: Type<FacilityData>(),
     },
   },
 

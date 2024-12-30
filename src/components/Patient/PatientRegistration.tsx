@@ -112,7 +112,7 @@ export default function PatientRegistration(
     ),
     date_of_birth:
       ageDob === "dob" ? dateQueryString(form.date_of_birth) : undefined,
-    year_of_birth: ageDob === "age" ? form.year_of_birth : undefined,
+    age: ageDob === "age" ? form.age : undefined,
     meta_info: {
       ...(form.meta_info as any),
       occupation:
@@ -135,7 +135,7 @@ export default function PatientRegistration(
           year_of_birth:
             ageDob === "dob"
               ? new Date(resp.date_of_birth!).getFullYear()
-              : resp.year_of_birth,
+              : new Date().getFullYear() - Number(resp.age!),
           partial_id: resp?.id?.slice(0, 5),
         },
       });
@@ -518,14 +518,11 @@ export default function PatientRegistration(
                     errors={errors["year_of_birth"]}
                   >
                     <Input
-                      value={
-                        form.year_of_birth
-                          ? new Date().getFullYear() - (form.year_of_birth || 0)
-                          : undefined
-                      }
+                      value={form.age ? form.age : undefined}
                       onChange={(e) =>
                         setForm((f) => ({
                           ...f,
+                          age: e.target.value,
                           year_of_birth: e.target.value
                             ? new Date().getFullYear() - Number(e.target.value)
                             : undefined,

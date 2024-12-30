@@ -130,43 +130,12 @@ export default function OrganizationFacilities({
                     <div className="flex flex-col h-full">
                       <div className="flex items-start justify-between">
                         <div>
-                          <h3 className="text-sm font-medium text-gray-900">
+                          <h3 className="text-md font-medium text-gray-900">
                             {facility.name}
                           </h3>
-                          <p className="text-sm text-gray-500">
-                            {facility.description}
-                          </p>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="shrink-0"
-                          asChild
-                        >
-                          <div>
-                            <CareIcon
-                              icon="l-arrow-up-right"
-                              className="h-4 w-4"
-                            />
-                          </div>
-                        </Button>
-                      </div>
-                      <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2">
-                        <div className="text-sm">
-                          <div className="text-gray-500">Type</div>
                           <div className="font-medium">
                             {facility.facility_type}
                           </div>
-                        </div>
-                        <div className="text-sm">
-                          <div className="text-gray-500">Features</div>
-                          <div className="font-medium">
-                            {facility.features?.join(", ")}
-                          </div>
-                        </div>
-                        <div className="col-span-2 text-sm">
-                          <div className="text-gray-500">Address</div>
-                          <div className="font-medium">{facility.address}</div>
                         </div>
                       </div>
                     </div>
@@ -177,6 +146,19 @@ export default function OrganizationFacilities({
                       className="text-sm text-primary hover:underline"
                     >
                       View Facility
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="shrink-0"
+                        asChild
+                      >
+                        <div>
+                          <CareIcon
+                            icon="l-arrow-up-right"
+                            className="h-4 w-4"
+                          />
+                        </div>
+                      </Button>
                     </Link>
                   </CardFooter>
                 </Card>

@@ -1,17 +1,20 @@
 import careConfig from "@careConfig";
+import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { navigate } from "raviger";
 import { useCallback, useEffect, useState } from "react";
 
 import Loading from "@/components/Common/Loading";
+import { UserModel } from "@/components/Users/models";
 
 import { AuthUserContext } from "@/hooks/useAuthUser";
 
 import { CarePatientTokenKey, LocalStorageKeys } from "@/common/constants";
 
 import routes from "@/Utils/request/api";
+import query from "@/Utils/request/query";
 import request from "@/Utils/request/request";
-import useTanStackQueryInstead from "@/Utils/request/useQuery";
+import { RequestResult } from "@/Utils/request/types";
 import { TokenData } from "@/types/auth/otpToken";
 
 interface Props {
@@ -26,11 +29,24 @@ export default function AuthUserProvider({
   otpAuthorized,
 }: Props) {
   const {
-    res,
     data: user,
-    loading,
-    refetch,
-  } = useTanStackQueryInstead(routes.currentUser, { silent: true });
+    isLoading,
+    refetch: refetchQuery,
+  } = useQuery({
+    queryKey: ["getCurrentUser"],
+    queryFn: query(routes.currentUser, { silent: true }),
+    retry: false,
+  });
+
+  const refetch = useCallback(async (): Promise<RequestResult<UserModel>> => {
+    const result = await refetchQuery();
+    return {
+      data: result.data,
+      res: new Response(),
+      error: undefined,
+    };
+  }, [refetchQuery]);
+
   const [isOTPAuthorized, setIsOTPAuthorized] = useState(false);
 
   const tokenData: TokenData = JSON.parse(
@@ -108,7 +124,7 @@ export default function AuthUserProvider({
     };
   }, [signOut]);
 
-  if (loading || !res) {
+  if (isLoading) {
     return <Loading />;
   }
 
@@ -121,11 +137,7 @@ export default function AuthUserProvider({
         refetchUser: refetch,
       }}
     >
-      {!res.ok || !user
-        ? isOTPAuthorized
-          ? otpAuthorized
-          : unauthorized
-        : children}
+      {!user ? (isOTPAuthorized ? otpAuthorized : unauthorized) : children}
     </AuthUserContext.Provider>
   );
 }

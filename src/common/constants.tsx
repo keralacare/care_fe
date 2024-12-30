@@ -482,7 +482,7 @@ export const BLOOD_GROUPS = [
 ];
 
 export const BLOOD_GROUP_CHOICES = [
-  { id: "UNK", text: "Unknown" },
+  { id: "unknown", text: "Unknown" },
   { id: "A_positive", text: "A+" },
   { id: "A_negative", text: "A-" },
   { id: "B_positive", text: "B+" },
