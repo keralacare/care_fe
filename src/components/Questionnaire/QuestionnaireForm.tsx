@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { t } from "i18next";
 import { useNavigationPrompt } from "raviger";
 import { useEffect, useState } from "react";
@@ -16,13 +16,16 @@ import Loading from "@/components/Common/Loading";
 import { PLUGIN_Component } from "@/PluginEngine";
 import routes from "@/Utils/request/api";
 import mutate from "@/Utils/request/mutate";
-import useQuery from "@/Utils/request/useQuery";
+import query from "@/Utils/request/query";
 import {
   DetailedValidationError,
   QuestionValidationError,
   ValidationErrorResponse,
 } from "@/types/questionnaire/batch";
-import type { QuestionnaireResponse } from "@/types/questionnaire/form";
+import type {
+  QuestionnaireResponse,
+  ResponseValue,
+} from "@/types/questionnaire/form";
 import type { Question } from "@/types/questionnaire/question";
 import { QuestionnaireDetail } from "@/types/questionnaire/questionnaire";
 import questionnaireApi from "@/types/questionnaire/questionnaireApi";
@@ -69,16 +72,20 @@ export function QuestionnaireForm({
     QuestionnaireFormState[]
   >([]);
   const [activeQuestionnaireId, setActiveQuestionnaireId] = useState<string>();
+
   const [activeGroupId, setActiveGroupId] = useState<string>();
   const [isInitialized, setIsInitialized] = useState(false);
 
   const {
     data: questionnaireData,
-    loading: isQuestionnaireLoading,
+    isLoading: isQuestionnaireLoading,
     error: questionnaireError,
-  } = useQuery(questionnaireApi.detail, {
-    pathParams: { id: questionnaireSlug ?? "" },
-    prefetch: !!questionnaireSlug && !FIXED_QUESTIONNAIRES[questionnaireSlug],
+  } = useQuery({
+    queryKey: ["questionnaireDetail", questionnaireSlug],
+    queryFn: query(questionnaireApi.detail, {
+      pathParams: { id: questionnaireSlug ?? "" },
+    }),
+    enabled: !!questionnaireSlug && !FIXED_QUESTIONNAIRES[questionnaireSlug],
   });
 
   const { mutate: submitBatch, isPending } = useMutation({
@@ -98,7 +105,7 @@ export function QuestionnaireForm({
 
   // TODO: Use useBlocker hook after switching to tanstack router
   // https://tanstack.com/router/latest/docs/framework/react/guide/navigation-blocking#how-do-i-use-navigation-blocking
-  useNavigationPrompt(isDirty, t("unsaved_changes"));
+  useNavigationPrompt(isDirty && !import.meta.env.DEV, t("unsaved_changes"));
 
   useEffect(() => {
     if (!isInitialized && questionnaireSlug) {
@@ -159,6 +166,9 @@ export function QuestionnaireForm({
 
     results.forEach((result, index) => {
       const form = updatedForms[index];
+      if (!result.data?.errors) {
+        return;
+      }
 
       result.data.errors.forEach(
         (error: QuestionValidationError | DetailedValidationError) => {
@@ -193,13 +203,68 @@ export function QuestionnaireForm({
 
   const handleSubmit = async () => {
     setIsDirty(false);
-    if (hasErrors) return;
 
+    // Clear existing errors first
+    const formsWithClearedErrors = questionnaireForms.map((form) => ({
+      ...form,
+      errors: [],
+    }));
+    let firstErrorId: string | undefined = undefined;
+
+    // Validate all required fields
+    const formsWithValidation = formsWithClearedErrors.map((form) => {
+      const errors: QuestionValidationError[] = [];
+
+      const validateQuestion = (q: Question) => {
+        // Handle nested questions in groups
+        if (q.type === "group" && q.questions) {
+          q.questions.forEach(validateQuestion);
+          return;
+        }
+
+        if (q.required) {
+          const response = form.responses.find((r) => r.question_id === q.id);
+          const hasValue = response?.values?.some(
+            (v) => v.value !== undefined && v.value !== null && v.value !== "",
+          );
+
+          if (!hasValue) {
+            errors.push({
+              question_id: q.id,
+              error: t("field_required"),
+              type: "validation_error",
+              msg: t("field_required"),
+            });
+            firstErrorId = firstErrorId ? firstErrorId : q.id;
+          }
+        }
+      };
+
+      form.questionnaire.questions.forEach(validateQuestion);
+      return { ...form, errors };
+    });
+
+    setQuestionnaireForms(formsWithValidation);
+
+    if (firstErrorId) {
+      const element = document.querySelector(
+        `[data-question-id="${firstErrorId}"]`,
+      );
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
+
+    if (formsWithValidation.some((form) => form.errors.length > 0)) {
+      return;
+    }
+
+    // Continue with existing submission logic...
     const requests: BatchRequest[] = [];
     if (encounterId && patientId) {
       const context = { patientId, encounterId };
       // First, collect all structured data requests if encounterId is provided
-      questionnaireForms.forEach((form) => {
+      formsWithValidation.forEach((form) => {
         form.responses.forEach((response) => {
           if (response.structured_type) {
             const structuredData = response.values?.[0]?.value;
@@ -217,7 +282,7 @@ export function QuestionnaireForm({
     }
 
     // Then, add questionnaire submission requests
-    questionnaireForms.forEach((form) => {
+    formsWithValidation.forEach((form) => {
       const nonStructuredResponses = form.responses.filter(
         (response) => !response.structured_type,
       );
@@ -298,11 +363,6 @@ export function QuestionnaireForm({
       </div>
 
       {/* Main Content */}
-      <PLUGIN_Component
-        __name="Scribe"
-        formState={questionnaireForms}
-        setFormState={setQuestionnaireForms}
-      />
       <div className="flex-1 overflow-y-auto w-full pb-8 space-y-2">
         {/* Questionnaire Forms */}
         {questionnaireForms.map((form, index) => (
@@ -347,11 +407,23 @@ export function QuestionnaireForm({
               encounterId={encounterId}
               questions={form.questionnaire.questions}
               responses={form.responses}
-              onResponseChange={(responses) => {
+              onResponseChange={(
+                values: ResponseValue[],
+                questionId: string,
+                note?: string,
+              ) => {
                 setQuestionnaireForms((existingForms) =>
                   existingForms.map((formItem) =>
                     formItem.questionnaire.id === form.questionnaire.id
-                      ? { ...formItem, responses }
+                      ? {
+                          ...formItem,
+                          responses: formItem.responses.map((r) =>
+                            r.question_id === questionId
+                              ? { ...r, values, note: note }
+                              : r,
+                          ),
+                          errors: [],
+                        }
                       : formItem,
                   ),
                 );
@@ -423,7 +495,7 @@ export function QuestionnaireForm({
               {t("cancel")}
             </Button>
             <Button
-              type="button"
+              type="submit"
               onClick={handleSubmit}
               disabled={isPending || hasErrors}
               className="relative"
@@ -441,6 +513,12 @@ export function QuestionnaireForm({
             </Button>
           </div>
         )}
+
+        <PLUGIN_Component
+          __name="Scribe"
+          formState={questionnaireForms}
+          setFormState={setQuestionnaireForms}
+        />
 
         {/* Add a Preview of the QuestionnaireForm */}
         {import.meta.env.DEV && (

@@ -1,8 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { isBefore, parse } from "date-fns";
+import { isAfter, isBefore, parse } from "date-fns";
 import { ArrowRightIcon } from "lucide-react";
-import { useState } from "react";
+import { useQueryParams } from "raviger";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Trans } from "react-i18next";
@@ -26,13 +26,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   Sheet,
   SheetClose,
@@ -59,6 +52,10 @@ interface Props {
   trigger?: React.ReactNode;
 }
 
+type QueryParams = {
+  sheet?: "create_template" | null;
+};
+
 export default function CreateScheduleTemplateSheet({
   facilityId,
   userId,
@@ -67,7 +64,10 @@ export default function CreateScheduleTemplateSheet({
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
-  const [open, setOpen] = useState(false);
+  // Voluntarily masking the setQParams function to merge with other query params if any (since path is not unique within the user availability tab)
+  const [qParams, _setQParams] = useQueryParams<QueryParams>();
+  const setQParams = (p: QueryParams) => _setQParams(p, { replace: false });
+
   const weekdayFormat = useBreakpoints({
     default: "alphabet",
     md: "short",
@@ -137,15 +137,10 @@ export default function CreateScheduleTemplateSheet({
         )
         .min(1, t("schedule_sessions_min_error")),
     })
-    .refine(
-      (data) => {
-        return isBefore(data.valid_from, data.valid_to);
-      },
-      {
-        message: t("from_date_must_be_before_to_date"),
-        path: ["valid_from"],
-      },
-    );
+    .refine((data) => !isAfter(data.valid_from, data.valid_to), {
+      message: t("from_date_must_be_before_to_date"),
+      path: ["valid_from"],
+    });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -174,7 +169,7 @@ export default function CreateScheduleTemplateSheet({
     }),
     onSuccess: () => {
       toast.success("Schedule template created successfully");
-      setOpen(false);
+      setQParams({ sheet: null });
       form.reset();
       queryClient.invalidateQueries({
         queryKey: ["user-schedule-templates", { facilityId, userId }],
@@ -241,7 +236,12 @@ export default function CreateScheduleTemplateSheet({
   };
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
+    <Sheet
+      open={qParams.sheet === "create_template"}
+      onOpenChange={(open) =>
+        setQParams({ sheet: open ? "create_template" : null })
+      }
+    >
       <SheetTrigger asChild>
         {trigger ?? (
           <Button variant="primary" disabled={isPending}>
@@ -373,7 +373,7 @@ export default function CreateScheduleTemplateSheet({
                         control={form.control}
                         name={`availabilities.${index}.name`}
                         render={({ field }) => (
-                          <FormItem className="col-span-2 md:col-span-1">
+                          <FormItem className="col-span-2">
                             <FormLabel required>{t("session_title")}</FormLabel>
                             <FormControl>
                               <Input
@@ -386,7 +386,7 @@ export default function CreateScheduleTemplateSheet({
                         )}
                       />
 
-                      <FormField
+                      {/* <FormField
                         control={form.control}
                         name={`availabilities.${index}.slot_type`}
                         render={({ field }) => (
@@ -429,7 +429,7 @@ export default function CreateScheduleTemplateSheet({
                             <FormMessage />
                           </FormItem>
                         )}
-                      />
+                      /> */}
 
                       <div className="flex items-center gap-4 col-span-2 md:col-span-1">
                         <FormField
@@ -577,7 +577,12 @@ export default function CreateScheduleTemplateSheet({
 
               <SheetFooter className="absolute inset-x-0 bottom-0 border-t bg-white p-6">
                 <SheetClose asChild>
-                  <Button variant="outline" type="button" disabled={isPending}>
+                  <Button
+                    className="mt-2 md:mt-0"
+                    variant="outline"
+                    type="button"
+                    disabled={isPending}
+                  >
                     {t("cancel")}
                   </Button>
                 </SheetClose>
