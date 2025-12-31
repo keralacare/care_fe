@@ -35,7 +35,6 @@ import {
 } from "@/types/device/device";
 import deviceApi from "@/types/device/deviceApi";
 
-import { Skeleton } from "@/components/ui/skeleton";
 import DeviceEncounterHistory from "./DeviceEncounterHistory";
 import DeviceServiceHistory from "./components/DeviceServiceHistory";
 import ManageLocationSheet from "./components/ManageLocationSheet";
@@ -451,17 +450,10 @@ const PluginDeviceShowCard = ({
   device: DeviceDetail & { care_type: string };
   facilityId: string;
 }) => {
-  const plugin = usePluginDevice(device.care_type);
-
-  if (plugin.isLoading) {
-    return <Skeleton className="w-full aspect-video" />;
-  }
-
-  const ShowPageCard = plugin.device.showPageCard;
-
-  if (!ShowPageCard) {
+  const pluginDevice = usePluginDevice(device.care_type);
+  if (!pluginDevice.showPageCard) {
     return null;
   }
 
-  return <ShowPageCard device={device} facilityId={facilityId} />;
+  return <pluginDevice.showPageCard device={device} facilityId={facilityId} />;
 };

@@ -1,28 +1,23 @@
-import { CareAppsContextType, useCareApps } from "@/hooks/useCareApps";
+import { useCareApps } from "@/hooks/useCareApps";
 
-function getDevicesFromCareApps(careApps: CareAppsContextType) {
-  return careApps.flatMap((app) => (!app.isLoading && app.devices) || []);
-}
+import { PluginDeviceManifest } from "@/pluginTypes";
 
 export const usePluginDevices = () => {
   const careApps = useCareApps();
-  const devices = getDevicesFromCareApps(careApps);
-  return devices;
+
+  return careApps.reduce<PluginDeviceManifest[]>((acc, app) => {
+    return [...acc, ...(app.devices || [])];
+  }, []);
 };
 
 export const usePluginDevice = (type: string) => {
-  const careApps = useCareApps();
-  const isLoading = careApps.some((app) => app.isLoading);
-  const devices = getDevicesFromCareApps(careApps);
+  const devices = usePluginDevices();
+
   const device = devices.find((device) => device.type === type);
 
-  if (device) {
-    return { isLoading: false, device } as const;
+  if (!device) {
+    throw new Error(`Device type ${type} not found`);
   }
 
-  if (isLoading) {
-    return { isLoading: true, device: null } as const;
-  }
-
-  throw new Error(`Device type ${type} not found`);
+  return device;
 };

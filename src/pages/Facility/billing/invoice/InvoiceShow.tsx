@@ -306,10 +306,8 @@ export function InvoiceShow({
     return t("appointment_invoice_alert");
   })();
 
-  const careApps = useCareApps();
-  const isInvoiceRecordPaymentPluginsPresent = careApps.some(
-    (plugin) =>
-      !plugin.isLoading && plugin.components?.InvoiceRecordPaymentOptions,
+  const isInvoiceRecordPaymentPluginsPresent = useCareApps().some(
+    (plugin) => plugin.components?.InvoiceRecordPaymentOptions,
   );
 
   if (isLoading) {

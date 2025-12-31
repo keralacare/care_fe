@@ -1,50 +1,22 @@
 import ErrorBoundary from "@/components/Common/ErrorBoundary";
 import Loading from "@/components/Common/Loading";
 import { PluginErrorBoundary } from "@/components/Common/PluginErrorBoundary";
-import { useQueries, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import {
   __federation_method_getRemote as getFederationRemote,
   __federation_method_setRemote as setFederationRemote,
   __federation_method_unwrapDefault as unwrapModule,
 } from "__federation__";
 import { Loader2Icon } from "lucide-react";
-import React, { Suspense } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 
 import { CareAppsContext, useCareApps } from "@/hooks/useCareApps";
 import query from "@/Utils/request/query";
 
 import { PluginManifest, SupportedPluginComponents } from "@/pluginTypes";
-import { PlugConfig } from "@/types/plugConfig";
 import plugConfigApi from "@/types/plugConfig/plugConfigApi";
 import { t } from "i18next";
 import { z } from "zod";
-
-const getPluginManifest = async (config: PlugConfig) => {
-  if (
-    !config.meta.url ||
-    !z.string().url().safeParse(config.meta.url).success
-  ) {
-    console.error(
-      `Plugin ${config.slug} has an invalid URL (${config.meta.url}) in meta`,
-    );
-    return null;
-  }
-
-  setFederationRemote(config.slug, {
-    url: () => Promise.resolve(config.meta.url),
-    format: "esm",
-    from: "vite",
-    externalType: "promise",
-  });
-
-  try {
-    const manifest = await getFederationRemote(config.slug, "./manifest");
-    return unwrapModule(manifest) as PluginManifest;
-  } catch (e) {
-    console.error(`There was an error enabling the app ${config.slug}`, e);
-    return null;
-  }
-};
 
 // Import the remote component synchronously
 export default function PluginEngine({
@@ -52,28 +24,70 @@ export default function PluginEngine({
 }: {
   children: React.ReactNode;
 }) {
+  const [pluginManifests, setPluginManifests] = useState<PluginManifest[]>([]);
+
   // Fetch enabled plugins from the backend API
   const { data: enabledPlugins } = useQuery({
     queryKey: ["enabled-plugins"],
     queryFn: query(plugConfigApi.list),
   });
 
-  const pluginsQuery = useQueries({
-    queries: (enabledPlugins?.configs ?? []).map((config) => ({
-      queryKey: ["plugin-manifest", config.slug],
-      queryFn: () => getPluginManifest(config),
-    })),
-    combine: (queries) =>
-      queries.map(({ data, isLoading }, i) => {
-        const config = (enabledPlugins?.configs ?? [])[i];
+  useEffect(() => {
+    const fetchPluginManifests = async () => {
+      if (!enabledPlugins) return;
 
-        if (isLoading) {
-          return { ...config, isLoading: true as const };
-        }
+      const manifests = await Promise.all(
+        enabledPlugins.configs.map(async (plugin) => {
+          if (
+            !plugin.meta.url ||
+            !z.string().url().safeParse(plugin.meta.url).success
+          ) {
+            console.error(
+              `Plugin ${plugin.slug} has an invalid URL (${plugin.meta.url}) in meta`,
+            );
+            return undefined;
+          }
 
-        return { ...config, isLoading: false as const, ...data! };
-      }),
-  });
+          setFederationRemote(plugin.slug, {
+            url: () => Promise.resolve(plugin.meta.url),
+            format: "esm",
+            from: "vite",
+            externalType: "promise",
+          });
+
+          return await getFederationRemote(plugin.slug, "./manifest")
+            .then((manifest) => {
+              return manifest;
+            })
+            .catch((e) =>
+              console.error(
+                `There was an error enabling the app ${plugin.slug}`,
+                e,
+              ),
+            );
+        }),
+      );
+      const filteredManifests = manifests.filter(
+        (m): m is PluginManifest => m !== undefined,
+      );
+      const availablePlugins = filteredManifests.map((manifest) =>
+        unwrapModule(manifest),
+      );
+
+      if (availablePlugins.length === 0) {
+        console.log("No plugins found");
+        return;
+      }
+
+      console.log(
+        `Loading ${filteredManifests.length} plugins; available plugins`,
+        availablePlugins,
+      );
+      setPluginManifests(availablePlugins);
+    };
+
+    fetchPluginManifests();
+  }, [enabledPlugins]);
 
   return (
     <Suspense fallback={<Loading />}>
@@ -84,7 +98,7 @@ export default function PluginEngine({
           </div>
         }
       >
-        <CareAppsContext.Provider value={pluginsQuery}>
+        <CareAppsContext.Provider value={pluginManifests}>
           <Suspense fallback={<Loading />}></Suspense>
           {children}
         </CareAppsContext.Provider>
@@ -100,15 +114,11 @@ export function PLUGIN_Component<K extends keyof SupportedPluginComponents>({
   __name,
   ...props
 }: { __name: K } & PluginProps<K>) {
-  const careApps = useCareApps();
+  const plugins = useCareApps();
 
   return (
     <>
-      {careApps.map((plugin) => {
-        if (plugin.isLoading) {
-          return null;
-        }
-
+      {plugins.map((plugin) => {
         const Component = plugin.components?.[
           __name
         ] as React.ComponentType<unknown>;

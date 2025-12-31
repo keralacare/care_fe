@@ -18,6 +18,7 @@ import {
   CheckCircle2,
   Component,
   Edit,
+  FileText,
   HistoryIcon,
   MapPin,
   NotebookPen,
@@ -206,6 +207,23 @@ export function EncounterCommandDialog({
         ],
       },
       {
+        group: t("available_reports"),
+        items: [
+          {
+            id: "treatment-summary",
+            label: t("treatment_summary"),
+            shortcut: getShortcutDisplay("treatment-summary"),
+            icon: <FileText />,
+          },
+          {
+            id: "discharge-summary",
+            label: t("discharge_summary"),
+            shortcut: getShortcutDisplay("discharge-summary"),
+            icon: <FileText />,
+          },
+        ],
+      },
+      {
         group: t("go_to"),
         items: [
           {
@@ -321,8 +339,6 @@ export function EncounterCommandDialog({
     [handleAction, onOpenChange, addRecentAction],
   );
 
-  const careApps = useCareApps();
-
   return (
     <>
       {trigger}
@@ -364,9 +380,8 @@ export function EncounterCommandDialog({
               <CommandSeparator />
             </div>
           ))}
-          {careApps.some(
-            (plugin) =>
-              !plugin.isLoading && plugin.components?.EncounterActions,
+          {useCareApps().some(
+            (plugin) => plugin.components?.EncounterActions,
           ) && (
             <CommandGroup heading={t("plugin_actions")} className="px-0">
               <PLUGIN_Component
