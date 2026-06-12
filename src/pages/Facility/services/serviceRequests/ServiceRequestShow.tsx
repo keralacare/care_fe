@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, MoreVertical, PrinterIcon } from "lucide-react";
+import { ArrowLeft, CheckIcon, MoreVertical, PrinterIcon } from "lucide-react";
 import { navigate } from "raviger";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -7,19 +7,15 @@ import { toast } from "sonner";
 
 import CareIcon from "@/CAREUI/icons/CareIcon";
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,10 +23,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Textarea } from "@/components/ui/textarea";
 
 import { ChargeItemsSection } from "@/components/Billing/ChargeItems/ChargeItemsSection";
 
-import useAppHistory from "@/hooks/useAppHistory";
 import useBreakpoints from "@/hooks/useBreakpoints";
 
 import mutate from "@/Utils/request/mutate";
@@ -41,7 +37,6 @@ import activityDefinitionApi from "@/types/emr/activityDefinition/activityDefini
 import { DiagnosticReportStatus } from "@/types/emr/diagnosticReport/diagnosticReport";
 import {
   EDITABLE_SERVICE_REQUEST_STATUSES,
-  ServiceRequestUpdateSpec,
   Status,
 } from "@/types/emr/serviceRequest/serviceRequest";
 import serviceRequestApi from "@/types/emr/serviceRequest/serviceRequestApi";
@@ -53,7 +48,17 @@ import {
 import specimenApi from "@/types/emr/specimen/specimenApi";
 import { SpecimenDefinitionRead } from "@/types/emr/specimenDefinition/specimenDefinition";
 
+import { ShortcutBadge } from "@/Utils/keyboardShortcutComponents";
+import BackButton from "@/components/Common/BackButton";
 import { PatientHeader } from "@/components/Patient/PatientHeader";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { Classification } from "@/types/emr/activityDefinition/activityDefinition";
 import { DiagnosticReportForm } from "./components/DiagnosticReportForm";
 import { DiagnosticReportReview } from "./components/DiagnosticReportReview";
 import { MultiQRCodePrintSheet } from "./components/MultiQRCodePrintSheet";
@@ -70,6 +75,11 @@ interface ServiceRequestShowProps {
   locationId?: string;
 }
 
+const CLASSIFICATIONS_CAN_BE_MARKED_AS_COMPLETE = [
+  Classification.surgical_procedure,
+  Classification.counselling,
+]; // TODO: Procedure won’t be in this list, so remove this variable and directly check for the AD slug instead
+
 export default function ServiceRequestShow({
   facilityId,
   serviceRequestId,
@@ -77,7 +87,6 @@ export default function ServiceRequestShow({
 }: ServiceRequestShowProps) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
-  const { goBack } = useAppHistory();
   const isMobile = useBreakpoints({
     default: true,
     lg: false,
@@ -85,6 +94,8 @@ export default function ServiceRequestShow({
 
   const [isPrintingAllQRCodes, setIsPrintingAllQRCodes] = useState(false);
   const [isQRCodeSheetOpen, setIsQRCodeSheetOpen] = useState(false);
+  const [isCompleteDialogOpen, setIsCompleteDialogOpen] = useState(false);
+  const [completionNote, setCompletionNote] = useState("");
   const [selectedSpecimenDefinition, setSelectedSpecimenDefinition] =
     useState<SpecimenDefinitionRead | null>(null);
 
@@ -119,6 +130,7 @@ export default function ServiceRequestShow({
   });
 
   const { mutate: executeBatch } = useMutation({
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     mutationFn: mutate(batchApi.batchRequest, { silent: true }),
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -133,22 +145,36 @@ export default function ServiceRequestShow({
     },
   });
 
-  const { mutate: updateServiceRequest, isPending: isUpdatingServiceRequest } =
-    useMutation({
-      mutationFn: mutate(serviceRequestApi.updateServiceRequest, {
-        pathParams: { facilityId, serviceRequestId },
-      }),
-      onSuccess: (data: ServiceRequestUpdateSpec) => {
-        if (data.status === Status.completed) {
-          toast.success(t("service_request_completed"));
-        } else {
-          toast.success(t("status_updated_successfully"));
-        }
-        queryClient.invalidateQueries({
-          queryKey: ["serviceRequest", facilityId, serviceRequestId],
-        });
-      },
-    });
+  const {
+    mutate: cancelServiceRequest,
+    isPending: isCancellingServiceRequest,
+  } = useMutation({
+    mutationFn: mutate(serviceRequestApi.cancelServiceRequest, {
+      pathParams: { facilityId, serviceRequestId },
+    }),
+    onSuccess: () => {
+      toast.success(t("service_request_cancelled"));
+      queryClient.invalidateQueries({
+        queryKey: ["serviceRequest", facilityId, serviceRequestId],
+      });
+    },
+  });
+
+  const {
+    mutate: completeServiceRequest,
+    isPending: isCompletingServiceRequest,
+  } = useMutation({
+    mutationFn: mutate(serviceRequestApi.updateServiceRequest, {
+      pathParams: { facilityId, serviceRequestId },
+    }),
+    onSuccess: () => {
+      toast.success(t("service_request_completed"));
+      setIsCompleteDialogOpen(false);
+      queryClient.invalidateQueries({
+        queryKey: ["serviceRequest", facilityId, serviceRequestId],
+      });
+    },
+  });
 
   const createDraftSpecimen = (requirement: SpecimenDefinitionRead) => {
     const matchingSpecimens = request?.specimens.filter(
@@ -296,133 +322,74 @@ export default function ServiceRequestShow({
     }
   };
 
+  const isFinal =
+    request?.diagnostic_reports?.[0]?.status === DiagnosticReportStatus.final;
+
+  const canMarkAsComplete =
+    isFinal ||
+    CLASSIFICATIONS_CAN_BE_MARKED_AS_COMPLETE.includes(request.category);
+  const canShowCompleteCta =
+    !request?.activity_definition?.diagnostic_report_codes || canMarkAsComplete;
+  const canShowMarkAsCompleteFootBar = canMarkAsComplete && !disableEdit;
+
   return (
     <div className="flex flex-col lg:flex-row min-h-screen bg-gray-50 relative">
-      <div className="flex-1 p-4 max-w-6xl">
+      <div
+        className={`flex-1 p-4 max-w-6xl ${canShowMarkAsCompleteFootBar ? "pb-28" : ""}`}
+      >
         <div className="space-y-6">
           <div className="flex items-center justify-between gap-2">
-            <Button
+            <BackButton
               variant="outline"
-              size="sm"
-              onClick={() => goBack()}
               className="font-semibold border border-gray-400 text-gray-950 underline underline-offset-2"
             >
               <ArrowLeft />
               {t("back")}
-            </Button>
+            </BackButton>
 
             <div className="flex items-end gap-2">
-              {(!request?.activity_definition?.diagnostic_report_codes ||
-                request?.diagnostic_reports?.[0]?.status ===
-                  DiagnosticReportStatus.final) && (
+              {canShowCompleteCta && (
                 <div className="flex items-center gap-2">
-                  {!disableEdit && (
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className="font-semibold border border-gray-400"
-                        >
-                          {t("mark_as_complete")}
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>
-                            {t("confirm_completion")}
-                          </AlertDialogTitle>
-                          <AlertDialogDescription>
-                            {t("service_request_completion_confirmation")}
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
-                          <AlertDialogAction
-                            onClick={() =>
-                              updateServiceRequest({
-                                status: Status.completed,
-                              })
-                            }
-                          >
-                            {t("confirm")}
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  )}
-                  {request?.diagnostic_reports?.[0]?.status ===
-                    DiagnosticReportStatus.final && (
-                    <Button
-                      variant="primary"
-                      className="font-semibold"
-                      onClick={() =>
-                        navigate(
-                          `/facility/${facilityId}/patient/${request.encounter.patient.id}/diagnostic_reports/${request.diagnostic_reports[0].id}`,
-                        )
-                      }
-                    >
-                      {t("view_report")}
-                    </Button>
-                  )}
+                  <>
+                    {isFinal && (
+                      <Button
+                        variant="primary"
+                        className="font-semibold"
+                        onClick={() =>
+                          navigate(
+                            `/facility/${facilityId}/patient/${request.encounter.patient.id}/diagnostic_reports/${request.diagnostic_reports[0].id}`,
+                          )
+                        }
+                      >
+                        {t("view_report")}
+                        <ShortcutBadge actionId="view-report" />
+                      </Button>
+                    )}
+                  </>
                 </div>
               )}
               {request.status !== Status.completed &&
-                request.status !== Status.entered_in_error && (
+                request.status !== Status.revoked && (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
                         variant="outline"
                         className="border-gray-400 px-2"
+                        disabled={isCancellingServiceRequest}
                       >
                         <CareIcon icon="l-ellipsis-v" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      {request.status !== Status.on_hold && (
-                        <DropdownMenuItem asChild className="text-primary-900">
-                          <Button
-                            variant="ghost"
-                            onClick={() =>
-                              updateServiceRequest({
-                                status: Status.on_hold,
-                              })
-                            }
-                            className="w-full flex flex-row justify-stretch items-center"
-                            disabled={isUpdatingServiceRequest}
-                          >
-                            <CareIcon icon="l-pause" className="mr-1" />
-                            {t("mark_as_on_hold")}
-                          </Button>
-                        </DropdownMenuItem>
-                      )}
-                      {(request.status === Status.on_hold ||
-                        request.status === Status.revoked) && (
-                        <DropdownMenuItem asChild className="text-primary-900">
-                          <Button
-                            variant="ghost"
-                            onClick={() =>
-                              updateServiceRequest({
-                                status: Status.active,
-                              })
-                            }
-                            className="w-full flex flex-row justify-stretch items-center"
-                            disabled={isUpdatingServiceRequest}
-                          >
-                            <CareIcon icon="l-play" className="mr-1" />
-                            {t("mark_as_active")}
-                          </Button>
-                        </DropdownMenuItem>
-                      )}
                       <DropdownMenuItem asChild className="text-primary-900">
                         <Button
                           variant="ghost"
                           onClick={() =>
-                            updateServiceRequest({
+                            cancelServiceRequest({
                               status: Status.entered_in_error,
                             })
                           }
-                          disabled={isUpdatingServiceRequest}
-                          className="w-full flex flex-row self-center"
+                          className="w-full flex flex-row "
                         >
                           <CareIcon
                             icon="l-exclamation-circle"
@@ -435,11 +402,10 @@ export default function ServiceRequestShow({
                         <Button
                           variant="ghost"
                           onClick={() =>
-                            updateServiceRequest({
+                            cancelServiceRequest({
                               status: Status.revoked,
                             })
                           }
-                          disabled={isUpdatingServiceRequest}
                           className="w-full flex flex-row justify-stretch items-center"
                         >
                           <CareIcon icon="l-ban" className="mr-1" />
@@ -475,6 +441,7 @@ export default function ServiceRequestShow({
               sourceUrl={`/facility/${facilityId}${locationId ? `/locations/${locationId}` : ""}/service_requests/${serviceRequestId}`}
               patientId={request.encounter.patient.id}
               viewOnly={disableEdit}
+              disableCreateChargeItems
             />
           </div>
 
@@ -487,6 +454,7 @@ export default function ServiceRequestShow({
                     specimens={getActiveAndDraftSpecimens(request?.specimens)}
                     open={isQRCodeSheetOpen}
                     onOpenChange={setIsQRCodeSheetOpen}
+                    isLoading={isPrintingAllQRCodes}
                   >
                     <Button
                       variant="outline"
@@ -598,8 +566,8 @@ export default function ServiceRequestShow({
             </Card>
           )}
 
-          {observationRequirements.length > 0 && (
-            <div className="space-y-3 pt-5">
+          <div className="space-y-3 pt-5">
+            {observationRequirements.length > 0 && (
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold">{t("test_results")}</h2>
                 <DropdownMenu>
@@ -627,22 +595,22 @@ export default function ServiceRequestShow({
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
-              {(!diagnosticReports.length ||
-                diagnosticReports[0]?.status !==
-                  DiagnosticReportStatus.final) && (
-                <DiagnosticReportForm
-                  patientId={request.encounter.patient.id}
-                  facilityId={facilityId}
-                  serviceRequestId={serviceRequestId}
-                  observationDefinitions={observationRequirements}
-                  diagnosticReports={diagnosticReports}
-                  activityDefinition={activityDefinition}
-                  specimens={request.specimens || []}
-                  disableEdit={disableEdit}
-                />
-              )}
-            </div>
-          )}
+            )}
+            {(!diagnosticReports.length ||
+              diagnosticReports[0]?.status !==
+                DiagnosticReportStatus.final) && (
+              <DiagnosticReportForm
+                patientId={request.encounter.patient.id}
+                facilityId={facilityId}
+                serviceRequestId={serviceRequestId}
+                observationDefinitions={observationRequirements}
+                diagnosticReports={diagnosticReports}
+                activityDefinition={activityDefinition}
+                specimens={request.specimens || []}
+                disableEdit={disableEdit}
+              />
+            )}
+          </div>
 
           {diagnosticReports.length > 0 && (
             <DiagnosticReportReview
@@ -660,6 +628,137 @@ export default function ServiceRequestShow({
           <WorkflowProgress request={request} variant="card" />
         </div>
       )}
+
+      {canShowMarkAsCompleteFootBar && (
+        <>
+          <div className="fixed bottom-0 inset-x-0 z-40 border-t bg-white border-gray-300 p-2">
+            <div className="flex w-full items-center justify-between px-4 py-3 gap-2 bg-white">
+              <div className="space-y-1">
+                <p className="text-sm font-semibold text-gray-900">
+                  {t("complete_service_request")}
+                </p>
+                <p className="text-xs text-gray-600">
+                  {t("complete_service_request_help_text")}
+                </p>
+              </div>
+              <Button
+                variant="primary"
+                className="font-semibold shrink-0"
+                onClick={() => {
+                  setCompletionNote(request.note ?? "");
+                  setIsCompleteDialogOpen(true);
+                }}
+                disabled={isCompletingServiceRequest}
+              >
+                {t("mark_as_complete")}
+                <ShortcutBadge actionId="mark-as-complete" />
+              </Button>
+            </div>
+          </div>
+
+          {isMobile ? (
+            <Sheet
+              open={isCompleteDialogOpen}
+              onOpenChange={(open) => {
+                if (!isCompletingServiceRequest) setIsCompleteDialogOpen(open);
+              }}
+            >
+              <SheetContent side="bottom">
+                <SheetHeader>
+                  <SheetTitle>{t("add_completion_note")}</SheetTitle>
+                  <SheetDescription>
+                    {t("service_request_completion_note_description")}
+                  </SheetDescription>
+                </SheetHeader>
+                <CompletionNoteContent
+                  note={completionNote}
+                  isUpdating={isCompletingServiceRequest}
+                  onNoteChange={setCompletionNote}
+                  onComplete={() =>
+                    completeServiceRequest({
+                      status: Status.completed,
+                      note: completionNote.trim() || null,
+                    })
+                  }
+                  onCancel={() => setIsCompleteDialogOpen(false)}
+                />
+              </SheetContent>
+            </Sheet>
+          ) : (
+            <Dialog
+              open={isCompleteDialogOpen}
+              onOpenChange={(open) => {
+                if (!isCompletingServiceRequest) setIsCompleteDialogOpen(open);
+              }}
+            >
+              <DialogContent className="sm:max-w-lg shadow-lg border-white/20">
+                <DialogHeader>
+                  <DialogTitle>{t("add_completion_note")}</DialogTitle>
+                  <DialogDescription>
+                    {t("service_request_completion_note_description")}
+                  </DialogDescription>
+                </DialogHeader>
+                <CompletionNoteContent
+                  note={completionNote}
+                  isUpdating={isCompletingServiceRequest}
+                  onNoteChange={setCompletionNote}
+                  onComplete={() =>
+                    completeServiceRequest({
+                      status: Status.completed,
+                      note: completionNote.trim() || null,
+                    })
+                  }
+                  onCancel={() => setIsCompleteDialogOpen(false)}
+                />
+              </DialogContent>
+            </Dialog>
+          )}
+        </>
+      )}
     </div>
   );
 }
+
+interface CompletionNoteContentProps {
+  note: string;
+  isUpdating: boolean;
+  onNoteChange: (note: string) => void;
+  onComplete: () => void;
+  onCancel: () => void;
+}
+
+const CompletionNoteContent = ({
+  note,
+  isUpdating,
+  onNoteChange,
+  onComplete,
+  onCancel,
+}: CompletionNoteContentProps) => {
+  const { t } = useTranslation();
+
+  return (
+    <>
+      <div className="space-y-2">
+        <p className="text-sm font-medium text-gray-900">
+          {t("completion_note")}
+        </p>
+        <Textarea
+          value={note}
+          onChange={(e) => onNoteChange(e.target.value)}
+          placeholder={t("enter_note")}
+          className="min-h-14"
+          aria-label={t("completion_note")}
+        />
+      </div>
+      <div className="flex flex-row items-start justify-start gap-2 pt-2 sm:pt-0">
+        <Button variant="primary" onClick={onComplete} disabled={isUpdating}>
+          <CheckIcon className="size-4" />
+          {isUpdating ? t("updating") : `${t("save_and_complete")}`}
+        </Button>
+        <Button variant="outline" onClick={onCancel} disabled={isUpdating}>
+          {t("cancel")}
+        </Button>
+      </div>
+    </>
+  );
+};

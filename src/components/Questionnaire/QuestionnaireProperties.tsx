@@ -1,4 +1,4 @@
-import { Building, Tags, X } from "lucide-react";
+import { Building, X } from "lucide-react";
 import { UseFormReturn, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
@@ -14,20 +14,15 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 import {
-  QuestionnaireDetail,
+  QuestionnaireRead,
   QuestionStatus,
   SubjectType,
 } from "@/types/questionnaire/questionnaire";
-import { QuestionnaireTagModel } from "@/types/questionnaire/tags";
 
 import CloneQuestionnaireSheet from "./CloneQuestionnaireSheet";
-import CreateQuestionnaireTagSheet from "./CreateQuestionnaireTagSheet";
 import ManageQuestionnaireOrganizationsSheet, {
   OrgSelector,
 } from "./ManageQuestionnaireOrganizationsSheet";
-import ManageQuestionnaireTagsSheet, {
-  QuestionnaireTagSelector,
-} from "./ManageQuestionnaireTagsSheet";
 
 interface Organization {
   id: string;
@@ -40,12 +35,12 @@ interface OrganizationResponse {
 }
 
 interface QuestionnairePropertiesProps {
-  form: UseFormReturn<QuestionnaireDetail>;
-  updateQuestionnaireField: <K extends keyof QuestionnaireDetail>(
+  form: UseFormReturn<QuestionnaireRead>;
+  updateQuestionnaireField: <K extends keyof QuestionnaireRead>(
     field: K,
-    value: QuestionnaireDetail[K],
+    value: QuestionnaireRead[K],
   ) => void;
-  id?: string;
+  slug?: string;
   organizations?: OrganizationResponse;
   organizationSelection: {
     selectedOrgs: Organization[];
@@ -56,16 +51,6 @@ interface QuestionnairePropertiesProps {
     isLoading?: boolean;
     error: string | undefined;
     setError: (error?: string) => void;
-  };
-  tags?: QuestionnaireTagModel[];
-  tagSelection: {
-    selectedTags: QuestionnaireTagModel[];
-    onToggle: (tagId: string) => void;
-    searchQuery: string;
-    setSearchQuery: (query: string) => void;
-    available?: QuestionnaireTagModel[];
-    isLoading?: boolean;
-    onTagCreated?: (tag: QuestionnaireTagModel) => void;
   };
 }
 
@@ -156,17 +141,17 @@ function SubjectTypeSelector({
 }
 
 function OrganizationSelector({
-  id,
+  slug,
   organizations,
   selection,
 }: {
-  id?: string;
+  slug?: string;
   organizations?: OrganizationResponse;
   selection: QuestionnairePropertiesProps["organizationSelection"];
 }) {
   const { t } = useTranslation();
 
-  if (id) {
+  if (slug) {
     return (
       <>
         <div className="flex flex-wrap gap-2 mb-2">
@@ -185,7 +170,7 @@ function OrganizationSelector({
           )}
         </div>
         <ManageQuestionnaireOrganizationsSheet
-          questionnaireId={id}
+          questionnaireSlug={slug}
           trigger={
             <Button variant="outline" className="w-full justify-start">
               <Building className="mr-2 size-4" />
@@ -243,109 +228,12 @@ function OrganizationSelector({
   );
 }
 
-function TagSelector({
-  id,
-  selection,
-  form,
-}: {
-  id?: string;
-  selection: QuestionnairePropertiesProps["tagSelection"];
-  form: UseFormReturn<QuestionnaireDetail>;
-}) {
-  const { t } = useTranslation();
-  const tags = useWatch({ control: form.control, name: "tags" });
-
-  if (id) {
-    return (
-      <>
-        <div className="flex flex-wrap gap-2 mb-2">
-          {tags?.map((tag) => (
-            <Badge
-              key={tag.id}
-              variant="secondary"
-              className="flex items-center gap-1"
-            >
-              <Building className="h-3 w-3" />
-              {tag.name}
-            </Badge>
-          ))}
-          {tags?.length === 0 && (
-            <p className="text-sm text-gray-500">{t("no_tags_selected")}</p>
-          )}
-        </div>
-        <ManageQuestionnaireTagsSheet
-          form={form}
-          trigger={
-            <Button variant="outline" className="w-full justify-start">
-              <Tags className="mr-2 size-4" />
-              {t("manage_tags")}
-            </Button>
-          }
-        />
-      </>
-    );
-  }
-
-  return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap gap-2">
-        {selection.selectedTags.length > 0 ? (
-          selection.selectedTags.map((tag) => (
-            <Badge
-              key={tag.id}
-              variant="secondary"
-              className="flex items-center gap-1"
-            >
-              {tag.name}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="size-4 p-0 hover:bg-transparent"
-                onClick={() => selection.onToggle(tag.id)}
-              >
-                <X className="h-3 w-3" />
-              </Button>
-            </Badge>
-          ))
-        ) : (
-          <p className="text-sm text-gray-500">{t("no_tags_selected")}</p>
-        )}
-      </div>
-
-      <QuestionnaireTagSelector
-        title={t("select_tags")}
-        selected={selection.selectedTags}
-        onToggle={selection.onToggle}
-        searchQuery={selection.searchQuery}
-        onSearchChange={selection.setSearchQuery}
-        isLoading={selection.isLoading}
-        tagOptions={selection.available}
-      />
-
-      {!id && (
-        <CreateQuestionnaireTagSheet
-          onTagCreated={(tag) => {
-            selection.onTagCreated?.(tag);
-          }}
-          trigger={
-            <Button variant="outline" className="w-full justify-start">
-              <Tags className="mr-2 size-4" />
-              {t("create_tag")}
-            </Button>
-          }
-        />
-      )}
-    </div>
-  );
-}
-
 export function QuestionnaireProperties({
   form,
   updateQuestionnaireField,
-  id,
+  slug,
   organizations,
   organizationSelection,
-  tagSelection,
 }: QuestionnairePropertiesProps) {
   const { t } = useTranslation();
   const status = useWatch({ control: form.control, name: "status" });
@@ -372,16 +260,12 @@ export function QuestionnaireProperties({
             {t("organizations")} <span className="text-red-500">*</span>
           </Label>
           <OrganizationSelector
-            id={id}
+            slug={slug}
             organizations={organizations}
             selection={organizationSelection}
           />
         </div>
-        <div className="space-y-2">
-          <Label>{t("tags", { count: 2 })}</Label>
-          <TagSelector id={id} selection={tagSelection} form={form} />
-        </div>
-        {id && (
+        {slug && (
           <CloneQuestionnaireSheet
             form={form}
             trigger={

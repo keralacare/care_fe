@@ -4,8 +4,6 @@ import ErrorPage from "@/components/ErrorPages/DefaultErrorPage";
 
 import TagConfigList from "@/pages/Admin/TagConfig/TagConfigList";
 import TagConfigView from "@/pages/Admin/TagConfig/TagConfigView";
-import ReportBuilderList from "@/pages/Encounters/ReportBuilder";
-import ReportBuilder from "@/pages/Encounters/ReportBuilder/ReportBuilder";
 import { BillingSettingsLayout } from "@/pages/Facility/settings/billing/layout";
 import CreateDevice from "@/pages/Facility/settings/devices/CreateDevice";
 import DeviceDetail from "@/pages/Facility/settings/devices/DeviceShow";
@@ -37,10 +35,9 @@ import ProductView from "./product/ProductView";
 import ProductKnowledgeForm from "./productKnowledge/ProductKnowledgeForm";
 import ProductKnowledgeList from "./productKnowledge/ProductKnowledgeList";
 import ProductKnowledgeView from "./productKnowledge/ProductKnowledgeView";
-import { CreateSpecimenDefinition } from "./specimen-definitions/CreateSpecimenDefinition";
 import { SpecimenDefinitionDetail } from "./specimen-definitions/SpecimenDefinitionDetail";
+import SpecimenDefinitionForm from "./specimen-definitions/SpecimenDefinitionForm";
 import { SpecimenDefinitionsList } from "./specimen-definitions/SpecimenDefinitionsList";
-import { UpdateSpecimenDefinition } from "./specimen-definitions/UpdateSpecimenDefinition";
 import TokenCategoryForm from "./tokenCategory/TokenCategoryForm";
 import TokenCategoryList from "./tokenCategory/TokenCategoryList";
 import TokenCategoryView from "./tokenCategory/TokenCategoryView";
@@ -72,10 +69,10 @@ const getRoutes = (facilityId: string) => ({
     <SpecimenDefinitionsList facilityId={facilityId} />
   ),
   "/specimen_definitions/create": () => (
-    <CreateSpecimenDefinition facilityId={facilityId} />
+    <SpecimenDefinitionForm facilityId={facilityId} />
   ),
   "/specimen_definitions/new": () => (
-    <CreateSpecimenDefinition facilityId={facilityId} />
+    <SpecimenDefinitionForm facilityId={facilityId} />
   ),
   "/specimen_definitions/:specimenSlug": ({
     specimenSlug,
@@ -92,7 +89,7 @@ const getRoutes = (facilityId: string) => ({
   }: {
     specimenSlug: string;
   }) => (
-    <UpdateSpecimenDefinition
+    <SpecimenDefinitionForm
       facilityId={facilityId}
       specimenSlug={specimenSlug}
     />
@@ -238,18 +235,6 @@ const getRoutes = (facilityId: string) => ({
     <TokenCategoryForm facilityId={facilityId} tokenCategoryId={id} />
   ),
 
-  "/reportbuilder": () => <ReportBuilderList facilityId={facilityId} />,
-  "/reportbuilder/new": () => <ReportBuilder facilityId={facilityId} />,
-  "/reportbuilder/:reportTemplateId": ({
-    reportTemplateId,
-  }: {
-    reportTemplateId: string;
-  }) => (
-    <ReportBuilder
-      facilityId={facilityId}
-      reportTemplateId={reportTemplateId}
-    />
-  ),
   "/patient_identifier_config": () => (
     <PatientIdentifierConfigList facilityId={facilityId} />
   ),

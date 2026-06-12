@@ -4,9 +4,11 @@ import "reactflow/dist/style.css";
 import * as Sentry from "@sentry/browser";
 
 import App from "@/App";
+import { AuthContextType, AuthUserContext } from "@/hooks/useAuthUser";
 import { initI18n } from "@/i18n";
+import { PlugConfigMeta } from "@/types/plugConfig";
 import careConfig from "@careConfig";
-import React from "react";
+import React, { Context } from "react";
 import { createRoot } from "react-dom/client";
 import { registerSW } from "virtual:pwa-register";
 
@@ -15,16 +17,30 @@ declare global {
   interface Window {
     CARE_API_URL: string;
     __CORE_ENV__: typeof careConfig;
+    __CARE_PLUGIN_RUNTIME__: { meta: PlugConfigMeta };
+    AuthUserContext: Context<AuthContextType | null>;
   }
 }
 
 // Expose Environment variable to window object for use in plugins
-window.CARE_API_URL = import.meta.env.REACT_CARE_API_URL;
+window.CARE_API_URL = careConfig.apiUrl;
+window.AuthUserContext = AuthUserContext;
 window.__CORE_ENV__ = careConfig;
 
 if ("serviceWorker" in navigator) {
   registerSW({ immediate: false });
 }
+
+// Handle stale chunk errors from lazy imports after deployments.
+// Only reload once per session to prevent infinite loops on network failures.
+window.addEventListener("vite:preloadError", (event) => {
+  const reloaded = sessionStorage.getItem("vite-chunk-reload");
+  if (!reloaded) {
+    sessionStorage.setItem("vite-chunk-reload", "1");
+    event.preventDefault();
+    window.location.reload();
+  }
+});
 
 if (import.meta.env.PROD) {
   Sentry.init({
@@ -42,6 +58,7 @@ initI18n()
         <App />
       </React.StrictMode>,
     );
+    sessionStorage.removeItem("vite-chunk-reload");
   })
   .catch((error) => {
     console.error("Failed to initialize i18n:", error);
@@ -52,4 +69,5 @@ initI18n()
         <App />
       </React.StrictMode>,
     );
+    sessionStorage.removeItem("vite-chunk-reload");
   });

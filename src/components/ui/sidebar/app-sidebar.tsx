@@ -27,10 +27,15 @@ import {
 import { OrgNav } from "@/components/ui/sidebar/org-nav";
 import { OrganizationSwitcher } from "@/components/ui/sidebar/organization-switcher";
 import { PatientNav } from "@/components/ui/sidebar/patient-nav";
+import {
+  ResponsibilityNav,
+  ResponsibilitySwitcher,
+} from "@/components/ui/sidebar/responsibility-switcher";
 
 import { useRouteParams } from "@/hooks/useRouteParams";
 import { ServiceSwitcher } from "./facility/service/service-switcher";
 
+import PinPageDialog from "@/components/Common/PinPageDialog";
 import { FacilityBareMinimum } from "@/types/facility/facility";
 import { CurrentUserRead } from "@/types/user/user";
 
@@ -56,6 +61,9 @@ export function AppSidebar({
   const { facilityId } = useRouteParams("/facility/:facilityId");
   const { locationId } = useRouteParams("/facility/:_/locations/:locationId");
   const { organizationId } = useRouteParams("/organization/:organizationId");
+  const { responsibilityId } = useRouteParams(
+    "/responsibilities/:responsibilityId",
+  );
   const { serviceId } = useRouteParams(
     "/facility/:facilityId/services/:serviceId",
   );
@@ -115,7 +123,10 @@ export function AppSidebar({
       className="group-data-[side=left]:border-r-0"
     >
       <SidebarHeader>
-        {selectedOrganization && hasOrganizations && (
+        {responsibilityId && (
+          <ResponsibilitySwitcher selectedResponsibilityId={responsibilityId} />
+        )}
+        {selectedOrganization && hasOrganizations && !responsibilityId && (
           <OrganizationSwitcher
             organizations={user?.organizations || []}
             selectedOrganization={selectedOrganization}
@@ -132,7 +143,8 @@ export function AppSidebar({
         {!locationId &&
           !serviceId &&
           !selectedFacility &&
-          !selectedOrganization && (
+          !selectedOrganization &&
+          !responsibilityId && (
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
@@ -165,11 +177,16 @@ export function AppSidebar({
           !selectedOrganization && (
             <FacilityNav selectedFacility={selectedFacility} />
           )}
-        {selectedOrganization && (
+        {responsibilityId && <ResponsibilityNav />}
+        {selectedOrganization && !responsibilityId && (
           <OrgNav organizations={user?.organizations || []} />
         )}
         {patientSidebar && <PatientNav />}
         {adminSidebar && <AdminNav />}
+        {(facilitySidebar ||
+          facilityLocationSidebar ||
+          facilityServiceSidebar ||
+          adminSidebar) && <PinPageDialog />}
       </SidebarContent>
 
       <SidebarFooter>

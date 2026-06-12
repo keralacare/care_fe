@@ -6,10 +6,13 @@ import { Button, buttonVariants } from "@/components/ui/button";
 
 import { cn } from "@/lib/utils";
 import { useEncounter } from "@/pages/Encounters/utils/EncounterProvider";
+import { encounterRequiresDischarge } from "@/pages/Encounters/utils/useEncounterProgressController";
 import { PLUGIN_Component } from "@/PluginEngine";
+import { ShortcutBadge } from "@/Utils/keyboardShortcutComponents";
 import { Account } from "./summary-panel-details-tab/account";
 import { DepartmentsAndTeams } from "./summary-panel-details-tab/department-and-team";
 import { DischargeDetails } from "./summary-panel-details-tab/discharge-summary";
+import { EncounterTags } from "./summary-panel-details-tab/encounter-tags";
 import { HospitalizationDetails } from "./summary-panel-details-tab/hospitalisation";
 import { Locations } from "./summary-panel-details-tab/locations";
 import { ManageCareTeam } from "./summary-panel-details-tab/manage-care-team";
@@ -19,11 +22,11 @@ export const SummaryPanelActionsTab = () => {
 
   const {
     actions: {
-      markAsCompleted,
       assignLocation,
       manageDepartments,
       manageCareTeam,
       dispense,
+      markAsCompleted,
     },
     selectedEncounter,
   } = useEncounter();
@@ -53,11 +56,13 @@ export const SummaryPanelActionsTab = () => {
       label: t("dispense"),
       onClick: dispense,
       hideOnMobile: false,
+      shortcut: <ShortcutBadge actionId="dispense" />,
     },
   ] as const satisfies {
     label: string;
     onClick: () => void;
     hideOnMobile: boolean;
+    shortcut?: React.ReactNode;
   }[];
 
   return (
@@ -79,6 +84,9 @@ export const SummaryPanelActionsTab = () => {
             >
               <NotebookPen />
               {action.label}
+              <span className="ml-auto">
+                {"shortcut" in action && action.shortcut}
+              </span>
             </Button>
           ))}
 
@@ -95,22 +103,27 @@ export const SummaryPanelActionsTab = () => {
         </div>
         <div className="flex xl:hidden flex-col space-y-2 mt-3">
           <Account />
+          <EncounterTags />
           <Locations />
           <ManageCareTeam />
           <DepartmentsAndTeams />
           <HospitalizationDetails />
           <DischargeDetails />
         </div>
-        <div className="sm:@sm:flex-1 flex flex-col gap-2 border-t border-gray-300 border-dashed sm:@sm:border-none pt-3 sm:@sm:pt-0 mt-3">
-          <Button
-            variant="outline_primary"
-            className="justify-start sm:@sm:justify-center"
-            onClick={markAsCompleted}
-          >
-            <CheckIcon />
-            {t("mark_as_completed")}
-          </Button>
-        </div>
+        {selectedEncounter && (
+          <div className="sm:@sm:flex-1 flex flex-col gap-2 border-t border-gray-300 border-dashed sm:@sm:border-none pt-3 sm:@sm:pt-0 mt-3">
+            <Button
+              variant="outline_primary"
+              className="justify-start sm:@sm:justify-center"
+              onClick={() => markAsCompleted()}
+            >
+              <CheckIcon />
+              {encounterRequiresDischarge(selectedEncounter)
+                ? t("mark_for_discharge")
+                : t("mark_as_completed")}
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

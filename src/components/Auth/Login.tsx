@@ -42,11 +42,14 @@ import FiltersCache from "@/Utils/FiltersCache";
 import ViewCache from "@/Utils/ViewCache";
 import mutate from "@/Utils/request/mutate";
 import { HTTPError } from "@/Utils/request/types";
-import { invalidateAllLocationCaches } from "@/atoms/location-atom";
 import authApi from "@/types/auth/authApi";
 import { TokenData } from "@/types/otp/otp";
 import otpApi from "@/types/otp/otpApi";
 
+import { clearQueryPersistenceCache } from "@/Utils/request/queryClient";
+import { invalidateAllPaymentReconcilationLocationCaches } from "@/atoms/paymentReconcilationLocationAtom";
+import { clearQueuePractitionerCache } from "@/atoms/queuePractitionerAtom";
+import { register } from "@/lib/override";
 import { AuthHero } from "./AuthHero";
 
 interface OtpLoginData {
@@ -105,8 +108,7 @@ const Login = (props: LoginProps) => {
   const [otp, setOtp] = useState("");
   const [otpError, setOtpError] = useState<string>("");
   const [otpValidationError, setOtpValidationError] = useState<string>("");
-  const [resendOtpCountdown, setResendOtpCountdown] =
-    useState(resendOtpTimeout);
+  const [resendOtpCountdown, setResendOtpCountdown] = useState(0);
 
   // Timer Function for resend OTP
   useEffect(() => {
@@ -119,7 +121,7 @@ const Login = (props: LoginProps) => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [resendOtpCountdown]);
 
   // Remember the last login mode
   useEffect(() => {
@@ -188,12 +190,13 @@ const Login = (props: LoginProps) => {
   });
 
   // Forgot Password Mutation
-  const { mutate: submitForgetPassword } = useMutation({
-    mutationFn: mutate(authApi.forgotPassword),
-    onSuccess: () => {
-      toast.success(t("password_sent"));
-    },
-  });
+  const { mutate: submitForgetPassword, isPending: forgotPasswordPending } =
+    useMutation({
+      mutationFn: mutate(authApi.forgotPassword),
+      onSuccess: () => {
+        toast.success(t("password_sent"));
+      },
+    });
 
   // Login form validation
   const handleChange = (e: any) => {
@@ -244,7 +247,9 @@ const Login = (props: LoginProps) => {
     if (!validated) return;
 
     FiltersCache.invalidateAll();
-    invalidateAllLocationCaches();
+    invalidateAllPaymentReconcilationLocationCaches();
+    clearQueuePractitionerCache();
+    clearQueryPersistenceCache();
     try {
       await signIn(validated);
     } catch (error) {
@@ -491,9 +496,9 @@ const Login = (props: LoginProps) => {
                             type="submit"
                             className="w-full"
                             variant="primary"
-                            disabled={isLoading}
+                            disabled={isLoading || forgotPasswordPending}
                           >
-                            {isLoading ? (
+                            {isLoading || forgotPasswordPending ? (
                               <CircularProgress className="text-white" />
                             ) : (
                               t("send_reset_link")
@@ -653,9 +658,9 @@ const Login = (props: LoginProps) => {
                               type="submit"
                               className="w-full"
                               variant="primary"
-                              disabled={isLoading}
+                              disabled={isLoading || forgotPasswordPending}
                             >
-                              {isLoading ? (
+                              {isLoading || forgotPasswordPending ? (
                                 <CircularProgress className="text-white" />
                               ) : (
                                 t("send_reset_link")
@@ -802,4 +807,4 @@ const Login = (props: LoginProps) => {
   );
 };
 
-export default Login;
+export default register("Login", Login);

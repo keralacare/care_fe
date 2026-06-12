@@ -1,14 +1,27 @@
 import { cn } from "@/lib/utils";
 
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
-import { LocationList } from "@/types/location/location";
+import {
+  BedAvailableSelected,
+  BedAvailableUnselected,
+  BedUnavailableSelected,
+  BedUnavailableUnselected,
+} from "@/CAREUI/icons/CustomIcons";
+import { LocationRead } from "@/types/location/location";
+import { buildLocationPath } from "@/types/location/utils";
 
 interface BedListingProps {
-  beds: LocationList[];
-  selectedBed: string | null;
-  onBedSelect: (bedId: string) => void;
-  onCheckStatus: (bed: LocationList) => void;
+  beds: LocationRead[];
+  selectedBed: LocationRead | null;
+  onBedSelect: (bed: LocationRead) => void;
+  onCheckStatus: (bed: LocationRead) => void;
+  showParent?: boolean;
 }
 
 export function BedListing({
@@ -16,19 +29,29 @@ export function BedListing({
   selectedBed,
   onBedSelect,
   onCheckStatus,
+  showParent = false,
 }: BedListingProps) {
   if (beds.length === 0) return null;
   return (
     <RadioGroup
-      value={selectedBed || ""}
-      onValueChange={onBedSelect}
-      className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4"
+      value={selectedBed?.id || ""}
+      onValueChange={(id) => {
+        const bed = beds.find((b) => b.id === id);
+        if (bed) onBedSelect(bed);
+      }}
+      className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
     >
       {beds.map((bed) => {
-        const isAvailable = !bed.current_encounter;
+        const isAvailable = bed.operational_status === "U";
         const isDischargedBed = bed.current_encounter?.status === "discharged";
-        const isSelected = selectedBed === bed.id;
+        const isSelected = selectedBed?.id === bed.id;
         const isClickable = isAvailable || isDischargedBed;
+        const segments = buildLocationPath(bed);
+        const fullPath = segments.map((s) => s.name).join(" › ");
+        const shortPath = segments
+          .map((s) => s.name)
+          .slice(-2)
+          .join(" › ");
 
         return (
           <div
@@ -45,7 +68,7 @@ export function BedListing({
             )}
             onClick={() => {
               if (isAvailable) {
-                onBedSelect(bed.id);
+                onBedSelect(bed);
               } else if (isDischargedBed) {
                 onCheckStatus(bed);
               }
@@ -62,21 +85,29 @@ export function BedListing({
             </div>
             <div className="flex flex-col items-center">
               <div className="relative">
-                <img
-                  src={
-                    isAvailable
-                      ? isSelected
-                        ? "/images/bed-available-selected.svg"
-                        : "/images/bed-available.svg"
-                      : isSelected
-                        ? "/images/bed-unavailable-selected.svg"
-                        : "/images/bed-unavailable.svg"
-                  }
-                  alt="Bed"
-                  className="size-10 mt-4"
-                />
+                {isAvailable ? (
+                  isSelected ? (
+                    <BedAvailableSelected className="size-10 mt-4" />
+                  ) : (
+                    <BedAvailableUnselected className="size-10 mt-4" />
+                  )
+                ) : isSelected ? (
+                  <BedUnavailableSelected className="size-10 mt-4" />
+                ) : (
+                  <BedUnavailableUnselected className="size-10 mt-4" />
+                )}
               </div>
               <p className="text-xs text-center font-medium mt-2">{bed.name}</p>
+              {showParent && segments.length > 1 && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <p className="text-xs mt-1 text-gray-400 truncate max-w-full cursor-default">
+                      {shortPath}
+                    </p>
+                  </TooltipTrigger>
+                  <TooltipContent>{fullPath}</TooltipContent>
+                </Tooltip>
+              )}
             </div>
           </div>
         );

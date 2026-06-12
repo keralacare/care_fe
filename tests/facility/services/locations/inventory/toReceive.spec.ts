@@ -63,10 +63,12 @@ test.describe("Facility To-Receive Orders Inventory Flow", () => {
     await expect(tableRow1).toContainText("5");
     await page.getByRole("button", { name: "Mark as Approved" }).click();
     await page.goto(bioChembasePath + "/inventory/internal/receive");
-    // verify item in table row 1
-    tableRow1 = page.locator("table tbody tr").nth(0);
-    await expect(tableRow1).toContainText(orderName);
-    await expect(tableRow1).toContainText("Pharmacy");
+    // verify item appears in table
+    const orderRow = page
+      .locator("table tbody tr")
+      .filter({ hasText: orderName });
+    await expect(orderRow.first()).toBeVisible();
+    await expect(orderRow.first()).toContainText("Pharmacy");
   });
 
   test("mark stock request as completed", async ({ page }) => {
@@ -94,16 +96,16 @@ test.describe("Facility To-Receive Orders Inventory Flow", () => {
       .getByRole("button", { name: "Mark as Approved" })
       .click({ timeout: 5000 });
     await page
-      .locator(".flex.flex-col.sm\\:flex-row")
-      .getByRole("button")
-      .nth(1)
+      .locator('[data-slot="dropdown-menu-trigger"]:has(.care-l-ellipsis-v)')
       .click();
     await page.getByRole("menuitem", { name: "Mark as Completed" }).click();
     await page.goto(bioChembasePath + "/inventory/internal/receive");
     await page.getByRole("tab", { name: "Completed" }).click();
-    // verify item in table row 1
-    tableRow1 = page.locator("table tbody tr").nth(0);
-    await expect(tableRow1).toContainText(orderName);
-    await expect(tableRow1).toContainText("Pharmacy");
+    // verify item appears in table
+    const orderRow = page
+      .locator("table tbody tr")
+      .filter({ hasText: orderName });
+    await expect(orderRow.first()).toBeVisible();
+    await expect(orderRow.first()).toContainText("Pharmacy");
   });
 });

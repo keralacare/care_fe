@@ -1,17 +1,19 @@
 import { faker } from "@faker-js/faker";
 import { expect, type Page } from "@playwright/test";
 
+import { BODY_SITES } from "tests/helper/commonConstants";
 import {
   closeAnyOpenPopovers,
   expectToast,
   selectFromCategoryPicker,
+  selectFromCommand,
   selectFromLocationMultiSelect,
   selectFromRequirements,
   selectFromValueSet,
 } from "tests/helper/ui";
 import { expectedSlug } from "tests/helper/utils";
 
-export const RESOURCE_CATEGORY_SLUG = "lab-tests-activity_definition";
+export const RESOURCE_CATEGORY_SLUG = "lab-tests-activity-definition";
 
 export const RESOURCE_CATEGORY_NAME = "Lab Tests";
 
@@ -26,19 +28,6 @@ export const ACTIVITY_DEFINITION_CODES = [
   "Anifrolumab therapy",
   "Open excision of left atrial appendage",
   "Voclosporin therapy",
-];
-
-export const BODY_SITES = [
-  "Structure of product of conception of ectopic pregnancy",
-  "Structure of left deltoid muscle",
-  "Structure of right deltoid muscle",
-  "Structure of right supraclavicular lymph node",
-  "Structure of left supraclavicular lymph node",
-  "Structure of colonic submucosa and/or colonic muscularis propria",
-  "Structure of lymphatic vessel and/or small blood vessel",
-  "Structure of neuroretinal rim of right optic disc",
-  "Structure of neuroretinal rim of left optic disc",
-  "Structure of epithelium of right lens",
 ];
 
 export const SPECIMEN_DEFINITIONS = [
@@ -79,14 +68,22 @@ export const CHARGE_ITEM_DEFINITIONS = [
   "Fasting Blood Glucose Test",
 ];
 
-export const STATUS_OPTIONS = ["Active", "Draft", "Retired", "Unknown"];
+export const HEALTHCARE_SERVICES = ["Pathology Lab"];
+
+export const STATUS_OPTIONS = [
+  "Active",
+  "Draft",
+  "Retired",
+  "Unknown",
+] as const;
 
 export const CLASSIFICATION_OPTIONS = [
   "Laboratory",
   "Imaging",
-  "Surgical Procedure",
+  "Procedure",
   "Counselling",
-];
+  "Education",
+] as const;
 
 interface ActivityDefinitionData {
   title: string;
@@ -105,6 +102,7 @@ interface ActivityDefinitionData {
   chargeItem?: string;
   location?: string;
   diagnosticReportCode?: string;
+  healthcareService?: string;
 }
 
 export function generateActivityDefinitionData(
@@ -133,6 +131,7 @@ export function generateActivityDefinitionData(
       chargeItem: faker.helpers.arrayElement(CHARGE_ITEM_DEFINITIONS),
       location: faker.helpers.arrayElement(LOCATIONS),
       diagnosticReportCode: faker.helpers.arrayElement(DIAGNOSTIC_REPORT_CODES),
+      healthcareService: faker.helpers.arrayElement(HEALTHCARE_SERVICES),
     };
   }
 
@@ -143,14 +142,19 @@ export function generateActivityDefinitionData(
  * Helper function to create an Activity Definition via UI
  * @param page - Playwright page object
  * @param facilityId - Facility ID where the AD will be created
+ * @param allFields - Whether to create the AD with all fields
+ * @param overrides - Overrides for the AD data (status and classification)
  * @returns Object containing the created AD data
  */
 export async function createActivityDefinition(
   page: Page,
   facilityId: string,
   allFields: boolean = false,
+  overrides: Partial<
+    Pick<ActivityDefinitionData, "status" | "classification">
+  > = {},
 ): Promise<ActivityDefinitionData> {
-  const data = generateActivityDefinitionData(allFields);
+  const data = { ...generateActivityDefinitionData(allFields), ...overrides };
 
   await page.goto(
     `/facility/${facilityId}/settings/activity_definitions/categories/f-${facilityId}-${RESOURCE_CATEGORY_SLUG}/new`,
@@ -214,6 +218,14 @@ export async function createActivityDefinition(
       navigateCategories: [data.chargeItemCategory!],
       search: data.chargeItem!,
       closeAfterSelect: true,
+    });
+
+    const healthcareServiceTrigger = page
+      .getByRole("combobox")
+      .filter({ hasText: /select.*healthcare service/i });
+    await selectFromCommand(page, healthcareServiceTrigger, {
+      search: data.healthcareService!,
+      itemIndex: 0,
     });
 
     const locationsTrigger = page

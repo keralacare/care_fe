@@ -31,7 +31,7 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { Link } from "raviger";
-import { useEffect, useState } from "react";
+import { forwardRef, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useInView } from "react-intersection-observer";
 import { useTokenListInfiniteQuery } from "./utils";
@@ -68,81 +68,113 @@ export function ManageQueueFinishedTab({
   return (
     <div className="flex flex-col gap-4">
       {tokens.length > 0 ? (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>{t("token_number")}</TableHead>
-              <TableHead>{t("patient_name")}</TableHead>
-              <TableHead>{t("service_points")}</TableHead>
-              <TableHead>{t("status")}</TableHead>
-              <TableHead className="w-[100px]">{t("actions")}</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {tokens.map((token, index) => (
-              <TableRow
-                key={token.id}
-                ref={index === tokens.length - 1 ? ref : undefined}
-              >
-                <TableCell>
-                  <span className="font-mono font-semibold">
-                    {renderTokenNumber(token)}
-                  </span>
-                </TableCell>
-                <TableCell>
-                  {token.patient ? (
-                    <Link
-                      href={`/facility/${facilityId}/patients/verify?${new URLSearchParams(
-                        {
-                          phone_number: token.patient.phone_number,
-                          year_of_birth: token.patient.year_of_birth.toString(),
-                          partial_id: token.patient.id.slice(0, 5),
-                          queue_id: token.queue.id,
-                          token_id: token.id,
-                        },
-                      ).toString()}`}
-                      className="hover:underline transition-colors flex items-center gap-1"
-                    >
-                      {token.patient.name}
-                      <ExternalLink className="size-3" />
-                    </Link>
-                  ) : (
-                    <span className="text-gray-500">-</span>
-                  )}
-                </TableCell>
-                <TableCell>
-                  {token.sub_queue?.name || (
-                    <span className="text-gray-500">-</span>
-                  )}
-                </TableCell>
-                <TableCell>
-                  <Badge
-                    variant={
-                      token.status === TokenStatus.FULFILLED
-                        ? "green"
-                        : token.status === TokenStatus.CANCELLED
-                          ? "destructive"
-                          : "secondary"
-                    }
-                    size="sm"
+        <>
+          {/* Desktop table */}
+          <div className="hidden lg:block">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{t("token_number")}</TableHead>
+                  <TableHead>{t("patient_name")}</TableHead>
+                  <TableHead>{t("encounter")}</TableHead>
+                  <TableHead>{t("service_points")}</TableHead>
+                  <TableHead>{t("status")}</TableHead>
+                  <TableHead className="w-[100px]">{t("actions")}</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {tokens.map((token, index) => (
+                  <TableRow
+                    key={token.id}
+                    ref={index === tokens.length - 1 ? ref : undefined}
                   >
-                    {t(token.status.toLowerCase())}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <FinishedTokenOptions
-                    token={token}
-                    facilityId={facilityId}
-                    queueId={queueId}
-                  />
-                </TableCell>
-              </TableRow>
+                    <TableCell>
+                      <span className="font-mono font-semibold">
+                        {renderTokenNumber(token)}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      {token.patient ? (
+                        <Link
+                          href={`/facility/${facilityId}/patients/home?${new URLSearchParams(
+                            {
+                              phone_number: token.patient.phone_number,
+                              year_of_birth:
+                                token.patient.year_of_birth?.toString() ?? "",
+                              partial_id: token.patient.id.slice(0, 5),
+                              queue_id: token.queue.id,
+                              token_id: token.id,
+                            },
+                          ).toString()}`}
+                          className="hover:underline transition-colors flex items-center gap-1"
+                        >
+                          {token.patient.name}
+                          <ExternalLink className="size-3" />
+                        </Link>
+                      ) : (
+                        <span className="text-gray-500">-</span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <Link
+                        href={`/facility/${facilityId}/queue/${token.queue.id}/token/${token.id}`}
+                        className="hover:underline transition-colors flex items-center gap-1"
+                      >
+                        {t("encounter")}
+                        <ExternalLink className="size-3" />
+                      </Link>
+                    </TableCell>
+                    <TableCell>
+                      {token.sub_queue?.name || (
+                        <span className="text-gray-500">-</span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={
+                          token.status === TokenStatus.FULFILLED
+                            ? "green"
+                            : token.status === TokenStatus.CANCELLED
+                              ? "destructive"
+                              : "secondary"
+                        }
+                        size="sm"
+                      >
+                        {t(token.status.toLowerCase())}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <FinishedTokenOptions
+                        token={token}
+                        facilityId={facilityId}
+                        queueId={queueId}
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
+                {isFetchingNextPage && (
+                  <FinishedTokensTableSkeleton count={5} />
+                )}
+              </TableBody>
+            </Table>
+          </div>
+
+          {/* Mobile card list */}
+          <div className="lg:hidden flex flex-col gap-3">
+            {tokens.map((token, index) => (
+              <FinishedTokenCard
+                key={token.id}
+                token={token}
+                facilityId={facilityId}
+                queueId={queueId}
+                ref={index === tokens.length - 1 ? ref : undefined}
+              />
             ))}
-            {isFetchingNextPage && <FinishedTokensTableSkeleton count={5} />}
-          </TableBody>
-        </Table>
+            {isFetchingNextPage && <FinishedTokenCardSkeletons count={3} />}
+          </div>
+        </>
       ) : (
-        <div className="flex flex-col gap-2 items-center justify-center bg-gray-100 rounded-lg py-20 border border-gray-100">
+        <div className="flex flex-col gap-2 items-center justify-center bg-gray-100 rounded-lg py-16 lg:py-20 px-4 text-center border border-gray-100">
           <DoorOpenIcon className="size-8 text-gray-700" />
           <span className="text-lg font-semibold text-gray-700">
             {t("no_tokens_finished")}
@@ -153,6 +185,107 @@ export function ManageQueueFinishedTab({
         </div>
       )}
     </div>
+  );
+}
+
+const FinishedTokenCard = forwardRef<
+  HTMLDivElement,
+  {
+    token: TokenRead;
+    facilityId: string;
+    queueId: string;
+  }
+>(function FinishedTokenCard({ token, facilityId, queueId }, ref) {
+  const { t } = useTranslation();
+
+  return (
+    <div
+      ref={ref}
+      className="flex flex-col gap-3 p-3 bg-gray-50 border border-gray-200 rounded-lg shadow-sm"
+    >
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex flex-col gap-1 min-w-0">
+          <span className="font-mono font-semibold text-sm">
+            {renderTokenNumber(token)}
+          </span>
+          {token.patient ? (
+            <Link
+              href={`/facility/${facilityId}/patients/home?${new URLSearchParams(
+                {
+                  phone_number: token.patient.phone_number,
+                  year_of_birth: token.patient.year_of_birth?.toString() ?? "",
+                  partial_id: token.patient.id.slice(0, 5),
+                  queue_id: token.queue.id,
+                  token_id: token.id,
+                },
+              ).toString()}`}
+              className="text-sm font-medium hover:underline flex items-center gap-1 min-w-0"
+            >
+              <span className="truncate">{token.patient.name}</span>
+              <ExternalLink className="size-3 shrink-0" />
+            </Link>
+          ) : (
+            <span className="text-sm text-gray-500">-</span>
+          )}
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <Badge
+            variant={
+              token.status === TokenStatus.FULFILLED
+                ? "green"
+                : token.status === TokenStatus.CANCELLED
+                  ? "destructive"
+                  : "secondary"
+            }
+            size="sm"
+          >
+            {t(token.status.toLowerCase())}
+          </Badge>
+          <FinishedTokenOptions
+            token={token}
+            facilityId={facilityId}
+            queueId={queueId}
+          />
+        </div>
+      </div>
+      <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-gray-600">
+        <div className="flex items-center gap-1">
+          <span className="font-medium">{t("service_points")}:</span>
+          <span>
+            {token.sub_queue?.name || <span className="text-gray-500">-</span>}
+          </span>
+        </div>
+        <Link
+          href={`/facility/${facilityId}/queue/${token.queue.id}/token/${token.id}`}
+          className="hover:underline transition-colors flex items-center gap-1 font-medium"
+        >
+          {t("encounter")}
+          <ExternalLink className="size-3" />
+        </Link>
+      </div>
+    </div>
+  );
+});
+
+function FinishedTokenCardSkeletons({ count = 3 }: { count?: number }) {
+  return (
+    <>
+      {Array.from({ length: count }, (_, index) => (
+        <div
+          key={index}
+          className="flex flex-col gap-3 p-3 bg-gray-50 border border-gray-200 rounded-lg"
+        >
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex flex-col gap-1 flex-1">
+              <Skeleton className="h-4 w-16" />
+              <Skeleton className="h-4 w-32" />
+            </div>
+            <Skeleton className="h-6 w-16" />
+          </div>
+          <Skeleton className="h-3 w-40" />
+        </div>
+      ))}
+    </>
   );
 }
 
@@ -191,6 +324,8 @@ function FinishedTokenOptions({
   const queryClient = useQueryClient();
   const [showMoveBackToInServiceDialog, setShowMoveBackToInServiceDialog] =
     useState(false);
+  const [showMoveBackToWaitingDialog, setShowMoveBackToWaitingDialog] =
+    useState(false);
 
   const { mutate: updateToken, isPending: isUpdating } = useMutation({
     mutationFn: mutate(tokenApi.update, {
@@ -208,6 +343,7 @@ function FinishedTokenOptions({
         queryKey: ["token-queue-summary", facilityId, queueId],
       });
       setShowMoveBackToInServiceDialog(false);
+      setShowMoveBackToWaitingDialog(false);
     },
   });
 
@@ -216,6 +352,14 @@ function FinishedTokenOptions({
       status: TokenStatus.IN_PROGRESS,
       note: token.note,
       sub_queue: token.sub_queue?.id || null,
+    });
+  };
+
+  const handleMoveBackToWaiting = () => {
+    updateToken({
+      status: TokenStatus.CREATED,
+      note: token.note,
+      sub_queue: null,
     });
   };
 
@@ -229,13 +373,24 @@ function FinishedTokenOptions({
           <MoreHorizontal className="size-4" />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem
-            onClick={() => setShowMoveBackToInServiceDialog(true)}
-            disabled={isUpdating}
-          >
-            <RotateCcw className="size-4" />
-            {t("move_back_to_in_service")}
-          </DropdownMenuItem>
+          {token.sub_queue ? (
+            <DropdownMenuItem
+              onClick={() => setShowMoveBackToInServiceDialog(true)}
+              disabled={isUpdating}
+            >
+              <RotateCcw className="size-4" />
+              {t("move_back_to_in_service")}
+            </DropdownMenuItem>
+          ) : (
+            <DropdownMenuItem
+              onClick={() => setShowMoveBackToWaitingDialog(true)}
+              disabled={isUpdating}
+            >
+              <RotateCcw className="size-4" />
+              {t("move_back_to_waiting")}
+            </DropdownMenuItem>
+          )}
+
           <DropdownMenuItem
             onClick={() =>
               updateToken({
@@ -261,6 +416,21 @@ function FinishedTokenOptions({
           tokenNumber: renderTokenNumber(token),
         })}
         onConfirm={handleMoveBackToInService}
+        cancelText={t("cancel")}
+        confirmText={t("confirm")}
+        variant="primary"
+        disabled={isUpdating}
+      />
+
+      <ConfirmActionDialog
+        open={showMoveBackToWaitingDialog}
+        onOpenChange={setShowMoveBackToWaitingDialog}
+        title={t("move_back_to_waiting")}
+        description={t("move_back_to_waiting_confirmation", {
+          patientName: token.patient?.name,
+          tokenNumber: renderTokenNumber(token),
+        })}
+        onConfirm={handleMoveBackToWaiting}
         cancelText={t("cancel")}
         confirmText={t("confirm")}
         variant="primary"

@@ -10,6 +10,8 @@ import { CreateInvoiceSheet } from "@/pages/Facility/billing/account/components/
 import AddMultipleChargeItemsSheet from "@/pages/Facility/services/serviceRequests/components/AddMultipleChargeItemsSheet";
 import { ChargeItemCard } from "@/pages/Facility/services/serviceRequests/components/ChargeItemCard";
 
+import { isAccountActiveAndBillable } from "@/pages/Facility/billing/account/utils";
+import { ResourceCategorySubType } from "@/types/base/resourceCategory/resourceCategory";
 import {
   AccountBillingStatus,
   AccountStatus,
@@ -32,6 +34,7 @@ interface ChargeItemsSectionProps {
   sourceUrl?: string;
   encounterId?: string;
   disableCreateChargeItems?: boolean;
+  disableCreateChargeItemsSection?: boolean;
   viewOnly?: boolean;
 }
 
@@ -43,6 +46,7 @@ export function ChargeItemsSection({
   sourceUrl,
   encounterId,
   disableCreateChargeItems = false,
+  disableCreateChargeItemsSection = false,
   viewOnly = false,
 }: ChargeItemsSectionProps) {
   const { t } = useTranslation();
@@ -120,17 +124,20 @@ export function ChargeItemsSection({
                   <ShortcutBadge actionId="create-an-invoice" />
                 </Button>
               )}
-              {!disableCreateChargeItems && !viewOnly && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setIsMultiAddOpen(true)}
-                >
-                  <PlusIcon className="size-4 mr-2" />
-                  {t("add_charge_items")}
-                  <ShortcutBadge actionId="add-a-charge-item" />
-                </Button>
-              )}
+              {!disableCreateChargeItemsSection &&
+                !viewOnly &&
+                account?.results[0] &&
+                isAccountActiveAndBillable(account?.results[0]) && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setIsMultiAddOpen(true)}
+                  >
+                    <PlusIcon className="size-4 mr-2" />
+                    {t("add_charge_items")}
+                    <ShortcutBadge actionId="add-a-charge-item" />
+                  </Button>
+                )}
             </div>
           </div>
         </CardHeader>
@@ -165,21 +172,24 @@ export function ChargeItemsSection({
           sourceUrl={sourceUrl}
         />
       )}
-
-      <AddMultipleChargeItemsSheet
-        open={isMultiAddOpen}
-        onOpenChange={setIsMultiAddOpen}
-        facilityId={facilityId}
-        serviceResourceId={resourceId}
-        patientId={patientId}
-        encounterId={encounterId}
-        serviceResourceType={serviceResourceType}
-        onChargeItemsAdded={() => {
-          queryClient.invalidateQueries({
-            queryKey: ["chargeItems", facilityId, resourceId],
-          });
-        }}
-      />
+      {account?.results[0]?.id && (
+        <AddMultipleChargeItemsSheet
+          open={isMultiAddOpen}
+          onOpenChange={setIsMultiAddOpen}
+          facilityId={facilityId}
+          serviceResourceId={resourceId}
+          patientId={patientId}
+          encounterId={encounterId}
+          serviceResourceType={serviceResourceType}
+          onChargeItemsAdded={() => {
+            queryClient.invalidateQueries({
+              queryKey: ["chargeItems", facilityId, resourceId],
+            });
+          }}
+          resourceSubType={ResourceCategorySubType.other}
+          accountId={account?.results[0]?.id}
+        />
+      )}
     </>
   );
 }

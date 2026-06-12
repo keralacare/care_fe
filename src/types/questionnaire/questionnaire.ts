@@ -1,14 +1,12 @@
 import { Code } from "@/types/base/code/code";
 
 import { Question } from "./question";
-import { QuestionnaireTagModel } from "./tags";
 
 export type SubjectType = "patient" | "encounter";
 
 export type QuestionStatus = "active" | "retired" | "draft";
 
-export interface QuestionnaireDetail {
-  id: string;
+export interface QuestionnaireBase {
   slug: string;
   version?: string;
   code?: Code;
@@ -17,20 +15,20 @@ export interface QuestionnaireDetail {
   description?: string;
   status: QuestionStatus;
   subject_type: SubjectType;
-  tags: QuestionnaireTagModel[];
 }
 
-export interface QuestionnaireCreate extends Omit<
-  QuestionnaireDetail,
-  "id" | "tags"
-> {
+export interface QuestionnaireRead extends QuestionnaireBase {
+  id: string;
+}
+
+export interface QuestionnaireCreate extends QuestionnaireBase {
   organizations: string[];
-  tags: string[];
 }
 
-export interface QuestionnaireForms {
-  count: number;
-  results: QuestionnaireDetail[];
+export type QuestionnaireUpdate = QuestionnaireBase;
+
+export interface QuestionnaireSetOrganizations {
+  organizations: string[];
 }
 
 export const QUESTIONNAIRE_STATUS_COLORS = {

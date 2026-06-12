@@ -1,14 +1,15 @@
 import { Link } from "raviger";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { EncounterActions } from "@/components/Encounter/EncounterActions";
+import TagBadge from "@/components/Tags/TagBadge";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 
 import { getPermissions } from "@/common/Permissions";
-
 import { formatDateTime } from "@/common/utils";
-import TagBadge from "@/components/Tags/TagBadge";
 import { usePermissions } from "@/context/PermissionContext";
 import { cn } from "@/lib/utils";
 import {
@@ -16,32 +17,31 @@ import {
   ENCOUNTER_STATUS_COLORS,
   ENCOUNTER_STATUS_FILTER_COLORS,
   ENCOUNTER_STATUS_ICONS,
-  EncounterRead,
+  EncounterListRead,
 } from "@/types/emr/encounter/encounter";
-import { useState } from "react";
 
 interface TimelineEncounterCardProps {
-  encounter: EncounterRead;
+  encounter: EncounterListRead;
   permissions: string[];
   facilityId?: string;
-  isLast?: boolean;
-  isFirst?: boolean;
+  actions?: React.ReactNode;
 }
 
 export function TimelineEncounterCard({
   encounter,
   permissions,
   facilityId,
+  actions,
 }: TimelineEncounterCardProps) {
   const { t } = useTranslation();
   const { hasPermission } = usePermissions();
-  const { canViewEncounter, canViewPatients } = getPermissions(
+  const { canReadEncounter, canViewPatients } = getPermissions(
     hasPermission,
     permissions,
   );
   const [isHovered, setIsHovered] = useState(false);
 
-  const canAccess = canViewEncounter || canViewPatients;
+  const canAccess = canReadEncounter || canViewPatients;
 
   const StatusIcon = ENCOUNTER_STATUS_ICONS[encounter.status];
 
@@ -76,8 +76,11 @@ export function TimelineEncounterCard({
         onMouseLeave={() => setIsHovered(false)}
       >
         <CardContent className="p-4">
-          <div className="font-semibold text-base mb-2">
-            {t(`encounter_class__${encounter.encounter_class}`)}
+          <div className="flex items-start justify-between gap-2 mb-2">
+            <div className="font-semibold text-base">
+              {t(`encounter_class__${encounter.encounter_class}`)}
+            </div>
+            <EncounterActions encounter={encounter} />
           </div>
           <div className="mb-3 flex items-center gap-2">
             <Badge
@@ -137,7 +140,7 @@ export function TimelineEncounterCard({
           )}
         </CardContent>
         <CardFooter className="p-1">
-          <div className="bg-gray-100 p-2 rounded-b-lg w-full">
+          <div className="flex justify-between bg-gray-100 p-2 rounded-b-lg w-full">
             <Button asChild variant="outline" disabled={!canAccess}>
               <Link
                 href={
@@ -149,6 +152,7 @@ export function TimelineEncounterCard({
                 {t("view_encounter")}
               </Link>
             </Button>
+            {actions}
           </div>
         </CardFooter>
       </Card>

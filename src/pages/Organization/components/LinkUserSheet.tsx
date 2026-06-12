@@ -24,7 +24,10 @@ import UserSelector from "@/components/Common/UserSelector";
 import mutate from "@/Utils/request/mutate";
 import query from "@/Utils/request/query";
 import { formatName } from "@/Utils/utils";
-import { RoleBase } from "@/types/emr/role/role";
+import {
+  RoleBase,
+  getRoleContextForOrganizationType,
+} from "@/types/emr/role/role";
 import organizationApi from "@/types/organization/organizationApi";
 import { UserReadMinimal } from "@/types/user/user";
 import UserApi from "@/types/user/userApi";
@@ -34,6 +37,7 @@ interface Props {
   open: boolean;
   setOpen: (open: boolean) => void;
   preSelectedUsername?: string;
+  isServiceAccount?: boolean;
 }
 
 export default function LinkUserSheet({
@@ -41,6 +45,7 @@ export default function LinkUserSheet({
   open,
   setOpen,
   preSelectedUsername,
+  isServiceAccount = false,
 }: Props) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
@@ -61,6 +66,14 @@ export default function LinkUserSheet({
     }
   }, [preSelectedUser]);
 
+  const { data: organization } = useQuery({
+    queryKey: ["organization", organizationId],
+    queryFn: query(organizationApi.get, {
+      pathParams: { id: organizationId },
+    }),
+    enabled: !!organizationId,
+  });
+
   const { mutate: assignUser } = useMutation({
     mutationFn: (body: { user: string; role: string }) =>
       mutate(organizationApi.assignUser, {
@@ -71,7 +84,7 @@ export default function LinkUserSheet({
       queryClient.invalidateQueries({
         queryKey: ["organizationUsers", organizationId],
       });
-      toast.success("User added to organization successfully");
+      toast.success(t("user_added_to_organization_successfully"));
       setOpen(false);
       setSelectedUser(undefined);
       setSelectedRole(undefined);
@@ -80,7 +93,7 @@ export default function LinkUserSheet({
 
   const handleAddUser = () => {
     if (!selectedUser || !selectedRole) {
-      toast.error("Please select both user and role");
+      toast.error(t("please_select_user_and_role"));
       return;
     }
 
@@ -100,30 +113,45 @@ export default function LinkUserSheet({
       <SheetTrigger asChild>
         <Button variant="primary_gradient">
           <CareIcon icon="l-plus" className="mr-2 size-4" />
-          {t("link_user")}
+          {isServiceAccount ? t("link_service_account") : t("link_user")}
         </Button>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>{t("link_user_to_organization")}</SheetTitle>
+          <SheetTitle>
+            {isServiceAccount
+              ? t("link_service_account_to_organization")
+              : t("link_user_to_organization")}
+          </SheetTitle>
           <SheetDescription>
-            {t("link_user_to_organization_description")}
+            {isServiceAccount
+              ? t("link_service_account_to_organization_description")
+              : t("link_user_to_organization_description")}
           </SheetDescription>
         </SheetHeader>
         <div className="space-y-6 py-4">
           <UserSelector
             selected={selectedUser}
             onChange={handleUserChange}
-            placeholder={t("search_for_a_user")}
-            noOptionsMessage={t("no_users_found")}
+            placeholder={
+              isServiceAccount
+                ? t("search_for_a_service_account")
+                : t("search_for_a_user")
+            }
+            noOptionsMessage={
+              isServiceAccount
+                ? t("no_service_accounts_found")
+                : t("no_users_found")
+            }
             popoverClassName="w-full"
+            isServiceAccount={isServiceAccount}
           />
           {selectedUser && (
             <div className="space-y-4">
               <div className="rounded-lg border border-gray-200 p-4 space-y-4">
                 <div className="flex gap-4 flex-row">
                   <Avatar
-                    name={`${selectedUser.first_name} ${selectedUser.last_name}`}
+                    name={formatName(selectedUser, true)}
                     imageUrl={selectedUser.profile_picture_url}
                     className="size-12"
                   />
@@ -145,7 +173,9 @@ export default function LinkUserSheet({
                   </div>
                   <div>
                     <span className="text-sm text-gray-500">
-                      {t("user_type")}
+                      {isServiceAccount
+                        ? t("service_account_type")
+                        : t("user_type")}
                     </span>
                     <p className="text-sm font-medium">
                       {selectedUser.user_type}
@@ -169,7 +199,14 @@ export default function LinkUserSheet({
                   {t("select_role")}
                 </Label>
                 <div>
-                  <RoleSelect value={selectedRole} onChange={setSelectedRole} />
+                  <RoleSelect
+                    value={selectedRole}
+                    onChange={setSelectedRole}
+                    context={getRoleContextForOrganizationType(
+                      organization?.org_type,
+                    )}
+                    disabled={!organization}
+                  />
                 </div>
               </div>
               <Button

@@ -1,5 +1,6 @@
 import { faker } from "@faker-js/faker";
 import { expect, test, type Page } from "@playwright/test";
+import { expectToast } from "tests/helper/ui";
 
 test.use({ storageState: "tests/.auth/user.json" });
 
@@ -69,11 +70,18 @@ test.describe("Facility Creation", () => {
       .getByRole("textbox", { name: "Facility Name *" })
       .fill(facilityName);
 
-    await page.getByRole("dialog", { name: "Add New Facility" }).click();
     await page
       .getByRole("textbox", { name: "Phone Number *" })
       .fill(phoneNumber);
     await page.getByRole("spinbutton", { name: "PIN Code *" }).fill(pinCode);
+
+    // Select the State in the government organization selector
+    const stateCombobox = page
+      .getByRole("combobox")
+      .filter({ hasText: "Select..." });
+    await stateCombobox.click();
+    await page.getByRole("option").first().click();
+
     await page.getByRole("textbox", { name: "Address *" }).fill(address);
     await page.getByRole("button", { name: "Create Facility" }).click();
 
@@ -116,21 +124,28 @@ test.describe("Facility Creation", () => {
       .getByRole("textbox", { name: "Facility Name *" })
       .fill(facilityName);
     await page.getByRole("textbox", { name: "Description" }).fill(description);
-    await page
-      .getByRole("button", { name: "Select Facility Features" })
-      .click();
+    await page.getByRole("combobox", { name: "Features" }).click();
 
     for (const feature of facilityFeatures) {
       await page
         .getByRole("option", { name: new RegExp(`Select ${feature}`) })
         .click();
     }
+    // Click the Done button to confirm selection
+    await page.getByRole("button", { name: "Done" }).click();
 
-    await page.getByRole("dialog", { name: "Add New Facility" }).click();
     await page
       .getByRole("textbox", { name: "Phone Number *" })
       .fill(phoneNumber);
     await page.getByRole("spinbutton", { name: "PIN Code *" }).fill(pinCode);
+
+    // Select the State in the government organization selector
+    const stateCombobox = page
+      .getByRole("combobox")
+      .filter({ hasText: "Select..." });
+    await stateCombobox.click();
+    await page.getByRole("option").first().click();
+
     await page.getByRole("textbox", { name: "Address *" }).fill(address);
     await page
       .getByRole("combobox")
@@ -156,7 +171,7 @@ test.describe("Facility Creation", () => {
       .fill(facilityName);
     await page.getByRole("link", { name: "View Facility" }).click();
 
-    // Verify facility details
+    // Verify facility details (link navigates to /settings/general)
     await expect(
       page.getByRole("heading", { name: facilityName }),
     ).toBeVisible();
@@ -192,10 +207,10 @@ test.describe("Facility Creation", () => {
       editDialog.getByRole("textbox", { name: "Description" }),
     ).toHaveValue(description);
 
-    // Verify facility features are displayed in the form
-    for (const feature of facilityFeatures) {
-      await expect(editDialog.getByText(feature)).toBeVisible();
-    }
+    // Verify no. of facility features badge is displayed in the form
+    await expect(
+      editDialog.getByText(`${facilityFeatures.length} features selected`),
+    ).toBeVisible();
 
     // Verify phone number (it's displayed with country code)
     await expect(
@@ -279,16 +294,10 @@ test.describe("Facility Creation", () => {
     ).toHaveValue("");
 
     // Verify no facility features are selected
-    const featuresButton = editDialog.getByRole("button", {
+    const featuresButton = editDialog.getByRole("combobox", {
       name: /^(Select Facility Features|Features)$/,
     });
     await expect(featuresButton).toBeVisible();
-
-    // Check that no feature badges are displayed in the form
-    for (const feature of FACILITY_FEATURES) {
-      const featureBadge = editDialog.getByText(feature, { exact: true });
-      await expect(featureBadge).not.toBeVisible();
-    }
   });
 
   test("Validate required fields in facility creation form", async ({
@@ -369,9 +378,7 @@ test.describe("Facility Creation", () => {
     await editDialog.getByRole("button", { name: "Update Facility" }).click();
 
     // Verify success message
-    await expect(
-      page.getByText(/Facility updated successfully|Updated successfully/i),
-    ).toBeVisible();
+    await expectToast(page, /Facility updated successfully/i);
 
     // Wait for dialog to close
     await expect(editDialog).not.toBeVisible();
@@ -451,9 +458,7 @@ test.describe("Facility Creation", () => {
     await updateButton.click();
 
     // Verify success message
-    await expect(
-      page.getByText(/Facility updated successfully|Updated successfully/i),
-    ).toBeVisible();
+    await expectToast(page, /Facility updated successfully/i);
 
     // Wait for dialog to close
     await expect(editDialog).not.toBeVisible();

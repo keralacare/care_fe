@@ -4,6 +4,7 @@ import OrganizationIndex from "@/pages/Organization/OrganizationIndex";
 import OrganizationPatients from "@/pages/Organization/OrganizationPatients";
 import OrganizationUsers from "@/pages/Organization/OrganizationUsers";
 import OrganizationView from "@/pages/Organization/OrganizationView";
+import ResponsibilityLanding from "@/pages/Organization/ResponsibilityLanding";
 
 const OrganizationRoutes: AppRoutes = {
   "/organization": () => <OrganizationIndex />,
@@ -12,6 +13,9 @@ const OrganizationRoutes: AppRoutes = {
   "/organization/:id/patients": ({ id }) => <OrganizationPatients id={id} />,
   "/organization/:id/facilities": ({ id }) => (
     <OrganizationFacilities id={id} />
+  ),
+  "/organization/:id/service_accounts": ({ id }) => (
+    <OrganizationUsers id={id} isServiceAccount={true} />
   ),
   "/organization/:navOrganizationId/children/:id": ({
     navOrganizationId,
@@ -30,6 +34,26 @@ const OrganizationRoutes: AppRoutes = {
     id,
   }) => (
     <OrganizationFacilities id={id} navOrganizationId={navOrganizationId} />
+  ),
+  "/organization/:navOrganizationId/children/:id/service_accounts": ({
+    navOrganizationId,
+    id,
+  }) => (
+    <OrganizationUsers
+      id={id}
+      isServiceAccount={true}
+      navOrganizationId={navOrganizationId}
+    />
+  ),
+
+  // Responsibility routes (role orgs with scoped context)
+  // Landing page checks permissions: admins see users, members see patients
+  "/responsibilities/:id": ({ id }) => <ResponsibilityLanding id={id} />,
+  "/responsibilities/:id/users": ({ id }) => (
+    <OrganizationUsers id={id} routeContext="responsibility" />
+  ),
+  "/responsibilities/:id/patients": ({ id }) => (
+    <OrganizationPatients id={id} routeContext="responsibility" />
   ),
 };
 

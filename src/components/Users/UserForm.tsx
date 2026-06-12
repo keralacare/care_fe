@@ -38,6 +38,7 @@ import {
   ValidationHelper,
   validateRule,
 } from "@/components/Users/UserFormValidations";
+import { RoleOrgAccessEditor } from "@/components/Users/UserRoleOrganizationAccess";
 
 import { GENDERS, GENDER_TYPES, NAME_PREFIXES } from "@/common/constants";
 
@@ -51,15 +52,20 @@ import { UserCreate, UserReadMinimal, UserUpdate } from "@/types/user/user";
 import userApi from "@/types/user/userApi";
 
 interface Props {
-  onSubmitSuccess?: (user: UserReadMinimal) => void;
+  onSubmitSuccess?: (
+    user: UserReadMinimal,
+    meta?: { roleOrgIds: string[] },
+  ) => void;
   existingUsername?: string;
   organizationId?: string;
+  isServiceAccount?: boolean;
 }
 
 export default function UserForm({
   onSubmitSuccess,
   existingUsername,
   organizationId,
+  isServiceAccount = false,
 }: Props) {
   const { t } = useTranslation();
   const isEditMode = !!existingUsername;
@@ -67,16 +73,13 @@ export default function UserForm({
   const [selectedLevels, setSelectedLevels] = useState<Organization[]>([]);
   const [isPasswordFieldFocused, setIsPasswordFieldFocused] = useState(false);
 
+  const roleOrgSchema = z.object({
+    organization: z.string().min(1, t("select_role_organization")),
+    role: z.string().min(1, t("please_select_role")),
+  });
+
   const userFormSchema = z
     .object({
-      user_type: z.enum([
-        "doctor",
-        "nurse",
-        "staff",
-        "volunteer",
-        "administrator",
-      ]),
-
       username: isEditMode
         ? z.string().optional()
         : z
@@ -101,16 +104,19 @@ export default function UserForm({
       gender: z.enum(GENDERS, { required_error: t("gender_is_required") }),
       prefix: z.string().optional(),
       suffix: z.string().optional(),
-      /* TODO: Userbase doesn't currently support these, neither does BE
-      but we will probably need these */
-      /* qualification: z.string().optional(),
-      doctor_experience_commenced_on: z.string().optional(),
-      doctor_medical_council_registration: z.string().optional(), */
       geo_organization: z.string().optional(),
+      // role_orgs only used in create mode
+      role_orgs: isEditMode
+        ? z.array(roleOrgSchema).optional()
+        : z.array(roleOrgSchema).default([]),
     })
     .refine(
       (data) => {
-        if (!isEditMode && data.password_setup_method === "immediate") {
+        if (
+          !isEditMode &&
+          data.password_setup_method === "immediate" &&
+          !isServiceAccount
+        ) {
           return !!data.password;
         }
         return true;
@@ -156,6 +162,19 @@ export default function UserForm({
         message: t("new_password_validation"),
         path: ["password"],
       },
+    )
+    .refine(
+      (data) => {
+        if (isEditMode || !data.role_orgs?.length) return true;
+        return (
+          new Set(data.role_orgs.map((entry) => entry.organization)).size ===
+          data.role_orgs.length
+        );
+      },
+      {
+        message: t("each_role_organization_must_be_unique"),
+        path: ["role_orgs"],
+      },
     );
 
   type UserFormValues = z.infer<typeof userFormSchema>;
@@ -163,7 +182,6 @@ export default function UserForm({
   const form = useForm({
     resolver: zodResolver(userFormSchema),
     defaultValues: {
-      user_type: "nurse",
       username: "",
       password: "",
       c_password: "",
@@ -174,6 +192,7 @@ export default function UserForm({
       prefix: "",
       suffix: "",
       password_setup_method: "immediate",
+      role_orgs: [],
     },
   });
 
@@ -187,13 +206,13 @@ export default function UserForm({
   useEffect(() => {
     if (userData && isEditMode) {
       const formData: Partial<UserFormValues> = {
-        user_type: userData.user_type,
         first_name: userData.first_name,
         last_name: userData.last_name,
         phone_number: userData.phone_number || "",
         gender: userData.gender || undefined,
         prefix: userData.prefix || "",
         suffix: userData.suffix || "",
+        geo_organization: userData.geo_organization?.id,
       };
       form.reset(formData);
     }
@@ -201,7 +220,6 @@ export default function UserForm({
 
   const [isUsernameFieldFocused, setIsUsernameFieldFocused] = useState(false);
 
-  //const userType = form.watch("user_type");
   const usernameInput = form.watch("username") || "";
   const phoneNumber = form.watch("phone_number");
 
@@ -250,50 +268,46 @@ export default function UserForm({
     }
   };
 
-  const { mutate: createUser, isPending: createPending } = useMutation({
+  const { mutateAsync: createUser, isPending: createPending } = useMutation({
     mutationKey: ["create_user"],
     mutationFn: mutate(userApi.create),
-    onSuccess: (resp: UserReadMinimal) => {
-      toast.success(t("user_added_successfully"));
-      queryClient.invalidateQueries({
-        queryKey: ["facilityUsers"],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["organizationUsers"],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["facilityOrganizationUsers"],
-      });
-      onSubmitSuccess?.(resp);
-    },
-    onError: (error) => {
-      toast.error(error?.message ?? t("user_add_error"));
-    },
   });
 
-  const { mutate: updateUser, isPending: updatePending } = useMutation({
+  const { mutateAsync: updateUser, isPending: updatePending } = useMutation({
     mutationKey: ["update_user"],
     mutationFn: mutate(userApi.update, {
       pathParams: { username: existingUsername! },
     }),
-    onSuccess: (resp: UserReadMinimal) => {
-      toast.success(t("user_updated_successfully"));
-      [
-        ["facilityUsers"],
-        ["organizationUsers"],
-        ["facilityOrganizationUsers"],
-        ["getUserDetails", resp.username],
-        ["currentUser"],
-      ].forEach((key) => queryClient.invalidateQueries({ queryKey: key }));
-      onSubmitSuccess?.(resp);
-    },
   });
+
+  const invalidateUserQueries = (username: string) => {
+    [
+      ["facilityUsers"],
+      ["organizationUsers"],
+      ["facilityOrganizationUsers"],
+      ["getUserDetails", username],
+      ["user", username],
+      ["currentUser"],
+      ["organization"],
+    ].forEach((key) => queryClient.invalidateQueries({ queryKey: key }));
+  };
+
+  const handleRequestErrors = (error: unknown) => {
+    const errorData = (error as { cause?: { errors?: { msg?: string[] } } })
+      ?.cause;
+    const messages = errorData?.errors?.msg;
+
+    if (messages?.length) {
+      messages.forEach((message) => toast.error(message));
+      return;
+    }
+
+    toast.error(t("something_went_wrong"));
+  };
 
   const onSubmit = async (data: UserFormValues) => {
     if (isEditMode) {
       const updatePayload: UserUpdate = {
-        user_type: data.user_type,
-        username: data.username || existingUsername!,
         first_name: data.first_name,
         last_name: data.last_name,
         phone_number: data.phone_number,
@@ -302,13 +316,25 @@ export default function UserForm({
         gender: data.gender,
         geo_organization: data.geo_organization || undefined,
       };
-      updateUser(updatePayload);
+
+      try {
+        const updatedUser = await updateUser(updatePayload);
+        invalidateUserQueries(updatedUser.username);
+        toast.success(t("user_updated_successfully"));
+        onSubmitSuccess?.(updatedUser);
+      } catch (error) {
+        handleRequestErrors(error);
+      }
     } else {
+      const roleOrganizations = (data.role_orgs || []).map((membership) => ({
+        organization: membership.organization,
+        role: membership.role,
+      }));
+
       const createPayload: UserCreate = {
-        user_type: data.user_type!,
         username: data.username!,
         password:
-          data.password_setup_method === "immediate"
+          data.password_setup_method === "immediate" && !isServiceAccount
             ? data.password!
             : undefined,
         first_name: data.first_name,
@@ -319,8 +345,26 @@ export default function UserForm({
         suffix: data.suffix || "",
         gender: data.gender,
         geo_organization: data.geo_organization || undefined,
+        is_service_account: isServiceAccount,
+        role_orgs: roleOrganizations,
       };
-      createUser(createPayload);
+
+      try {
+        const createdUser = await createUser(createPayload);
+        invalidateUserQueries(createdUser.username);
+        toast.success(
+          isServiceAccount
+            ? t("service_account_added_successfully")
+            : t("user_added_successfully"),
+        );
+        onSubmitSuccess?.(createdUser, {
+          roleOrgIds: roleOrganizations.map(
+            (membership) => membership.organization,
+          ),
+        });
+      } catch (error) {
+        handleRequestErrors(error);
+      }
     }
   };
 
@@ -340,47 +384,38 @@ export default function UserForm({
 
   useEffect(() => {
     const levels: Organization[] = [];
-    if (isEditMode && userData && "geo_organization" in userData) {
-      levels.push(userData.geo_organization as Organization);
+    if (isEditMode && userData?.geo_organization) {
+      levels.push(userData.geo_organization);
       setSelectedLevels(levels);
     }
-  }, [org, userData, isEditMode]);
+  }, [userData, isEditMode]);
+
+  useEffect(() => {
+    if (isEditMode || org?.org_type !== "role") {
+      return;
+    }
+
+    if ((form.getValues("role_orgs") ?? []).length > 0) {
+      return;
+    }
+
+    form.setValue(
+      "role_orgs",
+      [
+        {
+          organization: org.id,
+          role: "",
+        },
+      ],
+      { shouldDirty: false },
+    );
+  }, [form, isEditMode, org]);
+
+  const isSubmitting = updatePending || createPending;
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        {!isEditMode && (
-          <FormField
-            control={form.control}
-            name="user_type"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel aria-required>{t("user_type")}</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger ref={field.ref}>
-                      <SelectValue placeholder={t("select_user_type")} />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="doctor">{t("doctor")}</SelectItem>
-                    <SelectItem value="nurse">{t("nurse")}</SelectItem>
-                    <SelectItem value="staff">{t("staff")}</SelectItem>
-                    <SelectItem value="volunteer">{t("volunteer")}</SelectItem>
-                    <SelectItem value="administrator">
-                      {t("administrator")}
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        )}
-
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 items-start">
           <FormField
             control={form.control}
@@ -516,15 +551,89 @@ export default function UserForm({
               )}
             />
 
-            {!isEditMode && (
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel aria-required>{t("email")}</FormLabel>
+                  <FormControl>
+                    <Input type="email" placeholder={t("email")} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {!isServiceAccount && (
               <FormField
                 control={form.control}
-                name="email"
+                name="password_setup_method"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel aria-required>{t("email")}</FormLabel>
+                  <FormItem className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                    <FormLabel className="text-base font-medium mb-3 block">
+                      {t("password_setup_method")}
+                    </FormLabel>
                     <FormControl>
-                      <Input type="email" placeholder={t("email")} {...field} />
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="space-y-3"
+                      >
+                        <div
+                          className={cn(
+                            "flex items-start space-x-3 rounded-md border p-3",
+                            field.value === "immediate"
+                              ? "bg-white border-primary"
+                              : "bg-transparent  border-gray-200",
+                          )}
+                        >
+                          <RadioGroupItem
+                            value="immediate"
+                            id="immediate"
+                            className="mt-1"
+                          />
+                          <div className="space-y-1.5">
+                            <Label
+                              htmlFor="immediate"
+                              className="text-base font-medium cursor-pointer flex items-center"
+                            >
+                              <Lock className="size-4" />
+                              {t("set_password_now")}
+                            </Label>
+                            <p className="text-sm text-gray-500">
+                              {t("set_password_now_description")}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div
+                          className={cn(
+                            "flex items-start space-x-3 rounded-md border p-3",
+                            field.value === "email"
+                              ? "bg-white border-primary"
+                              : "bg-transparent  border-gray-200",
+                          )}
+                        >
+                          <RadioGroupItem
+                            value="email"
+                            id="email"
+                            className="mt-1"
+                          />
+                          <div className="space-y-1.5">
+                            <Label
+                              htmlFor="email"
+                              className="text-base font-medium cursor-pointer flex items-center"
+                            >
+                              <Mail className="size-4" />
+                              {t("send_email_invitation")}
+                            </Label>
+                            <p className="text-sm text-gray-500">
+                              {t("send_email_invitation_description")}
+                            </p>
+                          </div>
+                        </div>
+                      </RadioGroup>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -532,157 +641,84 @@ export default function UserForm({
               />
             )}
 
-            <FormField
-              control={form.control}
-              name="password_setup_method"
-              render={({ field }) => (
-                <FormItem className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                  <FormLabel className="text-base font-medium mb-3 block">
-                    {t("password_setup_method")}
-                  </FormLabel>
-                  <FormControl>
-                    <RadioGroup
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      className="space-y-3"
-                    >
-                      <div
-                        className={cn(
-                          "flex items-start space-x-3 rounded-md border p-3",
-                          field.value === "immediate"
-                            ? "bg-white border-primary"
-                            : "bg-transparent  border-gray-200",
-                        )}
-                      >
-                        <RadioGroupItem
-                          value="immediate"
-                          id="immediate"
-                          className="mt-1"
-                        />
-                        <div className="space-y-1.5">
-                          <Label
-                            htmlFor="immediate"
-                            className="text-base font-medium cursor-pointer flex items-center"
-                          >
-                            <Lock className="size-4" />
-                            {t("set_password_now")}
-                          </Label>
-                          <p className="text-sm text-gray-500">
-                            {t("set_password_now_description")}
-                          </p>
-                        </div>
-                      </div>
+            {form.watch("password_setup_method") === "immediate" &&
+              !isServiceAccount && (
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 items-start">
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel aria-required>{t("password")}</FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <PasswordInput
+                              placeholder={t("password")}
+                              {...field}
+                              onFocus={() => setIsPasswordFieldFocused(true)}
+                              onBlur={() => setIsPasswordFieldFocused(false)}
+                            />
+                          </div>
+                        </FormControl>
 
-                      <div
-                        className={cn(
-                          "flex items-start space-x-3 rounded-md border p-3",
-                          field.value === "email"
-                            ? "bg-white border-primary"
-                            : "bg-transparent  border-gray-200",
-                        )}
-                      >
-                        <RadioGroupItem
-                          value="email"
-                          id="email"
-                          className="mt-1"
-                        />
-                        <div className="space-y-1.5">
-                          <Label
-                            htmlFor="email"
-                            className="text-base font-medium cursor-pointer flex items-center"
-                          >
-                            <Mail className="size-4" />
-                            {t("send_email_invitation")}
-                          </Label>
-                          <p className="text-sm text-gray-500">
-                            {t("send_email_invitation_description")}
-                          </p>
-                        </div>
-                      </div>
-                    </RadioGroup>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {form.watch("password_setup_method") === "immediate" && (
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 items-start">
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel aria-required>{t("password")}</FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <PasswordInput
-                            placeholder={t("password")}
-                            {...field}
-                            onFocus={() => setIsPasswordFieldFocused(true)}
-                            onBlur={() => setIsPasswordFieldFocused(false)}
+                        <div
+                          className={cn(
+                            "text-small pl-2 text-secondary-500",
+                            !isPasswordFieldFocused && "hidden",
+                          )}
+                          aria-live="polite"
+                        >
+                          <ValidationHelper
+                            isInputEmpty={!field.value}
+                            successMessage={t("password_success_message")}
+                            validations={[
+                              {
+                                description: "password_length_validation",
+                                fulfilled: (field.value || "").length >= 8,
+                              },
+                              {
+                                description: "password_lowercase_validation",
+                                fulfilled: /[a-z]/.test(field.value || ""),
+                              },
+                              {
+                                description: "password_uppercase_validation",
+                                fulfilled: /[A-Z]/.test(field.value || ""),
+                              },
+                              {
+                                description: "password_number_validation",
+                                fulfilled: /\d/.test(field.value || ""),
+                              },
+                            ]}
                           />
                         </div>
-                      </FormControl>
 
-                      <div
-                        className={cn(
-                          "text-small pl-2 text-secondary-500",
-                          !isPasswordFieldFocused && "hidden",
-                        )}
-                        aria-live="polite"
-                      >
-                        <ValidationHelper
-                          isInputEmpty={!field.value}
-                          successMessage={t("password_success_message")}
-                          validations={[
-                            {
-                              description: "password_length_validation",
-                              fulfilled: (field.value || "").length >= 8,
-                            },
-                            {
-                              description: "password_lowercase_validation",
-                              fulfilled: /[a-z]/.test(field.value || ""),
-                            },
-                            {
-                              description: "password_uppercase_validation",
-                              fulfilled: /[A-Z]/.test(field.value || ""),
-                            },
-                            {
-                              description: "password_number_validation",
-                              fulfilled: /\d/.test(field.value || ""),
-                            },
-                          ]}
-                        />
-                      </div>
+                        <div className={cn(isPasswordFieldFocused && "hidden")}>
+                          <FormMessage />
+                        </div>
+                      </FormItem>
+                    )}
+                  />
 
-                      <div className={cn(isPasswordFieldFocused && "hidden")}>
+                  <FormField
+                    control={form.control}
+                    name="c_password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel aria-required>
+                          {t("confirm_password")}
+                        </FormLabel>
+                        <FormControl>
+                          <PasswordInput
+                            placeholder={t("confirm_password")}
+                            {...field}
+                          />
+                        </FormControl>
                         <FormMessage />
-                      </div>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="c_password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel aria-required>
-                        {t("confirm_password")}
-                      </FormLabel>
-                      <FormControl>
-                        <PasswordInput
-                          placeholder={t("confirm_password")}
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            )}
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              )}
           </>
         )}
 
@@ -734,19 +770,23 @@ export default function UserForm({
           />
         </div>
 
-        {/* TODO: Userbase doesn't currently support these, neither does BE
-        but we will probably need these */}
-        {/* {(userType === "doctor" || userType === "nurse") && (
+        {/* Role org assignments — only shown in create mode */}
+        {!isEditMode && (
           <FormField
             control={form.control}
-            name="qualification"
+            name="role_orgs"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("qualification")}</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder={t("qualification")}
-                    {...field}
+                  <RoleOrgAccessEditor
+                    value={field.value || []}
+                    onChange={(value) =>
+                      form.setValue("role_orgs", value, {
+                        shouldDirty: true,
+                        shouldValidate: true,
+                      })
+                    }
+                    disabled={isLoadingUser || isSubmitting}
                   />
                 </FormControl>
                 <FormMessage />
@@ -755,46 +795,6 @@ export default function UserForm({
           />
         )}
 
-        {userType === "doctor" && (
-          <>
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="doctor_experience_commenced_on"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t("years_of_experience")}</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        placeholder={t("years_of_experience")}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="doctor_medical_council_registration"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t("medical_council_registration")}</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder={t("medical_council_registration")}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          </>
-        )} */}
         <FormField
           control={form.control}
           name="geo_organization"
@@ -822,14 +822,17 @@ export default function UserForm({
           type="submit"
           className="w-full"
           variant="primary"
-          disabled={
-            isLoadingUser ||
-            !form.formState.isDirty ||
-            updatePending ||
-            createPending
-          }
+          disabled={isLoadingUser || !form.formState.isDirty || isSubmitting}
         >
-          {isEditMode ? t("update_user") : t("create_user")}
+          {isSubmitting
+            ? isEditMode
+              ? t("updating")
+              : t("creating")
+            : isEditMode
+              ? t("update_user")
+              : isServiceAccount
+                ? t("create_service_account")
+                : t("create_user")}
         </Button>
       </form>
     </Form>

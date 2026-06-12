@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -22,8 +22,12 @@ import { UserStatusIndicator } from "@/components/Users/UserListAndCard";
 import useAuthUser from "@/hooks/useAuthUser";
 
 import mutate from "@/Utils/request/mutate";
+import query from "@/Utils/request/query";
 import { formatName } from "@/Utils/utils";
-import { RoleBase } from "@/types/emr/role/role";
+import {
+  RoleBase,
+  getRoleContextForOrganizationType,
+} from "@/types/emr/role/role";
 import { OrganizationUserRole } from "@/types/organization/organization";
 import organizationApi from "@/types/organization/organizationApi";
 
@@ -47,6 +51,14 @@ export default function EditUserRoleSheet({
   const [showRemoveDialog, setShowRemoveDialog] = useState(false);
   const authUser = useAuthUser();
   const { t } = useTranslation();
+
+  const { data: organization } = useQuery({
+    queryKey: ["organization", organizationId],
+    queryFn: query(organizationApi.get, {
+      pathParams: { id: organizationId },
+    }),
+    enabled: !!organizationId,
+  });
 
   const { mutate: updateRole } = useMutation({
     mutationFn: (body: { user: string; role: string }) =>
@@ -125,7 +137,7 @@ export default function EditUserRoleSheet({
             <div className="rounded-lg border border-gray-200 p-4 space-y-4">
               <div className="flex items-start gap-4">
                 <Avatar
-                  name={`${userRole.user.first_name} ${userRole.user.last_name}`}
+                  name={formatName(userRole.user, true)}
                   className="size-12"
                   imageUrl={userRole.user.profile_picture_url}
                 />
@@ -163,7 +175,14 @@ export default function EditUserRoleSheet({
                 {t("select_new_role")}
               </Label>
               <div>
-                <RoleSelect value={selectedRole} onChange={setSelectedRole} />
+                <RoleSelect
+                  value={selectedRole}
+                  onChange={setSelectedRole}
+                  context={getRoleContextForOrganizationType(
+                    organization?.org_type,
+                  )}
+                  disabled={!organization}
+                />
               </div>
             </div>
 

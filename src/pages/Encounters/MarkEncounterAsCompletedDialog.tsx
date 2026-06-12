@@ -1,7 +1,5 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 
 import {
   AlertDialog,
@@ -15,28 +13,25 @@ import {
 } from "@/components/ui/alert-dialog";
 import { buttonVariants } from "@/components/ui/button";
 
+import { useEncounterProgressController } from "@/pages/Encounters/utils/useEncounterProgressController";
 import { PLUGIN_Component } from "@/PluginEngine";
-import mutate from "@/Utils/request/mutate";
-import { useEncounter } from "@/pages/Encounters/utils/EncounterProvider";
-import { EncounterStatus } from "@/types/emr/encounter/encounter";
-import encounterApi from "@/types/emr/encounter/encounterApi";
+import { EncounterRead } from "@/types/emr/encounter/encounter";
+import { ShortcutBadge } from "@/Utils/keyboardShortcutComponents";
+import { AlertTriangleIcon } from "lucide-react";
 
-export function MarkEncounterAsCompletedDialog(
-  props: React.ComponentProps<typeof AlertDialog>,
-) {
+export function MarkEncounterAsCompletedDialog({
+  encounter,
+  completeEverythingToMark,
+  ...props
+}: {
+  encounter: EncounterRead;
+  completeEverythingToMark?: boolean;
+} & React.ComponentProps<typeof AlertDialog>) {
   const { t } = useTranslation();
-  const queryClient = useQueryClient();
-  const { selectedEncounter: encounter } = useEncounter();
-
-  const { mutate: updateEncounter } = useMutation({
-    mutationFn: mutate(encounterApi.update, {
-      pathParams: { id: encounter?.id || "" },
-    }),
-    onSuccess: () => {
-      toast.success(t("encounter_marked_as_complete"));
-      queryClient.invalidateQueries({ queryKey: ["encounter", encounter?.id] });
-    },
-  });
+  const { completeEncounter, completeEverything } =
+    useEncounterProgressController({
+      encounter: encounter,
+    });
 
   if (!encounter) return null;
 
@@ -45,8 +40,16 @@ export function MarkEncounterAsCompletedDialog(
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{t("mark_as_complete")}</AlertDialogTitle>
-          <AlertDialogDescription>
-            {t("mark_encounter_as_complete_confirmation")}
+          <AlertDialogDescription className="flex flex-col gap-2">
+            <span>{t("mark_encounter_as_complete_confirmation")}</span>
+            {completeEverythingToMark && (
+              <div className="bg-yellow-50 flex gap-2 items-center justify-start rounded-md p-1">
+                <AlertTriangleIcon className="text-yellow-500 size-4" />
+                <span className="block text-sm text-yellow-900">
+                  {t("mark_everything_as_complete_description")}
+                </span>
+              </div>
+            )}
           </AlertDialogDescription>
         </AlertDialogHeader>
 
@@ -60,26 +63,15 @@ export function MarkEncounterAsCompletedDialog(
           <AlertDialogAction
             className={buttonVariants({ variant: "primary" })}
             onClick={() => {
-              updateEncounter({
-                ...encounter,
-                status: EncounterStatus.COMPLETED,
-                patient: encounter.patient.id,
-                encounter_class: encounter.encounter_class,
-                period: {
-                  start: encounter.period.start,
-                  end: encounter.period.end
-                    ? encounter.period.end
-                    : new Date().toISOString(),
-                },
-                hospitalization: encounter.hospitalization,
-                priority: encounter.priority,
-                external_identifier: encounter.external_identifier,
-                facility: encounter.facility.id,
-                discharge_summary_advice: encounter.discharge_summary_advice,
-              });
+              if (completeEverythingToMark) {
+                completeEverything();
+              } else {
+                completeEncounter();
+              }
             }}
           >
             {t("mark_as_complete")}
+            <ShortcutBadge actionId="enter-action" />
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

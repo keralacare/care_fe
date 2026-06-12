@@ -11,6 +11,7 @@ import type {
 } from "@/types/questionnaire/form";
 import type { EnableWhen, Question } from "@/types/questionnaire/question";
 
+import { QuestionDescription } from "@/components/Questionnaire/QuestionDescription";
 import { QuestionInput } from "./QuestionInput";
 
 interface QuestionGroupProps {
@@ -29,6 +30,8 @@ interface QuestionGroupProps {
   facilityId?: string;
   patientId: string;
   isSubQuestion?: boolean;
+  questionnaireId?: string;
+  questionnaireSlug?: string;
 }
 
 export function isQuestionEnabled(
@@ -111,6 +114,8 @@ export const QuestionGroup = memo(function QuestionGroup({
   facilityId,
   patientId,
   isSubQuestion = false,
+  questionnaireId,
+  questionnaireSlug,
 }: QuestionGroupProps) {
   const isEnabled = isQuestionEnabled(question, questionnaireResponses);
 
@@ -149,6 +154,8 @@ export const QuestionGroup = memo(function QuestionGroup({
         facilityId={facilityId}
         patientId={patientId}
         isSubQuestion={isSubQuestion}
+        questionnaireId={questionnaireId}
+        questionnaireSlug={questionnaireSlug}
       />
     );
   }
@@ -170,9 +177,7 @@ export const QuestionGroup = memo(function QuestionGroup({
             groupLabel
             isSubQuestion={isSubQuestion}
           />
-          {question.description && (
-            <p className="text-sm text-gray-500">{question.description}</p>
-          )}
+          <QuestionDescription question={question} />
         </div>
       )}
       <div
@@ -196,6 +201,8 @@ export const QuestionGroup = memo(function QuestionGroup({
             activeGroupId={activeGroupId}
             patientId={patientId}
             isSubQuestion={true}
+            questionnaireId={questionnaireId}
+            questionnaireSlug={questionnaireSlug}
           />
         ))}
       </div>

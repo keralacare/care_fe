@@ -1,4 +1,11 @@
-import { ChevronDown, Plus, Search, Trash2, X } from "lucide-react";
+import {
+  ChevronDown,
+  ExternalLinkIcon,
+  Plus,
+  Search,
+  Trash2,
+  X,
+} from "lucide-react";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 
@@ -27,10 +34,13 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import useBreakpoints from "@/hooks/useBreakpoints";
+import { cn } from "@/lib/utils";
+import { Link } from "raviger";
 
 type RequirementItem = {
   value: string;
   label: string;
+  link?: string;
   details: {
     label: string;
     value?: string | undefined;
@@ -48,41 +58,55 @@ interface RequirementsSelectorProps {
   onSearch?: (query: string) => void;
   customSelector?: React.ReactNode;
   canCreate?: boolean;
-  createForm?: (onSuccess: () => void) => React.ReactNode;
+  createForm?: (onSuccess: () => void, onCancel: () => void) => React.ReactNode;
   allowDuplicate?: boolean;
+  triggerBtnClassName?: string;
 }
 
 function SelectedItemCard({
   title,
+  link,
   details,
   onRemove,
 }: {
   title: string;
+  link?: string;
   details: { label: string; value?: string | undefined }[];
   onRemove: () => void;
 }) {
   return (
-    <div className="w-full relative flex flex-col rounded-sm border border-gray-200 bg-white px-2 py-1">
+    <div className="w-full flex flex-row justify-between rounded-sm border border-gray-200 bg-white px-2 py-1">
+      <div className="flex flex-col gap-1 grow-1 self-center">
+        <div className="flex items-center gap-1">
+          <p className="my-px font-medium text-sm text-gray-900">{title}</p>
+          {link && (
+            <Link href={link} basePath="/" className="text-gray-900">
+              <ExternalLinkIcon className="size-3" />
+            </Link>
+          )}
+        </div>
+        {details.length > 0 && (
+          <div className="grid grid-cols-1 gap-1 md:grid-cols-2">
+            {details.map(({ label, value }, index) => (
+              <div key={index} className="flex text-sm">
+                <span className="text-gray-500">{label}: </span>
+                <span className="ml-1 text-gray-900">{value}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
       <Button
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
           onRemove();
         }}
-        className="absolute right-2 top-0 rounded-full p-1 cursor-pointer"
+        className="p-0! py-0! cursor-pointer hover:bg-transparent"
         variant="ghost"
       >
         <Trash2 className="size-4 text-gray-500" />
       </Button>
-      <p className="my-px font-medium text-sm text-gray-900">{title}</p>
-      <div className="grid grid-cols-1 gap-1 md:grid-cols-2">
-        {details.map(({ label, value }, index) => (
-          <div key={index} className="flex text-sm">
-            <span className="text-gray-500">{label}: </span>
-            <span className="ml-1 text-gray-900">{value}</span>
-          </div>
-        ))}
-      </div>
     </div>
   );
 }
@@ -123,7 +147,7 @@ interface RequirementsContentProps {
   canCreate?: boolean;
   isCreateSheetOpen: boolean;
   setIsCreateSheetOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  createForm?: (onSuccess: () => void) => React.ReactNode;
+  createForm?: (onSuccess: () => void, onCancel: () => void) => React.ReactNode;
   allowDuplicate?: boolean;
   removeItem: (index: number) => void;
   addOption: (option: RequirementItem) => void;
@@ -180,7 +204,10 @@ function RequirementsContent({
               className="flex h-full w-full flex-col overflow-y-auto md:max-w-[600px] lg:max-w-[800px]"
             >
               <div className="flex-1 overflow-y-auto py-6">
-                {createForm?.(() => setIsCreateSheetOpen(false))}
+                {createForm?.(
+                  () => setIsCreateSheetOpen(false),
+                  () => setIsCreateSheetOpen(false),
+                )}
               </div>
             </SheetContent>
           </Sheet>
@@ -265,6 +292,7 @@ export default function RequirementsSelector({
   canCreate,
   createForm,
   allowDuplicate = false,
+  triggerBtnClassName,
 }: RequirementsSelectorProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [isCreateSheetOpen, setIsCreateSheetOpen] = React.useState(false);
@@ -293,7 +321,7 @@ export default function RequirementsSelector({
       variant="outline"
       role="combobox"
       aria-expanded={isOpen}
-      className="w-full justify-between"
+      className={cn("w-full justify-between", triggerBtnClassName)}
     >
       <div className="flex items-center gap-2 truncate">
         {value.length === 0 ? (
@@ -320,6 +348,7 @@ export default function RequirementsSelector({
               <SelectedItemCard
                 key={`${item.value}-${index}`}
                 title={item.label}
+                link={item.link}
                 details={item.details || []}
                 onRemove={() => removeItem(index)}
               />
@@ -364,6 +393,7 @@ export default function RequirementsSelector({
               <SelectedItemCard
                 key={`${item.value}-${index}`}
                 title={item.label}
+                link={item.link}
                 details={item.details || []}
                 onRemove={() => removeItem(index)}
               />

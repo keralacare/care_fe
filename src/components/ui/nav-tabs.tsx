@@ -16,12 +16,14 @@ import PageTitle from "@/components/Common/PageHeadTitle";
 
 import { ShortcutBadge } from "@/Utils/keyboardShortcutComponents";
 import { entriesOf, keysOf } from "@/Utils/utils";
+import { useEffect } from "react";
 
 interface NavTabDefinition {
   label: string;
   component: React.ReactNode;
   shortcutId?: string;
   labelSuffix?: React.ReactNode;
+  visible?: boolean;
 }
 
 interface Props<TabKey extends string> {
@@ -33,6 +35,7 @@ interface Props<TabKey extends string> {
   showMoreAfterIndex?: number;
   tabContentClassName?: string;
   enableIndexShortcut?: boolean;
+  alwaysShowShortcut?: boolean;
 }
 
 const getTabsToShowAndShowMore = <TabKey extends string>(
@@ -71,16 +74,24 @@ export const NavTabs = <TabKey extends string>({
   tabTriggerClassName,
   showMoreAfterIndex,
   enableIndexShortcut = false,
+  alwaysShowShortcut = false,
   ...props
 }: Props<TabKey> & React.ComponentProps<typeof Tabs>) => {
   const { t } = useTranslation();
 
-  const allTabKeys = keysOf(tabs);
+  const allTabKeys = keysOf(tabs).filter((key) => tabs[key].visible !== false);
   const { visibleTabs, showMoreTabs } = getTabsToShowAndShowMore(
     allTabKeys,
     currentTab,
     showMoreAfterIndex,
   );
+
+  useEffect(() => {
+    // escape from currentTab if it's visible is false
+    if (currentTab && tabs[currentTab].visible === false) {
+      onTabChange(allTabKeys[0]);
+    }
+  }, [currentTab, allTabKeys, tabs, onTabChange]);
 
   return (
     <Tabs
@@ -101,12 +112,16 @@ export const NavTabs = <TabKey extends string>({
           >
             {tabs[option].label}
             {tabs[option].labelSuffix}
-            {tabs[option].shortcutId && (
-              <ShortcutBadge actionId={tabs[option].shortcutId}></ShortcutBadge>
+            {tabs[option].shortcutId && !enableIndexShortcut && (
+              <ShortcutBadge
+                actionId={tabs[option].shortcutId}
+                alwaysShow={alwaysShowShortcut}
+              ></ShortcutBadge>
             )}
             {enableIndexShortcut && (
               <ShortcutBadge
                 actionId={`tab-index-${index + 1}`}
+                alwaysShow={alwaysShowShortcut}
               ></ShortcutBadge>
             )}
           </TabsTrigger>
@@ -136,12 +151,16 @@ export const NavTabs = <TabKey extends string>({
           </DropdownMenu>
         )}
       </TabsList>
-      {entriesOf(tabs).map(([key, tab]) => (
-        <TabsContent key={key} value={key} className={tabContentClassName}>
-          {setPageTitle && <PageTitle title={tab.label} />}
-          {tab.component}
-        </TabsContent>
-      ))}
+
+      {entriesOf(tabs).map(
+        ([key, tab]) =>
+          tab.visible !== false && (
+            <TabsContent key={key} value={key} className={tabContentClassName}>
+              {setPageTitle && <PageTitle title={tab.label} />}
+              {tab.component}
+            </TabsContent>
+          ),
+      )}
     </Tabs>
   );
 };

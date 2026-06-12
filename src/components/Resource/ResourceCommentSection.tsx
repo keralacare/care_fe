@@ -36,7 +36,7 @@ const CommentSection = ({ id }: { id: string }) => {
     queryFn: query(resourceRequestCommentApi.list, {
       queryParams: {
         limit: RESULTS_PER_PAGE_LIMIT,
-        offset: ((qParams.page ?? 1) - 1) * RESULTS_PER_PAGE_LIMIT,
+        offset: ((qParams.page || 1) - 1) * RESULTS_PER_PAGE_LIMIT,
       },
       pathParams: { resourceRequestId: id },
     }),
@@ -115,7 +115,7 @@ const CommentSection = ({ id }: { id: string }) => {
                       )}
                     >
                       <PaginationComponent
-                        cPage={qParams.page ?? 1}
+                        cPage={qParams.page || 1}
                         defaultPerPage={RESULTS_PER_PAGE_LIMIT}
                         data={{ totalCount: resourceComments?.count ?? 0 }}
                         onChange={(page) => setQueryParams({ page })}
@@ -144,7 +144,7 @@ export const Comment = ({ comment, created_by, created_date }: CommentRead) => (
       <TooltipComponent content={formatName(created_by)}>
         <div className="flex">
           <Avatar
-            name={`${created_by.first_name} ${created_by.last_name}`}
+            name={formatName(created_by, true)}
             imageUrl={created_by?.profile_picture_url}
             className="size-8 rounded-full object-cover"
           />

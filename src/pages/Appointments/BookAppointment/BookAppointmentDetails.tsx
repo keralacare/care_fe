@@ -1,37 +1,42 @@
 import { useMutation } from "@tanstack/react-query";
+import { useAtom } from "jotai";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { navigate } from "raviger";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
+import { scheduleServiceTypeAtom } from "@/atoms/scheduleServiceTypeAtom";
 import { Button } from "@/components/ui/button";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 
-import mutate from "@/Utils/request/mutate";
+import { register } from "@/lib/override";
 import { AppointmentSlotPicker } from "@/pages/Appointments/BookAppointment/AppointmentSlotPicker";
 import useCurrentFacility from "@/pages/Facility/utils/useCurrentFacility";
 import { TagConfig } from "@/types/emr/tagConfig/tagConfig";
 import scheduleApi from "@/types/scheduling/scheduleApi";
+import mutate from "@/Utils/request/mutate";
 
 import { ScheduleResourceFormState } from "@/components/Schedule/ResourceSelector";
-import {
-  Appointment,
-  SchedulableResourceType,
-} from "@/types/scheduling/schedule";
+import { Appointment } from "@/types/scheduling/schedule";
 import { AppointmentDateSelection } from "./AppointmentDateSelection";
 import { AppointmentFormSection } from "./AppointmentFormSection";
 
-export const BookAppointmentDetails = ({
-  patientId,
-  onSuccess,
-}: {
+export interface BookAppointmentDetailsProps {
   patientId: string;
   onSuccess?: () => void;
-}) => {
+}
+
+const BookAppointmentDetailsBase = ({
+  patientId,
+  onSuccess,
+}: BookAppointmentDetailsProps) => {
   const { t } = useTranslation();
 
   const { facilityId } = useCurrentFacility();
+  const [cachedServiceType, setCachedServiceType] = useAtom(
+    scheduleServiceTypeAtom,
+  );
 
   const [selectedSlotId, setSelectedSlotId] = useState<string>();
   const [selectedTags, setSelectedTags] = useState<TagConfig[]>([]);
@@ -42,21 +47,46 @@ export const BookAppointmentDetails = ({
   const [selectedResource, setSelectedResource] =
     useState<ScheduleResourceFormState>({
       resource: null,
-      resource_type: SchedulableResourceType.Practitioner,
+      resource_type: cachedServiceType,
     });
 
-  const { mutateAsync: createAppointment } = useMutation({
-    mutationFn: mutate(scheduleApi.slots.createAppointment, {
-      pathParams: { facilityId, slotId: selectedSlotId ?? "" },
-    }),
-    onSuccess: (data: Appointment) => {
-      toast.success(t("appointment_created_successfully"));
-      onSuccess?.();
-      navigate(
-        `/facility/${facilityId}/patient/${patientId}/appointments/${data.id}?showSuccess=true`,
-      );
+  useEffect(() => {
+    if (
+      selectedResource.resource === null &&
+      selectedResource.resource_type !== cachedServiceType
+    ) {
+      setSelectedResource({
+        resource: null,
+        resource_type: cachedServiceType,
+      });
+    }
+  }, [
+    cachedServiceType,
+    selectedResource.resource,
+    selectedResource.resource_type,
+  ]);
+
+  const handleResourceChange = (resource: ScheduleResourceFormState) => {
+    setSelectedResource(resource);
+    if (resource.resource_type !== cachedServiceType) {
+      setCachedServiceType(resource.resource_type);
+    }
+  };
+
+  const { mutateAsync: createAppointment, isPending: isCreating } = useMutation(
+    {
+      mutationFn: mutate(scheduleApi.slots.createAppointment, {
+        pathParams: { facilityId, slotId: selectedSlotId ?? "" },
+      }),
+      onSuccess: (data: Appointment) => {
+        toast.success(t("appointment_created_successfully"));
+        onSuccess?.();
+        navigate(
+          `/facility/${facilityId}/patient/${patientId}/appointments/${data.id}?showSuccess=true`,
+        );
+      },
     },
-  });
+  );
 
   const handleSubmit = async () => {
     if (!selectedResource || !selectedSlotId) {
@@ -89,7 +119,7 @@ export const BookAppointmentDetails = ({
             reason={reason}
             setReason={setReason}
             selectedResource={selectedResource}
-            setSelectedResource={setSelectedResource}
+            setSelectedResource={handleResourceChange}
           />
         </div>
         <div className="hidden sm:flex sm:flex-col lg:flex-row gap-6 bg-white shadow rounded-lg p-4 w-full sm:max-h-full">
@@ -130,6 +160,7 @@ export const BookAppointmentDetails = ({
               size="sm"
               onClick={handleSubmit}
               type="submit"
+              disabled={isCreating}
             >
               {t("confirm_appointment")}
             </Button>
@@ -199,7 +230,7 @@ export const BookAppointmentDetails = ({
                   variant="primary"
                   className="w-full"
                   onClick={handleSubmit}
-                  disabled={!selectedSlotId}
+                  disabled={!selectedSlotId || isCreating}
                 >
                   {t("confirm_appointment")}
                 </Button>
@@ -211,3 +242,8 @@ export const BookAppointmentDetails = ({
     </div>
   );
 };
+
+export const BookAppointmentDetails = register(
+  "BookAppointmentDetails",
+  BookAppointmentDetailsBase,
+);

@@ -1,6 +1,6 @@
-import { QuestionnaireDetail } from "@/types/questionnaire/questionnaire";
+import { QuestionnaireRead } from "@/types/questionnaire/questionnaire";
 
-const encounterQuestionnaire: QuestionnaireDetail = {
+const encounterQuestionnaire: QuestionnaireRead = {
   id: "encounter",
   slug: "encounter",
   version: "0.0.1",
@@ -17,10 +17,9 @@ const encounterQuestionnaire: QuestionnaireDetail = {
       structured_type: "encounter",
     },
   ],
-  tags: [],
 };
 
-const medication_request_questionnaire: QuestionnaireDetail = {
+const medication_request_questionnaire: QuestionnaireRead = {
   id: "medication_request",
   slug: "medication_request",
   version: "0.0.1",
@@ -37,10 +36,9 @@ const medication_request_questionnaire: QuestionnaireDetail = {
       required: true,
     },
   ],
-  tags: [],
 };
 
-const allergy_intolerance_questionnaire: QuestionnaireDetail = {
+const allergy_intolerance_questionnaire: QuestionnaireRead = {
   id: "allergy_intolerance",
   slug: "allergy_intolerance",
   version: "0.0.1",
@@ -57,10 +55,9 @@ const allergy_intolerance_questionnaire: QuestionnaireDetail = {
       required: true,
     },
   ],
-  tags: [],
 };
 
-const medication_statement_questionnaire: QuestionnaireDetail = {
+const medication_statement_questionnaire: QuestionnaireRead = {
   id: "medication_statement",
   slug: "medication_statement",
   version: "0.0.1",
@@ -77,10 +74,9 @@ const medication_statement_questionnaire: QuestionnaireDetail = {
       required: true,
     },
   ],
-  tags: [],
 };
 
-const service_request_questionnaire: QuestionnaireDetail = {
+const service_request_questionnaire: QuestionnaireRead = {
   id: "service_request",
   slug: "service_request",
   version: "0.0.1",
@@ -97,10 +93,9 @@ const service_request_questionnaire: QuestionnaireDetail = {
       required: true,
     },
   ],
-  tags: [],
 };
 
-const diagnosis_questionnaire: QuestionnaireDetail = {
+const diagnosis_questionnaire: QuestionnaireRead = {
   id: "diagnosis",
   slug: "diagnosis",
   version: "0.0.1",
@@ -117,10 +112,9 @@ const diagnosis_questionnaire: QuestionnaireDetail = {
       required: true,
     },
   ],
-  tags: [],
 };
 
-const symptom_questionnaire: QuestionnaireDetail = {
+const symptom_questionnaire: QuestionnaireRead = {
   id: "symptom",
   slug: "symptom",
   version: "0.0.1",
@@ -137,10 +131,9 @@ const symptom_questionnaire: QuestionnaireDetail = {
       required: true,
     },
   ],
-  tags: [],
 };
 
-const files_questionnaire: QuestionnaireDetail = {
+const files_questionnaire: QuestionnaireRead = {
   id: "files",
   slug: "files",
   version: "0.0.1",
@@ -157,10 +150,9 @@ const files_questionnaire: QuestionnaireDetail = {
       required: true,
     },
   ],
-  tags: [],
 };
 
-const time_of_death_questionnaire: QuestionnaireDetail = {
+const time_of_death_questionnaire: QuestionnaireRead = {
   id: "time_of_death",
   slug: "time_of_death",
   version: "0.0.1",
@@ -177,10 +169,9 @@ const time_of_death_questionnaire: QuestionnaireDetail = {
       required: true,
     },
   ],
-  tags: [],
 };
 
-const charge_item_questionnaire: QuestionnaireDetail = {
+const charge_item_questionnaire: QuestionnaireRead = {
   id: "charge_item",
   slug: "charge_item",
   version: "0.0.1",
@@ -197,10 +188,9 @@ const charge_item_questionnaire: QuestionnaireDetail = {
       required: true,
     },
   ],
-  tags: [],
 };
 
-const appointment_questionnaire: QuestionnaireDetail = {
+const appointment_questionnaire: QuestionnaireRead = {
   id: "appointment",
   slug: "appointment",
   version: "0.0.1",
@@ -217,7 +207,6 @@ const appointment_questionnaire: QuestionnaireDetail = {
       required: true,
     },
   ],
-  tags: [],
 };
 
 export const STRUCTURED_QUESTIONS = [
@@ -270,16 +259,25 @@ export const STRUCTURED_QUESTIONS = [
   },
 ] as const;
 
-export const FIXED_QUESTIONNAIRES: Record<string, QuestionnaireDetail> =
+export const FIXED_QUESTIONNAIRES: Record<string, QuestionnaireRead> =
   STRUCTURED_QUESTIONS.reduce(
     (acc, question) => {
       if ("questionnaire" in question) {
-        acc[question.questionnaire.id] = question.questionnaire;
+        acc[question.questionnaire.slug] = question.questionnaire;
       }
       return acc;
     },
-    {} as Record<string, QuestionnaireDetail>,
+    {} as Record<string, QuestionnaireRead>,
   );
 
 export type StructuredQuestionType =
   (typeof STRUCTURED_QUESTIONS)[number]["value"];
+
+export function filterStructuredQuestionnaireSlugs(slug?: string) {
+  return slug &&
+    STRUCTURED_QUESTIONS.map(
+      (question) => question.questionnaire.slug,
+    ).includes(slug)
+    ? undefined
+    : slug;
+}

@@ -14,29 +14,19 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { reverseFrequencyOption } from "@/components/Questionnaire/QuestionTypes/MedicationRequestQuestion";
-
 import {
-  INACTIVE_MEDICATION_STATUSES,
-  MEDICATION_REQUEST_TIMING_OPTIONS,
-  MedicationRequestDosageInstruction,
-  MedicationRequestRead,
   displayMedicationName,
+  INACTIVE_MEDICATION_STATUSES,
+  MedicationRequestRead,
 } from "@/types/emr/medicationRequest/medicationRequest";
 
-import { formatDosage, formatSig } from "./utils";
-
-export function getFrequencyDisplay(
-  timing?: MedicationRequestDosageInstruction["timing"],
-) {
-  if (!timing) return undefined;
-  const code = reverseFrequencyOption(timing);
-  if (!code) return undefined;
-  return {
-    code,
-    meaning: MEDICATION_REQUEST_TIMING_OPTIONS[code].display,
-  };
-}
+import { DosageInstructionList } from "./DosageInstructionList";
+import {
+  formatDosage,
+  formatDuration,
+  formatFrequency,
+  formatSig,
+} from "./utils";
 
 interface MedicationsTableProps {
   medications: MedicationRequestRead[];
@@ -90,11 +80,7 @@ export const MedicationsTable = ({
         <TableBody>
           {(showInactive ? medications : activeMedications).map(
             (medication: MedicationRequestRead) => {
-              const instruction = medication.dosage_instruction[0];
-              const frequency = getFrequencyDisplay(instruction?.timing);
-              const dosage = formatDosage(instruction);
-              const duration = instruction?.timing?.repeat?.bounds_duration;
-              const remarks = formatSig(instruction);
+              const instructions = medication.dosage_instruction;
               const notes = medication.note;
               const isInactive = INACTIVE_MEDICATION_STATUSES.includes(
                 medication.status as (typeof INACTIVE_MEDICATION_STATUSES)[number],
@@ -114,28 +100,53 @@ export const MedicationsTable = ({
                   <TableCell className="py-2 px-3 break-words whitespace-normal">
                     {displayMedicationName(medication)}
                   </TableCell>
-                  <TableCell className="py-2 px-3">{dosage}</TableCell>
                   <TableCell className="py-2 px-3 break-words whitespace-normal">
-                    {" "}
-                    {instruction?.as_needed_boolean
-                      ? `${t("as_needed_prn")} (${instruction?.as_needed_for?.display})`
-                      : frequency?.meaning}
-                    {(instruction?.additional_instruction ?? []).length > 0 && (
-                      <div className="text-sm text-gray-600 space-y-1">
-                        {instruction.additional_instruction?.map(
-                          (item: { display: string }, index: number) => (
-                            <div key={index}>{item.display}</div>
-                          ),
-                        )}
-                      </div>
-                    )}
-                  </TableCell>
-                  <TableCell className="py-2 px-3">
-                    {duration ? `${duration.value} ${duration.unit}` : "-"}
+                    <DosageInstructionList
+                      instructions={instructions}
+                      renderItem={(di) => formatDosage(di) || "-"}
+                    />
                   </TableCell>
                   <TableCell className="py-2 px-3 break-words whitespace-normal">
-                    {remarks || "-"}
-                    {notes ? ` (${t("note")}: ${notes})` : ""}
+                    <DosageInstructionList
+                      instructions={instructions}
+                      renderItem={(di) => {
+                        const freq = formatFrequency(di);
+                        const additionalInstr = di.additional_instruction ?? [];
+                        return (
+                          <>
+                            {freq || "-"}
+                            {additionalInstr.length > 0 && (
+                              <div className="text-sm text-gray-600 space-y-1">
+                                {additionalInstr.map(
+                                  (item: { display: string }, aIdx: number) => (
+                                    <div key={aIdx}>{item.display}</div>
+                                  ),
+                                )}
+                              </div>
+                            )}
+                          </>
+                        );
+                      }}
+                    />
+                  </TableCell>
+                  <TableCell className="py-2 px-3 break-words whitespace-normal">
+                    <DosageInstructionList
+                      instructions={instructions}
+                      renderItem={(di) => formatDuration(di) || "-"}
+                    />
+                  </TableCell>
+                  <TableCell className="py-2 px-3 break-words whitespace-normal">
+                    <DosageInstructionList
+                      instructions={instructions}
+                      renderItem={(di) => (
+                        <>
+                          {formatSig(di) || "-"}
+                          {notes && (
+                            <div className="text-sm text-gray-600">{notes}</div>
+                          )}
+                        </>
+                      )}
+                    />
                   </TableCell>
                 </TableRow>
               );

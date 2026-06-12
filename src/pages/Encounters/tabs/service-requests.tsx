@@ -44,12 +44,12 @@ export const EncounterServiceRequestTab = () => {
   const maxVisibleTabs = useBreakpoints({ default: 2, md: 3 });
 
   const { data, isLoading } = useQuery({
-    queryKey: ["serviceRequests", facilityId, encounterId, qParams],
+    queryKey: ["serviceRequests", facilityId, { ...qParams, encounterId }],
     queryFn: query.debounced(serviceRequestApi.listServiceRequest, {
       pathParams: { facilityId: facilityId || "" },
       queryParams: {
         encounter: encounterId,
-        offset: ((qParams.page ?? 1) - 1) * resultsPerPage,
+        offset: ((qParams.page || 1) - 1) * resultsPerPage,
         limit: resultsPerPage,
         status: qParams.status,
         title: qParams.search,

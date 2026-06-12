@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
-import { PatientRead } from "@/types/emr/patient/patient";
+import { EncounterListRead } from "@/types/emr/encounter/encounter";
+import { PatientListRead } from "@/types/emr/patient/patient";
 import {
   Appointment,
   SchedulableResourceType,
@@ -19,6 +20,18 @@ export enum TokenStatus {
   ENTERED_IN_ERROR = "ENTERED_IN_ERROR",
 }
 
+export const TokenActiveStatuses: TokenStatus[] = [
+  TokenStatus.UNFULFILLED,
+  TokenStatus.CREATED,
+  TokenStatus.IN_PROGRESS,
+];
+
+export const TokenFinalStatuses: TokenStatus[] = [
+  TokenStatus.FULFILLED,
+  TokenStatus.CANCELLED,
+  TokenStatus.ENTERED_IN_ERROR,
+];
+
 export const TOKEN_STATUS_COLORS = {
   UNFULFILLED: "secondary",
   CREATED: "blue",
@@ -30,6 +43,37 @@ export const TOKEN_STATUS_COLORS = {
   TokenStatus,
   React.ComponentProps<typeof Badge>["variant"]
 >;
+
+export enum QueueTokenStatus {
+  WAITING = "waiting",
+  CALLED = "called",
+  RECALL = "recall",
+  SERVING = "serving",
+}
+
+export const QUEUE_TOKEN_STATUS_COLORS = {
+  [QueueTokenStatus.WAITING]: "pink",
+  [QueueTokenStatus.CALLED]: "indigo",
+  [QueueTokenStatus.RECALL]: "orange",
+  [QueueTokenStatus.SERVING]: "green",
+} as const satisfies Record<
+  QueueTokenStatus,
+  React.ComponentProps<typeof Badge>["variant"]
+>;
+
+export function getQueueTokenStatus(
+  token: Pick<TokenRead, "status" | "sub_queue">,
+): QueueTokenStatus {
+  if (token.status === TokenStatus.CREATED) {
+    return token.sub_queue ? QueueTokenStatus.CALLED : QueueTokenStatus.WAITING;
+  }
+
+  if (token.status === TokenStatus.UNFULFILLED) {
+    return QueueTokenStatus.RECALL;
+  }
+
+  return QueueTokenStatus.SERVING;
+}
 
 export interface Token {
   id: string;
@@ -58,7 +102,7 @@ export interface TokenRead extends Token {
   category: TokenCategoryRead;
   sub_queue?: TokenSubQueueRead;
   note: string;
-  patient?: PatientRead;
+  patient?: PatientListRead;
   number: number;
   status: TokenStatus;
   queue: TokenQueueRead;
@@ -68,6 +112,7 @@ export type TokenRetrieve = TokenRead & {
   created_by: UserReadMinimal;
   updated_by: UserReadMinimal;
   booking?: Appointment;
+  encounter?: EncounterListRead;
 } & ScheduleResource;
 
 export function renderTokenNumber(token: TokenRead) {

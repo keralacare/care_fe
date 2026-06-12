@@ -214,6 +214,87 @@ export async function selectFromValueSet(
   await scope.waitFor({ state: "hidden" }).catch(() => {});
 }
 
+interface SelectFromCommandOptions {
+  search?: string;
+  itemIndex?: number;
+}
+
+/**
+ * Generic helper for selecting from a Command component inside a Popover or Drawer.
+ * This pattern is used by UserSelector, HealthcareServiceSelector, and other similar components.
+ *
+ * Key behavior:
+ * - Single selection (auto-closes after select)
+ * - Uses CommandInput with data-slot="command-input" for search
+ * - Options are directly clickable CommandItems
+ * - Works with both Popover (desktop) and Drawer (mobile)
+ *
+ * @example
+ * await selectFromCommand(page, trigger, {
+ *   search: "Search Term",
+ *   itemIndex: 0
+ * });
+ */
+export async function selectFromCommand(
+  page: Page,
+  trigger: Locator,
+  { search, itemIndex = 0 }: SelectFromCommandOptions = {},
+) {
+  await trigger.waitFor({ state: "visible" });
+  await trigger.scrollIntoViewIfNeeded();
+
+  // Close any existing popovers before opening
+  await closeAnyOpenPopovers(page);
+
+  await trigger.click();
+
+  // Wait for the picker to open (could be dialog or popover)
+  const dialog = page.getByRole("dialog").last();
+  const hasDialog = await dialog.isVisible().catch(() => false);
+  const popper = page.locator("[data-radix-popper-content-wrapper]").last();
+  const scope = hasDialog ? dialog : popper;
+
+  await scope.waitFor({ state: "visible" });
+
+  // If search is provided, use the search input
+  if (search) {
+    // Try finding by data-slot first (standard CommandInput), fallback to placeholder
+    const input = scope.locator('[data-slot="command-input"]').first();
+    const isInputVisible = await input.isVisible().catch(() => false);
+
+    if (isInputVisible) {
+      await input.fill("");
+      await input.fill(search);
+      // Wait for search results to update
+      await page.waitForTimeout(500);
+    } else {
+      // Fallback for custom inputs
+      const placeholderInput = scope.getByPlaceholder(/search/i).first();
+      if (await placeholderInput.isVisible().catch(() => false)) {
+        await placeholderInput.fill("");
+        await placeholderInput.fill(search);
+        await page.waitForTimeout(500);
+      }
+    }
+  }
+
+  // Wait for options to load
+  const options = scope.getByRole("option");
+  await options.first().waitFor({ state: "visible" });
+
+  const count = await options.count();
+  if (count === 0) {
+    throw new Error("No options found in command selector");
+  }
+
+  // Click the option directly
+  const targetOption = options.nth(itemIndex);
+  await targetOption.click();
+
+  // Auto-closes on selection, so wait for it to close
+  await scope.waitFor({ state: "hidden" }).catch(() => {});
+}
+
 interface SelectFromCategoryPickerOptions {
   search?: string;
   navigateCategories?: string[];
@@ -336,6 +417,97 @@ export async function selectFromCategoryPicker(
   }
 }
 
+interface SelectFromDefinitionCategoryPickerOptions {
+  search?: string;
+  navigateCategories?: string[];
+  itemIndex?: number;
+}
+
+/**
+ * Helper for ResourceDefinitionCategoryPicker component
+ * This is different from selectFromCategoryPicker and handles definition selection
+ * (used for activity definitions, etc.)
+ *
+ * @example
+ * await selectFromDefinitionCategoryPicker(page, trigger, {
+ *   navigateCategories: ["Lab Tests"],
+ *   search: "Complete Blood Count",
+ *   itemIndex: 0
+ * });
+ */
+export async function selectFromDefinitionCategoryPicker(
+  page: Page,
+  trigger: Locator,
+  {
+    search,
+    navigateCategories = [],
+    itemIndex = 0,
+  }: SelectFromDefinitionCategoryPickerOptions = {},
+) {
+  await trigger.waitFor({ state: "visible" });
+  await trigger.scrollIntoViewIfNeeded();
+
+  // Close any existing popovers before opening
+  await closeAnyOpenPopovers(page);
+
+  await trigger.click();
+
+  // Wait for the picker to open (could be dialog or popover)
+  const dialog = page.getByRole("dialog").last();
+  const hasDialog = await dialog.isVisible().catch(() => false);
+  const popper = page.locator("[data-radix-popper-content-wrapper]").last();
+  const scope = hasDialog ? dialog : popper;
+
+  await scope.waitFor({ state: "visible" });
+
+  // Navigate through categories if specified
+  for (const categoryTitle of navigateCategories) {
+    // Wait for the category to appear
+    const categoryItem = scope.getByRole("option", {
+      name: new RegExp(categoryTitle, "i"),
+    });
+    await categoryItem.waitFor({ state: "attached" });
+    await categoryItem.waitFor({ state: "visible" });
+    await categoryItem.click();
+
+    // Wait for navigation to complete - wait for new options to load after category click
+    const items = scope.getByRole("option");
+    await items.first().waitFor({ state: "attached" });
+  }
+
+  // If search is provided, use search to filter items
+  if (search) {
+    const input = scope.locator('[data-slot="command-input"]').first();
+    await input.waitFor({ state: "visible" });
+    await input.fill("");
+    await input.fill(search);
+
+    // Wait for search results to load - options will be updated after input change
+    const items = scope.getByRole("option");
+    await items.first().waitFor({ state: "attached" });
+  }
+
+  // Wait for items to load
+  const items = scope.getByRole("option");
+  await items.first().waitFor({ state: "attached" });
+  await items.first().waitFor({ state: "visible" });
+
+  const count = await items.count();
+  if (count === 0) {
+    throw new Error("No items found in definition category picker");
+  }
+
+  // Select item at itemIndex
+  const targetItem = items.nth(itemIndex);
+  await targetItem.waitFor({ state: "attached" });
+  await targetItem.waitFor({ state: "visible" });
+  await targetItem.scrollIntoViewIfNeeded();
+  await targetItem.click();
+
+  // Wait for selection to register and dialog to close
+  await scope.waitFor({ state: "hidden" }).catch(() => {});
+}
+
 /**
  * Checks if a toast notification with the given text is visible
  * @param page - Playwright page object
@@ -361,4 +533,163 @@ export function getCardByTitle(page: Page, title: string | RegExp) {
   return page.locator('[data-slot="card"]').filter({
     has: page.locator('[data-slot="card-title"]', { hasText: title }),
   });
+}
+
+export async function clearFilter(page: Page) {
+  const clearButton = page
+    .getByRole("button")
+    .filter({ has: page.locator("svg.lucide-x") })
+    .first();
+  await clearButton.click();
+}
+
+/**
+ * Helper to select a value from a FilterSelect component
+ * FilterSelect uses a Select component with a combobox trigger that shows the label
+ *
+ * @param page - Playwright page object
+ * @param label - The label text of the FilterSelect (e.g., "status", "category")
+ * @param value - The value to select (will be matched case-insensitively)
+ *
+ * @example
+ * await selectFromFilterSelect(page, "status", "active");
+ * await selectFromFilterSelect(page, "category", "laboratory");
+ */
+export async function selectFromFilterSelect(
+  page: Page,
+  label: string | RegExp,
+  value: string,
+) {
+  // Find the FilterSelect combobox by its label text
+  const filterSelect = page
+    .getByRole("combobox")
+    .filter({ hasText: label })
+    .first();
+  await filterSelect.waitFor({ state: "visible" });
+  await filterSelect.scrollIntoViewIfNeeded();
+  await filterSelect.click();
+
+  // Select the option by value (case-insensitive match)
+  const option = page.getByRole("option", {
+    name: new RegExp(value, "i"),
+  });
+  await option.waitFor({ state: "visible" });
+  await option.click();
+}
+
+/**
+ * Apply a filter to a table view with navigation and filter selection
+ * @param page - Playwright page object
+ * @param url - Full URL to navigate to
+ * @param filterLabel - Filter label regex (e.g., /status/i, /category/i)
+ * @param filterValue - Value to filter by
+ *
+ * @example
+ * await applyTableFilter(page, "/facility/123/settings/definitions", /status/i, "Active");
+ */
+export async function applyTableFilter(
+  page: Page,
+  url: string,
+  filterLabel: RegExp,
+  filterValue: string,
+) {
+  await page.goto(url);
+  await clearFilter(page);
+  await page.locator('[data-slot="table-body"]').waitFor({ state: "visible" });
+
+  await selectFromFilterSelect(page, filterLabel, filterValue);
+  await page.waitForLoadState("networkidle");
+
+  const tableBody = page.locator('[data-slot="table-body"]');
+  await tableBody.waitFor({ state: "visible" });
+
+  const tableBodyRows = tableBody.locator('[data-slot="table-row"]');
+  await tableBodyRows.first().waitFor({ state: "visible" });
+}
+
+/**
+ * Verify all badges in table match expected text and optionally verify specific row exists
+ * @param page - Playwright page object
+ * @param badgeText - Expected badge text to verify
+ * @param specificRowText - Optional text to find specific row
+ *
+ * @example
+ * await verifyTableBadges(page, "Active", "My Activity");
+ * await verifyTableBadges(page, "Laboratory"); // Without specific row check
+ */
+export async function verifyTableBadges(
+  page: Page,
+  badgeText: string,
+  specificRowText?: string,
+) {
+  const tableBody = page.locator('[data-slot="table-body"]');
+  const tableBodyRows = tableBody.locator('[data-slot="table-row"]');
+  const rowCount = await tableBodyRows.count();
+
+  if (rowCount > 0) {
+    const badges = tableBody
+      .locator('[data-slot="badge"]')
+      .filter({ hasText: badgeText });
+    await expect(badges).toHaveCount(rowCount);
+  }
+
+  if (specificRowText) {
+    const specificRow = page.locator('[data-slot="table-row"]', {
+      hasText: specificRowText,
+    });
+    await expect(specificRow).toBeVisible();
+  }
+}
+
+/**
+ * Clicks on a tab that may be visible or hidden in a dropdown menu.
+ * Handles responsive layouts where tabs can be moved to a menu.
+ *
+ * @param page - Playwright page instance
+ * @param tabName - Name or regex pattern for the tab
+ *
+ * @example
+ * ```typescript
+ * await clickTabOrMenuItem(page, /service requests/i);
+ * ```
+ */
+export async function clickTabOrMenuItem(
+  page: Page,
+  tabName: string | RegExp,
+): Promise<void> {
+  // Try to find as a visible tab first
+  const tab = page.getByRole("tab", { name: tabName });
+  const isTabVisible = await tab.isVisible().catch(() => false);
+
+  if (isTabVisible) {
+    await tab.click();
+    return;
+  }
+
+  // If not visible as a tab, it might be in a dropdown menu
+  const moreButton = page
+    .locator('[data-slot="dropdown-menu-trigger"]')
+    .filter({ hasText: /more/i })
+    .first();
+
+  const isMoreButtonVisible = await moreButton.isVisible().catch(() => false);
+
+  if (isMoreButtonVisible) {
+    await moreButton.click();
+
+    // Wait for menu to open
+    const menu = page.locator('[role="menu"]').first();
+    await menu.waitFor({ state: "visible" });
+
+    // Look for the specific menu item
+    const menuItem = page.getByRole("menuitem", { name: tabName });
+    await menuItem.waitFor({ state: "visible" });
+    await menuItem.scrollIntoViewIfNeeded();
+    await menuItem.click();
+    return;
+  }
+
+  throw new Error(
+    `Tab "${tabName}" not found as visible tab or in dropdown menu`,
+  );
 }

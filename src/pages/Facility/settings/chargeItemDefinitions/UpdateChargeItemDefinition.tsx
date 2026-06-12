@@ -80,9 +80,12 @@ export function UpdateChargeItemDefinition({
     return null;
   }
 
-  const handleSuccess = (slug: string) => {
+  const handleSuccess = () => {
     navigate(
-      `/facility/${facilityId}/settings/charge_item_definitions/${slug}`,
+      `/facility/${facilityId}/settings/charge_item_definitions/categories/${chargeItemDefinition.category.slug}`,
+      {
+        replace: true,
+      },
     );
   };
 
@@ -103,9 +106,7 @@ export function UpdateChargeItemDefinition({
           categorySlug={chargeItemDefinition.category.slug}
           initialData={chargeItemDefinition}
           isUpdate={true}
-          onSuccess={(chargeItemDefinition) =>
-            handleSuccess(chargeItemDefinition.slug)
-          }
+          onSuccess={() => handleSuccess()}
         />
       </div>
     </Page>

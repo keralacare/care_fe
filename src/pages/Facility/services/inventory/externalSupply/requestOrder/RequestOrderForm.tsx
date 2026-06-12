@@ -53,13 +53,14 @@ import {
   RequestOrderStatus,
 } from "@/types/inventory/requestOrder/requestOrder";
 import requestOrderApi from "@/types/inventory/requestOrder/requestOrderApi";
-import { LocationList } from "@/types/location/location";
+import { LocationRead } from "@/types/location/location";
 import locationApi from "@/types/location/locationApi";
 import organizationApi from "@/types/organization/organizationApi";
 import { ShortcutBadge } from "@/Utils/keyboardShortcutComponents";
 import mutate from "@/Utils/request/mutate";
 import query from "@/Utils/request/query";
 import { PaginatedResponse } from "@/Utils/request/types";
+import { goBack } from "@/Utils/utils";
 
 const createRequestOrderFormSchema = (
   t: (key: string) => string,
@@ -143,13 +144,13 @@ export default function RequestOrderForm({
     queryFn: query.debounced(locationApi.list, {
       pathParams: { facility_id: facilityId },
       queryParams: {
-        search: searchDeliveryFrom,
+        name: searchDeliveryFrom,
         limit: 100,
         mode: "kind",
         ordering: "sort_index",
       },
     }),
-    select: (data: PaginatedResponse<LocationList>) => {
+    select: (data: PaginatedResponse<LocationRead>) => {
       // Filter out the current location
       return data.results.filter((location) => location.id !== locationId);
     },
@@ -214,7 +215,9 @@ export default function RequestOrderForm({
     onSuccess: (requestOrder: RequestOrderRetrieve) => {
       queryClient.invalidateQueries({ queryKey: ["requestOrders"] });
       toast.success(t("order_created"));
-      navigate(returnPath + requestOrder.id);
+      navigate(returnPath + requestOrder.id, {
+        replace: true,
+      });
     },
   });
 
@@ -228,7 +231,9 @@ export default function RequestOrderForm({
     onSuccess: (requestOrder: RequestOrderRetrieve) => {
       queryClient.invalidateQueries({ queryKey: ["requestOrders"] });
       toast.success(t("order_updated"));
-      navigate(returnPath + requestOrder.id);
+      navigate(returnPath + requestOrder.id, {
+        replace: true,
+      });
     },
   });
 
@@ -551,13 +556,7 @@ export default function RequestOrderForm({
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={() =>
-                      navigate(
-                        requestOrderId
-                          ? returnPath + requestOrderId
-                          : returnPath,
-                      )
-                    }
+                    onClick={() => goBack()}
                   >
                     {t("cancel")}
                     <ShortcutBadge actionId="cancel-action" />

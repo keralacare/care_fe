@@ -29,7 +29,7 @@ import query from "@/Utils/request/query";
 import { formatName } from "@/Utils/utils";
 import { usePermissions } from "@/context/PermissionContext";
 import patientApi from "@/types/emr/patient/patientApi";
-import { RoleBase } from "@/types/emr/role/role";
+import { RoleBase, RoleContext } from "@/types/emr/role/role";
 import { UserReadMinimal } from "@/types/user/user";
 
 import { PatientProps } from ".";
@@ -55,7 +55,7 @@ function AddUserSheet({ patientId }: AddUserSheetProps) {
       queryClient.invalidateQueries({
         queryKey: ["patientUsers", patientId],
       });
-      toast.success("User added to patient successfully");
+      toast.success(t("user_added_to_patient_successfully"));
       setOpen(false);
       setSelectedUser(undefined);
       setSelectedRole(undefined);
@@ -64,7 +64,7 @@ function AddUserSheet({ patientId }: AddUserSheetProps) {
 
   const handleAddUser = () => {
     if (!selectedUser || !selectedRole) {
-      toast.error("Please select both user and role");
+      toast.error(t("please_select_user_and_role"));
       return;
     }
 
@@ -155,7 +155,11 @@ function AddUserSheet({ patientId }: AddUserSheetProps) {
                   {t("select_role")}
                 </label>
                 <div>
-                  <RoleSelect value={selectedRole} onChange={setSelectedRole} />
+                  <RoleSelect
+                    value={selectedRole}
+                    onChange={setSelectedRole}
+                    context={RoleContext.FACILITY}
+                  />
                 </div>
               </div>
 
@@ -205,7 +209,7 @@ export const PatientUsers = ({ patientData }: PatientProps) => {
       queryClient.invalidateQueries({
         queryKey: ["patientUsers", patientId],
       });
-      toast.success("User removed successfully");
+      toast.success(t("user_removed_successfully"));
     },
   });
 

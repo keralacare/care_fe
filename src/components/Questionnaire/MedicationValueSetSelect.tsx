@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { cn } from "@/lib/utils";
+import careConfig from "@careConfig";
 
 import {
   Breadcrumb,
@@ -50,7 +51,6 @@ import {
 } from "@/types/inventory/productKnowledge/productKnowledge";
 import productKnowledgeApi from "@/types/inventory/productKnowledge/productKnowledgeApi";
 import query from "@/Utils/request/query";
-import { isAppleDevice } from "@/Utils/utils";
 
 interface Props {
   onSelect: (value: Code) => void;
@@ -80,7 +80,9 @@ export default function MedicationValueSetSelect({
   const { t } = useTranslation();
   const { facilityId } = useCurrentFacilitySilently();
   const [open, setOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<TabType>("product");
+  const [activeTab, setActiveTab] = useState<TabType>(
+    careConfig.medicationValueSetSelectDefaultTab,
+  );
   const [search, setSearch] = useState("");
   const isMobile = useBreakpoints({ default: true, sm: false });
 
@@ -118,7 +120,6 @@ export default function MedicationValueSetSelect({
         limit: 100,
         offset: 0,
         name: search,
-        product_type: "medication",
         category: search ? undefined : currentCategory,
         status: ProductKnowledgeStatus.active,
       },
@@ -303,10 +304,10 @@ function MedicationValueSetSelectTabs({
     >
       <TabsList className="flex w-full">
         <TabsTrigger value="product" className="flex-1">
-          {t("in_stock")}
+          {t("product")}
         </TabsTrigger>
         <TabsTrigger value="valueset" className="flex-1">
-          {t("medication_list")}
+          {t("medication")}
         </TabsTrigger>
       </TabsList>
     </Tabs>
@@ -423,7 +424,8 @@ function MedicationCommandItem({
   return (
     <CommandItem
       key={item.id}
-      value={isCategory ? item.title : item.name}
+      value={item.id}
+      content={isCategory ? item.title : item.name}
       onSelect={handleSelect}
       className="cursor-pointer p-3 hover:bg-gray-50"
     >
@@ -501,7 +503,7 @@ export function MedicationValueSetSelectTabContent({
                 onValueChange={onSearchChange}
                 value={search}
                 className="border-none ring-0 text-base sm:text-sm"
-                autoFocus={!isAppleDevice}
+                autoFocus
               />
             </div>
 
@@ -523,7 +525,15 @@ export function MedicationValueSetSelectTabContent({
                 )}
               </CommandEmpty>
 
-              {!search && (
+              {search ? (
+                <MedicationCommandGroup
+                  items={products}
+                  onProductSelect={(product) => {
+                    onProductSelect(product);
+                    onOpenChange(false);
+                  }}
+                />
+              ) : (
                 <>
                   <MedicationCommandGroup
                     items={categories}
@@ -540,16 +550,6 @@ export function MedicationValueSetSelectTabContent({
                     />
                   )}
                 </>
-              )}
-
-              {search && (
-                <MedicationCommandGroup
-                  items={products}
-                  onProductSelect={(product) => {
-                    onProductSelect(product);
-                    onOpenChange(false);
-                  }}
-                />
               )}
             </CommandList>
           </Command>

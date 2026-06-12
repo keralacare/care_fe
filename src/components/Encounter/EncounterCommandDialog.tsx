@@ -1,3 +1,4 @@
+import { CardListSkeleton } from "@/components/Common/SkeletonLoading";
 import {
   CommandDialog,
   CommandEmpty,
@@ -8,10 +9,7 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from "@/components/ui/command";
-import {
-  useEncounterShortcutDisplays,
-  useEncounterShortcuts,
-} from "@/hooks/useEncounterShortcuts";
+import { useShortcutDisplay } from "@/context/ShortcutContext";
 import {
   ArrowBigRight,
   Building2,
@@ -23,14 +21,20 @@ import {
   NotebookPen,
   Pill,
   Plus,
+  RotateCcw,
   Users,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { PLUGIN_Component } from "@/PluginEngine";
+import query from "@/Utils/request/query";
 import { useCareApps } from "@/hooks/useCareApps";
-import useQuestionnaireOptions from "@/hooks/useQuestionnaireOptions";
+import { useEncounter } from "@/pages/Encounters/utils/EncounterProvider";
+import { encounterRequiresDischarge } from "@/pages/Encounters/utils/useEncounterProgressController";
 import { EncounterRead } from "@/types/emr/encounter/encounter";
+import questionnaireApi from "@/types/questionnaire/questionnaireApi";
+import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "raviger";
 import { useTranslation } from "react-i18next";
 
 interface ActionItem {
@@ -59,10 +63,35 @@ export function EncounterCommandDialog({
   onOpenChange,
   trigger,
 }: EncounterCommandDialogProps) {
+  const {
+    canWriteSelectedEncounter,
+    canRestartSelectedEncounter,
+    actions,
+    selectedEncounterId,
+    primaryEncounterId,
+  } = useEncounter();
   const { t } = useTranslation();
-  const questionnaireOptions = useQuestionnaireOptions("encounter_actions");
-  const getShortcutDisplay = useEncounterShortcutDisplays();
-  const { handleAction } = useEncounterShortcuts();
+  const [search, setSearch] = useState("");
+  const navigate = useNavigate();
+
+  const { data: questionnaires, isLoading } = useQuery({
+    queryKey: ["questionnaires", search, "encounter"],
+    queryFn: query.debounced(questionnaireApi.list, {
+      queryParams: {
+        title: search,
+        status: "active",
+        subject_type: "encounter",
+      },
+    }),
+  });
+
+  useEffect(() => {
+    if (!open) {
+      setSearch("");
+    }
+  }, [open]);
+
+  const getShortcutDisplay = useShortcutDisplay();
 
   const STORAGE_KEY = "encounter-command-dialog-recent-actions";
   const MAX_RECENT_ACTIONS = 4;
@@ -79,24 +108,86 @@ export function EncounterCommandDialog({
   const [recentActionsState, setRecentActionsState] =
     useState<string[]>(getRecentActions);
 
-  // Handle keyboard shortcut to open command dialog
-  useEffect(() => {
-    const handleOpenCommandDialog = () => {
-      onOpenChange(true);
-    };
+  // Build encounter URL helper
+  const buildEncounterUrl = useCallback(
+    (path: string) => {
+      const currentEncounterIdToUse = primaryEncounterId || encounter.id;
+      const baseUrl = `/facility/${encounter.facility.id}/patient/${encounter.patient.id}/encounter/${currentEncounterIdToUse}${path}`;
 
-    document.addEventListener(
-      "open-encounter-command-dialog",
-      handleOpenCommandDialog,
-    );
+      // Add selectedEncounter parameter if we're viewing a different encounter
+      if (
+        selectedEncounterId &&
+        primaryEncounterId &&
+        selectedEncounterId !== primaryEncounterId
+      ) {
+        const separator = path.includes("?") ? "&" : "?";
+        return `${baseUrl}${separator}selectedEncounter=${selectedEncounterId}`;
+      }
 
-    return () => {
-      document.removeEventListener(
-        "open-encounter-command-dialog",
-        handleOpenCommandDialog,
-      );
-    };
-  }, [onOpenChange]);
+      return baseUrl;
+    },
+    [encounter, selectedEncounterId, primaryEncounterId],
+  );
+
+  // Handle action execution
+  const handleAction = useCallback(
+    (actionId: string) => {
+      const actionHandlers: Record<string, () => void> = {
+        "add-service-request": () =>
+          navigate(buildEncounterUrl("/questionnaire/service_request")),
+        "add-medication-request": () =>
+          navigate(buildEncounterUrl("/questionnaire/medication_request")),
+        "add-allergy": () =>
+          navigate(buildEncounterUrl("/questionnaire/allergy_intolerance")),
+        "add-symptoms": () =>
+          navigate(buildEncounterUrl("/questionnaire/symptom")),
+        "add-diagnosis": () =>
+          navigate(buildEncounterUrl("/questionnaire/diagnosis")),
+        "update-encounter": () =>
+          navigate(buildEncounterUrl("/questionnaire/encounter")),
+        "service-requests": () =>
+          navigate(buildEncounterUrl("/service_requests")),
+        "diagnostic-reports": () =>
+          navigate(buildEncounterUrl("/diagnostic_reports")),
+        "clinical-history": () =>
+          navigate(
+            `/facility/${encounter.facility.id}/patient/${encounter.patient.id}/history/responses?sourceUrl=${encodeURIComponent(
+              buildEncounterUrl("/updates"),
+            )}`,
+          ),
+        "encounter-overview": () => navigate(buildEncounterUrl("/updates")),
+        plots: () => navigate(buildEncounterUrl("/plots")),
+        observations: () => navigate(buildEncounterUrl("/observations")),
+        medicines: () => navigate(buildEncounterUrl("/medicines")),
+        responses: () => navigate(buildEncounterUrl("/responses")),
+        files: () => navigate(buildEncounterUrl("/files")),
+        notes: () => navigate(buildEncounterUrl("/notes")),
+        devices: () => navigate(buildEncounterUrl("/devices")),
+        consents: () => navigate(buildEncounterUrl("/consents")),
+        "mark-as-completed": () => actions.markAsCompleted(),
+        "mark-as-complete": () => actions.markAsCompleted(true),
+        "assign-location": () => actions.assignLocation(),
+        "view-location-history": () => actions.viewLocationHistory(),
+        "manage-care-team": () => actions.manageCareTeam(),
+        "manage-departments": () => actions.manageDepartments(),
+        dispense: () => actions.dispense(),
+        "restart-encounter": () => actions.restartEncounter(),
+      };
+
+      const handler = actionHandlers[actionId];
+      if (handler) {
+        handler();
+        return;
+      }
+
+      // Handle dynamic questionnaire actions
+      if (actionId.startsWith("questionnaire-")) {
+        const slug = actionId.replace("questionnaire-", "");
+        navigate(buildEncounterUrl(`/questionnaire/${slug}`));
+      }
+    },
+    [navigate, buildEncounterUrl, actions, encounter],
+  );
 
   const addRecentAction = useCallback(
     (actionId: string): void => {
@@ -115,9 +206,12 @@ export function EncounterCommandDialog({
 
   const recentActions = recentActionsState;
 
-  const baseEncounterActions: ActionGroup[] = useMemo(
-    () => [
-      {
+  const baseEncounterActions: ActionGroup[] = useMemo(() => {
+    const groups: ActionGroup[] = [];
+
+    // Write actions - only show when user has write permission
+    if (canWriteSelectedEncounter) {
+      groups.push({
         group: t("encounter_actions"),
         items: [
           {
@@ -139,9 +233,15 @@ export function EncounterCommandDialog({
             icon: <Plus />,
           },
           {
-            id: "add-questionnaire",
-            label: t("add_form"),
-            shortcut: getShortcutDisplay("add-questionnaire"),
+            id: "add-service-request",
+            label: t("service_request"),
+            shortcut: getShortcutDisplay("add-service-request"),
+            icon: <Plus />,
+          },
+          {
+            id: "add-medication-request",
+            label: t("add_medication"),
+            shortcut: getShortcutDisplay("add-medication-request"),
             icon: <Plus />,
           },
           {
@@ -151,139 +251,182 @@ export function EncounterCommandDialog({
             icon: <Edit />,
           },
         ],
+      });
+    }
+
+    // Actions group - different items based on encounter status
+    const actionItems: ActionItem[] = [
+      {
+        id: "clinical-history",
+        label: t("see_clinical_history"),
+        shortcut: getShortcutDisplay("clinical-history"),
+        icon: <Component />,
       },
       {
-        group: t("actions"),
-        items: [
-          {
-            id: "clinical-history",
-            label: t("see_clinical_history"),
-            shortcut: getShortcutDisplay("clinical-history"),
-            icon: <Component />,
-          },
-          {
-            id: "consents",
-            label: t("manage_consents"),
-            shortcut: getShortcutDisplay("consents"),
-            icon: <NotebookPen />,
-          },
-          {
-            id: "mark-as-completed",
-            label: t("mark_as_completed"),
-            shortcut: getShortcutDisplay("mark-as-completed"),
-            icon: <CheckCircle2 />,
-          },
-          {
-            id: "assign-location",
-            label: t("assign_location"),
-            shortcut: getShortcutDisplay("assign-location"),
-            icon: <MapPin />,
-          },
-          {
-            id: "view-location-history",
-            label: t("location_history"),
-            shortcut: getShortcutDisplay("view-location-history"),
-            icon: <HistoryIcon />,
-          },
-          {
-            id: "manage-care-team",
-            label: t("manage_care_team"),
-            shortcut: getShortcutDisplay("manage-care-team"),
-            icon: <Users />,
-          },
-          {
-            id: "manage-departments",
-            label: t("update_department"),
-            shortcut: getShortcutDisplay("manage-departments"),
-            icon: <Building2 />,
-          },
-          {
-            id: "dispense",
-            label: t("dispense"),
-            shortcut: getShortcutDisplay("dispense"),
-            icon: <Pill />,
-          },
-        ],
+        id: "view-location-history",
+        label: t("location_history"),
+        shortcut: getShortcutDisplay("view-location-history"),
+        icon: <HistoryIcon />,
       },
-      {
-        group: t("go_to"),
-        items: [
-          {
-            id: "encounter-overview",
-            label: t("ENCOUNTER_TAB__updates"),
-            shortcut: getShortcutDisplay("encounter-overview"),
-            icon: <ArrowBigRight />,
-          },
-          {
-            id: "plots",
-            label: t("ENCOUNTER_TAB__plots"),
-            shortcut: getShortcutDisplay("plots"),
-            icon: <ArrowBigRight />,
-          },
-          {
-            id: "observations",
-            label: t("observations"),
-            shortcut: getShortcutDisplay("observations"),
-            icon: <ArrowBigRight />,
-          },
-          {
-            id: "medicines",
-            label: t("medicines"),
-            shortcut: getShortcutDisplay("medicines"),
-            icon: <ArrowBigRight />,
-          },
-          {
-            id: "files",
-            label: t("files"),
-            shortcut: getShortcutDisplay("files"),
-            icon: <ArrowBigRight />,
-          },
-          {
-            id: "notes",
-            label: t("notes"),
-            shortcut: getShortcutDisplay("notes"),
-            icon: <ArrowBigRight />,
-          },
-          {
-            id: "devices",
-            label: t("devices"),
-            shortcut: getShortcutDisplay("devices"),
-            icon: <ArrowBigRight />,
-          },
-          {
-            id: "consents",
-            label: t("consents"),
-            shortcut: getShortcutDisplay("consents"),
-            icon: <ArrowBigRight />,
-          },
-          {
-            id: "service-requests",
-            label: t("service_requests"),
-            shortcut: getShortcutDisplay("service-requests"),
-            icon: <ArrowBigRight />,
-          },
-          {
-            id: "diagnostic-reports",
-            label: t("ENCOUNTER_TAB__diagnostic_reports"),
-            shortcut: getShortcutDisplay("diagnostic-reports"),
-            icon: <ArrowBigRight />,
-          },
-        ],
-      },
-      {
+    ];
+
+    // Add write actions only when user has write permission
+    if (canWriteSelectedEncounter) {
+      actionItems.push(
+        {
+          id: "consents",
+          label: t("manage_consents"),
+          shortcut: getShortcutDisplay("consents"),
+          icon: <NotebookPen />,
+        },
+        {
+          id: "mark-as-completed",
+          label: encounterRequiresDischarge(encounter)
+            ? t("mark_for_discharge")
+            : t("mark_as_completed"),
+          icon: <CheckCircle2 />,
+        },
+        {
+          id: "assign-location",
+          label: t("assign_location"),
+          shortcut: getShortcutDisplay("assign-location"),
+          icon: <MapPin />,
+        },
+        {
+          id: "manage-care-team",
+          label: t("manage_care_team"),
+          shortcut: getShortcutDisplay("manage-care-team"),
+          icon: <Users />,
+        },
+        {
+          id: "manage-departments",
+          label: t("update_department"),
+          shortcut: getShortcutDisplay("manage-departments"),
+          icon: <Building2 />,
+        },
+        {
+          id: "dispense",
+          label: t("dispense"),
+          shortcut: getShortcutDisplay("dispense"),
+          icon: <Pill />,
+        },
+      );
+    }
+
+    // Add restart action only when user can restart
+    if (canRestartSelectedEncounter) {
+      actionItems.push({
+        id: "restart-encounter",
+        label: t("restart_encounter"),
+        shortcut: getShortcutDisplay("restart-encounter"),
+        icon: <RotateCcw />,
+      });
+    }
+
+    groups.push({
+      group: t("actions"),
+      items: actionItems,
+    });
+
+    // Go to navigation - always available
+    groups.push({
+      group: t("go_to"),
+      items: [
+        {
+          id: "encounter-overview",
+          label: t("ENCOUNTER_TAB__updates"),
+          shortcut: getShortcutDisplay("encounter-overview"),
+          icon: <ArrowBigRight />,
+        },
+        {
+          id: "plots",
+          label: t("ENCOUNTER_TAB__plots"),
+          shortcut: getShortcutDisplay("plots"),
+          icon: <ArrowBigRight />,
+        },
+        {
+          id: "observations",
+          label: t("observations"),
+          shortcut: getShortcutDisplay("observations"),
+          icon: <ArrowBigRight />,
+        },
+        {
+          id: "medicines",
+          label: t("medicines"),
+          shortcut: getShortcutDisplay("medicines"),
+          icon: <ArrowBigRight />,
+        },
+        {
+          id: "responses",
+          label: t("responses"),
+          shortcut: getShortcutDisplay("responses"),
+          icon: <ArrowBigRight />,
+        },
+        {
+          id: "files",
+          label: t("files"),
+          shortcut: getShortcutDisplay("files"),
+          icon: <ArrowBigRight />,
+        },
+        {
+          id: "notes",
+          label: t("notes"),
+          shortcut: getShortcutDisplay("notes"),
+          icon: <ArrowBigRight />,
+        },
+        {
+          id: "devices",
+          label: t("devices"),
+          shortcut: getShortcutDisplay("devices"),
+          icon: <ArrowBigRight />,
+        },
+        {
+          id: "consents",
+          label: t("consents"),
+          shortcut: getShortcutDisplay("consents"),
+          icon: <ArrowBigRight />,
+        },
+        {
+          id: "service-requests",
+          label: t("service_requests"),
+          shortcut: getShortcutDisplay("service-requests"),
+          icon: <ArrowBigRight />,
+        },
+        {
+          id: "diagnostic-reports",
+          label: t("ENCOUNTER_TAB__diagnostic_reports"),
+          shortcut: getShortcutDisplay("diagnostic-reports"),
+          icon: <ArrowBigRight />,
+        },
+      ],
+    });
+
+    // Questionnaires - only show when user has write permission
+    if (canWriteSelectedEncounter) {
+      groups.push({
         group: t("questionnaire"),
         items: [
-          ...(questionnaireOptions?.results || []).map((option) => ({
+          ...(questionnaires?.results || []).map((option) => ({
             id: `questionnaire-${option.slug}`,
             label: option.title,
             icon: <NotebookPen />,
             shortcut: getShortcutDisplay(`questionnaire-${option.slug}`),
           })),
         ],
-      },
-    ],
-    [t, questionnaireOptions, getShortcutDisplay],
-  );
+      });
+    }
+
+    return groups;
+  }, [
+    t,
+    questionnaires,
+    search,
+    getShortcutDisplay,
+    canWriteSelectedEncounter,
+    canRestartSelectedEncounter,
+    encounter.encounter_class,
+    encounter.status,
+  ]);
 
   const findRecentActions = useCallback(
     (actionIds: string[], groups: ActionGroup[]) => {
@@ -335,17 +478,26 @@ export function EncounterCommandDialog({
           <CommandInput
             placeholder={t("search_encounter_command")}
             className="border-none focus:ring-0 text-base sm:text-sm"
+            onValueChange={setSearch}
           />
         </div>
         <CommandList className="h-[80vh] max-h-[80vh] w-full">
-          <CommandEmpty>{t("no_results")}</CommandEmpty>
+          <CommandEmpty>
+            {isLoading && search.length > 0 ? (
+              <div className="space-y-2">
+                <CardListSkeleton count={3} />
+              </div>
+            ) : (
+              t("no_results")
+            )}
+          </CommandEmpty>
           {encounterActions.map((group) => (
             <div key={group.group}>
               <CommandGroup heading={group.group} className="px-2">
                 {group.items.map((action) => (
                   <CommandItem
-                    key={action.id}
-                    value={action.id}
+                    key={`${group.group}-${action.id}`}
+                    value={`${group.group} ${action.id} ${action.label}`}
                     onSelect={() => handleSelect(action.id)}
                     className="rounded-md cursor-pointer hover:bg-gray-100 flex justify-between aria-selected:bg-gray-100"
                     autoFocus={false}

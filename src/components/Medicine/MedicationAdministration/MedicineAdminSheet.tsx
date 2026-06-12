@@ -1,5 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
@@ -22,7 +28,11 @@ import {
 } from "@/types/emr/medicationRequest/medicationRequest";
 
 import { MedicineAdminForm } from "./MedicineAdminForm";
-import { createMedicationAdministrationRequest } from "./utils";
+import {
+  GroupedMedication,
+  createMedicationAdministrationRequest,
+  getLatestActiveRequest,
+} from "./utils";
 
 interface Props {
   open: boolean;
@@ -31,6 +41,7 @@ interface Props {
   lastAdministeredDates?: Record<string, string>;
   patientId: string;
   encounterId: string;
+  selectedGroup?: GroupedMedication;
 }
 
 interface MedicineListItemProps {
@@ -64,7 +75,7 @@ const MedicineListItem = ({
             <span className="font-medium">
               {displayMedicationName(medicine)}
             </span>
-            {medicine.dosage_instruction[0]?.as_needed_boolean && (
+            {medicine.dosage_instruction.some((di) => di.as_needed_boolean) && (
               <span className="text-sm text-rose-500">
                 {t("as_needed_prn")}
               </span>
@@ -110,6 +121,7 @@ export function MedicineAdminSheet({
   lastAdministeredDates,
   patientId,
   encounterId,
+  selectedGroup,
 }: Props) {
   const { t } = useTranslation();
 
@@ -123,6 +135,22 @@ export function MedicineAdminSheet({
     {},
   );
   const formRef = useRef<HTMLFormElement>(null);
+
+  // Pre-select the latest active request when opening with a selectedGroup
+  useEffect(() => {
+    if (open && selectedGroup) {
+      const latestRequest = getLatestActiveRequest(selectedGroup);
+      if (latestRequest) {
+        setSelectedMedicines(new Set([latestRequest.id]));
+        setAdministrationRequests({
+          [latestRequest.id]: createMedicationAdministrationRequest(
+            latestRequest,
+            encounterId,
+          ),
+        });
+      }
+    }
+  }, [open, selectedGroup, encounterId]);
 
   const { mutate: upsertAdministrations, isPending } = useMutation({
     mutationFn: mutate(medicationAdministrationApi.upsert, {
@@ -248,7 +276,7 @@ export function MedicineAdminSheet({
               </Button>
               <Button
                 type="submit"
-                className="bg-[#006D4C] hover:bg-[#006D4C]/90"
+                className="bg-primary-700 hover:bg-primary-700/90"
                 disabled={
                   selectedMedicines.size === 0 || isPending || !isAllFormsValid
                 }

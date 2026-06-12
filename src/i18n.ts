@@ -1,5 +1,6 @@
 import { PlugConfig } from "@/types/plugConfig";
 import plugConfigApi from "@/types/plugConfig/plugConfigApi";
+import { mergePlugConfigs } from "@/Utils/plugConfig";
 import { callApi } from "@/Utils/request/query";
 import careConfig from "@careConfig";
 import i18n from "i18next";
@@ -31,6 +32,10 @@ const namespaceToUrl = (namespace: string) => {
     (config) => config.meta?.name === namespace || config.slug === namespace,
   );
 
+  if (typeof pluginConfig?.meta?.localPath === "string") {
+    return pluginConfig.meta.localPath;
+  }
+
   if (
     pluginConfig?.meta?.url &&
     z.string().url().safeParse(pluginConfig.meta.url).success
@@ -42,19 +47,21 @@ const namespaceToUrl = (namespace: string) => {
   return undefined;
 };
 
+const fetchOptions = { cache: "no-store" as RequestCache };
+
 export async function initI18n() {
   // Fetch plugin configurations from API
   try {
     const response = await callApi(plugConfigApi.list, {
       silent: true,
     });
-    pluginConfigs = response.configs || [];
+    pluginConfigs = mergePlugConfigs(response.configs || []);
   } catch (error) {
     console.warn(
       "Failed to fetch plugin configurations for i18n namespaces:",
       error,
     );
-    pluginConfigs = [];
+    pluginConfigs = mergePlugConfigs();
   }
 
   const pluginNamespaces = pluginConfigs
@@ -75,7 +82,7 @@ export async function initI18n() {
           const remoteUrl = `${careConfig.i18nUrl}/${language}.json`;
           const localUrl = `/locale/${language}.json`;
           Promise.all([
-            fetch(remoteUrl)
+            fetch(remoteUrl, fetchOptions)
               .then((response) => {
                 if (!response.ok) {
                   throw new Error(`HTTP error! status: ${response.status}`);
@@ -89,7 +96,7 @@ export async function initI18n() {
                 );
                 return {};
               }),
-            fetch(localUrl)
+            fetch(localUrl, fetchOptions)
               .then((response) => {
                 if (!response.ok) {
                   throw new Error(`HTTP error! status: ${response.status}`);
@@ -125,7 +132,7 @@ export async function initI18n() {
           return;
         }
 
-        fetch(`${baseUrl}/locale/${language}.json`)
+        fetch(`${baseUrl}/locale/${language}.json`, fetchOptions)
           .then((response) => {
             if (!response.ok) {
               throw new Error(`HTTP error! status: ${response.status}`);
@@ -147,6 +154,7 @@ export async function initI18n() {
     .init({
       fallbackLng: "en",
       ns: namespaces,
+      fallbackNS: pluginNamespaces,
       load: "currentOnly",
       supportedLngs: Object.keys(LANGUAGES),
       interpolation: {

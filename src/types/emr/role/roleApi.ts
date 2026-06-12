@@ -1,5 +1,4 @@
-import { HttpMethod, Type } from "@/Utils/request/api";
-import { PaginatedResponse } from "@/Utils/request/types";
+import { HttpMethod, PaginatedResponse, Type } from "@/Utils/request/types";
 
 import { RoleCreate, RoleRead } from "./role";
 
@@ -12,7 +11,7 @@ export default {
   createRole: {
     path: "/api/v1/role/",
     method: HttpMethod.POST,
-    TReq: Type<RoleCreate>(),
+    TBody: Type<RoleCreate>(),
     TRes: Type<RoleRead>(),
   },
   getRole: {
@@ -23,7 +22,7 @@ export default {
   updateRole: {
     path: "/api/v1/role/{external_id}/",
     method: HttpMethod.PUT,
-    TReq: Type<RoleCreate>(),
+    TBody: Type<RoleCreate>(),
     TRes: Type<RoleRead>(),
   },
   deleteRole: {

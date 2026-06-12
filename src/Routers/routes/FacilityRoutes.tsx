@@ -2,10 +2,13 @@ import { Redirect } from "raviger";
 
 import FacilityUsers from "@/components/Facility/FacilityUsers";
 import ResourceCreate from "@/components/Resource/ResourceForm";
+import MedicationDispenseRedirect from "@/pages/Facility/billing/account/components/MedicationDispenseRedirect";
 
 import BedAvailabilityDashboard from "@/pages/Facility/BedAvailabilityDashboard";
 
 import { AppRoutes } from "@/Routers/AppRouter";
+import TemplateBuilder from "@/pages/Encounters/TemplateBuilder/TemplateBuilder";
+import TemplatePage from "@/pages/Encounters/TemplateBuilder/TemplatePage";
 import AccountList from "@/pages/Facility/billing/account/AccountList";
 import AccountShow from "@/pages/Facility/billing/account/AccountShow";
 import CreateInvoicePage from "@/pages/Facility/billing/account/CreateInvoice";
@@ -13,6 +16,7 @@ import { PrintChargeItems } from "@/pages/Facility/billing/account/components/Pr
 import InvoiceList from "@/pages/Facility/billing/invoice/InvoiceList";
 import InvoiceShow from "@/pages/Facility/billing/invoice/InvoiceShow";
 import PrintInvoice from "@/pages/Facility/billing/invoice/PrintInvoice";
+import PrintInvoices from "@/pages/Facility/billing/invoice/PrintInvoices";
 import PaymentReconciliationList from "@/pages/Facility/billing/paymentReconciliation/PaymentReconciliationList";
 import PaymentReconciliationShow from "@/pages/Facility/billing/paymentReconciliation/PaymentReconciliationShow";
 import PrintPaymentReconciliation from "@/pages/Facility/billing/paymentReconciliation/PrintPaymentReconciliation";
@@ -87,7 +91,7 @@ const FacilityRoutes: AppRoutes = {
     );
     return acc;
   }, {}),
-  "/facility/:facilityId/billing/accounts": ({ facilityId }) => (
+  "/facility/:facilityId/billing/account": ({ facilityId }) => (
     <AccountList facilityId={facilityId} />
   ),
   "/facility/:facilityId/billing/account/:accountId": ({
@@ -96,42 +100,24 @@ const FacilityRoutes: AppRoutes = {
   }) => (
     <AccountShow facilityId={facilityId} accountId={accountId} tab="invoices" />
   ),
-  "/facility/:facilityId/billing/account/:accountId/invoices": ({
-    facilityId,
-    accountId,
-  }) => (
-    <AccountShow facilityId={facilityId} accountId={accountId} tab="invoices" />
-  ),
-  "/facility/:facilityId/billing/account/:accountId/charge_items": ({
-    facilityId,
-    accountId,
-  }) => (
-    <AccountShow
-      facilityId={facilityId}
-      accountId={accountId}
-      tab="charge_items"
-    />
-  ),
   "/facility/:facilityId/billing/account/:accountId/charge_items/print": ({
     facilityId,
     accountId,
   }) => <PrintChargeItems facilityId={facilityId} accountId={accountId} />,
-  "/facility/:facilityId/billing/account/:accountId/payments": ({
+  "/facility/:facilityId/billing/account/:accountId/:tab": ({
     facilityId,
     accountId,
-  }) => (
-    <AccountShow facilityId={facilityId} accountId={accountId} tab="payments" />
-  ),
-  "/facility/:facilityId/billing/account/:accountId/bed_charge_items": ({
-    facilityId,
-    accountId,
-  }) => (
-    <AccountShow
-      facilityId={facilityId}
-      accountId={accountId}
-      tab="bed_charge_items"
-    />
-  ),
+    tab,
+  }) => <AccountShow facilityId={facilityId} accountId={accountId} tab={tab} />,
+  "/facility/:facilityId/billing/account/:accountId/:tab/payment/:paymentType":
+    ({ facilityId, accountId, tab, paymentType }) => (
+      <AccountShow
+        facilityId={facilityId}
+        accountId={accountId}
+        tab={tab}
+        paymentType={paymentType}
+      />
+    ),
   "/facility/:facilityId/billing/account/:accountId/invoices/create": ({
     facilityId,
     accountId,
@@ -143,10 +129,24 @@ const FacilityRoutes: AppRoutes = {
     facilityId,
     invoiceId,
   }) => <InvoiceShow facilityId={facilityId} invoiceId={invoiceId} />,
+  "/facility/:facilityId/billing/invoices/:invoiceId/pay": ({
+    facilityId,
+    invoiceId,
+  }) => (
+    <InvoiceShow
+      facilityId={facilityId}
+      invoiceId={invoiceId}
+      paymentType="pay"
+    />
+  ),
   "/facility/:facilityId/billing/invoice/:invoiceId/print": ({
     facilityId,
     invoiceId,
   }) => <PrintInvoice facilityId={facilityId} invoiceId={invoiceId} />,
+  "/facility/:facilityId/billing/invoices/:invoiceIds/print": ({
+    facilityId,
+    invoiceIds,
+  }) => <PrintInvoices facilityId={facilityId} invoiceIds={invoiceIds} />,
   "/facility/:facilityId/billing/payments": ({ facilityId }) => (
     <PaymentReconciliationList facilityId={facilityId} />
   ),
@@ -166,6 +166,24 @@ const FacilityRoutes: AppRoutes = {
     <PrintPaymentReconciliation
       facilityId={facilityId}
       paymentReconciliationId={paymentReconciliationId}
+    />
+  ),
+  "/facility/:facilityId/template": ({ facilityId }) => (
+    <TemplatePage facilityId={facilityId} />
+  ),
+  "/facility/:facilityId/template/builder": ({ facilityId }) => (
+    <TemplateBuilder facilityId={facilityId} />
+  ),
+  "/facility/:facilityId/template/builder/:slug": ({ facilityId, slug }) => (
+    <TemplateBuilder facilityId={facilityId} slug={slug} />
+  ),
+  "/facility/:facilityId/medication_dispense/redirect/:medicationDispenseId": ({
+    facilityId,
+    medicationDispenseId,
+  }) => (
+    <MedicationDispenseRedirect
+      facilityId={facilityId}
+      medicationDispenseId={medicationDispenseId}
     />
   ),
 };

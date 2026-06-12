@@ -97,6 +97,10 @@ function OrganizationLevelSelect({
   );
 }
 
+/**
+ * @deprecated This component is deprecated and should not be used.
+ * Use `GovtOrganizationPicker` instead. This component is known for weird bugs.
+ */
 export default function GovtOrganizationSelector({
   onChange,
   required,
@@ -183,7 +187,7 @@ export default function GovtOrganizationSelector({
           currentLevel={selectedLevels[index]}
           previousLevel={selectedLevels[index - 1]}
           onChange={handleFilterChange}
-          required={required}
+          required={requiredDepth != null ? index < requiredDepth : required}
           authToken={authToken}
         />
       ))}

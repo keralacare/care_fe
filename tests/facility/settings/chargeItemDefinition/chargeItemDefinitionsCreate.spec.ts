@@ -18,7 +18,7 @@ test.describe("Charge Item Definition Creation", () => {
 
   test.beforeEach(async ({ page }) => {
     facilityId = getFacilityId();
-    const chargeItemName = faker.commerce.productName();
+    const chargeItemName = faker.string.alphanumeric(10);
     title = chargeItemName;
     slug = chargeItemName.replace(/\s+/g, "-").slice(0, 25);
     basePrice = faker.commerce.price({ dec: 0 });
@@ -32,9 +32,7 @@ test.describe("Charge Item Definition Creation", () => {
     await page.goto(
       `/facility/${facilityId}/settings/charge_item_definitions/`,
     );
-    await page
-      .getByRole("textbox", { name: "Search categories..." })
-      .fill(categoryName);
+    await page.getByRole("textbox", { name: "Search" }).fill(categoryName);
     await page.getByRole("heading", { name: categoryName }).click();
   });
 
@@ -48,6 +46,22 @@ test.describe("Charge Item Definition Creation", () => {
     await expect(page.getByText(/slug.*atleast 5.*atmost 25/i)).toBeVisible();
     // Base Price required/invalid
     await expect(page.getByText(/base price.*required/i)).toBeVisible();
+  });
+
+  test("rejects a whitespace-only title", async ({ page }) => {
+    await page.getByRole("button", { name: /add definition/i }).click();
+    // Title is only spaces; slug and base price are valid, so the title
+    // validation is the only thing that can block creation.
+    await page.getByRole("textbox", { name: /title/i }).fill("   ");
+    await page.getByRole("textbox", { name: /slug/i }).fill(slug);
+    await page.getByRole("textbox", { name: /base price/i }).fill(basePrice);
+    await page.getByRole("button", { name: /create/i }).click();
+
+    // A whitespace-only title must be treated as empty: required error, no creation.
+    await expect(page.getByText(/title.*required/i)).toBeVisible();
+    await expect(
+      page.getByText(/charge item definition.*created successfully/i),
+    ).toHaveCount(0);
   });
 
   test("create charge item definition with required fields only", async ({
@@ -64,11 +78,15 @@ test.describe("Charge Item Definition Creation", () => {
       page.getByText(/charge item definition.*created successfully/i),
     ).toBeVisible();
 
-    // Verify in edit view
-    await page.getByRole("textbox", { name: /search/i }).fill(title);
-    await expect(page.getByRole("table").getByText(title)).toBeVisible();
+    // Verify in search results (retry to handle search indexing delay)
+    await expect(async () => {
+      await page.getByRole("textbox", { name: /search/i }).clear();
+      await page.getByRole("textbox", { name: /search/i }).fill(title);
+      await expect(page.getByRole("table").getByText(title)).toBeVisible();
+    }).toPass({ intervals: [2_000, 3_000, 5_000], timeout: 30_000 });
 
     await page.getByRole("link", { name: "View" }).click();
+    await page.waitForURL("**/charge_item_definitions/**");
     await expect(page.getByRole("heading", { name: title })).toBeVisible();
 
     await page.getByRole("button", { name: "Edit" }).first().click();
@@ -80,10 +98,12 @@ test.describe("Charge Item Definition Creation", () => {
     );
     await expect(
       page.getByRole("textbox", { name: /base price/i }),
-    ).toHaveValue(basePrice);
+    ).toHaveValue(Number(basePrice).toFixed(2));
   });
 
   test("create charge item definition with all fields", async ({ page }) => {
+    const cgstRate = "9";
+    const sgstRate = "6";
     await page.getByRole("button", { name: /add definition/i }).click();
     await page.getByRole("textbox", { name: /title/i }).fill(title);
     await page.getByRole("textbox", { name: /slug/i }).fill(slug);
@@ -101,8 +121,28 @@ test.describe("Charge Item Definition Creation", () => {
       .filter({ hasText: /^Add tax$/ })
       .first()
       .click();
-    await page.locator("div").filter({ hasText: /^9 %$/ }).first().click();
-    await page.locator("div").filter({ hasText: /^6 %$/ }).nth(2).click();
+
+    await page
+      .getByRole("textbox", { name: "Search for tax code" })
+      .fill(cgstRate);
+
+    // Select 9% under CGST section - find exact "cgst" text, navigate to container, find radio button
+    await page
+      .getByText("cgst", { exact: true })
+      .locator("../..")
+      .locator(`button[role="radio"][value="${cgstRate}"]`)
+      .click();
+
+    await page
+      .getByRole("textbox", { name: "Search for tax code" })
+      .fill(sgstRate);
+
+    // Select 6% under SGST section - find exact "sgst" text, navigate to container, find radio button
+    await page
+      .getByText("sgst", { exact: true })
+      .locator("../..")
+      .locator(`button[role="radio"][value="${sgstRate}"]`)
+      .click();
     const doneButton = page.getByRole("button", { name: "Done" });
     await doneButton.scrollIntoViewIfNeeded();
     await doneButton.click();
@@ -114,10 +154,18 @@ test.describe("Charge Item Definition Creation", () => {
       .click();
     await page.getByRole("checkbox").first().click();
     await page.getByRole("button", { name: "Done" }).click();
+    const switchElement = page.getByRole("switch", {
+      name: "Use facility global value",
+    });
+    if (await switchElement.isChecked()) {
+      await switchElement.click();
+    }
+    await page.waitForLoadState("networkidle");
     await page.getByRole("button", { name: "Add Condition" }).click();
+    // To do: make this metric agnostic/otherwise might have to adjust everytime we add a new metric
     await page
       .getByRole("combobox")
-      .filter({ hasText: /^Metric|Patient Age$/ })
+      .filter({ hasText: /^Metric|Encounter/ })
       .click();
     await page.getByRole("option", { name: "Patient Age" }).click();
     await page.getByRole("combobox").filter({ hasText: "In range" }).click();
@@ -132,18 +180,28 @@ test.describe("Charge Item Definition Creation", () => {
       page.getByText(/charge item definition.*created successfully/i),
     ).toBeVisible();
 
-    // Verify all fields
-    await page.getByRole("textbox", { name: /search/i }).fill(title);
-    await expect(page.getByRole("table").getByText(title)).toBeVisible();
+    // Verify in search results (retry to handle search indexing delay)
+    await expect(async () => {
+      await page.getByRole("textbox", { name: /search/i }).clear();
+      await page.getByRole("textbox", { name: /search/i }).fill(title);
+      await expect(page.getByRole("table").getByText(title)).toBeVisible();
+    }).toPass({ intervals: [2_000, 3_000, 5_000], timeout: 30_000 });
+
     await page.getByRole("link", { name: "View" }).click();
+    await page.waitForURL("**/charge_item_definitions/**");
     await expect(page.getByRole("heading", { name: title })).toBeVisible();
     await expect(page.getByText(description)).toBeVisible();
-    await expect(page.getByText(purpose)).toBeVisible();
+    await expect(page.getByText(purpose).last()).toBeVisible();
     await expect(page.getByText(url)).toBeVisible();
-    await expect(page.getByText(mrp)).toBeVisible();
-    await expect(page.getByText(purchasePrice)).toBeVisible();
-    await expect(page.getByText("9%")).toBeVisible();
-    await expect(page.getByText("6%")).toBeVisible();
+    const formatCurrency = (val: string) =>
+      new Intl.NumberFormat("en-IN", {
+        style: "currency",
+        currency: "INR",
+      }).format(Number(val));
+    await expect(page.getByText(formatCurrency(mrp))).toBeVisible();
+    await expect(page.getByText(formatCurrency(purchasePrice))).toBeVisible();
+    await expect(page.getByText("9.00%")).toBeVisible();
+    await expect(page.getByText("6.00%")).toBeVisible();
     await expect(
       page.getByText("Patient Age is in range 60 to 120 years"),
     ).toBeVisible();

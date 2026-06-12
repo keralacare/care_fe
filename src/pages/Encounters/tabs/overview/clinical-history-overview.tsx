@@ -16,6 +16,8 @@ import { useEncounter } from "@/pages/Encounters/utils/EncounterProvider";
 import allergyIntoleranceApi from "@/types/emr/allergyIntolerance/allergyIntoleranceApi";
 import { completedEncounterStatus } from "@/types/emr/encounter/encounter";
 
+import { ShortcutBadge } from "@/Utils/keyboardShortcutComponents";
+
 export const ClinicalHistoryOverview = (props: React.ComponentProps<"div">) => {
   const { t } = useTranslation();
   const { facilityId, patientId, patient, primaryEncounter } = useEncounter();
@@ -49,7 +51,7 @@ export const ClinicalHistoryOverview = (props: React.ComponentProps<"div">) => {
             <span className="text-sm font-medium text-gray-600">
               {t("blood_group")}:
             </span>
-            <Badge variant="destructive">
+            <Badge variant="yellow">
               <DropletIcon className="size-4" strokeWidth={1.5} />
               <span>
                 {t(`BLOOD_GROUP_LONG__${patient?.blood_group || "unknown"}`)}
@@ -61,7 +63,7 @@ export const ClinicalHistoryOverview = (props: React.ComponentProps<"div">) => {
               <span className="text-sm font-medium text-gray-600">
                 {t("allergies")}:
               </span>
-              <Badge variant="yellow">
+              <Badge variant="destructive">
                 <div>
                   <AllergyIcon className="size-4" />
                 </div>
@@ -85,8 +87,8 @@ export const ClinicalHistoryOverview = (props: React.ComponentProps<"div">) => {
           <Link
             href={
               facilityId
-                ? `/facility/${facilityId}/patient/${patientId}/history/symptoms?sourceUrl=${encodeURIComponent(sourceUrl ?? "")}`
-                : `/patient/${patientId}/history/symptoms?sourceUrl=${encodeURIComponent(sourceUrl ?? "")}`
+                ? `/facility/${facilityId}/patient/${patientId}/history/responses?sourceUrl=${encodeURIComponent(sourceUrl ?? "")}`
+                : `/patient/${patientId}/history/responses?sourceUrl=${encodeURIComponent(sourceUrl ?? "")}`
             }
           >
             <img
@@ -95,6 +97,7 @@ export const ClinicalHistoryOverview = (props: React.ComponentProps<"div">) => {
               className="size-4"
             />
             {t("see_clinical_history")}
+            <ShortcutBadge actionId="clinical-history" />
           </Link>
         </Button>
       </div>

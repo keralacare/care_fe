@@ -27,10 +27,12 @@ function generateFacilityLinks(
     canListEncounters: boolean;
     canWriteAppointment: boolean;
     canCreateEncounter: boolean;
-    canViewEncounter: boolean;
+    canReadEncounter: boolean;
     canListTokenCategories: boolean;
+    canListTemplate: boolean;
   },
   pluginLinks: NavigationLink[],
+  pluginBillingLinks: NavigationLink[],
 ) {
   if (!selectedFacility) return [];
 
@@ -108,7 +110,7 @@ function generateFacilityLinks(
       children: [
         {
           name: t("accounts"),
-          url: `${baseUrl}/billing/accounts`,
+          url: `${baseUrl}/billing/account`,
         },
         {
           name: t("invoices"),
@@ -118,6 +120,10 @@ function generateFacilityLinks(
           name: t("payments"),
           url: `${baseUrl}/billing/payments`,
         },
+        ...pluginBillingLinks.map((l) => ({
+          ...l,
+          url: `${baseUrl}${l.url}`,
+        })),
       ],
     },
     {
@@ -186,10 +192,11 @@ function generateFacilityLinks(
           name: t("tag_config"),
           url: `${baseUrl}/settings/tag_config`,
         },
-        // {
-        //   name: t("report_builder"),
-        //   url: `${baseUrl}/settings/report_builder/`,
-        // },
+        {
+          name: t("templates"),
+          url: `${baseUrl}/template`,
+          visibility: permissions.canListTemplate,
+        },
       ],
     },
   ];
@@ -211,6 +218,10 @@ export function FacilityNav({ selectedFacility }: FacilityNavProps) {
     !c.isLoading && c.navItems ? c.navItems : [],
   ) as NavigationLink[];
 
+  const pluginBillingNavItems = careApps.flatMap((c) =>
+    !c.isLoading && c.billingNavItems ? c.billingNavItems : [],
+  ) as NavigationLink[];
+
   const { facility } = useCurrentFacility();
 
   const {
@@ -218,16 +229,18 @@ export function FacilityNav({ selectedFacility }: FacilityNavProps) {
     canListEncounters,
     canWriteAppointment,
     canCreateEncounter,
-    canViewEncounter,
+    canReadEncounter,
     canListTokenCategories,
+    canListTemplate,
   } = getPermissions(hasPermission, facility?.permissions ?? []);
   const permissions = {
     canViewAppointments,
     canListEncounters,
     canWriteAppointment,
     canCreateEncounter,
-    canViewEncounter,
+    canReadEncounter,
     canListTokenCategories,
+    canListTemplate,
   };
   return (
     <NavMain
@@ -236,6 +249,7 @@ export function FacilityNav({ selectedFacility }: FacilityNavProps) {
         t,
         permissions,
         pluginNavItems,
+        pluginBillingNavItems,
       )}
     />
   );

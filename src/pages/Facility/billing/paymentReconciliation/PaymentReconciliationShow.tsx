@@ -1,12 +1,17 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { BanIcon, TriangleAlertIcon } from "lucide-react";
+import {
+  ArrowLeft,
+  BanIcon,
+  ExternalLink,
+  Eye,
+  PrinterIcon,
+  TriangleAlertIcon,
+} from "lucide-react";
 import { Link } from "raviger";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-
-import CareIcon from "@/CAREUI/icons/CareIcon";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,30 +22,19 @@ import { Separator } from "@/components/ui/separator";
 import CriticalActionConfirmationDialog from "@/components/Common/CriticalActionConfirmationDialog";
 import { TableSkeleton } from "@/components/Common/SkeletonLoading";
 
-import useAppHistory from "@/hooks/useAppHistory";
-
 import { useShortcutSubContext } from "@/context/ShortcutContext";
 import {
+  getPaymentTypeLabelKey,
+  PAYMENT_RECONCILIATION_METHOD_MAP,
   PAYMENT_RECONCILIATION_OUTCOME_COLORS,
   PAYMENT_RECONCILIATION_STATUS_COLORS,
-  PaymentReconciliationPaymentMethod,
   PaymentReconciliationStatus,
 } from "@/types/billing/paymentReconciliation/paymentReconciliation";
 import paymentReconciliationApi from "@/types/billing/paymentReconciliation/paymentReconciliationApi";
 import { ShortcutBadge } from "@/Utils/keyboardShortcutComponents";
 import mutate from "@/Utils/request/mutate";
 import query from "@/Utils/request/query";
-import { formatPatientAge } from "@/Utils/utils";
-
-const methodMap: Record<PaymentReconciliationPaymentMethod, string> = {
-  cash: "Cash",
-  ccca: "Credit Card",
-  cchk: "Credit Check",
-  cdac: "Credit Account",
-  chck: "Check",
-  ddpo: "Direct Deposit",
-  debc: "Debit Card",
-};
+import { formatName, formatPatientAge, goBack } from "@/Utils/utils";
 
 // Helper for friendly display of enum values
 function humanize(str: string): string {
@@ -65,7 +59,6 @@ export function PaymentReconciliationShow({
   paymentReconciliationId: string;
 }) {
   const { t } = useTranslation();
-  const { goBack } = useAppHistory();
   const queryClient = useQueryClient();
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
@@ -131,12 +124,12 @@ export function PaymentReconciliationShow({
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start gap-4">
         <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
+          <h1 className="text-2xl font-bold">
             {t(payment.is_credit_note ? "refund" : "payment")}
-            <span className="text-lg font-normal text-gray-500">
-              #{payment.id}
-            </span>
           </h1>
+          <p className="text-sm text-gray-500">
+            {t("payment_id")}: {payment.id}
+          </p>
           <div className="flex flex-wrap gap-2 mt-2">
             <Badge
               variant={PAYMENT_RECONCILIATION_STATUS_COLORS[payment.status]}
@@ -148,8 +141,17 @@ export function PaymentReconciliationShow({
             >
               {t(payment.outcome)}
             </Badge>
-            <Badge variant="outline">{t(methodMap[payment.method])}</Badge>
-            <Badge variant="outline">{t(payment.reconciliation_type)}</Badge>
+            <Badge variant="outline">
+              {t(PAYMENT_RECONCILIATION_METHOD_MAP[payment.method])}
+            </Badge>
+            <Badge variant="outline">
+              {t(
+                getPaymentTypeLabelKey(
+                  payment.reconciliation_type,
+                  payment.is_credit_note,
+                ),
+              )}
+            </Badge>
           </div>
         </div>
         <div className="flex gap-2">
@@ -157,9 +159,9 @@ export function PaymentReconciliationShow({
             <Link
               href={`/facility/${facilityId}/billing/payments/${paymentReconciliationId}/print`}
             >
-              <CareIcon icon="l-print" className="mr-2 size-4" />
+              <PrinterIcon className="size-4" />
               {t("print_receipt")}
-              <ShortcutBadge actionId="print-button" />
+              <ShortcutBadge actionId="print-payment-receipt" />
             </Link>
           </Button>
         </div>
@@ -228,7 +230,7 @@ export function PaymentReconciliationShow({
                   </div>
                   <div className="font-medium">
                     {payment.payment_datetime
-                      ? format(new Date(payment.payment_datetime), "PPP")
+                      ? format(new Date(payment.payment_datetime), "PPP p")
                       : "-"}
                   </div>
                 </div>
@@ -246,7 +248,7 @@ export function PaymentReconciliationShow({
                 <div className="space-y-4">
                   <InfoItem
                     label={t("payment_method")}
-                    value={methodMap[payment.method]}
+                    value={PAYMENT_RECONCILIATION_METHOD_MAP[payment.method]}
                   />
                   {payment.reference_number && (
                     <InfoItem
@@ -266,7 +268,12 @@ export function PaymentReconciliationShow({
                 <div>
                   <InfoItem
                     label={t("reconciliation_type")}
-                    value={humanize(payment.reconciliation_type)}
+                    value={t(
+                      getPaymentTypeLabelKey(
+                        payment.reconciliation_type,
+                        payment.is_credit_note,
+                      ),
+                    )}
                   />
                 </div>
                 <div className="space-y-4">
@@ -369,7 +376,7 @@ export function PaymentReconciliationShow({
                     </div>
                     <div className="font-bold">
                       <MonetaryDisplay
-                        amount={String(payment.target_invoice.total_gross)}
+                        amount={payment.target_invoice.total_gross}
                       />
                     </div>
                   </div>
@@ -380,7 +387,7 @@ export function PaymentReconciliationShow({
                     <Link
                       href={`/facility/${facilityId}/billing/invoices/${payment.target_invoice.id}`}
                     >
-                      <CareIcon icon="l-eye" className="mr-2 size-4" />
+                      <Eye className="size-4" />
                       {t("view_invoice")}
                     </Link>
                   </Button>
@@ -388,7 +395,7 @@ export function PaymentReconciliationShow({
                     <Link
                       href={`/facility/${facilityId}/billing/invoice/${payment.target_invoice.id}/print`}
                     >
-                      <CareIcon icon="l-print" className="mr-2 size-4" />
+                      <PrinterIcon className="size-4" />
                       {t("print_invoice")}
                     </Link>
                   </Button>
@@ -412,8 +419,8 @@ export function PaymentReconciliationShow({
                   <p className="font-medium">{t("payment_recorded")}</p>
                   <p className="text-sm text-gray-500">
                     {payment.payment_datetime
-                      ? format(new Date(payment.payment_datetime), "PPP")
-                      : format(new Date(), "PPP")}
+                      ? format(new Date(payment.payment_datetime), "PPP p")
+                      : format(new Date(), "PPP p")}
                   </p>
                 </div>
                 {payment.status === "cancelled" && (
@@ -421,7 +428,7 @@ export function PaymentReconciliationShow({
                     <div className="absolute left-0 top-2 size-2 rounded-full bg-destructive" />
                     <p className="font-medium">{t("payment_cancelled")}</p>
                     <p className="text-sm text-gray-500">
-                      {format(new Date(), "PPP")}
+                      {format(new Date(), "PPP p")}
                     </p>
                   </div>
                 )}
@@ -441,7 +448,7 @@ export function PaymentReconciliationShow({
                     href={`/facility/${facilityId}/billing/payments/${paymentReconciliationId}/print`}
                     className="flex items-center w-full relative"
                   >
-                    <CareIcon icon="l-print" className="mr-2 size-4" />
+                    <PrinterIcon className="size-4" />
                     {t("print_receipt")}
                   </Link>
                 </Button>
@@ -451,7 +458,7 @@ export function PaymentReconciliationShow({
                       href={`/facility/${facilityId}/billing/invoices/${payment.target_invoice.id}`}
                       className="flex items-center w-full relative"
                     >
-                      <CareIcon icon="l-eye" className="mr-2 size-4" />
+                      <Eye className="size-4" />
                       {t("view_invoice")}
                       <ShortcutBadge actionId="view-invoice" />
                     </Link>
@@ -468,7 +475,7 @@ export function PaymentReconciliationShow({
                             variant="outline"
                             disabled={isPending}
                           >
-                            <CareIcon icon="l-ban" className="mr-2 size-4" />
+                            <BanIcon className="size-4" />
                             {t("mark_as_cancelled")}
                             <ShortcutBadge actionId="mark-payment-cancelled" />
                           </Button>
@@ -498,10 +505,7 @@ export function PaymentReconciliationShow({
                             variant="outline"
                             disabled={isPending}
                           >
-                            <CareIcon
-                              icon="l-exclamation-triangle"
-                              className="mr-2 size-4"
-                            />
+                            <TriangleAlertIcon className="size-4" />
                             {t("mark_as_entered_in_error")}
                             <ShortcutBadge actionId="mark-payment-error" />
                           </Button>
@@ -536,12 +540,46 @@ export function PaymentReconciliationShow({
                   }
                   data-shortcut-id="go-back"
                 >
-                  <CareIcon icon="l-arrow-left" className="mr-2 size-4" />
+                  <ArrowLeft className="size-4" />
                   {t("back_to_payments")}
+                </Button>
+                <Button variant="outline" className="w-full" asChild>
+                  <Link
+                    href={`/facility/${facilityId}/billing/account/${payment.account?.id}`}
+                  >
+                    <ExternalLink className="size-4" />
+                    {t("view_account")}
+                    <ShortcutBadge actionId="view-account" />
+                  </Link>
                 </Button>
               </div>
             </CardContent>
           </Card>
+
+          <div className="space-y-6 p-2">
+            <div>
+              <div className="text-xs text-gray-500 mb-1">
+                {t("created_by")}
+              </div>
+              <div className="text-sm font-medium">
+                {formatName(payment.created_by)}
+              </div>
+              <div className="text-xs text-gray-500">
+                {format(new Date(payment.created_date), "PPP p")}
+              </div>
+            </div>
+            <div>
+              <div className="text-xs text-gray-500 mb-1">
+                {t("last_modified_by")}
+              </div>
+              <div className="text-sm font-medium">
+                {formatName(payment.updated_by)}
+              </div>
+              <div className="text-xs text-gray-500">
+                {format(new Date(payment.modified_date), "PPP p")}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
