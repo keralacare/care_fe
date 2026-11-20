@@ -62,7 +62,7 @@ export default function AdminOrganizationFormSheet({
       .trim()
       .min(1, { message: t("field_required") }),
     description: z.string().optional(),
-    org_type: z.nativeEnum(OrgType),
+    org_type: z.enum(OrgType),
   });
 
   const form = useForm({
@@ -126,13 +126,15 @@ export default function AdminOrganizationFormSheet({
       name: values.name.trim(),
       description: values.description?.trim() || undefined,
       org_type: values.org_type,
-      parent_id: parentOrgId,
-    };
+    } satisfies OrganizationUpdate;
 
     if (isEditMode) {
       updateOrganization(data);
     } else {
-      createOrganization(data);
+      createOrganization({
+        ...data,
+        parent: parentOrgId,
+      } satisfies OrganizationCreate);
     }
   };
 

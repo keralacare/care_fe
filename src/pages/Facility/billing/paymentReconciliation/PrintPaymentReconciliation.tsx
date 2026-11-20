@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 
 import PrintPreview from "@/CAREUI/misc/PrintPreview";
+import PatientPrintPageHeader from "@/components/Common/PatientPrintPageHeader";
 
 import { Badge } from "@/components/ui/badge";
 import { MonetaryDisplay } from "@/components/ui/monetary-display";
@@ -27,6 +28,7 @@ import {
   PaymentReconciliationStatus,
 } from "@/types/billing/paymentReconciliation/paymentReconciliation";
 import paymentReconciliationApi from "@/types/billing/paymentReconciliation/paymentReconciliationApi";
+import { getPatientIdentifiers } from "@/types/emr/patient/patient";
 import { PrintTemplateType } from "@/types/facility/printTemplate";
 import { PatientIdentifierUse } from "@/types/patient/patientIdentifierConfig/patientIdentifierConfig";
 import query from "@/Utils/request/query";
@@ -73,7 +75,7 @@ const DetailRow = ({
   );
 };
 
-export function PrintPaymentReconciliation({
+function PrintPaymentReconciliation({
   facilityId,
   paymentReconciliationId,
 }: PrintPaymentReconciliationProps) {
@@ -107,6 +109,7 @@ export function PrintPaymentReconciliation({
       watermark={getWatermark()}
       facility={facility}
       templateSlug={PrintTemplateType.payment_receipt}
+      pageHeader={<PatientPrintPageHeader patient={payment.account.patient} />}
     >
       <div className="max-w-5xl mx-auto">
         <div>
@@ -162,20 +165,17 @@ export function PrintPaymentReconciliation({
                 value={payment.id}
                 width="w-24"
               />
-              {payment.account.patient?.instance_identifiers
-                ?.filter(
-                  ({ config }) =>
-                    config.config.use === PatientIdentifierUse.official,
-                )
-                .map((identifier) => (
-                  <DetailRow
-                    key={identifier.config.id}
-                    label={identifier.config.config.display}
-                    value={identifier.value}
-                    width="w-24"
-                    isStrong
-                  />
-                ))}
+              {getPatientIdentifiers(payment.account.patient, {
+                use: PatientIdentifierUse.official,
+              }).map((identifier) => (
+                <DetailRow
+                  key={identifier.config.id}
+                  label={identifier.config.config.display}
+                  value={identifier.value}
+                  width="w-24"
+                  isStrong
+                />
+              ))}
               <DetailRow
                 label={t("payment_method")}
                 value={PAYMENT_RECONCILIATION_METHOD_MAP[payment.method]}

@@ -8,26 +8,9 @@ import {
   selectFromValueSet,
 } from "tests/helper/ui";
 
-export const STATUS_OPTIONS = [
-  "Draft",
-  "Active",
-  "On Hold",
-  "Entered in Error",
-  "Ended",
-  "Completed",
-  "Revoked",
-  "Unknown",
-];
-
 export const ACTIVITY_DEFINITIONS = [
   "Urinalysis",
   "Lipid Panel",
-  "Fasting Blood Glucose",
-];
-
-export const OBSERVATION_DEFINITIONS = [
-  "Urinalysis Observation",
-  "Lipid Panel Observation",
   "Fasting Blood Glucose",
 ];
 
@@ -42,6 +25,22 @@ export interface ServiceRequestTestData {
   patientInstruction?: string;
   notes?: string;
   requestor?: string;
+}
+
+export type ServiceRequestOverrides = Partial<
+  Pick<ServiceRequestTestData, "activityDefinition" | "priority">
+>;
+
+/**
+ * The report type picker preselects the only remaining report code, so the
+ * placeholder is not always shown. Locate the picker by its label instead.
+ */
+export function reportTypeCombobox(page: Page) {
+  return page
+    .locator('label[data-slot="label"]')
+    .filter({ hasText: /^Select Diagnostic Report Type$/ })
+    .locator("..")
+    .getByRole("combobox");
 }
 
 export function generateServiceRequestTestData(
@@ -73,8 +72,9 @@ export async function createServiceRequest(
   patientId: string,
   encounterId: string,
   allFields: boolean = false,
+  overrides: ServiceRequestOverrides = {},
 ): Promise<ServiceRequestTestData> {
-  const data = generateServiceRequestTestData(allFields);
+  const data = { ...generateServiceRequestTestData(allFields), ...overrides };
 
   await page.goto(
     `/facility/${facilityId}/patient/${patientId}/encounter/${encounterId}/service_requests`,

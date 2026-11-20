@@ -12,14 +12,12 @@ import { z } from "zod";
 import { CaretSortIcon } from "@radix-ui/react-icons";
 
 import useCurrentFacility from "@/pages/Facility/utils/useCurrentFacility";
-import batchApi from "@/types/base/batch/batchApi";
 import {
   ChargeItemBatchResponse,
   ChargeItemRead,
   extractChargeItemsFromBatchResponse,
 } from "@/types/billing/chargeItem/chargeItem";
 import {
-  MedicationDispenseCategory,
   MedicationDispenseCreate,
   MedicationDispenseStatus,
 } from "@/types/emr/medicationDispense/medicationDispense";
@@ -27,6 +25,7 @@ import { InventoryRead } from "@/types/inventory/product/inventory";
 import inventoryApi from "@/types/inventory/product/inventoryApi";
 import { ProductKnowledgeBase } from "@/types/inventory/productKnowledge/productKnowledge";
 import { LocationRead } from "@/types/location/location";
+import { BatchRequestObject, useBatchRequest } from "@/Utils/request/batch";
 import mutate from "@/Utils/request/mutate";
 import query from "@/Utils/request/query";
 
@@ -70,6 +69,7 @@ import {
 import { useShortcutSubContext } from "@/context/ShortcutContext";
 import { ProductKnowledgeSelect } from "@/pages/Facility/services/inventory/ProductKnowledgeSelect";
 import StockLotSelector from "@/pages/Facility/services/inventory/StockLotSelector";
+import { getExpirationDateThresholdForDispensing } from "@/pages/Facility/services/inventory/utils";
 import { MonetaryComponentType } from "@/types/base/monetaryComponent/monetaryComponent";
 import {
   DispenseOrderBatchResponse,
@@ -77,6 +77,8 @@ import {
   extractDispenseOrderFromBatchResponse,
 } from "@/types/emr/dispenseOrder/dispenseOrder";
 import dispenseOrderApi from "@/types/emr/dispenseOrder/dispenseOrderApi";
+import medicationDispenseApi from "@/types/emr/medicationDispense/medicationDispenseApi";
+import { MedicationCategory } from "@/types/emr/medicationRequest/medicationRequest";
 import {
   isGreaterThan,
   isLessThanOrEqual,
@@ -86,6 +88,7 @@ import {
 } from "@/Utils/decimal";
 import { isLotAllowedForDispensing } from "@/Utils/inventory";
 import { ShortcutBadge } from "@/Utils/keyboardShortcutComponents";
+import { generateAlternateIdentifier } from "@/Utils/utils";
 
 interface SelectedLocation {
   id: string;
@@ -116,7 +119,7 @@ const createFormSchema = () =>
   z.object({
     items: z.array(
       z.object({
-        reference_id: z.string().uuid(),
+        reference_id: z.uuid(),
         productKnowledge: z.any(),
         quantity: zodDecimal({ min: 1 }),
         lots: z.array(
@@ -142,8 +145,8 @@ export default function DispenseDrawer({
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const { facilityId } = useCurrentFacility();
-  const [alternateIdentifier, _setAlternateIdentifier] = useState<string>(
-    `${encounterId}-${new Date().toISOString().replace(/[:.]/g, "-")}`,
+  const [alternateIdentifier, setAlternateIdentifier] = useState(() =>
+    generateAlternateIdentifier(encounterId),
   );
   const [currentLocation, setCurrentLocation] = useState<LocationRead>(
     () =>
@@ -190,8 +193,11 @@ export default function DispenseDrawer({
   useEffect(() => {
     if (open) {
       form.reset({ items: [] });
+      // Each time the drawer opens is a new dispense session, so it should
+      // produce a new dispense order rather than reuse the previous one.
+      setAlternateIdentifier(generateAlternateIdentifier(encounterId));
     }
-  }, [open, form]);
+  }, [open, form, encounterId]);
 
   useEffect(() => {
     const fetchMissingInventories = async () => {
@@ -207,7 +213,11 @@ export default function DispenseDrawer({
           queryParams: {
             limit: 100,
             product_knowledge: productKnowledgeId,
+            status: "active",
             net_content_gt: 0,
+            ordering: "product__expiration_date",
+            product_expiration_date_after:
+              getExpirationDateThresholdForDispensing().toISOString(),
           },
         })({ signal: new AbortController().signal });
 
@@ -231,7 +241,7 @@ export default function DispenseDrawer({
     fetchMissingInventories();
   }, [productKnowledgeInventoriesMap, facilityId, currentLocation.id]);
 
-  // Auto-select first valid (non-expired) lot by default
+  // Inventories are fetched earliest-expiry first (FEFO), so the first valid lot is the one to use
   useEffect(() => {
     fields.forEach((field, index) => {
       const inventories =
@@ -243,9 +253,7 @@ export default function DispenseDrawer({
         inventories?.length &&
         !currentLots.some((lot) => lot.selectedInventoryId)
       ) {
-        const validLot = inventories.find((inv) =>
-          isLotAllowedForDispensing(inv.product.expiration_date),
-        );
+        const validLot = inventories.find(isLotAllowedForDispensing);
 
         if (validLot) {
           form.setValue(`items.${index}.lots`, [
@@ -260,6 +268,9 @@ export default function DispenseDrawer({
   }, [productKnowledgeInventoriesMap, fields, form]);
 
   const { mutate: updateDispenseOrder } = useMutation({
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["dispenseOrder"] });
+    },
     mutationFn: ({
       dispenseOrderId,
       status,
@@ -272,13 +283,14 @@ export default function DispenseDrawer({
       })({ status }),
   });
 
-  const { mutate: dispense, isPending } = useMutation({
-    mutationFn: mutate(batchApi.batchRequest),
+  const { mutate: dispense, isPending } = useBatchRequest({
     onSuccess: (response) => {
       toast.success(t("items_dispensed_successfully"));
       queryClient.invalidateQueries({
         queryKey: ["inventory", currentLocation.id],
       });
+      queryClient.invalidateQueries({ queryKey: ["medication_dispense"] });
+      queryClient.invalidateQueries({ queryKey: ["infinite-dispenseOrders"] });
 
       const chargeItems = extractChargeItemsFromBatchResponse(
         response as ChargeItemBatchResponse,
@@ -436,12 +448,7 @@ export default function DispenseDrawer({
 
   const createDispenseRequests = useCallback(
     (items: FormItemType[]) => {
-      const requests: Array<{
-        url: string;
-        method: string;
-        reference_id: string;
-        body: MedicationDispenseCreate;
-      }> = [];
+      const requests: BatchRequestObject<MedicationDispenseCreate>[] = [];
 
       items.forEach((item) => {
         const productKnowledge = item.productKnowledge;
@@ -464,7 +471,7 @@ export default function DispenseDrawer({
 
           const dispenseData: MedicationDispenseCreate = {
             status: MedicationDispenseStatus.completed,
-            category: MedicationDispenseCategory.outpatient,
+            category: MedicationCategory.outpatient,
             when_prepared: new Date(),
             dosage_instruction: [],
             encounter: encounterId,
@@ -480,9 +487,8 @@ export default function DispenseDrawer({
           };
 
           requests.push({
-            url: `/api/v1/medication/dispense/`,
-            method: "POST",
-            reference_id: `dispense_${item.reference_id}_lot_${lot.selectedInventoryId}`,
+            api: medicationDispenseApi.create,
+            referenceId: `dispense_${item.reference_id}_lot_${lot.selectedInventoryId}`,
             body: dispenseData,
           });
         });
@@ -490,7 +496,12 @@ export default function DispenseDrawer({
 
       return requests;
     },
-    [productKnowledgeInventoriesMap, encounterId, currentLocation.id],
+    [
+      productKnowledgeInventoriesMap,
+      encounterId,
+      currentLocation.id,
+      alternateIdentifier,
+    ],
   );
 
   const handleDispense = useCallback(() => {
@@ -511,7 +522,7 @@ export default function DispenseDrawer({
       return;
     }
 
-    dispense({ requests });
+    dispense(requests);
   }, [form, validateFormWithToasts, createDispenseRequests, dispense, t]);
 
   const watchedItems = useWatch({

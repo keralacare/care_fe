@@ -1,16 +1,19 @@
-import { Redirect, useRoutes } from "raviger";
+import { Redirect, useFullPath, useRoutes } from "raviger";
+import { useTranslation } from "react-i18next";
 
+import Loading from "@/components/Common/Loading";
 import ErrorPage from "@/components/ErrorPages/DefaultErrorPage";
+import { PrintPrescriptions } from "@/components/Prescription/PrintPrescriptions";
 
 import { ScheduleHome } from "@/components/Schedule/ScheduleHome";
 import AppointmentDetail from "@/pages/Appointments/AppointmentDetail";
 import AppointmentsPage from "@/pages/Appointments/AppointmentsPage";
 import PrintAppointments from "@/pages/Appointments/components/PrintAppointments";
 import BedsList from "@/pages/Facility/locations/BedsList";
+import useCurrentLocation from "@/pages/Facility/locations/utils/useCurrentLocation";
 import { ManageQueuePage } from "@/pages/Facility/queues/ManageQueue";
 import QueuesIndex from "@/pages/Facility/queues/QueuesIndex";
 import { InventoryList } from "@/pages/Facility/services/inventory/InventoryList";
-// import { ReceiveStock } from "@/pages/Facility/services/inventory/ReceiveStock";
 
 import { ExternalPurchasesList } from "@/pages/Facility/services/inventory/externalSupply/requestOrder/ExternalPurchasesList";
 import RequestOrderForm from "@/pages/Facility/services/inventory/externalSupply/requestOrder/RequestOrderForm";
@@ -23,16 +26,15 @@ import { PrintDeliveryOrder } from "@/pages/Facility/services/inventory/external
 import { PrintRequestOrder } from "@/pages/Facility/services/inventory/externalSupply/requestOrder/PrintRequestOrder";
 import { ToDispatch } from "@/pages/Facility/services/inventory/ToDispatch";
 import { ToReceive } from "@/pages/Facility/services/inventory/ToReceive";
-import AllMedicationBillForm from "@/pages/Facility/services/pharmacy/AllMedicationBillForm";
-import DispensesView from "@/pages/Facility/services/pharmacy/DispensesView";
-import MedicationBillForm from "@/pages/Facility/services/pharmacy/MedicationBillForm";
+import BillMedicationsByNewDispense from "@/pages/Facility/services/pharmacy/billMedications/BillMedicationsByNewDispense";
+import BillMedicationsByPrescriptions from "@/pages/Facility/services/pharmacy/billMedications/BillMedicationsByPrescriptions";
+import DispenseOrderCompleted from "@/pages/Facility/services/pharmacy/DispenseOrderCompleted";
+import { DispenseOrderView } from "@/pages/Facility/services/pharmacy/DispenseOrderView";
 import MedicationDispenseHistory from "@/pages/Facility/services/pharmacy/MedicationDispenseHistory";
-import MedicationRequestList from "@/pages/Facility/services/pharmacy/MedicationRequestList";
 import MedicationReturnList from "@/pages/Facility/services/pharmacy/MedicationReturnList";
 import MedicationReturnShow from "@/pages/Facility/services/pharmacy/MedicationReturnShow";
-import PrescriptionsView, {
-  PharmacyMedicationTab,
-} from "@/pages/Facility/services/pharmacy/PrescriptionsView";
+import PrescriptionQueue from "@/pages/Facility/services/pharmacy/PrescriptionQueue";
+import PrescriptionsPreviewPage from "@/pages/Facility/services/pharmacy/PrescriptionsPreviewPage";
 import { PrintDispenseOrder } from "@/pages/Facility/services/pharmacy/PrintDispenseOrder";
 import { PrintMedicationReturn } from "@/pages/Facility/services/pharmacy/PrintMedicationReturn";
 import ServiceRequestList from "@/pages/Facility/services/serviceRequests/ServiceRequestList";
@@ -44,53 +46,89 @@ interface LocationLayoutProps {
   locationId: string;
 }
 
+// Inventory and Pharmacy pages, for locations that use inventory
+const INVENTORY_PAGES = [
+  "inventory",
+  "medication_requests",
+  "medication_dispense",
+  "medication_return",
+];
+
+// To Receive and the stock requests and deliveries it opens stay open, so
+// transfers already on their way to the location can still be received, but
+// not the forms that raise or edit them
+function needsInventory(path: string) {
+  const [page, kind, type, ...rest] = path.split("/").filter(Boolean);
+  if (!INVENTORY_PAGES.includes(page)) return false;
+  const isReceiving =
+    page === "inventory" && kind === "internal" && type === "receive";
+  return !isReceiving || rest.includes("new") || rest.includes("edit");
+}
+
 const getRoutes = (facilityId: string, locationId: string) => ({
   // Beds
   "/beds": () => <BedsList facilityId={facilityId} locationId={locationId} />,
   // Pharmacy
   "/medication_requests": () => (
-    <MedicationRequestList facilityId={facilityId} locationId={locationId} />
+    <PrescriptionQueue facilityId={facilityId} locationId={locationId} />
   ),
-  "/medication_requests/patient/:patientId/prescription/:prescriptionId": ({
+  "/medication_requests/patient/:patientId/prescriptions/:prescriptionIds": ({
     patientId,
-    prescriptionId,
+    prescriptionIds,
   }: {
     patientId: string;
-    prescriptionId: string;
+    prescriptionIds: string;
   }) => (
-    <PrescriptionsView
+    <PrescriptionsPreviewPage
       facilityId={facilityId}
       patientId={patientId}
-      tab={PharmacyMedicationTab.PENDING}
-      prescriptionId={prescriptionId}
+      locationId={locationId}
+      prescriptionIds={prescriptionIds.split(",")}
     />
   ),
-  // Todo: Re-check if this route is needed
-  // "/medication_requests/patient/:patientId/print": ({
-  //   patientId,
-  // }: {
-  //   patientId: string;
-  // }) => (
-  //   <PrintPharmacyPrescription facilityId={facilityId} patientId={patientId} />
-  // ),
-  "/medication_requests/patient/:patientId/bill": ({
-    patientId,
-  }: {
-    patientId: string;
-  }) => <AllMedicationBillForm patientId={patientId} />,
-  "/medication_requests/patient/:patientId/prescription/:prescriptionId/bill":
+  "/medication_requests/patient/:patientId/prescriptions/:prescriptionIds/print":
     ({
       patientId,
-      prescriptionId,
+      prescriptionIds,
     }: {
       patientId: string;
-      prescriptionId: string;
+      prescriptionIds: string;
     }) => (
-      <MedicationBillForm
+      <PrintPrescriptions
+        facilityId={facilityId}
         patientId={patientId}
-        prescriptionId={prescriptionId}
+        prescriptionIds={prescriptionIds.split(",")}
       />
     ),
+  "/medication_requests/patient/:patientId/bill/prescriptions/:prescriptionIds":
+    ({
+      patientId,
+      prescriptionIds,
+    }: {
+      patientId: string;
+      prescriptionIds: string;
+    }) => (
+      <BillMedicationsByPrescriptions
+        facilityId={facilityId}
+        locationId={locationId}
+        patientId={patientId}
+        prescriptionIds={prescriptionIds.split(",")}
+      />
+    ),
+  "/medication_requests/patient/:patientId/bill/dispense/:encounterId": ({
+    patientId,
+    encounterId,
+  }: {
+    patientId: string;
+    encounterId: string;
+  }) => (
+    <BillMedicationsByNewDispense
+      facilityId={facilityId}
+      locationId={locationId}
+      patientId={patientId}
+      encounterId={encounterId}
+    />
+  ),
   "/medication_dispense": () => (
     <MedicationDispenseHistory
       facilityId={facilityId}
@@ -108,12 +146,27 @@ const getRoutes = (facilityId: string, locationId: string) => ({
       locationId={locationId}
     />
   ),
+  "/medication_dispense/order/:dispenseOrderId/completed": ({
+    dispenseOrderId,
+  }: {
+    dispenseOrderId: string;
+  }) => (
+    <DispenseOrderCompleted
+      facilityId={facilityId}
+      locationId={locationId}
+      dispenseOrderId={dispenseOrderId}
+    />
+  ),
   "/medication_dispense/order/:dispenseOrderId": ({
     dispenseOrderId,
   }: {
     dispenseOrderId: string;
   }) => (
-    <DispensesView facilityId={facilityId} dispenseOrderId={dispenseOrderId} />
+    <DispenseOrderView
+      facilityId={facilityId}
+      locationId={locationId}
+      dispenseOrderId={dispenseOrderId}
+    />
   ),
   "/medication_return": () => (
     <MedicationReturnList facilityId={facilityId} locationId={locationId} />
@@ -432,6 +485,42 @@ export function LocationLayout({
       locationId,
     },
   });
+
+  const { t } = useTranslation();
+  // The path below the location, read the way the router matches it: decoded
+  // and ignoring case
+  const path = decodeURIComponent(useFullPath())
+    .slice(basePath.length)
+    .toLowerCase();
+  const { location, isLoading } = useCurrentLocation();
+
+  // External supply is only for Store locations
+  if (path.startsWith("/inventory/external")) {
+    if (isLoading) return <Loading />;
+    if (location?.inventory_usage !== "store") {
+      return (
+        <ErrorPage
+          forError="CUSTOM_ERROR"
+          title={t("external_supply_unavailable")}
+          message={t("external_supply_store_only")}
+        />
+      );
+    }
+  }
+
+  // Inventory and Pharmacy are only for locations that use inventory
+  if (needsInventory(path)) {
+    if (isLoading) return <Loading />;
+    if ((location?.inventory_usage ?? "none") === "none") {
+      return (
+        <ErrorPage
+          forError="CUSTOM_ERROR"
+          title={t("inventory_unavailable")}
+          message={t("inventory_needs_usage")}
+        />
+      );
+    }
+  }
 
   return <div>{routeResult}</div>;
 }

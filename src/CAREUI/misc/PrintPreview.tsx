@@ -5,11 +5,7 @@ import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 
 import CareIcon from "@/CAREUI/icons/CareIcon";
-import {
-  FitToWidthScrollContainer,
-  ZoomProvider,
-  ZoomTransform,
-} from "@/CAREUI/interactive/Zoom";
+import { FitToWidthScrollContainer } from "@/CAREUI/interactive/FitToWidthScrollContainer";
 
 import { Button } from "@/components/ui/button";
 
@@ -43,6 +39,9 @@ type Props = {
   facility?: FacilityRead;
   templateSlug: string;
   hideFacilityHeader?: boolean;
+  footer?: ReactNode;
+  /** Rendered above the content and repeated on every printed page except the first. */
+  pageHeader?: ReactNode;
 };
 
 export default function PrintPreview(props: Props) {
@@ -107,6 +106,8 @@ export default function PrintPreview(props: Props) {
         facility={props.facility}
         templateSlug={props.templateSlug}
         hideFacilityHeader={props.hideFacilityHeader}
+        footer={props.footer}
+        pageHeader={props.pageHeader}
       >
         {props.children}
       </FacilityPrintLayout>
@@ -147,12 +148,8 @@ export default function PrintPreview(props: Props) {
             </FitToWidthScrollContainer>
           </div>
         ) : (
-          <div className="mx-auto my-4 max-w-[95vw] print:max-w-none sm:my-8">
-            <ZoomProvider>
-              <ZoomTransform className="origin-top-left bg-white p-10 text-sm shadow-2xl transition-all duration-200 ease-in-out print:transform-none max-w-[calc(100vw-1rem)]">
-                {printContent}
-              </ZoomTransform>
-            </ZoomProvider>
+          <div className="mx-auto my-4 print:max-w-none sm:my-8 origin-top-left bg-white p-10 text-sm shadow-2xl transition-all duration-200 ease-in-out print:transform-none max-w-[calc(100vw-1rem)]">
+            {printContent}
           </div>
         )}
       </Page>
@@ -315,19 +312,66 @@ function FacilityLogo({
   );
 }
 
+function PageHeaderRepeater({
+  pageHeader,
+  children,
+}: {
+  pageHeader?: ReactNode;
+  children: ReactNode;
+}) {
+  if (!pageHeader) return <>{children}</>;
+
+  return (
+    <table
+      className="w-full border-collapse"
+      style={{ tableLayout: "fixed", fontSize: "inherit" }}
+    >
+      <thead className="hidden print:table-header-group">
+        <tr>
+          <td className="p-0! font-normal">
+            <div className="h-5 overflow-hidden">{pageHeader}</div>
+          </td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          {/* align-top: Firefox otherwise baseline-aligns the cell and offsets the mask. */}
+          <td className="p-0! align-top">
+            <div aria-hidden="true" className="relative hidden h-0 print:block">
+              <div className="absolute inset-x-0 bottom-0 h-5 bg-white" />
+            </div>
+            <div className="relative print:-mt-5">{children}</div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  );
+}
+
 function FacilityPrintLayout({
   templateSlug,
   facility,
   children,
   hideFacilityHeader,
+  footer,
+  pageHeader,
 }: {
   templateSlug?: string;
   facility?: FacilityRead;
   children: ReactNode;
   hideFacilityHeader?: boolean;
+  footer?: ReactNode;
+  pageHeader?: ReactNode;
 }) {
   if (!facility) {
-    return <>{children}</>;
+    return (
+      <>
+        <PageHeaderRepeater pageHeader={pageHeader}>
+          {children}
+        </PageHeaderRepeater>
+        {footer && <div>{footer}</div>}
+      </>
+    );
   }
 
   const printTemplate = resolvePrintTemplate(facility, templateSlug);
@@ -376,7 +420,11 @@ function FacilityPrintLayout({
           )}
         </div>
       )}
-      <div className="flex-1">{children}</div>
+      <div className="flex-1">
+        <PageHeaderRepeater pageHeader={pageHeader}>
+          {children}
+        </PageHeaderRepeater>
+      </div>
       {footerImage?.url && (
         <div className="mt-auto pt-2">
           <img
@@ -391,6 +439,7 @@ function FacilityPrintLayout({
           />
         </div>
       )}
+      {footer && <div>{footer}</div>}
     </div>
   );
 }

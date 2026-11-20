@@ -10,11 +10,15 @@ import PrintPreview from "@/CAREUI/misc/PrintPreview";
 
 import { Separator } from "@/components/ui/separator";
 
+import PatientPrintPageHeader from "@/components/Common/PatientPrintPageHeader";
 import { formatValue } from "@/components/Facility/ConsultationDetails/QuestionnaireResponsesList";
 import { useCurrentFacilitySilently } from "@/pages/Facility/utils/useCurrentFacility";
 import { EncounterRead } from "@/types/emr/encounter/encounter";
 import encounterApi from "@/types/emr/encounter/encounterApi";
-import { PatientRead } from "@/types/emr/patient/patient";
+import {
+  getPatientIdentifiers,
+  PatientRead,
+} from "@/types/emr/patient/patient";
 import patientApi from "@/types/emr/patient/patientApi";
 import { PrintTemplateType } from "@/types/facility/printTemplate";
 import { PatientIdentifierUse } from "@/types/patient/patientIdentifierConfig/patientIdentifierConfig";
@@ -81,12 +85,17 @@ export function PrintAllQuestionnaireResponses({
     return questionnaireResponses?.results?.[0]?.questionnaire;
   }, [questionnaireResponses]);
 
+  const headerPatient = encounter?.patient ?? patient;
+
   return (
     <PrintPreview
       title={t("questionnaire_response_logs")}
       disabled={!questionnaireResponses?.results?.length}
       facility={facility}
       templateSlug={PrintTemplateType.questionnaire_response_logs}
+      pageHeader={
+        headerPatient && <PatientPrintPageHeader patient={headerPatient} />
+      }
     >
       <div className="md:p-2 max-w-4xl mx-auto">
         <div>
@@ -96,9 +105,9 @@ export function PrintAllQuestionnaireResponses({
             </h2>
           </div>
 
-          <EncounterDetails
+          <PrintableEncounterDetails
             encounter={encounter}
-            patient={encounter?.patient ?? patient}
+            patient={headerPatient}
           />
 
           <div className="flex flex-col sm:flex-row justify-between items-center sm:items-start mb-4 pb-2 border-b border-gray-200">
@@ -113,7 +122,7 @@ export function PrintAllQuestionnaireResponses({
           {questionnaireResponses?.results?.map(
             (item: QuestionnaireResponse) => (
               <div key={item.id} className="w-full">
-                <ResponseCard key={item.id} item={item} />
+                <PrintableResponseCard key={item.id} item={item} />
               </div>
             ),
           )}
@@ -150,7 +159,7 @@ interface EncounterDetailsProps {
   patient?: PatientRead;
 }
 
-export function EncounterDetails({
+export function PrintableEncounterDetails({
   encounter,
   patient,
 }: EncounterDetailsProps) {
@@ -170,17 +179,15 @@ export function EncounterDetails({
               : undefined
           }
         />
-        {patient?.instance_identifiers
-          ?.filter(
-            ({ config }) => config.config.use === PatientIdentifierUse.official,
-          )
-          .map((identifier) => (
-            <DetailRow
-              key={identifier.config.id}
-              label={identifier.config.config.display}
-              value={identifier.value}
-            />
-          ))}
+        {getPatientIdentifiers(patient, {
+          use: PatientIdentifierUse.official,
+        }).map((identifier) => (
+          <DetailRow
+            key={identifier.config.id}
+            label={identifier.config.config.display}
+            value={identifier.value}
+          />
+        ))}
         {patient?.address && (
           <DetailRow label={t("address")} value={patient.address} />
         )}
@@ -250,11 +257,7 @@ function QuestionResponseValue({ question, response }: QuestionResponseProps) {
               {precedentUnit && (
                 <span className="ml-1 text-xs">{precedentUnit.code}</span>
               )}
-              {coding && (
-                <span className="ml-1 text-xs">
-                  {coding.display} ({coding.code})
-                </span>
-              )}
+              {coding && <span className="ml-1 text-xs">{coding.display}</span>}
               {index === response.values.length - 1 && response.note && (
                 <span className="text-gray-500">({response.note})</span>
               )}
@@ -331,7 +334,7 @@ interface ResponseCardProps {
   item?: QuestionnaireResponse;
 }
 
-export function ResponseCard({ item }: ResponseCardProps) {
+export function PrintableResponseCard({ item }: ResponseCardProps) {
   const { t } = useTranslation();
 
   if (!item) return null;

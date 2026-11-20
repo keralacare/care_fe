@@ -43,6 +43,9 @@ export function ToReceive({ facilityId, locationId, internal, tab }: Props) {
   const { t } = useTranslation();
   const currentTab = tab === "deliveries" ? "deliveries" : "orders";
   const { location } = useCurrentLocation();
+  // To Receive stays open at locations that don't use inventory, so transfers
+  // already sent there can be received, but they can't raise stock requests
+  const canRaiseRequest = (location?.inventory_usage ?? "none") !== "none";
   return (
     <Page
       title={t("to_receive")}
@@ -71,7 +74,7 @@ export function ToReceive({ facilityId, locationId, internal, tab }: Props) {
               )}
             </p>
           </div>
-          {currentTab === "orders" && (
+          {currentTab === "orders" && canRaiseRequest && (
             <div className="flex items-center gap-2">
               <Button
                 variant="primary"
@@ -239,7 +242,7 @@ function OutgoingOrdersTab({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col md:flex-row items-start gap-2">
+      <div className="flex w-full min-w-0 flex-wrap items-center gap-2">
         <Tabs value={qParams.status}>
           <TabsList>
             {EFFECTIVE_STATUSES.map((status) => (
@@ -260,7 +263,7 @@ function OutgoingOrdersTab({
           onClearAll={handleClearAll}
           onClearFilter={handleClearFilter}
           placeholder={t("filters")}
-          className="flex sm:flex-row flex-wrap sm:items-center"
+          className="w-full min-w-0 items-start sm:w-auto sm:flex-row sm:flex-wrap sm:items-center"
           triggerButtonClassName="self-start sm:self-center"
           clearAllButtonClassName="self-start"
           facilityId={facilityId}
@@ -383,7 +386,7 @@ function IncomingDeliveriesTab({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col md:flex-row items-start gap-2">
+      <div className="flex w-full min-w-0 flex-wrap items-center gap-2">
         <Tabs value={qParams.status}>
           <TabsList>
             {EFFECTIVE_STATUSES.map((status) => (
@@ -404,7 +407,7 @@ function IncomingDeliveriesTab({
           onClearAll={handleClearAll}
           onClearFilter={handleClearFilter}
           placeholder={t("filters")}
-          className="flex sm:flex-row flex-wrap sm:items-center"
+          className="w-full min-w-0 items-start sm:w-auto sm:flex-row sm:flex-wrap sm:items-center"
           triggerButtonClassName="self-start sm:self-center"
           facilityId={facilityId}
         />

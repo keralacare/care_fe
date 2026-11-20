@@ -69,10 +69,10 @@ const createRequestOrderFormSchema = (
   z.object({
     name: z.string().min(1, t("name_is_required")),
     note: z.string().optional(),
-    intent: z.nativeEnum(RequestOrderIntent),
-    category: z.nativeEnum(RequestOrderCategory),
-    priority: z.nativeEnum(RequestOrderPriority),
-    reason: z.nativeEnum(RequestOrderReason),
+    intent: z.enum(RequestOrderIntent),
+    category: z.enum(RequestOrderCategory),
+    priority: z.enum(RequestOrderPriority),
+    reason: z.enum(RequestOrderReason),
     supplier: internal
       ? z.string().optional()
       : z.string().min(1, t("supplier_required")),
@@ -151,8 +151,14 @@ export default function RequestOrderForm({
       },
     }),
     select: (data: PaginatedResponse<LocationRead>) => {
-      // Filter out the current location
-      return data.results.filter((location) => location.id !== locationId);
+      // Only inventory locations other than the current one; keep an existing
+      // order's origin so it still shows when editing
+      return data.results.filter(
+        (location) =>
+          location.id !== locationId &&
+          (location.inventory_usage !== "none" ||
+            location.id === existingData?.origin?.id),
+      );
     },
   });
 
@@ -200,6 +206,14 @@ export default function RequestOrderForm({
       });
     }
   }, [isEditMode, existingData, form]);
+
+  useEffect(() => {
+    if (isEditMode) return;
+    if (internal && form.getValues("origin") === locationId) {
+      form.setValue("origin", undefined);
+    }
+    form.setValue("destination", locationId);
+  }, [locationId, internal, isEditMode, form]);
 
   const tagIds = form.watch("tags") || [];
   const selectedTags = useTagConfigs({ ids: tagIds, facilityId })

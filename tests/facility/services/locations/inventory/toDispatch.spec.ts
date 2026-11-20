@@ -1,5 +1,7 @@
 import { faker } from "@faker-js/faker";
 import { expect, Page, test } from "@playwright/test";
+import { waitForOrderUpdate } from "tests/helper/inventory";
+
 import { getFacilityId } from "tests/support/facilityId";
 
 // Use the authenticated state
@@ -13,6 +15,37 @@ let pharmacybasePath: string;
 let isInitialized: boolean = false;
 
 test.describe("Facility To-Dispatch Orders Inventory Flow", () => {
+  async function addRequestedStock(page: Page) {
+    await page.getByRole("button", { name: /^Load from order\b/ }).click();
+    const requestPicker = page.getByRole("dialog", {
+      name: "Select Items to Add",
+      exact: true,
+    });
+    await requestPicker
+      .getByRole("checkbox", { name: "Select All", exact: true })
+      .uncheck();
+    await requestPicker.getByRole("checkbox", { name: /Paracetamol/ }).check();
+    await requestPicker.getByRole("button", { name: /^Done\b/ }).click();
+    await expect(requestPicker).not.toBeVisible();
+    const form = page.getByRole("form", {
+      name: "Pending changes",
+      exact: true,
+    });
+    await expect(form.getByRole("spinbutton")).toHaveValue(/^5(?:\.0+)?$/);
+    await form
+      .getByRole("button", { name: /^Select stock$/i })
+      .last()
+      .click();
+    await page
+      .getByRole("dialog")
+      .getByRole("checkbox", { disabled: false })
+      .first()
+      .check();
+    await page.keyboard.press("Escape");
+    await form.getByRole("button", { name: /^Save Changes\b/ }).click();
+    await expect(form).not.toBeVisible();
+  }
+
   async function createStockRequest(page: Page, orderNameParam?: string) {
     await page.goto(bioChembasePath + "/inventory/internal/receive");
     orderName = orderNameParam ?? faker.lorem.words(5);
@@ -35,9 +68,11 @@ test.describe("Facility To-Dispatch Orders Inventory Flow", () => {
     let tableRow1 = page.locator("table tbody tr").nth(0);
     await expect(tableRow1).toContainText("Paracetamol");
     await expect(tableRow1).toContainText("5");
-    await page
-      .getByRole("button", { name: "Mark as Approved" })
-      .click({ timeout: 5000 });
+    const approveButton = page.getByRole("button", {
+      name: "Mark as Approved",
+    });
+    await expect(approveButton).toBeEnabled();
+    await waitForOrderUpdate(page, "pending", () => approveButton.click());
 
     await page.goto(bioChembasePath + "/inventory/internal/receive");
     // verify item appears in table
@@ -102,13 +137,10 @@ test.describe("Facility To-Dispatch Orders Inventory Flow", () => {
     await expect(
       page.getByRole("button", { name: "Load from order" }),
     ).toBeVisible();
-    await page.getByRole("button", { name: "Load from order" }).click();
-    await page.getByRole("button", { name: "Done" }).click();
-    await page.getByRole("button", { name: "Select stock" }).nth(1).click();
-    await page.locator("div").filter({ hasText: "₹20.00" }).nth(3).click();
-    await page.mouse.click(0, 0);
-    await page.getByRole("button", { name: "Save" }).click();
-    await page.getByRole("button", { name: "Mark as Approved" }).click();
+    await addRequestedStock(page);
+    await waitForOrderUpdate(page, "pending", () =>
+      page.getByRole("button", { name: "Mark as Approved" }).click(),
+    );
     await page.goto(pharmacybasePath + "/inventory/internal/dispatch");
     await page.getByRole("tab", { name: "Outgoing Deliveries" }).click();
     const deliveryRow = page
@@ -131,13 +163,10 @@ test.describe("Facility To-Dispatch Orders Inventory Flow", () => {
     await expect(
       page.getByRole("button", { name: "Load from order" }),
     ).toBeVisible();
-    await page.getByRole("button", { name: "Load from order" }).click();
-    await page.getByRole("button", { name: "Done" }).click();
-    await page.getByRole("button", { name: "Select stock" }).nth(1).click();
-    await page.locator("div").filter({ hasText: "₹20.00" }).nth(3).click();
-    await page.mouse.click(0, 0);
-    await page.getByRole("button", { name: "Save" }).click();
-    await page.getByRole("button", { name: "Mark as Approved" }).click();
+    await addRequestedStock(page);
+    await waitForOrderUpdate(page, "pending", () =>
+      page.getByRole("button", { name: "Mark as Approved" }).click(),
+    );
     await page.goto(pharmacybasePath + "/inventory/internal/dispatch");
     await page.getByRole("tab", { name: "Outgoing Deliveries" }).click();
     const deliveryRow = page
@@ -158,8 +187,20 @@ test.describe("Facility To-Dispatch Orders Inventory Flow", () => {
     await page
       .getByRole("row", { name: "Requested Qty." })
       .getByRole("checkbox")
-      .click();
-    await page.getByRole("button", { name: "Mark as Completed" }).click();
+      .check();
+    const receiveButton = page.getByRole("button", {
+      name: "Receive & Update Stock",
+    });
+    await expect(receiveButton).toBeEnabled();
+    await receiveButton.click();
+    await page.getByRole("button", { name: "Confirm" }).click();
+    const markAsCompletedButton = page.getByRole("button", {
+      name: "Mark as Completed",
+    });
+    await expect(markAsCompletedButton).toBeEnabled();
+    await waitForOrderUpdate(page, "completed", () =>
+      markAsCompletedButton.click(),
+    );
 
     await page.goto(bioChembasePath + "/inventory/internal/receive");
     await page.getByRole("tab", { name: "Incoming Deliveries" }).click();
